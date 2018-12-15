@@ -1,0 +1,440 @@
+
+.fsecure_logo{
+    display: inline-block;
+}
+.topic_image{
+    margin-left: -15px; 
+    margin-right: -15px;
+    margin-top: -18px;
+    background: linear-gradient(to right, #21527e,#45bcd6);
+    background: -webkit-linear-gradient(to right, #21527e,#45bcd6);
+    background: -moz-linear-gradient(to right, #21527e,#45bcd6);
+    background: -o-linear-gradient(to right, #21527e,#45bcd6);
+    /* height: 400px; */
+}
+
+.fsecure{
+    display: inline-block;
+    font-size: 40px;
+    font-weight: 600;
+    font-family: initial;
+    color: rgb(21, 121, 54);
+}
+
+.fsecure_back1{
+    background: url('/assets/images/fsecure_back1.jpg');
+    /* opacity: 0.5; */
+    min-height: 238px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+}
+
+.heading_1{
+    margin: auto;
+}
+
+.subheading_1{
+    font-size: 22px;
+    font-family: Gungsuh;
+    font-weight: 600;
+}
+
+.subheading_2{
+    font-size: 14px;
+    padding-left: 30px;
+}
+
+/* ul{
+    list-style-image: url('/assets/images/tick.png')
+} */
+
+.term_btn{
+    background: linear-gradient(to right top, #f32828, rgba(226, 0, 0, 0.78));
+    background: -moz-linear-gradient(to right top, #f32828, rgba(226, 0, 0, 0.78));
+    background: -o-linear-gradient(to right top, #f32828, rgba(226, 0, 0, 0.78));
+    background: -webkit-linear-gradient(to right top, #f32828, rgba(226, 0, 0, 0.78));
+    line-height: 1.5em;
+    border-color: antiquewhite;
+    padding-left: 30px;
+    padding-right: 30px;
+    font-family: serif;
+    cursor: pointer;
+    transition: 1s ease-out;
+}
+
+.term_btn:hover{
+    background: linear-gradient(to right top, #2295b7, rgba(23, 64, 95, 0.78));
+    background: -webkit-linear-gradient(to right top, #2295b7, rgba(23, 64, 95, 0.78));
+    background: -moz-linear-gradient(to right top, #2295b7, rgba(23, 64, 95, 0.78));
+    background: -o-linear-gradient(to right top, #2295b7, rgba(23, 64, 95, 0.78));
+}
+
+.fsecure_contents{
+    margin-top: 30px;
+}
+
+
+@media screen and (min-width: 450px){
+    .fsecure_form_border{
+        border-style: groove;
+        border-radius: 1px;
+        width: 430px;
+        margin: auto;
+    }
+}
+
+.fsecure_form_border{
+    padding: 20px 5px;
+    margin-top: 30px;
+    box-shadow: 12px 6px 14px 0px rgba(66, 58, 58, 0.52);
+}
+@media screen and (max-width: 449px){
+    .fsecure_form_border{
+        border-style: groove;
+        border-radius: 1px;
+        /* width: 300em; */
+        /* margin: auto; */
+    }
+}
+
+
+.label_class{
+    /* text-align: center; */
+    /* margin: auto; */
+    font-family: initial;
+    font-size: 24px;
+}
+
+.male_icon{
+    font-size: 24px;
+    color: rgb(32, 129, 129);
+}
+
+.female_icon{
+    font-size: 24px;
+    color: rgb(224, 16, 197);
+}
+
+.btn_style{
+    padding-left: 30px;
+    padding-right: 30px;
+    background-color: #d7dce0;
+}
+
+.btn:active{
+    background-color: #2295b7;
+}
+
+.range_style{
+    margin-left: 10px;
+    background: #35b1ad;
+    padding: 5px 10px;
+    margin-right: 5px;
+    font-family: serif;
+}
+
+.logo_style{
+
+    text-align: center;
+    margin-top: 30px;
+    font-family: fantasy;
+    color: rgb(21, 42, 156);
+    /* background-color: #57c6d6; */
+    padding: 10px;
+}
+
+.plan_style{
+    font-size: 30px;
+    text-align: center;
+    font-family: initial;
+    font-weight: 700;
+    margin-top: 20px;
+    color: #f1f1f1;
+    /* background-color: #d6f9e0;
+     */
+     /* background: linear-gradient(to bottom right, rgb(25, 77, 93), #91a9d8);
+     background: -moz-linear-gradient(to bottom right, rgb(25, 77, 93), #91a9d8);
+     background: -o-linear-gradient(to bottom right, rgb(25, 77, 93), #91a9d8);
+     background: -webkit-linear-gradient(to bottom right, rgb(25, 77, 93), #91a9d8); */
+     background: linear-gradient(to bottom right, rgb(220, 87, 87), #c65a5a);
+     background: -webkit-linear-gradient(to bottom right, rgb(220, 87, 87), #c65a5a);
+     background: -o-linear-gradient(to bottom right, rgb(220, 87, 87), #c65a5a);
+     background: -moz-linear-gradient(to bottom right, rgb(220, 87, 87), #c65a5a);
+
+        box-shadow: 3px 2px 16px 1px rgba(0, 0, 0, 0.54);
+}
+
+.fsecure_details1{
+    margin-top: 40px;
+}
+
+.tax_benefit{
+    padding: 20px;
+    height: 300px;
+    overflow: overlay;
+    display: block;
+    font-family: serif;
+    /* background: url(/assets/images/tax_benefit.png) no-repeat; */
+}
+
+.require_style{
+    color: red;
+}
+
+.circleNumber{
+    border-radius: 50em;
+    width: 36px;
+    height: 36px;
+    background: #f9b2b2;
+    text-align: center;
+    padding: 2px 6px;
+}
+
+.banner_style{
+    margin: auto;
+    border: 1px groove;
+    padding: 2px;
+}
+
+/* .tax_benefit::after{
+   
+    opacity: 0.5;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    position: absolute;
+    z-index: -1;   
+} */
+
+/* ---------------- */
+
+
+
+/*  RADIO button style */
+
+.control {
+    font-family: arial;
+    /* display: block; */
+    padding-right: 30px;
+    position: relative;
+    padding-left: 30px;
+    margin-bottom: 5px;
+    padding-top: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+    .control input {
+        position: absolute;
+        z-index: -1;
+        opacity: 0;
+    }
+.control_indicator {
+    position: absolute;
+    top: 2px;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    background: #e6e6e6;
+    border: 0px solid #000000;
+}
+.control-radio .control_indicator {
+    border-radius: 50%;
+}
+
+.control:hover input ~ .control_indicator,
+.control input:focus ~ .control_indicator {
+    background: #cccccc;
+}
+
+.control input:checked ~ .control_indicator {
+    background: #2aa1c0;
+}
+.control:hover input:not([disabled]):checked ~ .control_indicator,
+.control input:checked:focus ~ .control_indicator {
+    background: #0e6647;
+}
+.control input:disabled ~ .control_indicator {
+    background: #e6e6e6;
+    opacity: 0.6;
+    pointer-events: none;
+}
+.control_indicator:after {
+    box-sizing: unset;
+    content: '';
+    position: absolute;
+    display: none;
+}
+.control input:checked ~ .control_indicator:after {
+    display: block;
+}
+.control-radio .control_indicator:after {
+    left: 7px;
+    top: 7px;
+    height: 6px;
+    width: 6px;
+    border-radius: 50%;
+    background: #ffffff;
+}
+.control-radio input:disabled ~ .control_indicator:after {
+    background: #7b7b7b;
+}
+
+/*  */
+
+.fsecure-form{
+    margin: 20px 0px;
+}
+
+.fsecure-form-style{
+    margin: auto;
+    /* border: 1px solid; */
+    /* border-style: groove; */
+    padding-top: 20px;
+    padding-bottom: 20px;
+    box-shadow: 2px 4px 20px 5px #cacaca;
+}
+
+
+
+/* Custom checkbox */
+
+.container1 {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    /* font-size: 22px; */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.container1 input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background-color: #eee;
+}
+
+/* On mouse-over, add a grey background color */
+.container1:hover input ~ .checkmark {
+    background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+.container1 input:checked ~ .checkmark {
+    background-color: #2196F3;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Show the checkmark when checked */
+.container1 input:checked ~ .checkmark:after {
+    display: block;
+}
+
+/* Style the checkmark/indicator */
+.container1 .checkmark:after {
+    left: 9px;
+    top: 5px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+/* -------------------------------------------------------------------------- */
+
+.ng-valid[required], .ng-valid.required  {
+    border-left: 3px solid #54d334; /* green */
+  }
+  
+  .ng-invalid:not(form)  {
+    border-left: 3px solid #ed504c; /* red */
+  }
+
+
+
+  /*  ---------------------------------------*/
+  .container1 {
+    position: relative;
+    /* width: 50%; */
+}
+  .image {
+    opacity: 1;
+    display: block;
+    width: 100%;
+    height: auto;
+    transition: .5s ease;
+    backface-visibility: hidden;
+  }
+  
+  .middle {
+    transition: .5s ease;
+    opacity: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%)
+  }
+  
+  .container1:hover .image {
+    opacity: 0.3;
+  }
+  
+  .container1:hover .middle {
+    opacity: 1;
+  }
+  
+  .text {
+    background-color: #4CAF50;
+    color: white;
+    font-size: 16px;
+    padding: 16px 32px;
+  }
+
+
+  .container2 {
+    position: relative;
+}
+
+.center2 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 18px;
+}
+
+/* img { 
+    width: 100%;
+    height: auto;
+    opacity: 0.3;
+} */
+
+  /* ----------------------------- */
+  
+  

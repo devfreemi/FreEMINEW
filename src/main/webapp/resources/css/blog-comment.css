@@ -1,0 +1,126 @@
+.container{
+    margin-top: 40px;
+    padding: 15px;
+}
+
+.comment_area{
+    margin-top: 30px; 
+    margin-bottom: 30px;
+    background-color: rgba(191, 220, 50, 0.26);
+    padding: 15px;
+}
+
+.commentbox_heading{
+    text-align: center;
+    margin: 15px auto;
+    font-family: fantasy;
+}
+
+.share_button{
+    margin-bottom: 10px; 
+    margin-top: 20px;
+    padding: .3em 5em;
+  }
+
+/* 
+
+@media screen and ( min-width: 800px ){
+.commentdesign{
+    position: relative;
+    margin: auto;
+}
+
+.commentedContent{
+    position: relative;
+    margin: auto;
+    margin-top: 5px;
+    width: 50em;
+    height: auto;
+    border-width: 1px;
+    border-style: solid;
+    border-color: grey;
+    padding: 5px;
+}
+
+}
+
+
+@media screen and ( max-width: 450px ){
+    .commentedContent{
+        margin-top: 5px;
+        width: 100%;
+        height: auto;
+        border-width: 1px;
+        border-style: solid;
+        border-color: grey;
+        padding: 5px;
+    }
+}
+
+
+.tip {
+    width: 0px;
+    height: 0px;
+    position: absolute;
+    background: transparent;
+    border: 10px solid #ccc;
+  }
+
+.tip-left {
+    top: 10px;
+    left: -25px;
+    border-top-color: transparent;
+    border-left-color: transparent;
+    border-bottom-color: transparent;  
+  }
+  
+  .tip-right {
+    top: 10px;
+    right: -25px;
+    border-top-color: transparent;
+    border-right-color: transparent;
+    border-bottom-color: transparent;  
+  }
+  
+  .dialogbox .body {
+    margin: auto;
+    position: relative;
+    max-width: 50em;
+    height: auto;
+    margin: 20px 10px;
+    padding: 5px;
+    background-color: #DADADA;
+    border-radius: 3px;
+    border: 5px solid #ccc;
+  }
+  
+  .body .message {
+    min-height: 30px;
+    border-radius: 3px;
+    font-family: Arial;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #797979;
+  }
+
+  .share_button{
+    margin-bottom: 10px; 
+    margin-top: 20px;
+    padding: .3em 5em;
+  }
+
+  .commentBox{
+    width: 100%;
+    height: auto;
+    border-width: 1px;
+    border-style: solid;
+    border-color: grey;
+    margin-bottom: 10px;
+    background-color: bisque;
+}
+
+.commentbox_heading{
+    text-align: center;
+    margin: 15px auto;
+    font-family: fantasy;
+} */

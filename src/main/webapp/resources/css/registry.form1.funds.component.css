@@ -1,0 +1,57 @@
+.page_topic{
+    text-align: center;
+    margin-bottom: 40px;
+    margin-top: -20px;
+    background: linear-gradient(to right, #186d6dd4, #765c19b0),url(/products/resources/images/registry_funds.jpg);
+    background: -webkit-linear-gradient(to right, #186d6dd4, #765c19b0),url(/products/resources/images/registry_funds.jpg);
+    background: -moz-linear-gradient(to right, #186d6dd4, #765c19b0),url(/products/resources/images/registry_funds.jpg);
+    background: -o-linear-gradient(to right, #186d6dd4, #765c19b0),url(/products/resources/images/registry_funds.jpg);
+    /* background: linear-gradient(to right, #8b65a1, #57a5a7);
+    background: -webkit-linear-gradient(to right, #8b65a1, #57a5a7);
+    background: -moz-linear-gradient(to right, #8b65a1, #57a5a7);
+    background: -o-linear-gradient(to right, #8b65a1, #57a5a7); */
+    margin-left: -15px;
+    margin-right: -15px;
+    padding: 20px;
+    color: aliceblue;
+    font-family: serif;
+    text-transform: capitalize;
+}
+
+.image_style{
+    /* border: 1px solid black;;
+    border-style: groove; */
+    padding: 0px 1px 0px 1px;;
+}
+.funds_border{
+    /* border: 1px solid; */
+    /* border-style: groove; */
+    padding: 0px 1px 0px 1px;;
+}
+
+.funds_table{
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th{
+    border: 1px solid #bebebe;
+    width: 100%;
+}
+.thead_style{
+    font-size: 12px;
+    table-layout: auto;
+}
+
+tr:nth-child(even) {background-color: #f2f2f2;}
+
+.funds_list{
+    overflow-x:auto;
+    max-height: 500px;
+    overflow-y:auto;    
+}
+
+.rating_design{
+    color: #e73c45;
+}

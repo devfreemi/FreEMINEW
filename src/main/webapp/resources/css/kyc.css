@@ -1,0 +1,94 @@
+.info-border{
+	border-style: dashed;
+    padding: 10px;
+    border-color: #ab6812;
+    border-width: 1px;
+    border-radius: 5px;
+    background-color: #fdfdfd;
+}
+
+.line-through{
+	background-color: #f9a25d;
+    height: 2px;
+}
+
+.heading1{
+	font-family: serif;
+    color: #25608a;
+    font-style: italic;
+}
+
+.heading2{
+	color: #25608a;
+    font-style: italic;
+}
+
+.freemi_choice{
+	font-size: 12px;
+	text-align: justify;
+}
+
+.kyc_info{
+	padding: 10px;
+    border: 1px solid;
+    border-color: #185786;
+    border-radius: 4px;
+    max-height: 270px;
+    overflow-y: auto;
+    text-align: justify;
+}
+
+::-webkit-scrollbar { 
+    display: none; 
+}
+
+.points{
+	font-size: 14px;
+    line-height: 1.7rem;
+}
+
+ul{
+	list-style-type: square;
+}
+
+strong{
+	    color: #d25d1a;
+}
+
+.non_kyc{
+	color: #fc2607;
+}
+
+.otp_header{
+	border-bottom: unset; 
+	height: 90px; 
+	background: linear-gradient(to right, #B2FEFA, #0ED2F7); 
+	color: black;
+}
+
+.topic_otp{
+	font-family: serif;
+    font-weight: bold;
+    text-align: justify;
+}
+
+.timer_style{
+	text-align: center;
+    margin-bottom: 20px;
+    font-weight: bold;
+    color: #5063ef;
+    font-family: monospace;
+    font-size: 16px;
+}
+
+.btn-pan{
+	background: #56CCF2;  /* fallback for old browsers */
+	background: -webkit-linear-gradient(to bottom, #2F80ED, #56CCF2);  /* Chrome 10-25, Safari 5.1-6 */
+	background: linear-gradient(to bottom, #2F80ED, #56CCF2); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+	border-color: #56CCF2;
+	
+}
+
+
+
+

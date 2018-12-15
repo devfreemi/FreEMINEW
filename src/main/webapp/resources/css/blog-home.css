@@ -1,0 +1,50 @@
+.blog-header {
+  position: relative;
+  margin: auto;
+  padding: 10px;
+  border-bottom-style: inset;
+  border-bottom-width: 3px;
+}
+
+.blog-header h4 {
+  text-align: center;
+  text-align: -webkit-center;
+  text-align: -moz-center;
+  text-align: -o-center;
+}
+
+.search-box-outer {
+  position: relative;
+  padding: 10px;
+}
+
+.search-box-outer input {
+  display: block;
+  margin: auto;
+  width: 50%;
+  border: 1px solid darkgray;
+  border-radius: 10px;
+  padding-left: 10px;
+  transition: width 1s;
+}
+
+.search-box-outer input:hover {
+  width: 80%;
+}
+
+
+.main-content {
+    display: block;
+    width: 80em;
+    
+    border: 1px solid bisque;
+}
+
+.related-content {
+    display: block;
+    width: 20em;
+    border: 1px solid bisque;
+    position: relative;
+    margin: auto;
+    /* padding-top: 10px; */
+}

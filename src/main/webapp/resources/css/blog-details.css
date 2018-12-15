@@ -1,0 +1,43 @@
+.topicheader {
+    width: 70%;
+    background: rgba(3, 2, 2, 0.76);
+    margin: 0 auto;
+}
+
+.headerstyle {
+    text-align: center;
+    font-size: 30px;
+    font-family: 'Times New Roman', Times, serif;
+    color: white;
+    padding: 20px 0 20px 0;
+    margin-bottom: 10px;
+    margin-top: 5px;
+}
+
+.authorname {
+    font-size: 14px;
+    text-align: center;
+}
+
+.authorstyle {
+    color: aquamarine;
+}
+.innercontent{
+    /* text-align: center; */
+    padding: 30px;
+    border-bottom-width: 1px;
+    border-bottom-color: #C8C4C4;
+    border-bottom-style: inset;
+    font-family: serif;
+    text-align: justify;
+}
+
+.page_look{
+    padding: 5px;
+    background: #1f8e7e;
+    font-size: 18px;
+    color: aliceblue;
+    font-family: sans-serif;
+    margin-bottom: 15px;
+	
+}

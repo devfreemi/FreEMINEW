@@ -1,0 +1,53 @@
+.fremi-outer-shell{
+    border: 1px solid #bebdbd;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    box-shadow: 1px 1px 3px 1px #b6b5b5;
+    margin: 0px 15px;
+}
+
+
+.fsecure-profiles{
+    background-color: #8199a6;
+    padding: 10px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+.fsecure-outer{
+    padding: 10px;
+    background-color: #e4f7e4;
+    /* overflow-x: auto;  */
+}
+
+/* Table */
+#fsecure-records {
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    
+}
+
+#fsecure-records td, #fsecure-records th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#fsecure-records tr:nth-child(even){background-color: #f2f2f2;}
+
+#fsecure-records tr:hover {background-color: #ddd;}
+
+#fsecure-records th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #ff6464;
+    color: white;
+}
+.fsecure-records{
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #ff6464;
+    color: white;
+}
+/*  */

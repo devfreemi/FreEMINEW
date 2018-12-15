@@ -1,0 +1,307 @@
+/* --------------------------------- NEW CUSTOMER----------------------------------------------------------------------------  */
+
+.sectionheader h4{
+	margin-bottom: 0px;
+}
+
+#regForm {
+  background-color: #ffffff;
+  margin: 30px auto;
+  /* padding: 40px;
+  width: 70%;
+  min-width: 300px; */
+}
+
+/* Style the input fields */
+input {
+  padding: 10px;
+  width: 100%;
+  font-size: 17px;
+  font-family: Raleway;
+  border: 1px solid #aaaaaa;
+}
+
+/* Mark input boxes that gets an error on validation: */
+input.invalid {
+  /* background-color: #ffdddd; */
+  border-left: 2px solid red;
+}
+
+input.valid {
+  /* background-color: #ffdddd; */
+  border-left: 2px solid green;
+}
+
+/* Hide all steps by default: */
+.tab {
+  display: none;
+}
+
+/* Make circles that indicate the steps of the form: */
+.step {
+  height: 15px;
+  width: 15px;
+  margin: 0 30px;
+  background-color: #bbbbbb;
+  border: none; 
+  border-radius: 50%;
+  display: inline-block;
+  opacity: 0.5;
+}
+
+/* Mark the active step: */
+.step.active {
+  opacity: 1;
+}
+
+/* Mark the steps that are finished and valid: */
+.step.finish {
+  background-color: #4CAF50;
+}
+
+.formstyle{
+	margin: auto;
+    border: 1px solid #c8d4d4;
+    color: #ffffff;
+    box-shadow: 2px 3px 16px 0px #c6c5c5;
+}
+
+.sectionheader{
+	background-color: #ff5e07;
+	padding: 3px;
+	margin-bottom: 10px;
+    margin-top: 10px;
+    padding: 5px;
+    font-family: serif;
+}
+
+.label_design{
+	font-weight: 500;
+	color: #283b94;
+	font-size: 14px;
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
+.label_design1{
+	font-weight: normal; 
+	color: black;
+	padding-top: 0;
+	padding-bottom: 0;
+	
+}
+
+.label_design::after{
+	content: " :"
+}
+
+
+
+
+.gap_custom{
+	margin-bottom: 0px;
+}
+
+
+.folioReference{
+	padding-top: 30px;
+}
+
+
+/* mfpayment  */
+
+.transaction_status{
+	border: 1px solid #c0bebe;
+	border-radius: 4px;
+	margin: auto;
+	min-height: 300px;
+	padding-bottom: 5px;
+}
+
+.payment_header{
+	text-align: center;
+	background: #457fca;  /* fallback for old browsers */	
+	background: -webkit-linear-gradient(to right, #5691c8, #457fca);  /* Chrome 10-25, Safari 5.1-6 */
+	background: linear-gradient(to right, #5691c8, #457fca); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+	color: white;
+	padding: 5px;
+	margin: 0 -15px;
+
+}
+
+.razorpay-payment-button{
+	color: #ffffff;
+    /* background-color: #007bff;
+    border-color: #007bff; */
+    
+    background: #ff9966;  /* fallback for old browsers */
+	background: -webkit-linear-gradient(to right, #ff5e62, #ff9966);  /* Chrome 10-25, Safari 5.1-6 */
+	background: linear-gradient(to right, #ff5e62, #ff9966); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    font-family: sans-serif;
+    padding: 5px;
+    border-radius: 3px;
+    border: none;
+}
+
+.agree_Check{
+	padding-right: 10px;
+	height: 100px;
+	overflow-y: auto; 
+	text-align: justify;
+	font-size: 12px; 
+	color: #575353;
+}
+
+
+
+.cams_success{
+	    /* background: #1f9f3a; */
+    background: #11998e;
+    background: -webkit-linear-gradient(to right, #38ef7d, #11998e);
+    background: linear-gradient(to right, #37af64, #11998e);
+    color: aliceblue;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.cams_failure{
+	    /* background: #1f9f3a; */
+    background: #ff8080;
+    background: -webkit-linear-gradient(to right, #ff8080, #ff8080);
+    background: linear-gradient(to right, #ff8080, #ff8080);
+    color: aliceblue;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.data_style{
+	font-family: serif;
+	font-weight: bold;
+}
+
+.pay_topic{
+	color: #0a7197; 
+	font-family: sans-serif;
+	font-weight: bold;
+	
+}
+
+.urn_topic{
+	font-size: 13px;
+    font-style: italic;
+    color: #006d6d;
+}
+
+.progress_tag{
+    text-align: center;
+    color: #687672;
+    font-family: Impact, Charcoal, sans-serif;
+    border: 1px solid #c2b8b8;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+
+/* Animation effect  */
+
+.lds-ellipsis {
+  display: inline-block;
+  position: relative;
+  width: 64px;
+  height: 64px;
+}
+.lds-ellipsis div {
+  position: absolute;
+  top: 27px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  /* background: #dfc; */
+  animation-timing-function: cubic-bezier(0, 1, 1, 0);
+ background: #ee0979;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to left, #ff6a00, #ee0979);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to left, #ff6a00, #ee0979); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+  
+}
+.lds-ellipsis div:nth-child(1) {
+  left: 6px;
+  animation: lds-ellipsis1 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(2) {
+  left: 6px;
+  animation: lds-ellipsis2 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(3) {
+  left: 26px;
+  animation: lds-ellipsis2 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(4) {
+  left: 45px;
+  animation: lds-ellipsis3 0.6s infinite;
+}
+@keyframes lds-ellipsis1 {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes lds-ellipsis3 {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0);
+  }
+}
+@keyframes lds-ellipsis2 {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(19px, 0);
+  }
+}
+
+
+
+/* --------------------------------- END NEW CUSTOMER----------------------------------------------------------------------------  */
+
+/* --------------------------------- EXISTING CUSTOMER----------------------------------------------------------------------------  */
+
+
+.purchase_info{
+	background: #1A2980;  /* fallback for old browsers */
+	background: -webkit-linear-gradient(to right, #26D0CE, #235fa9);  /* Chrome 10-25, Safari 5.1-6 */
+	background: linear-gradient(to right, #26D0CE, #235fa9); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+	color: #f0ff03;
+}
+
+/* --------------------------------- END EXISTING CUSTOMER----------------------------------------------------------------------------  */
+
+
+
+/* mf info for accordian  */
+.mfInfo{
+	margin-top: 30px;
+}
+
+.card{
+	margin-bottom: 1px;
+}
+
+.card-header{
+	padding: 0;
+}
+
+.card-body{
+	font-size: 13px;
+	text-align: justify;
+}
+
+.topic_content:AFTER {
+	content: " +";
+	font-weight: bold;
+}

@@ -1,0 +1,40 @@
+.modal-header{
+    background: #1fc8db; /* For browsers that do not support gradients */
+    background: -webkit-linear-gradient(140deg, #0fb8ad 0%, #1fc8db 50%, #2cb5e8 75%); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(140deg, #0fb8ad 0%, #1fc8db 50%, #2cb5e8 75%); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(140deg, #0fb8ad 0%, #1fc8db 50%, #2cb5e8 75%); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(140deg, #0fb8ad 0%, #1fc8db 50%, #2cb5e8 75%); /* Standard syntax */
+}
+
+.modal_body{
+    margin-bottom: 40px;
+}
+
+.estimate_details{
+    text-align: center;
+}
+
+.loan_avail{
+    margin-top: 30px;
+}
+    
+label{
+    font-size: 18px;
+    color: #94094a;
+    font-variant: common-ligatures;
+    font-weight: 800;
+    font-family: sans-serif;
+}
+
+.model_topic{
+    color: #ffffff;
+    margin: auto;
+    font-family: Copperplate Gothic Bold;
+    font-weight: 700;
+}
+
+.btn_custom{
+    font-family: cursive;
+    padding: 5px 40px;
+    background: rgb(6, 103, 77);
+}

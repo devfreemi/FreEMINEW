@@ -1,0 +1,40 @@
+.accordian-style{
+    /* width: 80%;  */
+    margin: 20px auto;
+}
+
+.profile{
+    font-weight: 800;
+}
+
+label{
+    font-weight: 600;
+}
+
+.fa-refresh{
+    transition: 2s;
+    -webkit-transition: 2s;
+    -moz-transition: 2s;
+    -o-transition: 2s;
+    /* animation-iteration-count: infinite;
+    -webkit-animation-iteration-count: infinite;
+    -moz-animation-iteration-count: infinite;
+    -o-animation-iteration-count: infinite; */
+}
+.fa-refresh:hover{
+    transform: rotate(360deg);
+}
+
+.disappear{
+    animation-delay: 2s;
+    animation: box_vanish;
+}
+
+@keyframes box_vanish{
+    0% {
+        transform:opacity(1);
+    }
+    100% {
+        transform: opacity(0);
+    }
+}

@@ -1,0 +1,44 @@
+.fremi-outer-shell{
+    border: 1px solid #bebdbd;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    box-shadow: 1px 1px 3px 1px #b6b5b5;
+    margin: 0px 15px;
+}
+
+
+.freemi-profiles{
+    background-color: #8199a6;
+    padding: 10px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+.freemi-outer{
+    padding: 10px;
+    /* overflow-x: auto;  */
+}
+
+/* Table */
+#freemi-records {
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#freemi-records td, #freemi-records th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#freemi-records tr:nth-child(even){background-color: #f2f2f2;}
+
+#freemi-records tr:hover {background-color: #ddd;}
+
+#freemi-records th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #ff6464;
+    color: white;
+}
+/*  */
