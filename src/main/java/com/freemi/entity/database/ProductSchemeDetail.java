@@ -214,6 +214,7 @@ public class ProductSchemeDetail implements Serializable {
 	
 	@Column(name="riskometer_value")
 	private String riskometer_value;
+	
 	@Column(name="rtacode")
 	private String RTACode;
 

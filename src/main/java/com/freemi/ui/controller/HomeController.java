@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
@@ -23,7 +24,6 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,6 +39,7 @@ import com.freemi.entity.general.ClientSystemDetails;
 import com.freemi.entity.general.ContactUsForm;
 import com.freemi.entity.general.ForgotPassword;
 import com.freemi.entity.general.Login;
+import com.freemi.ui.restclient.GoogleSecurity;
 import com.freemi.ui.restclient.RestClient;
 
 
@@ -60,24 +61,9 @@ public class HomeController {
 		//logger.info("@@@@ Inside Login..");
 		logger.info("@@@@ HomeController @@@@");
 		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
-		return "index";
+		/*return "index";*/
+		return "redirect:/registry-mutual-funds";
 	}
-
-	@RequestMapping(value = "/about", method = RequestMethod.GET)
-	public String about(Model map) {
-		//logger.info("@@@@ Inside Login..");
-		logger.info("@@@@ ABoutController @@@@");
-		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
-		return "about";
-	}
-	@RequestMapping(value = "/terms-of-use", method = RequestMethod.GET)
-	public String termsOfUse(Model map) {
-		//logger.info("@@@@ Inside Login..");
-		logger.info("@@@@ TermsOfUseController @@@@");
-		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
-		return "terms-of-use";
-	}
-
 
 
 	@RequestMapping(value = "/login", method = RequestMethod.GET )
@@ -104,8 +90,27 @@ public class HomeController {
 		logger.info("@@@@ Inside Login do..");
 		//		logger.info("Referer- "+ request.getHeader("Referer"));
 		//		String referer = request.getHeader("Referer");
-
+		System.out.println("Recpcha form resuest- "+ request.getParameter("g-recaptcha-response"));
+		
 		String ip = CommonTask.getClientSystemIp(request);
+		
+		if(bindingResult.hasErrors()){
+			logger.info("Error in login form");
+//			model.addAttribute("error", "Invalid form data");
+			model.addAttribute("error", bindingResult.getFieldError().getDefaultMessage());
+			return "login";
+		}
+		if(request.getParameter("g-recaptcha-response")==""){
+			logger.info("Security token not checked");
+			model.addAttribute("error", "Please check the security verification");
+			return "login";
+		}else{
+			if(!GoogleSecurity.verifyRecaptcha(request.getParameter("g-recaptcha-response"), "Y", ip, request.getRequestURL().toString())){
+				logger.warn("Security token validation failed");
+				model.addAttribute("error", "Security token validation failed!");
+				return "login";
+			}
+		}
 
 		//		logger.info("Beginning attemptAuthentication() from IP- "+ request.getRemoteHost()+ "/"+request.getHeader("X-Forwarded-for"));
 		String returnUrl="";
@@ -116,7 +121,7 @@ public class HomeController {
 			try {
 				url = new URL(referer);
 				URI uri = url.toURI();
-				if(uri.getRawPath().contains("/register") || uri.getRawPath().contains("/forgotPassword")){
+				if(uri.getRawPath().contains("/register") || uri.getRawPath().contains("/forgotPassword") || uri.getRawPath().contains("/resetPassword")){
 					returnUrl="redirect:/";
 				}else
 					returnUrl = "redirect:/"+ uri.getRawPath().split("/products/")[1];
@@ -142,11 +147,7 @@ public class HomeController {
 
 		RestClient client = new RestClient();
 		ResponseEntity<String> response = null;
-		if(bindingResult.hasErrors()){
-			logger.info("Error in login form");
-			model.addAttribute("error", "Invalid form data");
-			return "login";
-		}
+		
 
 		try{
 			response= client.login(login.getUsermobile(), login.getUserpassword(), ip);
@@ -215,12 +216,24 @@ public class HomeController {
 	}
 
 	@RequestMapping(value = "/forgotPassword.do", method = RequestMethod.POST)
-	public String forgotPasswordSubmit(@ModelAttribute("forgotPasswordForm") @Valid ForgotPassword forgotPasswordForm, BindingResult bindingResult, Model model) {
-		logger.info("@@@@ Inside Login do..");
+	public String forgotPasswordSubmit(@ModelAttribute("forgotPasswordForm") @Valid ForgotPassword forgotPasswordForm, BindingResult bindingResult, Model model, HttpServletRequest request, HttpServletResponse resp) {
+		logger.info("@@@@ Forgot password request submit..");
 
 		if(bindingResult.hasErrors()){
 			logger.info("Error in forgot form");
+			model.addAttribute("error", bindingResult.getFieldError().getDefaultMessage());
 			return "forgotPassword";
+		}
+		if(request.getParameter("g-recaptcha-response")==""){
+			logger.info("Security token not checked");
+			model.addAttribute("error", "Please check the security verification");
+			return "forgotPassword";
+		}else{
+			if(!GoogleSecurity.verifyRecaptcha(request.getParameter("g-recaptcha-response"), "Y", CommonTask.getClientSystemIp(request), request.getRequestURL().toString())){
+				logger.warn("Security token validation failed");
+				model.addAttribute("error", "Security token validation failed!");
+				return "forgotPassword";
+			}
 		}
 
 		RestClient client = new RestClient();
@@ -229,7 +242,7 @@ public class HomeController {
 			response = client.forgotPassword(forgotPasswordForm);
 			logger.info(response.getBody());
 			//			logger.info(response.getHeaders());
-			model.addAttribute("success", "Mail will be sent if account exist to reset password");
+			model.addAttribute("success", "Password reset mail sent on registered email id.");
 		}catch(HttpStatusCodeException  e){
 			logger.info("test failure - " + e.getStatusCode());
 			model.addAttribute("error", "Unable to process request curretnly");
@@ -240,7 +253,6 @@ public class HomeController {
 		}
 
 		//		model.addAttribute("forgotPasswordForm", forgotPasswordForm);
-		logger.info("@@@@ ForgotPasswordController @@@@");
 		
 		return "forgotPassword";
 	}
@@ -293,7 +305,7 @@ public class HomeController {
 	
 
 
-	@RequestMapping(value = "/terms-conditions", method = RequestMethod.GET)
+/*	@RequestMapping(value = "/terms-conditions", method = RequestMethod.GET)
 	public String getTermsConditions(Model map) {
 		//logger.info("@@@@ Inside Login..");
 		logger.info("@@@@ Terms & conditions Controller @@@@");
@@ -307,13 +319,14 @@ public class HomeController {
 		logger.info("@@@@ Privacy-policyController @@@@");
 		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 		return "privacy-policy";
-	}
+	}*/
 
-	@RequestMapping(value = "/blogs/{blogname}", method = RequestMethod.GET)
-	public String getBlog(@PathVariable("blogname") String blogname ,ModelMap model) {
+	@RequestMapping(value = "/terms-of-use", method = RequestMethod.GET)
+	public String termsOfUse(Model map) {
 		//logger.info("@@@@ Inside Login..");
-		logger.info("@@@@ BlogsContentController @@@@");
-		return ("blogs/"+blogname);
+		logger.info("@@@@ Terms of user controller @@@@");
+		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
+		return "terms-of-use";
 	}
 
 
@@ -359,9 +372,6 @@ public class HomeController {
 
 		return "SUCCESS";
 	}
-
-
-
 
 
 

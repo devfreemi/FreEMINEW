@@ -27,9 +27,9 @@ import com.freemi.entity.Birla.SavePrePurchaseMultiRequestInput;
 import com.freemi.entity.Birla.SavePreSIPMultipleSchemesInput;
 import com.freemi.entity.Birla.SavePreSIPMultipleSchemesInput.PreSIPMultipleSchemes;
 import com.freemi.entity.Birla.SavePreSIPMultipleSchemesInput.PreSIPMultipleSchemes.SchemeDetails;
+import com.freemi.entity.database.UserBankDetails;
 import com.freemi.entity.Birla.ValidateAadhaarOTPOutput;
 import com.freemi.entity.general.ClientSystemDetails;
-import com.freemi.entity.general.UserBankDetails;
 import com.freemi.entity.investment.FolioCreationStatus;
 import com.freemi.entity.investment.MFInvestForm;
 

@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.freemi.controller.interfaces.FreemiServiceInterface;
 import com.freemi.database.service.DatabaseEntryManager;
+import com.freemi.database.service.FreemiServiceInterface;
 
 @RestController
 public class CampaignProducts {

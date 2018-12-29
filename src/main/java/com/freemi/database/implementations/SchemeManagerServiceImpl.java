@@ -1,4 +1,4 @@
-package com.freemi.repository.implementations;
+package com.freemi.database.implementations;
 
 import java.io.Serializable;
 import java.util.List;

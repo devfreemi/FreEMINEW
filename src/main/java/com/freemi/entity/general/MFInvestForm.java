@@ -2,6 +2,8 @@ package com.freemi.entity.general;
 
 import javax.validation.constraints.Pattern;
 
+import com.freemi.entity.database.UserBankDetails;
+
 public class MFInvestForm {
 
 	@Pattern(regexp = "[a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}")

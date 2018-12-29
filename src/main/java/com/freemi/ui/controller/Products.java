@@ -35,7 +35,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.freemi.common.util.CommonConstants;
 import com.freemi.common.util.CommonTask;
-import com.freemi.controller.interfaces.FreemiServiceInterface;
+import com.freemi.database.service.FreemiServiceInterface;
 import com.freemi.entity.database.FreemiLoanQuery;
 import com.freemi.entity.database.ProductSchemeDetail;
 import com.freemi.entity.general.AadhaarOTP;

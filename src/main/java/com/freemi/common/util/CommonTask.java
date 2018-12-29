@@ -7,7 +7,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.freemi.entity.general.ClientSystemDetails;
 import com.freemi.entity.general.MFInvestForm;
-import com.freemi.ui.controller.KYCController;
 
 public class CommonTask {
 	private static final Logger logger = LogManager.getLogger(CommonTask.class);
@@ -54,10 +53,10 @@ public class CommonTask {
 	
 	public static boolean validateInvestForm(MFInvestForm formData){
 		
-		int count=0;
+		/*int count=0;
 		boolean status=false;
 		if(formData.getPAN()==null)
-			count++;
+			count++;*/
 		
 		
 		return false;

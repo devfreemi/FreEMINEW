@@ -87,16 +87,16 @@
 								data-ride="carousel">
 								<div class="carousel-inner">
 									<div class="carousel-item active">
-										<img class="d-block w-100" src="${contextcdn}/resources/images/ekyc1.png" alt="First slide">
+										<img class="d-block w-100" src="<c:url value="${contextcdn}/resources/images/ekyc1.png"/>" alt="First slide">
 									</div>
 									<div class="carousel-item">
-										<img class="d-block w-100" src="${contextcdn}/resources/images/ekyc2.png" alt="Second slide">
+										<img class="d-block w-100" src="<c:url value="${contextcdn}/resources/images/ekyc2.png"/>" alt="Second slide">
 									</div>
 									<div class="carousel-item">
-										<img class="d-block w-100" src="${contextcdn}/resources/images/ekyc3.png" alt="Third slide">
+										<img class="d-block w-100" src="<c:url value="${contextcdn}/resources/images/ekyc3.png"/>" alt="Third slide">
 									</div>
 									<div class="carousel-item">
-										<img class="d-block w-100" src="${contextcdn}/resources/images/ekyc4.png" alt="Fourth slide">
+										<img class="d-block w-100" src="<c:url value="${contextcdn}/resources/images/ekyc4.png"/>" alt="Fourth slide">
 									</div>
 								</div>
 							</div>

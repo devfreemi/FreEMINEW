@@ -153,6 +153,10 @@
 						<a class="password_reset" href="${pageContext.request.contextPath}/forgotPassword">Forgot
 							Password? </a>
 					</div>
+					
+					<div style="margin-bottom: 20px;">
+						<div class="g-recaptcha" data-sitekey="6LdvUoQUAAAAADk77XVS_YlkPTluN9EYCawk1xo6"></div>
+					</div>
 					<div class="login_buttons">
 						<button type="submit" id="loginsubmit"
 							class="btn btn-sm btn-block login_button">
@@ -174,5 +178,6 @@
 		</div>
 
 	</div>
+	<script src='https://www.google.com/recaptcha/api.js'></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-package com.freemi.controller.interfaces;
+package com.freemi.database.service;
 
 import org.springframework.stereotype.Component;
 

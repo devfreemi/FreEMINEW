@@ -1,4 +1,4 @@
-package com.freemi.repository.implementations;
+package com.freemi.database.implementations;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

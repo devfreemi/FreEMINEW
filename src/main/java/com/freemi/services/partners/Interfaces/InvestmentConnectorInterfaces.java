@@ -3,8 +3,8 @@ package com.freemi.services.partners.Interfaces;
 import javax.servlet.http.HttpSession;
 
 import com.freemi.entity.Birla.ValidateAadhaarOTPOutput;
+import com.freemi.entity.database.UserBankDetails;
 import com.freemi.entity.general.ClientSystemDetails;
-import com.freemi.entity.general.UserBankDetails;
 import com.freemi.entity.investment.FolioCreationStatus;
 import com.freemi.entity.investment.MFInvestForm;
 

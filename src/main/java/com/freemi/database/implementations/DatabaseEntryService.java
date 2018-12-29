@@ -1,4 +1,4 @@
-package com.freemi.repository.implementations;
+package com.freemi.database.implementations;
 
 import java.util.List;
 

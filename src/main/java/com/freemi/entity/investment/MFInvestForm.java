@@ -2,7 +2,7 @@ package com.freemi.entity.investment;
 
 import java.io.Serializable;
 
-import com.freemi.entity.general.UserBankDetails;
+import com.freemi.entity.database.UserBankDetails;
 
 public class MFInvestForm implements Serializable {
 

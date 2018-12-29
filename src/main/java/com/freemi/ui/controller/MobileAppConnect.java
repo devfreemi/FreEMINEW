@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freemi.common.util.CommonTask;
-import com.freemi.controller.interfaces.FreemiServiceInterface;
+import com.freemi.database.service.FreemiServiceInterface;
 import com.freemi.entity.database.FreemiLoanQuery;
 import com.freemi.entity.general.ClientSystemDetails;
 

@@ -13,12 +13,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
     protected void configure(HttpSecurity security) throws Exception
     {
+		
      security.httpBasic().disable()
+//     .csrf().disable()
 //     .headers().cacheControl().disable()
      .headers()
      	.httpStrictTransportSecurity().includeSubDomains(true).maxAgeInSeconds(31536000)
      	.and()
      	.frameOptions().sameOrigin()
+     	
      ;
     }
 	

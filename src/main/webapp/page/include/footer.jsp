@@ -1,5 +1,5 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<link href="<c:url value="${contextcdn}/resources/css/footer.min.css"/>" rel="stylesheet" type="text/css">
+<link href="<c:url value="${contextcdn}/resources/css/footer.css"/>" rel="stylesheet" type="text/css">
 
 	<div class="footer"
 		style="background-color: rgb(1, 48, 76); padding-bottom: 20px;">

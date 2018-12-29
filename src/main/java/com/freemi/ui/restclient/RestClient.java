@@ -18,13 +18,15 @@ import com.freemi.entity.general.FSecure;
 import com.freemi.entity.general.ForgotPassword;
 import com.freemi.entity.general.ProfilePasswordChangeForm;
 import com.freemi.entity.general.Registerform;
+import com.freemi.entity.general.ResetPassword;
 import com.freemi.entity.general.UserProfile;
 
 public class RestClient {
 	
 //	private final String SERVICE_URL1 = "https://ec2-35-154-76-43.ap-south-1.compute.amazonaws.com/freemibackend";
 //	private final String SERVICE_URL1 = "http://ec2-35-154-76-43.ap-south-1.compute.amazonaws.com:8080/freemibackend";
-	private final String SERVICE_URL1 = "http://localhost:8090/freemibackend";
+//	private final String SERVICE_URL1 = "http://localhost:8090/freemibackend";
+	private final String SERVICE_URL1 = "http://localhost:8080/freemibackend";
 
 	private final String ANONYMOUS_TOKEN = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbm9ueW1vdXMifQ.Ch3VesT2dCyRIDandUkxL87dIoioHCAdsRZzoNx0xNw";
 	
@@ -57,7 +59,7 @@ public class RestClient {
 //		ResponseEntity<String> result = restTemplate.postForObject(url, parametersMap, String.class);
 		
 		response = restTemplate.postForEntity(url, parametersMap, String.class);
-		logger.info("Response from logging api- "+ response.getHeaders());
+		logger.info("Response from logging api - "+ response.getHeaders());
 		return response;
 	}
 	
@@ -165,6 +167,21 @@ public class RestClient {
 		return restTemplate.postForEntity(url, entity,  String.class);
 	}
 	
+	public ResponseEntity<String> forgotPasswordUpdate(ResetPassword forgotPasswordChangeForm,String userid, String token,String requestingIp) throws JsonProcessingException{
+		final String url = SERVICE_URL1 + "/forgotPasswordReset/"+userid;
+		ObjectMapper mapper = new ObjectMapper();
+		RestTemplate restTemplate = new RestTemplate();
+		String formdata= mapper.writeValueAsString(forgotPasswordChangeForm);
+		
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", "Bearer "+token);
+		headers.set("requestingIp", requestingIp);
+		headers.set("userid", userid);
+		HttpEntity<String> entity = new HttpEntity<String>(formdata,headers);
+		return restTemplate.postForEntity(url, entity,  String.class);
+	}
+	
+	
 	
 	public ResponseEntity<String> validateResetPasswordToken(String userid, String token,String requestingIp) throws JsonProcessingException{
 		logger.info("Reset password token validation rest call- "+ token);
@@ -172,8 +189,9 @@ public class RestClient {
 		RestTemplate restTemplate = new RestTemplate();
 		
 		HttpHeaders headers = new HttpHeaders();
-		headers.set("Authorization", token);
+		headers.set("Authorization", "Bearer "+token);
 		headers.set("requestingIp", requestingIp);
+		headers.set("userid", userid);
 //		HttpEntity<String> entity = new HttpEntity<String>(formdata,headers);
 		HttpEntity<String> entity = new HttpEntity<String>(headers);
 		return restTemplate.postForEntity(url, entity,  String.class);

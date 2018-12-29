@@ -1,10 +1,10 @@
-<!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<!DOCTYPE html>
 <html lang="en">
-<head>
+<head lang="en">
 <meta name="keywords" content="Credit Line, Instant Credit,Personal Loan,Home Loan, Business Loan, Instant Credit, Credit Crad, No Cost EMI,personal loan, personal loan rate" />
 <meta name="Copyright" content="Copyright 2018 @ freemi.in" />
 <meta name="author" content="https://www.freemi.in" />
@@ -19,7 +19,7 @@
 <meta property="og:image:type" content="image/png" />
 
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link href="https://www.freemi.in/products/loans" rel="canonical">
+<link href="https://www.freemi.in/products/loans/" rel="canonical">
 <title>FreEMI Loans</title>
 <link href="<c:url value="${contextcdn}/resources/css/freeEmi2.min.css"/>"
 	rel="stylesheet">
@@ -31,7 +31,7 @@
 <script src="<c:url value="${contextcdn}/resources/js/pace.min.js" />"></script>
 <script src="<c:url value="${contextcdn}/resources/js/freemi.js" />"></script>
 
-<!-- EMI Calculator Widget START --><script src="https://emicalculator.net/widget/2.0/js/emicalc-loader.min.js"></script><!-- EMI Calculator Widget END -->
+<!-- EMI Calculator Widget START --><script async src="https://emicalculator.net/widget/2.0/js/emicalc-loader.min.js"></script><!-- EMI Calculator Widget END -->
 
 <jsp:include page="include/bootstrap.jsp"></jsp:include>
 <style>

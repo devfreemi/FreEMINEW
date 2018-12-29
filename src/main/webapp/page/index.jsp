@@ -4,7 +4,6 @@
 <html lang="en">
 <head>
 <jsp:include page="include/bootstrap.jsp"></jsp:include>
-<jsp:include page="include/GoogleHeadTag.jsp"></jsp:include>
 <meta name="keywords" content="Credits, mutual funds, best mutual fund, interest rate, compare interest rate, investment plans" />
 <meta name="Copyright" content="Copyright 2018 @ freemi.in" />
 <meta name="author" content="https://www.freemi.in" />

@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -29,6 +30,7 @@ import com.freemi.common.util.CommonTask;
 import com.freemi.entity.general.ProfilePasswordChangeForm;
 import com.freemi.entity.general.ResetPassword;
 import com.freemi.entity.general.UserProfile;
+import com.freemi.ui.restclient.GoogleSecurity;
 import com.freemi.ui.restclient.RestClient;
 
 @Controller
@@ -44,8 +46,9 @@ public class ProfileManageController{
 	
 	@RequestMapping(value = "/profile", method = RequestMethod.GET)
 	public String getProfile(ModelMap model, HttpSession session, HttpServletRequest request) {
-		//logger.info("@@@@ Inside Login..");
+		logger.info("@@@@ Get profile details..");
 		String returnurl = "";
+		int error = 0;
 		RestClient client = new RestClient();
 		ResponseEntity<String> response = null;
 		if(session.getAttribute("token") == null){
@@ -56,7 +59,7 @@ public class ProfileManageController{
 				response = client.getProfileData(session.getAttribute("userid").toString(), session.getAttribute("token").toString(), CommonTask.getClientSystemDetails(request).getClientIpv4Address());
 //				logger.info(response.getBody());
 //				logger.info(response.getHeaders());
-				System.err.println(response.getBody());
+				System.out.println(response.getBody());
 				UserProfile profile = new ObjectMapper().readValue(response.getBody(), UserProfile.class);
 //				logger.info(profile.getGender());
 				
@@ -66,25 +69,35 @@ public class ProfileManageController{
 				model.addAttribute("profilePasswordChangeForm", new ProfilePasswordChangeForm());
 				logger.info(profile.getMobile());
 			}catch(HttpStatusCodeException  e){
-				logger.info("test failure - " + e.getStatusCode());
+				logger.info("Unable to fetch profile details - " + e.getStatusCode());
+				if(e.getStatusCode().value() == 401){
+					model.addAttribute("error", "Token validation failed. Please check if it expired");
+				}else{
 				model.addAttribute("error", "Unable to process request curretnly");
+				}
+				error =1;
 			} catch (JsonProcessingException e) {
 				model.addAttribute("error","Invalid form data");
+				error = 1;
 			}catch(Exception e){
 //				e.printStackTrace();
 				model.addAttribute("error","Error processing request");
-			}finally{
-				logger.info("entering finally");
-//				model.addAttribute("profileBasic", new UserProfile());
-//				model.addAttribute("profileAccount", new UserProfile());
-//				model.addAttribute("profileAddress", new UserProfile());
+				error =1;
+			}
+			
+			if(error == 1){
+				model.addAttribute("error","Sorry. Unable to fetch your details currently.");
+				model.addAttribute("profileBasic", new UserProfile());
+				model.addAttribute("profileAccount", new UserProfile());
+				model.addAttribute("profileAddress", new UserProfile());
+				model.addAttribute("profilePasswordChangeForm", new ProfilePasswordChangeForm());
 			}
 			
 			
 		}
 		
 		
-		logger.info("@@@@ ProfileController @@@@");
+		logger.info("@@@@ ProfileController complete. @@@@");
 		return returnurl;
 	}
 
@@ -170,10 +183,10 @@ public class ProfileManageController{
 	}
 	
 	
+	// This functionality is through profile management after user is logged in.
 	@RequestMapping(value = "/changePassword.do", method = RequestMethod.POST)
-	public String postPassChangeDo(@ModelAttribute("profileBasic") UserProfile profile,@ModelAttribute("profileAccount") UserProfile profileAccount,@ModelAttribute("profileAddress") UserProfile profileAddress ,@ModelAttribute("profilePasswordChangeForm") ProfilePasswordChangeForm passChangeForm, Model model, HttpSession session, HttpServletRequest request) {
+	public String postPassChangeDo(@ModelAttribute("profileBasic") UserProfile profile,@ModelAttribute("profileAccount") UserProfile profileAccount,@ModelAttribute("profileAddress") UserProfile profileAddress ,@ModelAttribute("profilePasswordChangeForm") ProfilePasswordChangeForm passChangeForm, Model model, HttpSession session, HttpServletRequest request, HttpServletResponse resp) {
 
-		
 		logger.info("@@@@ ProfilePasswordChange @@@@");
 		String returnurl="";
 		RestClient client = new RestClient();
@@ -226,7 +239,7 @@ public class ProfileManageController{
 	
 	@RequestMapping(value = "/resetPassword", method = RequestMethod.GET)
 	public String resetPasswordValidator(@RequestParam("env")String env,@RequestParam("user")String user, @RequestParam("token")String token,Model map,HttpServletRequest request,HttpServletResponse response, HttpSession session) {
-		//logger.info("@@@@ Inside Login..");
+		logger.info("@@@@ resetPasswordController");
 		logger.info("Forgot password reset request received from ip- "+ CommonTask.getClientSystemIp(request));
 		logger.info("Reset password details- [user: "+user+"]"+" [token: "+token+"]");
 		String returnurl = "";
@@ -241,23 +254,35 @@ public class ProfileManageController{
 			
 			try {
 				responseEntity = client.validateResetPasswordToken(user, token, CommonTask.getClientSystemIp(request));
+				logger.info("Token validations status received");
 				logger.info("Validataion status for token of user - "+user +" --> "+responseEntity.getBody());
 //				logger.info(profile.getMobile());
 				
 				if(!responseEntity.getBody().equalsIgnoreCase("VALID")){
 					map.addAttribute("STATUS", "N");
+					map.addAttribute("PWDCHANGE", "N");
 					map.addAttribute("error", "Token validation failed.");
 				}else{
 					map.addAttribute("STATUS", "Y");
+					map.addAttribute("PWDCHANGE", "N");
+					map.addAttribute("success", "Set your new password");
+					session.setAttribute("user", user);
+					session.setAttribute("token", token);
 				}
 			}catch(HttpStatusCodeException  e){
-				logger.info("Connection failure - " + e.getStatusCode());
+				logger.info("Connection failure to reset password token validation link - " + e.getStatusCode());
 				map.addAttribute("STATUS", "N");
-				map.addAttribute("error", "Unable to process request curretnly");
+				if( e.getStatusCode().value() == 401){
+					map.addAttribute("error", "Token valiation failed. Please check if it exprired.");
+				}else{
+					map.addAttribute("error", "Unable to process request curretnly");
+				}
 			} catch (JsonProcessingException e) {
 				map.addAttribute("STATUS", "N");
 				map.addAttribute("error","Invalid form data");
 			}catch(Exception e){
+				logger.error("Error proceeing reset password token validation \n " + e.getMessage());
+				e.printStackTrace();
 				map.addAttribute("STATUS", "N");
 				map.addAttribute("error","Error processing request");
 			}	
@@ -267,7 +292,6 @@ public class ProfileManageController{
 			map.addAttribute("contextcdn", environment.getProperty(CommonConstants.CDN_URL));
 			returnurl = "reset-password";
 		}
-		logger.info("@@@@ DashboardController @@@@");
 		
 		return returnurl;
 //		return "my-dashboard";
@@ -279,12 +303,83 @@ public class ProfileManageController{
 		return "redirect:/resetPassword";
 	}
 
-	@RequestMapping(value = "/resetPassword.do", method = RequestMethod.POST)
+	/*@RequestMapping(value = "/resetPassword.do", method = RequestMethod.POST)
 	public String resetPasswordSubmit(ModelMap model) {
 		//logger.info("@@@@ Inside Login..");
 		logger.info("@@@@ ResetPasswordDoController @@@@");
-		return "reset-password";
+//		return "reset-password";
+		return "redirect:/resetPassword";
+	}*/
+	
+	@RequestMapping(value = "/resetPassword.do", method = RequestMethod.POST)
+	public String ForgotPasswordResetSubmit(@ModelAttribute("resetPassword")ResetPassword resetPassForm,BindingResult bindingResult,Model model,HttpServletRequest request,HttpServletResponse response, HttpSession session) {
+		//logger.info("@@@@ Inside Login..");
+		logger.info("@@@@ ForgotPasswordresetController @@@@");
+		System.out.println(request.getQueryString());
+		String returnurl="";
+		RestClient client = new RestClient();
+		
+		ResponseEntity<String> responseEntity = null;
+		
+		if(!resetPassForm.getNewpassword().equalsIgnoreCase(resetPassForm.getConfirmpassword())){
+			model.addAttribute("STATUS", "N");
+			model.addAttribute("error", "Confirm password do not match");
+			return "reset-password";
+		}
+		if(bindingResult.hasErrors()){
+			logger.info("Error in login form");
+//			model.addAttribute("error", "Invalid form data");
+			model.addAttribute("STATUS", "N");
+			model.addAttribute("error", bindingResult.getFieldError().getDefaultMessage());
+			return "reset-password";
+		}
+		if(request.getParameter("g-recaptcha-response")==""){
+			logger.info("Security token not checked");
+			model.addAttribute("STATUS", "N");
+			model.addAttribute("error", "Please check the security verification");
+			return "reset-password";
+		}
+		else{
+			if(!GoogleSecurity.verifyRecaptcha(request.getParameter("g-recaptcha-response"), "Y", CommonTask.getClientSystemIp(request), request.getRequestURL().toString())){
+				logger.warn("Security token validation failed");
+				model.addAttribute("STATUS", "N");
+				model.addAttribute("error", "Security token validation failed!");
+				return "reset-password";
+			}
+		}
+		
+		if(session.getAttribute("token") == null){
+			returnurl="redirect:/login";
+		}else{
+			returnurl="reset-password";
+			try {
+				responseEntity = client.forgotPasswordUpdate(resetPassForm,session.getAttribute("user").toString(), session.getAttribute("token").toString(),CommonTask.getClientSystemDetails(request).getClientIpv4Address());
+//				System.err.println(response.getBody());
+				logger.info(responseEntity.getBody());
+				if(responseEntity.getBody().equals("SUCCESS")){
+					model.addAttribute("STATUS", "Y");
+					model.addAttribute("PWDCHANGE", "S");
+					model.addAttribute("success", "Your account password updated successfully");
+					model.addAttribute("resetPassword", new ResetPassword());
+				}
+				
+			}catch(HttpStatusCodeException  e){
+				logger.info("test failure - " + e.getStatusCode());
+				
+				model.addAttribute("error", "Unable to process request curretnly");
+			} catch (JsonProcessingException e) {
+				model.addAttribute("STATUS", "N");
+				model.addAttribute("error","Invalid form data");
+			}catch(Exception e){
+				model.addAttribute("STATUS", "N");
+				model.addAttribute("error","Error processing request");
+			}
+		}
+		
+		return returnurl;
 	}
+	
+	
 
 	@RequestMapping(value = "/blogs", method = RequestMethod.GET)
 	public String getBlogs(ModelMap model) {

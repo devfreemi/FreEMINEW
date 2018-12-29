@@ -3,8 +3,8 @@ package com.freemi.controller.implementations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.freemi.controller.interfaces.FreemiServiceInterface;
 import com.freemi.database.service.FreemiLoanQueryService;
+import com.freemi.database.service.FreemiServiceInterface;
 import com.freemi.entity.database.FreemiLoanQuery;
 
 @Service
