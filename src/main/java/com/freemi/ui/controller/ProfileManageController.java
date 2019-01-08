@@ -1,5 +1,7 @@
 package com.freemi.ui.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -21,31 +23,42 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freemi.common.util.CommonConstants;
 import com.freemi.common.util.CommonTask;
+import com.freemi.common.util.InvestFormConstants;
+import com.freemi.database.service.BseEntryManager;
+import com.freemi.entity.database.UserBankDetails;
 import com.freemi.entity.general.ProfilePasswordChangeForm;
 import com.freemi.entity.general.ResetPassword;
 import com.freemi.entity.general.UserProfile;
+import com.freemi.entity.investment.BseAllTransactionsView;
+import com.freemi.entity.investment.BseMFInvestForm;
+import com.freemi.entity.investment.SelectMFFund;
 import com.freemi.ui.restclient.GoogleSecurity;
 import com.freemi.ui.restclient.RestClient;
 
 @Controller
 @Scope("session")
+@SessionAttributes({"profileBasic","profileAccount","profileAddress"})
 public class ProfileManageController{
 	
 
 	@Autowired
 	private Environment environment;
 	
+	@Autowired
+	BseEntryManager bseEntryManager;
+	
 	private static final Logger logger = LogManager.getLogger(ProfileManageController.class);
 
 	
 	@RequestMapping(value = "/profile", method = RequestMethod.GET)
-	public String getProfile(ModelMap model, HttpSession session, HttpServletRequest request) {
+	public String getProfile(Model model, HttpSession session, HttpServletRequest request) {
 		logger.info("@@@@ Get profile details..");
 		String returnurl = "";
 		int error = 0;
@@ -55,6 +68,8 @@ public class ProfileManageController{
 			returnurl="redirect:/login";
 		}else{
 			returnurl="profile";
+			/*
+//			User Profile collection from LDAP			
 			try {
 				response = client.getProfileData(session.getAttribute("userid").toString(), session.getAttribute("token").toString(), CommonTask.getClientSystemDetails(request).getClientIpv4Address());
 //				logger.info(response.getBody());
@@ -82,6 +97,23 @@ public class ProfileManageController{
 			}catch(Exception e){
 //				e.printStackTrace();
 				model.addAttribute("error","Error processing request");
+				error =1;
+			}
+			*/
+			
+//			User profile data collection from DB
+			try{
+				UserProfile profile = bseEntryManager.getCustomerDetailsByMobile(session.getAttribute("userid").toString());
+				
+				model.addAttribute("profileBasic", profile);
+				model.addAttribute("profileAccount", profile);
+				model.addAttribute("profileAddress", profile);
+				model.addAttribute("profilePasswordChangeForm", new ProfilePasswordChangeForm());
+				model.addAttribute("states", InvestFormConstants.states);
+				model.addAttribute("bankNames", InvestFormConstants.bankNames);
+				model.addAttribute("accountTypes", InvestFormConstants.accountTypes);
+			}catch(Exception e){
+				logger.error("Unable to fetch customer profile data from DB",e);
 				error =1;
 			}
 			
@@ -118,6 +150,11 @@ public class ProfileManageController{
 //				logger.info(profile.getMobile());
 				model.addAttribute("success", "User profile updated successfully");
 				
+				model.addAttribute("profileBasic", profile);
+				model.addAttribute("states", InvestFormConstants.states);
+				model.addAttribute("bankNames", InvestFormConstants.bankNames);
+				model.addAttribute("accountTypes", InvestFormConstants.accountTypes);
+				
 			}catch(HttpStatusCodeException  e){
 				logger.info("test failure - " + e.getStatusCode());
 				model.addAttribute("error", "Unable to process request curretnly");
@@ -138,7 +175,6 @@ public class ProfileManageController{
 	@RequestMapping(value = "/profileAccount.do", method = RequestMethod.POST)
 	public String postProfileAccountDo(@ModelAttribute("profileBasic") UserProfile profile,@ModelAttribute("profileAccount") UserProfile profileAccount,@ModelAttribute("profileAddress") UserProfile profileAddress ,@ModelAttribute("profilePasswordChangeForm") ProfilePasswordChangeForm passChangeForm,Model model, HttpSession session, HttpServletRequest request) {
 
-		
 		logger.info("@@@@ ProfileAccountDoController @@@@");
 		String returnurl="";
 		RestClient client = new RestClient();
@@ -147,9 +183,10 @@ public class ProfileManageController{
 			returnurl="redirect:/login";
 		}else{
 			returnurl="profile";
+			/*
+//			Updating profile details into LDAP database
 			try {
 				response = client.updateProfileData(profileAccount,session.getAttribute("userid").toString(), session.getAttribute("token").toString(),CommonTask.getClientSystemDetails(request).getClientIpv4Address());
-//				System.err.println(response.getBody());
 				if(response.getBody().equals("SUCCESS")){
 					model.addAttribute("success", "Bank Account Details updated successfully");
 				}
@@ -163,9 +200,26 @@ public class ProfileManageController{
 			}finally{
 				logger.info("entering finally");
 			}
+			*/
 			
+//			Updating profile details in DB
+			try{
+				bseEntryManager.updateCustomerBankDetails(profileAccount);
+				model.addAttribute("success", "Bank Account Details updated successfully");
+				
+				model.addAttribute("accountTypes", InvestFormConstants.accountTypes);
+			}catch(Exception e){
+				logger.error("Failed to update Investor bank details in profile", e);
+				model.addAttribute("error", "Failed to update your bank details. Please contact admin.");
+			}
 			
 		}
+		
+		model.addAttribute("profileBasic", profile);
+		model.addAttribute("profileAddress", profileAddress);
+		
+		model.addAttribute("states", InvestFormConstants.states);
+		model.addAttribute("bankNames", InvestFormConstants.bankNames);
 		
 		return returnurl;
 	}
@@ -174,6 +228,23 @@ public class ProfileManageController{
 	public String postProfileAddressDo(@ModelAttribute("profileBasic") UserProfile profile,@ModelAttribute("profileAccount") UserProfile profileAccount,@ModelAttribute("profileAddress") UserProfile profileAddress ,@ModelAttribute("profilePasswordChangeForm") ProfilePasswordChangeForm passChangeForm,Model model, HttpSession session) {
 
 		logger.info("@@@@ ProfileAddressDoController @@@@");
+		
+		try{
+			bseEntryManager.updateCustomerAddress(profileAddress);
+			model.addAttribute("success", "Address updated successfully");
+			
+		}catch(Exception e){
+			logger.error("Failed to update Investor address in profile", e);
+			model.addAttribute("error", "Failed to update Investor address. Please contact admin.");
+		}
+		
+		model.addAttribute("profileBasic", profile);
+		model.addAttribute("profileAccount", profileAccount);
+		
+		model.addAttribute("states", InvestFormConstants.states);
+		model.addAttribute("bankNames", InvestFormConstants.bankNames);
+		model.addAttribute("accountTypes", InvestFormConstants.accountTypes);
+		
 		return "profile";
 	}
 
@@ -222,15 +293,32 @@ public class ProfileManageController{
 	
 
 	@RequestMapping(value = "/my-dashboard", method = RequestMethod.GET)
-	public String getMyDashboard(ModelMap model, HttpSession session) {
+	public String getMyDashboard(Model map,HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 		//logger.info("@@@@ Inside Login..");
 		String returnurl = "";
-	
+		double totalAsset= 0;
 		if(session.getAttribute("token") == null){
 			returnurl="redirect:/login";
 		}else{
 			returnurl = "my-dashboard";
+			// Get user's MF order history
+			try{
+			List<BseAllTransactionsView> fundsOrder= bseEntryManager.getCustomerAllTransactionRecords(null,session.getAttribute("userid").toString(),null);
+			if(fundsOrder.size()>=1){
+			for(int i=0;i<fundsOrder.size();i++){
+				totalAsset+=fundsOrder.get(i).getSchemeInvestment();
+			}
+			map.addAttribute("mforderhistory", fundsOrder);
+			map.addAttribute("ORDERHISTORY", "SUCCESS");
+			}else{
+				map.addAttribute("ORDERHISTORY", "EMPTY");
+			}
+			}catch(Exception ex){
+				map.addAttribute("ORDERHISTORY", "ERROR");
+				logger.error("Failed to fetch cutomer Registry details \n", ex);
+			}
 		}
+		map.addAttribute("totalasset", totalAsset);
 		logger.info("@@@@ DashboardController @@@@");
 		return returnurl;
 //		return "my-dashboard";
@@ -380,14 +468,14 @@ public class ProfileManageController{
 	}
 	
 	
-
+/*
 	@RequestMapping(value = "/blogs", method = RequestMethod.GET)
 	public String getBlogs(ModelMap model) {
 		//logger.info("@@@@ Inside Login..");
 		logger.info("@@@@ BlogsController @@@@");
 		return "blogs";
 	}
-	
+	*/
 		
 	@ExceptionHandler(MissingServletRequestParameterException.class)
 	@ResponseBody

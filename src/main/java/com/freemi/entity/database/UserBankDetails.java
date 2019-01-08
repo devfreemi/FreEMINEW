@@ -25,11 +25,12 @@ public class UserBankDetails implements Serializable  {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	@Id
+//	@Transient
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="SL_NO")
-	private Long serialNo;
+	private long serialNo;
 	
+	@Id
 	@Column(name="CLIENT_ID")
 	private String clientID;
 	
@@ -53,7 +54,7 @@ public class UserBankDetails implements Serializable  {
 	private String branchState;
 	
 	@Transient
-	@Column(name="")
+	@Column(name="BANK_ADDRESS_1")
 	private String bankAddress;
 	
 	@Column(name="ACCOUNT_BRANCH_1")
@@ -69,90 +70,114 @@ public class UserBankDetails implements Serializable  {
 	@OneToOne(fetch= FetchType.LAZY, optional=false, cascade=CascadeType.PERSIST)
 	@JoinColumn(name="CLIENT_ID", nullable= false,insertable=false,updatable=false)
 	private BseMFInvestForm mfForm;
-	
-	public Long getSerialNo() {
+
+	public long getSerialNo() {
 		return serialNo;
 	}
-	public void setSerialNo(Long serialNo) {
+
+	public void setSerialNo(long serialNo) {
 		this.serialNo = serialNo;
 	}
+
 	public String getClientID() {
 		return clientID;
 	}
+
 	public void setClientID(String clientID) {
 		this.clientID = clientID;
 	}
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-	public String getBankBranch() {
-		return bankBranch;
-	}
-	public void setBankBranch(String bankBranch) {
-		this.bankBranch = bankBranch;
-	}
+
 	public String getAccountHolder() {
 		return accountHolder;
 	}
+
 	public void setAccountHolder(String accountHolder) {
 		this.accountHolder = accountHolder;
 	}
+
 	public String getIfscCode() {
 		return ifscCode;
 	}
+
 	public void setIfscCode(String ifscCode) {
 		this.ifscCode = ifscCode;
 	}
+
 	public String getBankName() {
 		return bankName;
 	}
+
 	public void setBankName(String bankName) {
 		this.bankName = bankName;
 	}
+
 	public String getAccountNumber() {
 		return accountNumber;
 	}
+
 	public void setAccountNumber(String accountNumber) {
 		this.accountNumber = accountNumber;
 	}
+
 	public String getBankCity() {
 		return bankCity;
 	}
+
 	public void setBankCity(String bankCity) {
 		this.bankCity = bankCity;
 	}
-	public String getBankAddress() {
-		return bankAddress;
-	}
-	public void setBankAddress(String bankAddress) {
-		this.bankAddress = bankAddress;
-	}
-	public String getAccountType() {
-		return accountType;
-	}
-	public void setAccountType(String accountType) {
-		this.accountType = accountType;
-	}
-	public String getAccountCountry() {
-		return accountCountry;
-	}
-	public void setAccountCountry(String accountCountry) {
-		this.accountCountry = accountCountry;
-	}
+
 	public String getBranchState() {
 		return branchState;
 	}
+
 	public void setBranchState(String branchState) {
 		this.branchState = branchState;
 	}
+
+	public String getBankAddress() {
+		return bankAddress;
+	}
+
+	public void setBankAddress(String bankAddress) {
+		this.bankAddress = bankAddress;
+	}
+
+	public String getBankBranch() {
+		return bankBranch;
+	}
+
+	public void setBankBranch(String bankBranch) {
+		this.bankBranch = bankBranch;
+	}
+
+	public String getAccountType() {
+		return accountType;
+	}
+
+	public void setAccountType(String accountType) {
+		this.accountType = accountType;
+	}
+
+	public String getAccountCountry() {
+		return accountCountry;
+	}
+
+	public void setAccountCountry(String accountCountry) {
+		this.accountCountry = accountCountry;
+	}
+
 	public BseMFInvestForm getMfForm() {
 		return mfForm;
 	}
+
 	public void setMfForm(BseMFInvestForm mfForm) {
 		this.mfForm = mfForm;
 	}
-	
-	
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
 	
 
 }

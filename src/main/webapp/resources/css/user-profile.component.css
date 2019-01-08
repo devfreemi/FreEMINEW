@@ -38,3 +38,10 @@ label{
         transform: opacity(0);
     }
 }
+
+.card{
+	margin-bottom: .5rem;
+}
+.card-header{
+	padding: .15rem 1.25rem;
+}

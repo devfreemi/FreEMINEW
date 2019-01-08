@@ -17,9 +17,15 @@ public class UserProfile implements Serializable {
 	private String mail;
 	private String fname;
 	private String accountHolder;
+	
 	private String ifscCode;
 	private String bankName;
 	private String accountNumber;
+	private String accountType;
+	private String branch;
+	private String branchCity;
+	private String accountState;
+	
 	private String aadhaar;
 	private String pan;
 	private String gender;
@@ -149,7 +155,32 @@ public class UserProfile implements Serializable {
 	public void setLandmark(String landmark) {
 		this.landmark = landmark;
 	}
-	
-	
+	public String getAccountType() {
+		return accountType;
+	}
+	public void setAccountType(String accountType) {
+		this.accountType = accountType;
+	}
+	public String getBranch() {
+		return branch;
+	}
+	public void setBranch(String branch) {
+		this.branch = branch;
+	}
+	public String getBranchCity() {
+		return branchCity;
+	}
+	public void setBranchCity(String branchCity) {
+		this.branchCity = branchCity;
+	}
+	public String getAccountState() {
+		return accountState;
+	}
+	public void setAccountState(String accountState) {
+		this.accountState = accountState;
+	}
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
 
 }

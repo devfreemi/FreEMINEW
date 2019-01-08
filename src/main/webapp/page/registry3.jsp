@@ -23,7 +23,8 @@
 	rel="stylesheet">
 <link href="<c:url value="${contextcdn}/resources/css/animate.css"/>"
 	type="text/css" rel="stylesheet">
-<link href="<c:url value="${contextcdn}/resources/css/pace-theme.css"/>" rel="stylesheet">
+<link href="<c:url value="${contextcdn}/resources/css/pace-theme.css"/>"
+	rel="stylesheet">
 <script src="<c:url value="${contextcdn}/resources/js/pace.min.js" />"></script>
 <jsp:include page="include/bootstrap.jsp"></jsp:include>
 </head>
@@ -36,8 +37,8 @@
 				<div class="row page_heading">
 					<div class="registry_logo">
 						<img
-							src="<c:url value="${contextcdn}/resources/images/registry.png"/>" alt="Registry"
-							class="img-fluid" style="width: 90px;">
+							src="<c:url value="${contextcdn}/resources/images/registry.png"/>"
+							alt="Registry" class="img-fluid" style="width: 90px;">
 					</div>
 					<div class="registry_title">
 						<h1>Registry</h1>
@@ -57,8 +58,9 @@
 							<div class="topic_color">
 								<div class="row">
 									<div class="col-3">
-										<img src="<c:url value="${contextcdn }/resources/images/registry_r.png"/>" alt="retirement"
-											class="img_fluid custom_img_fluid">
+										<img
+											src="<c:url value="${contextcdn }/resources/images/registry_r.png"/>"
+											alt="retirement" class="img_fluid custom_img_fluid">
 									</div>
 									<div class="col-7" style="margin-left: -10px;">
 										<h3>Retirement</h3>
@@ -78,129 +80,136 @@
 										<span><strong>1yr Return</strong></span>
 									</div>
 								</div>
-								<c:forEach var="product" items="${productlist}">
-									<div class="row">
-										<div class="col-1 radio_style">
-											<input type="radio" name="scheme"
-												value="${product.productScId}">
-										</div>
-										<div class="col-9" style="margin-left: -1px;">
-											<strong><a href="#" data-toggle="modal"
-												data-target="#${product.fundName}">${product.fundName}</a></strong>
-										</div>
-										<div class="col-2"
-											style="margin-left: -10px; padding-left: 1px;">
-											<fmt:formatNumber value="${product.PReturn_1Y * 100}"
-												pattern="0.00" />
-										</div>
-									</div>
-
-									<!--  Modal Code -->
-									<div class="modal fade" id="${product.fundName}" tabindex="-1"
-										role="dialog" aria-labelledby="exampleModalLabel"
-										aria-hidden="true">
-										<div class="modal-dialog" role="document">
-											<div class="modal-content">
-												<div class="modal-header">
-													<h5 class="modal-title" id="exampleModalLabel">Scheme
-														Details</h5>
-													<button type="button" class="close" data-dismiss="modal"
-														aria-label="Close">
-														<span aria-hidden="true">&times;</span>
-													</button>
+								<c:choose>
+									<c:when test="${DATA == 'Y' }">
+										<c:forEach var="product" items="${productlist}">
+											<div class="row">
+												<div class="col-1 radio_style">
+													<input type="radio" name="scheme"
+														value="${product.productScId}">
 												</div>
-												<div class="modal-body">
-													<div class="row">
-														<div class="col-4">
-															<label class="label_style">Fund Name</label>
-														</div>
-														<div class="col-1 radio_style">
-															<label>:</label>
-														</div>
-														<div class="col-7" style="margin-left: -10px;">
-															<label>${product.fundName}</label>
-														</div>
-													</div>
-													
-													<div class="row">
-														<div class="col-4">
-															<label class="label_style">Scheme code</label>
-														</div>
-														<div class="col-1 radio_style">
-															<label>:</label>
-														</div>
-														<div class="col-7" style="margin-left: -10px;">
-															<label>${product.schemeCode}</label>
-														</div>
-													</div>
-
-													<div class="row">
-														<div class="col-4">
-															<label class="label_style">Fund Type</label>
-														</div>
-														<div class="col-1 radio_style">
-															<label>:</label>
-														</div>
-														<div class="col-7" style="margin-left: -10px;">
-															<label>${product.fundType}</label>
-														</div>
-													</div>
-
-													<div class="row">
-														<div class="col-4">
-															<label class="label_style">NAV</label>
-														</div>
-														<div class="col-1 radio_style">
-															<label>:</label>
-														</div>
-														<div class="col-7" style="margin-left: -10px;">
-															<label>${product.nav}</label>
-														</div>
-													</div>
-
-													<div class="row">
-														<div class="col-4">
-															<label class="label_style">NAV Date</label>
-														</div>
-														<div class="col-1 radio_style">
-															<label>:</label>
-														</div>
-														<div class="col-7" style="margin-left: -10px;">
-															<label>${product.nav_Date}</label>
-														</div>
-													</div>
-
-													<div class="row">
-														<div class="col-4">
-															<label class="label_style">Risk</label>
-														</div>
-														<div class="col-1 radio_style">
-															<label>:</label>
-														</div>
-														<div class="col-7" style="margin-left: -10px;">
-															<label>${product.riskometer_value}</label>
-														</div>
-													</div>
-
+												<div class="col-9" style="margin-left: -1px;">
+													<strong><a href="#" data-toggle="modal"
+														data-target="#${product.fundName}">${product.fundName}</a></strong>
 												</div>
-												<div class="modal-footer"></div>
+												<div class="col-2"
+													style="margin-left: -10px; padding-left: 1px;">
+													<fmt:formatNumber value="${product.PReturn_1Y * 100}"
+														pattern="0.00" />
+												</div>
+											</div>
+
+											<!--  Modal Code -->
+											<div class="modal fade" id="${product.fundName}"
+												tabindex="-1" role="dialog"
+												aria-labelledby="exampleModalLabel" aria-hidden="true">
+												<div class="modal-dialog" role="document">
+													<div class="modal-content">
+														<div class="modal-header">
+															<h5 class="modal-title" id="exampleModalLabel">Scheme
+																Details</h5>
+															<button type="button" class="close" data-dismiss="modal"
+																aria-label="Close">
+																<span aria-hidden="true">&times;</span>
+															</button>
+														</div>
+														<div class="modal-body">
+															<div class="row">
+																<div class="col-4">
+																	<label class="label_style">Fund Name</label>
+																</div>
+																<div class="col-1 radio_style">
+																	<label>:</label>
+																</div>
+																<div class="col-7" style="margin-left: -10px;">
+																	<label>${product.fundName}</label>
+																</div>
+															</div>
+
+															<div class="row">
+																<div class="col-4">
+																	<label class="label_style">Scheme code</label>
+																</div>
+																<div class="col-1 radio_style">
+																	<label>:</label>
+																</div>
+																<div class="col-7" style="margin-left: -10px;">
+																	<label>${product.schemeCode}</label>
+																</div>
+															</div>
+
+															<div class="row">
+																<div class="col-4">
+																	<label class="label_style">Fund Type</label>
+																</div>
+																<div class="col-1 radio_style">
+																	<label>:</label>
+																</div>
+																<div class="col-7" style="margin-left: -10px;">
+																	<label>${product.fundType}</label>
+																</div>
+															</div>
+
+															<div class="row">
+																<div class="col-4">
+																	<label class="label_style">NAV</label>
+																</div>
+																<div class="col-1 radio_style">
+																	<label>:</label>
+																</div>
+																<div class="col-7" style="margin-left: -10px;">
+																	<label>${product.nav}</label>
+																</div>
+															</div>
+
+															<div class="row">
+																<div class="col-4">
+																	<label class="label_style">NAV Date</label>
+																</div>
+																<div class="col-1 radio_style">
+																	<label>:</label>
+																</div>
+																<div class="col-7" style="margin-left: -10px;">
+																	<label>${product.nav_Date}</label>
+																</div>
+															</div>
+
+															<div class="row">
+																<div class="col-4">
+																	<label class="label_style">Risk</label>
+																</div>
+																<div class="col-1 radio_style">
+																	<label>:</label>
+																</div>
+																<div class="col-7" style="margin-left: -10px;">
+																	<label>${product.riskometer_value}</label>
+																</div>
+															</div>
+
+														</div>
+														<div class="modal-footer"></div>
+													</div>
+												</div>
+											</div>
+
+											<!--  Modal Code -->
+										</c:forEach>
+										<div class="row" style="margin-top: 15px;">
+											<div class="col-6" style="margin: auto;">
+												<a href="" id="birthdayhrf" style="text-decoration: none;">
+													<button type="button"
+														class="btn btn-outline-info btn-sm btn-block">
+														Create Registry</button>
+												</a>
 											</div>
 										</div>
-									</div>
+									</c:when>
+									<c:when test="${DATA == 'N' }">
+										<span style="color: red;">${error }</span>
+									</c:when>
+								</c:choose>
 
-									<!--  Modal Code -->
-								</c:forEach>
 
-								<div class="row" style="margin-top: 15px;">
-									<div class="col-6" style="margin: auto;">
-										<a href="" id="birthdayhrf"
-											style="text-decoration: none;">
-											<button type="button"
-												class="btn btn-outline-info btn-sm btn-block">
-												Create Registry</button>
-										</a>
-									</div>
-								</div>
 
 							</div>
 						</div>
@@ -212,8 +221,9 @@
 							<div class="topic_color">
 								<div class="row">
 									<div class="col-3">
-										<img src="<c:url value="${contextcdn}/resources/images/registry_an.png"/>" alt="anniversary"
-											class="img_fluid custom_img_fluid">
+										<img
+											src="<c:url value="${contextcdn}/resources/images/registry_an.png"/>"
+											alt="anniversary" class="img_fluid custom_img_fluid">
 									</div>
 									<div class="col-7" style="margin-left: -10px;">
 										<h3>Anniversary</h3>
@@ -233,130 +243,137 @@
 										<span><strong>1yr Return</strong></span>
 									</div>
 								</div>
-								<c:forEach var="product" items="${annivesarylist}">
-									<div class="row">
-										<div class="col-1 radio_style">
-											<input type="radio" name="scheme"
-												value="${product.productScId}">
-										</div>
-										<div class="col-9" style="margin-left: -1px;">
-											<strong><a href="#" data-toggle="modal"
-												data-target="#${product.fundName}">${product.fundName}</a></strong>
-										</div>
-										<div class="col-2"
-											style="margin-left: -10px; padding-left: 1px;">
-											<fmt:formatNumber value="${product.PReturn_1Y * 100}"
-												pattern="0.00" />
-										</div>
-									</div>
 
-									<!--  Modal Code -->
-									<div class="modal fade" id="${product.fundName}" tabindex="-1"
-										role="dialog" aria-labelledby="exampleModalLabel"
-										aria-hidden="true">
-										<div class="modal-dialog" role="document">
-											<div class="modal-content">
-												<div class="modal-header">
-													<h5 class="modal-title" id="exampleModalLabel">Scheme
-														Details</h5>
-													<button type="button" class="close" data-dismiss="modal"
-														aria-label="Close">
-														<span aria-hidden="true">&times;</span>
-													</button>
+								<c:choose>
+									<c:when test="">
+										<c:forEach var="product" items="${annivesarylist}">
+											<div class="row">
+												<div class="col-1 radio_style">
+													<input type="radio" name="scheme"
+														value="${product.productScId}">
 												</div>
-												<div class="modal-body">
-													<div class="row">
-														<div class="col-4">
-															<label class="label_style">Fund Name</label>
-														</div>
-														<div class="col-1 radio_style">
-															<label>:</label>
-														</div>
-														<div class="col-7" style="margin-left: -10px;">
-															<label>${product.fundName}</label>
-														</div>
-													</div>
-													
-													<div class="row">
-														<div class="col-4">
-															<label class="label_style">Scheme code</label>
-														</div>
-														<div class="col-1 radio_style">
-															<label>:</label>
-														</div>
-														<div class="col-7" style="margin-left: -10px;">
-															<label>${product.schemeCode}</label>
-														</div>
-													</div>
-
-													<div class="row">
-														<div class="col-4">
-															<label class="label_style">Fund Type</label>
-														</div>
-														<div class="col-1 radio_style">
-															<label>:</label>
-														</div>
-														<div class="col-7" style="margin-left: -10px;">
-															<label>${product.fundType}</label>
-														</div>
-													</div>
-
-													<div class="row">
-														<div class="col-4">
-															<label class="label_style">NAV</label>
-														</div>
-														<div class="col-1 radio_style">
-															<label>:</label>
-														</div>
-														<div class="col-7" style="margin-left: -10px;">
-															<label>${product.nav}</label>
-														</div>
-													</div>
-
-													<div class="row">
-														<div class="col-4">
-															<label class="label_style">NAV Date</label>
-														</div>
-														<div class="col-1 radio_style">
-															<label>:</label>
-														</div>
-														<div class="col-7" style="margin-left: -10px;">
-															<label>${product.nav_Date}</label>
-														</div>
-													</div>
-
-													<div class="row">
-														<div class="col-4">
-															<label class="label_style">Risk</label>
-														</div>
-														<div class="col-1 radio_style">
-															<label>:</label>
-														</div>
-														<div class="col-7" style="margin-left: -10px;">
-															<label>${product.riskometer_value}</label>
-														</div>
-													</div>
-
+												<div class="col-9" style="margin-left: -1px;">
+													<strong><a href="#" data-toggle="modal"
+														data-target="#${product.fundName}">${product.fundName}</a></strong>
 												</div>
-												<div class="modal-footer"></div>
+												<div class="col-2"
+													style="margin-left: -10px; padding-left: 1px;">
+													<fmt:formatNumber value="${product.PReturn_1Y * 100}"
+														pattern="0.00" />
+												</div>
+											</div>
+
+											<!--  Modal Code -->
+											<div class="modal fade" id="${product.fundName}"
+												tabindex="-1" role="dialog"
+												aria-labelledby="exampleModalLabel" aria-hidden="true">
+												<div class="modal-dialog" role="document">
+													<div class="modal-content">
+														<div class="modal-header">
+															<h5 class="modal-title" id="exampleModalLabel">Scheme
+																Details</h5>
+															<button type="button" class="close" data-dismiss="modal"
+																aria-label="Close">
+																<span aria-hidden="true">&times;</span>
+															</button>
+														</div>
+														<div class="modal-body">
+															<div class="row">
+																<div class="col-4">
+																	<label class="label_style">Fund Name</label>
+																</div>
+																<div class="col-1 radio_style">
+																	<label>:</label>
+																</div>
+																<div class="col-7" style="margin-left: -10px;">
+																	<label>${product.fundName}</label>
+																</div>
+															</div>
+
+															<div class="row">
+																<div class="col-4">
+																	<label class="label_style">Scheme code</label>
+																</div>
+																<div class="col-1 radio_style">
+																	<label>:</label>
+																</div>
+																<div class="col-7" style="margin-left: -10px;">
+																	<label>${product.schemeCode}</label>
+																</div>
+															</div>
+
+															<div class="row">
+																<div class="col-4">
+																	<label class="label_style">Fund Type</label>
+																</div>
+																<div class="col-1 radio_style">
+																	<label>:</label>
+																</div>
+																<div class="col-7" style="margin-left: -10px;">
+																	<label>${product.fundType}</label>
+																</div>
+															</div>
+
+															<div class="row">
+																<div class="col-4">
+																	<label class="label_style">NAV</label>
+																</div>
+																<div class="col-1 radio_style">
+																	<label>:</label>
+																</div>
+																<div class="col-7" style="margin-left: -10px;">
+																	<label>${product.nav}</label>
+																</div>
+															</div>
+
+															<div class="row">
+																<div class="col-4">
+																	<label class="label_style">NAV Date</label>
+																</div>
+																<div class="col-1 radio_style">
+																	<label>:</label>
+																</div>
+																<div class="col-7" style="margin-left: -10px;">
+																	<label>${product.nav_Date}</label>
+																</div>
+															</div>
+
+															<div class="row">
+																<div class="col-4">
+																	<label class="label_style">Risk</label>
+																</div>
+																<div class="col-1 radio_style">
+																	<label>:</label>
+																</div>
+																<div class="col-7" style="margin-left: -10px;">
+																	<label>${product.riskometer_value}</label>
+																</div>
+															</div>
+
+														</div>
+														<div class="modal-footer"></div>
+													</div>
+												</div>
+											</div>
+
+											<!--  Modal Code -->
+										</c:forEach>
+										<div class="row" style="margin-top: 15px;">
+											<div class="col-6" style="margin: auto;">
+												<a href="" style="text-decoration: none;" id="annivhrf">
+													<button type="button"
+														class="btn btn-outline-info btn-sm btn-block">
+														Create Registry</button>
+												</a>
 											</div>
 										</div>
-									</div>
+									</c:when>
 
-									<!--  Modal Code -->
-								</c:forEach>
+									<c:when test="${DATA == 'N' }">
+										<span style="color: red;">${error }</span>
+									</c:when>
 
-								<div class="row" style="margin-top: 15px;">
-									<div class="col-6" style="margin: auto;">
-										<a href="" style="text-decoration: none;" id="annivhrf"
-											>
-											<button type="button"
-												class="btn btn-outline-info btn-sm btn-block">
-												Create Registry</button>
-										</a>
-									</div>
-								</div>
-
+								</c:choose>
 							</div>
 
 						</div>
@@ -368,8 +385,9 @@
 							<div class="topic_color">
 								<div class="row">
 									<div class="col-3">
-										<img src="<c:url value="${contextcdn }/resources/images/registry_m.png"/>" alt="wedding gift"
-											class="img_fluid custom_img_fluid">
+										<img
+											src="<c:url value="${contextcdn }/resources/images/registry_m.png"/>"
+											alt="wedding gift" class="img_fluid custom_img_fluid">
 									</div>
 									<div class="col-7" style="margin-left: -10px;">
 										<h3>Wedding Gift</h3>
@@ -388,129 +406,140 @@
 										<span><strong>1yr Return</strong></span>
 									</div>
 								</div>
-								<c:forEach var="product" items="${annivesarylist}">
-									<div class="row">
-										<div class="col-1 radio_style">
-											<input type="radio" name="scheme"
-												value="${product.productScId}">
-										</div>
-										<div class="col-9" style="margin-left: -1px;">
-											<strong><a href="#" data-toggle="modal"
-												data-target="#${product.fundName}">${product.fundName}</a></strong>
-										</div>
-										<div class="col-2"
-											style="margin-left: -10px; padding-left: 1px;">
-											<fmt:formatNumber value="${product.PReturn_1Y * 100}"
-												pattern="0.00" />
-										</div>
-									</div>
 
-									<!--  Modal Code -->
-									<div class="modal fade" id="${product.fundName}" tabindex="-1"
-										role="dialog" aria-labelledby="exampleModalLabel"
-										aria-hidden="true">
-										<div class="modal-dialog" role="document">
-											<div class="modal-content">
-												<div class="modal-header">
-													<h5 class="modal-title" id="exampleModalLabel">Scheme
-														Details</h5>
-													<button type="button" class="close" data-dismiss="modal"
-														aria-label="Close">
-														<span aria-hidden="true">&times;</span>
-													</button>
+								<c:choose>
+
+									<c:when test="${DATA == 'Y' }">
+										<c:forEach var="product" items="${annivesarylist}">
+											<div class="row">
+												<div class="col-1 radio_style">
+													<input type="radio" name="scheme"
+														value="${product.productScId}">
 												</div>
-												<div class="modal-body">
-													<div class="row">
-														<div class="col-4">
-															<label class="label_style">Fund Name</label>
-														</div>
-														<div class="col-1 radio_style">
-															<label>:</label>
-														</div>
-														<div class="col-7" style="margin-left: -10px;">
-															<label>${product.fundName}</label>
-														</div>
-													</div>
-													
-													<div class="row">
-														<div class="col-4">
-															<label class="label_style">Scheme code</label>
-														</div>
-														<div class="col-1 radio_style">
-															<label>:</label>
-														</div>
-														<div class="col-7" style="margin-left: -10px;">
-															<label>${product.schemeCode}</label>
-														</div>
-													</div>
-
-													<div class="row">
-														<div class="col-4">
-															<label class="label_style">Fund Type</label>
-														</div>
-														<div class="col-1 radio_style">
-															<label>:</label>
-														</div>
-														<div class="col-7" style="margin-left: -10px;">
-															<label>${product.fundType}</label>
-														</div>
-													</div>
-
-													<div class="row">
-														<div class="col-4">
-															<label class="label_style">NAV</label>
-														</div>
-														<div class="col-1 radio_style">
-															<label>:</label>
-														</div>
-														<div class="col-7" style="margin-left: -10px;">
-															<label>${product.nav}</label>
-														</div>
-													</div>
-
-													<div class="row">
-														<div class="col-4">
-															<label class="label_style">NAV Date</label>
-														</div>
-														<div class="col-1 radio_style">
-															<label>:</label>
-														</div>
-														<div class="col-7" style="margin-left: -10px;">
-															<label>${product.nav_Date}</label>
-														</div>
-													</div>
-
-													<div class="row">
-														<div class="col-4">
-															<label class="label_style">Risk</label>
-														</div>
-														<div class="col-1 radio_style">
-															<label>:</label>
-														</div>
-														<div class="col-7" style="margin-left: -10px;">
-															<label>${product.riskometer_value}</label>
-														</div>
-													</div>
-
+												<div class="col-9" style="margin-left: -1px;">
+													<strong><a href="#" data-toggle="modal"
+														data-target="#${product.fundName}">${product.fundName}</a></strong>
 												</div>
-												<div class="modal-footer"></div>
+												<div class="col-2"
+													style="margin-left: -10px; padding-left: 1px;">
+													<fmt:formatNumber value="${product.PReturn_1Y * 100}"
+														pattern="0.00" />
+												</div>
+											</div>
+
+											<!--  Modal Code -->
+											<div class="modal fade" id="${product.fundName}"
+												tabindex="-1" role="dialog"
+												aria-labelledby="exampleModalLabel" aria-hidden="true">
+												<div class="modal-dialog" role="document">
+													<div class="modal-content">
+														<div class="modal-header">
+															<h5 class="modal-title" id="exampleModalLabel">Scheme
+																Details</h5>
+															<button type="button" class="close" data-dismiss="modal"
+																aria-label="Close">
+																<span aria-hidden="true">&times;</span>
+															</button>
+														</div>
+														<div class="modal-body">
+															<div class="row">
+																<div class="col-4">
+																	<label class="label_style">Fund Name</label>
+																</div>
+																<div class="col-1 radio_style">
+																	<label>:</label>
+																</div>
+																<div class="col-7" style="margin-left: -10px;">
+																	<label>${product.fundName}</label>
+																</div>
+															</div>
+
+															<div class="row">
+																<div class="col-4">
+																	<label class="label_style">Scheme code</label>
+																</div>
+																<div class="col-1 radio_style">
+																	<label>:</label>
+																</div>
+																<div class="col-7" style="margin-left: -10px;">
+																	<label>${product.schemeCode}</label>
+																</div>
+															</div>
+
+															<div class="row">
+																<div class="col-4">
+																	<label class="label_style">Fund Type</label>
+																</div>
+																<div class="col-1 radio_style">
+																	<label>:</label>
+																</div>
+																<div class="col-7" style="margin-left: -10px;">
+																	<label>${product.fundType}</label>
+																</div>
+															</div>
+
+															<div class="row">
+																<div class="col-4">
+																	<label class="label_style">NAV</label>
+																</div>
+																<div class="col-1 radio_style">
+																	<label>:</label>
+																</div>
+																<div class="col-7" style="margin-left: -10px;">
+																	<label>${product.nav}</label>
+																</div>
+															</div>
+
+															<div class="row">
+																<div class="col-4">
+																	<label class="label_style">NAV Date</label>
+																</div>
+																<div class="col-1 radio_style">
+																	<label>:</label>
+																</div>
+																<div class="col-7" style="margin-left: -10px;">
+																	<label>${product.nav_Date}</label>
+																</div>
+															</div>
+
+															<div class="row">
+																<div class="col-4">
+																	<label class="label_style">Risk</label>
+																</div>
+																<div class="col-1 radio_style">
+																	<label>:</label>
+																</div>
+																<div class="col-7" style="margin-left: -10px;">
+																	<label>${product.riskometer_value}</label>
+																</div>
+															</div>
+
+														</div>
+														<div class="modal-footer"></div>
+													</div>
+												</div>
+											</div>
+
+											<!--  Modal Code -->
+										</c:forEach>
+										<div class="row" style="margin-top: 15px;">
+											<div class="col-6" style="margin: auto;">
+												<a href="" style="text-decoration: none;" id="marriagehrf">
+													<button type="button"
+														class="btn btn-outline-info btn-sm btn-block">
+														Create Registry</button>
+												</a>
 											</div>
 										</div>
-									</div>
+									</c:when>
 
-									<!--  Modal Code -->
-								</c:forEach>
+									<c:when test="${DATA == 'N' }">
+										<span style="color: red;">${error }</span>
+									</c:when>
 
-								<div class="row" style="margin-top: 15px;">
-									<div class="col-6" style="margin: auto;">
-										<a href="" style="text-decoration: none;" id="marriagehrf"
-											>
-											<button type="button"
-												class="btn btn-outline-info btn-sm btn-block">
-												Create Registry</button>
-										</a>
-									</div>
-								</div>
+								</c:choose>
+
+
 
 							</div>
 						</div>
@@ -526,8 +555,9 @@
 							<div class="topic_color">
 								<div class="row">
 									<div class="col-3">
-										<img src="<c:url value="${contextcdn }/resources/images/registry_bd.png"/>" alt="birthday"
-											class="img_fluid custom_img_fluid">
+										<img
+											src="<c:url value="${contextcdn }/resources/images/registry_bd.png"/>"
+											alt="birthday" class="img_fluid custom_img_fluid">
 									</div>
 									<div class="col-7" style="margin-left: -10px;">
 										<h3>Birthday</h3>
@@ -547,130 +577,136 @@
 										<span><strong>1yr Return</strong></span>
 									</div>
 								</div>
-								<c:forEach var="product" items="${productlist}">
-									<div class="row">
-										<div class="col-1 radio_style">
-											<input type="radio" name="scheme"
-												value="${product.productScId}">
-										</div>
-										<div class="col-9" style="margin-left: -1px;">
-											<strong><a href="#" data-toggle="modal"
-												data-target="#${product.fundName}">${product.fundName}</a></strong>
-										</div>
-										<div class="col-2"
-											style="margin-left: -10px; padding-left: 1px;">
-											<fmt:formatNumber value="${product.PReturn_1Y * 100}"
-												pattern="0.00" />
-										</div>
-									</div>
 
-									<!--  Modal Code -->
-									<div class="modal fade" id="${product.fundName}" tabindex="-1"
-										role="dialog" aria-labelledby="exampleModalLabel"
-										aria-hidden="true">
-										<div class="modal-dialog" role="document">
-											<div class="modal-content">
-												<div class="modal-header">
-													<h5 class="modal-title" id="exampleModalLabel">Scheme
-														Details</h5>
-													<button type="button" class="close" data-dismiss="modal"
-														aria-label="Close">
-														<span aria-hidden="true">&times;</span>
-													</button>
+								<c:choose>
+									<c:when test="${DATA == 'Y' }">
+										<c:forEach var="product" items="${productlist}">
+											<div class="row">
+												<div class="col-1 radio_style">
+													<input type="radio" name="scheme"
+														value="${product.productScId}">
 												</div>
-												<div class="modal-body">
-													<div class="row">
-														<div class="col-4">
-															<label class="label_style">Fund Name</label>
-														</div>
-														<div class="col-1 radio_style">
-															<label>:</label>
-														</div>
-														<div class="col-7" style="margin-left: -10px;">
-															<label>${product.fundName}</label>
-														</div>
-													</div>
-													
-													<div class="row">
-														<div class="col-4">
-															<label class="label_style">Scheme code</label>
-														</div>
-														<div class="col-1 radio_style">
-															<label>:</label>
-														</div>
-														<div class="col-7" style="margin-left: -10px;">
-															<label>${product.schemeCode}</label>
-														</div>
-													</div>
-
-													<div class="row">
-														<div class="col-4">
-															<label class="label_style">Fund Type</label>
-														</div>
-														<div class="col-1 radio_style">
-															<label>:</label>
-														</div>
-														<div class="col-7" style="margin-left: -10px;">
-															<label>${product.fundType}</label>
-														</div>
-													</div>
-
-													<div class="row">
-														<div class="col-4">
-															<label class="label_style">NAV</label>
-														</div>
-														<div class="col-1 radio_style">
-															<label>:</label>
-														</div>
-														<div class="col-7" style="margin-left: -10px;">
-															<label>${product.nav}</label>
-														</div>
-													</div>
-
-													<div class="row">
-														<div class="col-4">
-															<label class="label_style">NAV Date</label>
-														</div>
-														<div class="col-1 radio_style">
-															<label>:</label>
-														</div>
-														<div class="col-7" style="margin-left: -10px;">
-															<label>${product.nav_Date}</label>
-														</div>
-													</div>
-
-													<div class="row">
-														<div class="col-4">
-															<label class="label_style">Risk</label>
-														</div>
-														<div class="col-1 radio_style">
-															<label>:</label>
-														</div>
-														<div class="col-7" style="margin-left: -10px;">
-															<label>${product.riskometer_value}</label>
-														</div>
-													</div>
-
+												<div class="col-9" style="margin-left: -1px;">
+													<strong><a href="#" data-toggle="modal"
+														data-target="#${product.fundName}">${product.fundName}</a></strong>
 												</div>
-												<div class="modal-footer"></div>
+												<div class="col-2"
+													style="margin-left: -10px; padding-left: 1px;">
+													<fmt:formatNumber value="${product.PReturn_1Y * 100}"
+														pattern="0.00" />
+												</div>
+											</div>
+
+											<!--  Modal Code -->
+											<div class="modal fade" id="${product.fundName}"
+												tabindex="-1" role="dialog"
+												aria-labelledby="exampleModalLabel" aria-hidden="true">
+												<div class="modal-dialog" role="document">
+													<div class="modal-content">
+														<div class="modal-header">
+															<h5 class="modal-title" id="exampleModalLabel">Scheme
+																Details</h5>
+															<button type="button" class="close" data-dismiss="modal"
+																aria-label="Close">
+																<span aria-hidden="true">&times;</span>
+															</button>
+														</div>
+														<div class="modal-body">
+															<div class="row">
+																<div class="col-4">
+																	<label class="label_style">Fund Name</label>
+																</div>
+																<div class="col-1 radio_style">
+																	<label>:</label>
+																</div>
+																<div class="col-7" style="margin-left: -10px;">
+																	<label>${product.fundName}</label>
+																</div>
+															</div>
+
+															<div class="row">
+																<div class="col-4">
+																	<label class="label_style">Scheme code</label>
+																</div>
+																<div class="col-1 radio_style">
+																	<label>:</label>
+																</div>
+																<div class="col-7" style="margin-left: -10px;">
+																	<label>${product.schemeCode}</label>
+																</div>
+															</div>
+
+															<div class="row">
+																<div class="col-4">
+																	<label class="label_style">Fund Type</label>
+																</div>
+																<div class="col-1 radio_style">
+																	<label>:</label>
+																</div>
+																<div class="col-7" style="margin-left: -10px;">
+																	<label>${product.fundType}</label>
+																</div>
+															</div>
+
+															<div class="row">
+																<div class="col-4">
+																	<label class="label_style">NAV</label>
+																</div>
+																<div class="col-1 radio_style">
+																	<label>:</label>
+																</div>
+																<div class="col-7" style="margin-left: -10px;">
+																	<label>${product.nav}</label>
+																</div>
+															</div>
+
+															<div class="row">
+																<div class="col-4">
+																	<label class="label_style">NAV Date</label>
+																</div>
+																<div class="col-1 radio_style">
+																	<label>:</label>
+																</div>
+																<div class="col-7" style="margin-left: -10px;">
+																	<label>${product.nav_Date}</label>
+																</div>
+															</div>
+
+															<div class="row">
+																<div class="col-4">
+																	<label class="label_style">Risk</label>
+																</div>
+																<div class="col-1 radio_style">
+																	<label>:</label>
+																</div>
+																<div class="col-7" style="margin-left: -10px;">
+																	<label>${product.riskometer_value}</label>
+																</div>
+															</div>
+
+														</div>
+														<div class="modal-footer"></div>
+													</div>
+												</div>
+											</div>
+
+											<!--  Modal Code -->
+										</c:forEach>
+										<div class="row" style="margin-top: 15px;">
+											<div class="col-6" style="margin: auto;">
+												<a href="" style="text-decoration: none;" id="retirementhrf">
+													<button type="button"
+														class="btn btn-outline-info btn-sm btn-block">
+														Create Registry</button>
+												</a>
 											</div>
 										</div>
-									</div>
 
-									<!--  Modal Code -->
-								</c:forEach>
-
-								<div class="row" style="margin-top: 15px;">
-									<div class="col-6" style="margin: auto;">
-										<a href="" style="text-decoration: none;" id="retirementhrf"
-											>
-											<button type="button"
-												class="btn btn-outline-info btn-sm btn-block">
-												Create Registry</button>
-										</a>
-									</div>
-								</div>
-
+									</c:when>
+									<c:when test="${DATA == 'N' }">
+										<span style="color: red;">${error }</span>
+									</c:when>
+								</c:choose>
 							</div>
 						</div>
 
@@ -681,8 +717,9 @@
 							<div class="topic_color">
 								<div class="row">
 									<div class="col-3">
-										<img src="<c:url value="${contextcdn }/resources/images/registry_st.png"/>" alt="tax saving"
-											class="img_fluid custom_img_fluid">
+										<img
+											src="<c:url value="${contextcdn }/resources/images/registry_st.png"/>"
+											alt="tax saving" class="img_fluid custom_img_fluid">
 									</div>
 									<div class="col-7" style="margin-left: -10px;">
 										<h3>Tax Saving</h3>
@@ -702,130 +739,137 @@
 										<span><strong>1yr Return</strong></span>
 									</div>
 								</div>
-								<c:forEach var="product" items="${taxsavinglist}">
-									<div class="row">
-										<div class="col-1 radio_style">
-											<input type="radio" name="scheme"
-												value="${product.productScId}">
-										</div>
-										<div class="col-9" style="margin-left: -1px;">
-											<strong><a href="#" data-toggle="modal"
-												data-target="#${product.fundName}">${product.fundName}</a></strong>
-										</div>
-										<div class="col-2"
-											style="margin-left: -10px; padding-left: 1px;">
-											<fmt:formatNumber value="${product.PReturn_1Y * 100}"
-												pattern="0.00" />
-										</div>
-									</div>
-
-									<!--  Modal Code -->
-									<div class="modal fade" id="${product.fundName}" tabindex="-1"
-										role="dialog" aria-labelledby="exampleModalLabel"
-										aria-hidden="true">
-										<div class="modal-dialog" role="document">
-											<div class="modal-content">
-												<div class="modal-header">
-													<h5 class="modal-title" id="exampleModalLabel">Scheme
-														Details</h5>
-													<button type="button" class="close" data-dismiss="modal"
-														aria-label="Close">
-														<span aria-hidden="true">&times;</span>
-													</button>
+								<c:choose>
+									<c:when test="${DATA == 'Y' }">
+										<c:forEach var="product" items="${taxsavinglist}">
+											<div class="row">
+												<div class="col-1 radio_style">
+													<input type="radio" name="scheme"
+														value="${product.productScId}">
 												</div>
-												<div class="modal-body">
-													<div class="row">
-														<div class="col-4">
-															<label class="label_style">Fund Name</label>
-														</div>
-														<div class="col-1 radio_style">
-															<label>:</label>
-														</div>
-														<div class="col-7" style="margin-left: -10px;">
-															<label>${product.fundName}</label>
-														</div>
-													</div>
-													
-													<div class="row">
-														<div class="col-4">
-															<label class="label_style">Scheme code</label>
-														</div>
-														<div class="col-1 radio_style">
-															<label>:</label>
-														</div>
-														<div class="col-7" style="margin-left: -10px;">
-															<label>${product.schemeCode}</label>
-														</div>
-													</div>
-
-													<div class="row">
-														<div class="col-4">
-															<label class="label_style">Fund Type</label>
-														</div>
-														<div class="col-1 radio_style">
-															<label>:</label>
-														</div>
-														<div class="col-7" style="margin-left: -10px;">
-															<label>${product.fundType}</label>
-														</div>
-													</div>
-
-													<div class="row">
-														<div class="col-4">
-															<label class="label_style">NAV</label>
-														</div>
-														<div class="col-1 radio_style">
-															<label>:</label>
-														</div>
-														<div class="col-7" style="margin-left: -10px;">
-															<label>${product.nav}</label>
-														</div>
-													</div>
-
-													<div class="row">
-														<div class="col-4">
-															<label class="label_style">NAV Date</label>
-														</div>
-														<div class="col-1 radio_style">
-															<label>:</label>
-														</div>
-														<div class="col-7" style="margin-left: -10px;">
-															<label>${product.nav_Date}</label>
-														</div>
-													</div>
-
-													<div class="row">
-														<div class="col-4">
-															<label class="label_style">Risk</label>
-														</div>
-														<div class="col-1 radio_style">
-															<label>:</label>
-														</div>
-														<div class="col-7" style="margin-left: -10px;">
-															<label>${product.riskometer_value}</label>
-														</div>
-													</div>
-
+												<div class="col-9" style="margin-left: -1px;">
+													<strong><a href="#" data-toggle="modal"
+														data-target="#${product.fundName}">${product.fundName}</a></strong>
 												</div>
-												<div class="modal-footer"></div>
+												<div class="col-2"
+													style="margin-left: -10px; padding-left: 1px;">
+													<fmt:formatNumber value="${product.PReturn_1Y * 100}"
+														pattern="0.00" />
+												</div>
+											</div>
+
+											<!--  Modal Code -->
+											<div class="modal fade" id="${product.fundName}"
+												tabindex="-1" role="dialog"
+												aria-labelledby="exampleModalLabel" aria-hidden="true">
+												<div class="modal-dialog" role="document">
+													<div class="modal-content">
+														<div class="modal-header">
+															<h5 class="modal-title" id="exampleModalLabel">Scheme
+																Details</h5>
+															<button type="button" class="close" data-dismiss="modal"
+																aria-label="Close">
+																<span aria-hidden="true">&times;</span>
+															</button>
+														</div>
+														<div class="modal-body">
+															<div class="row">
+																<div class="col-4">
+																	<label class="label_style">Fund Name</label>
+																</div>
+																<div class="col-1 radio_style">
+																	<label>:</label>
+																</div>
+																<div class="col-7" style="margin-left: -10px;">
+																	<label>${product.fundName}</label>
+																</div>
+															</div>
+
+															<div class="row">
+																<div class="col-4">
+																	<label class="label_style">Scheme code</label>
+																</div>
+																<div class="col-1 radio_style">
+																	<label>:</label>
+																</div>
+																<div class="col-7" style="margin-left: -10px;">
+																	<label>${product.schemeCode}</label>
+																</div>
+															</div>
+
+															<div class="row">
+																<div class="col-4">
+																	<label class="label_style">Fund Type</label>
+																</div>
+																<div class="col-1 radio_style">
+																	<label>:</label>
+																</div>
+																<div class="col-7" style="margin-left: -10px;">
+																	<label>${product.fundType}</label>
+																</div>
+															</div>
+
+															<div class="row">
+																<div class="col-4">
+																	<label class="label_style">NAV</label>
+																</div>
+																<div class="col-1 radio_style">
+																	<label>:</label>
+																</div>
+																<div class="col-7" style="margin-left: -10px;">
+																	<label>${product.nav}</label>
+																</div>
+															</div>
+
+															<div class="row">
+																<div class="col-4">
+																	<label class="label_style">NAV Date</label>
+																</div>
+																<div class="col-1 radio_style">
+																	<label>:</label>
+																</div>
+																<div class="col-7" style="margin-left: -10px;">
+																	<label>${product.nav_Date}</label>
+																</div>
+															</div>
+
+															<div class="row">
+																<div class="col-4">
+																	<label class="label_style">Risk</label>
+																</div>
+																<div class="col-1 radio_style">
+																	<label>:</label>
+																</div>
+																<div class="col-7" style="margin-left: -10px;">
+																	<label>${product.riskometer_value}</label>
+																</div>
+															</div>
+
+														</div>
+														<div class="modal-footer"></div>
+													</div>
+												</div>
+											</div>
+
+											<!--  Modal Code -->
+										</c:forEach>
+
+										<div class="row" style="margin-top: 15px;">
+											<div class="col-6" style="margin: auto;">
+												<a href="" style="text-decoration: none;" id="taxsavinghrf">
+													<button type="button"
+														class="btn btn-outline-info btn-sm btn-block">
+														Create Registry</button>
+												</a>
 											</div>
 										</div>
-									</div>
 
-									<!--  Modal Code -->
-								</c:forEach>
+									</c:when>
+									<c:when test="${DATA == 'N' }">
+										<span style="color: red;">${error }</span>
+									</c:when>
 
-								<div class="row" style="margin-top: 15px;">
-									<div class="col-6" style="margin: auto;">
-										<a href="" style="text-decoration: none;" id="taxsavinghrf"
-											>
-											<button type="button"
-												class="btn btn-outline-info btn-sm btn-block">
-												Create Registry</button>
-										</a>
-									</div>
-								</div>
-
+								</c:choose>
 							</div>
 
 						</div>
@@ -837,8 +881,9 @@
 							<div class="topic_color">
 								<div class="row">
 									<div class="col-3">
-										<img src="<c:url value="${contextcdn }/resources/images/registry_p.png"/>" alt="parties"
-											class="img_fluid custom_img_fluid">
+										<img
+											src="<c:url value="${contextcdn }/resources/images/registry_p.png"/>"
+											alt="parties" class="img_fluid custom_img_fluid">
 									</div>
 									<div class="col-7" style="margin-left: -10px;">
 										<h3>Parties</h3>
@@ -857,129 +902,137 @@
 										<span><strong>1yr Return</strong></span>
 									</div>
 								</div>
-								<c:forEach var="product" items="${annivesarylist}">
-									<div class="row">
-										<div class="col-1 radio_style">
-											<input type="radio" name="scheme"
-												value="${product.productScId}">
-										</div>
-										<div class="col-9" style="margin-left: -1px;">
-											<strong><a href="#" data-toggle="modal"
-												data-target="#${product.fundName}">${product.fundName}</a></strong>
-										</div>
-										<div class="col-2"
-											style="margin-left: -10px; padding-left: 1px;">
-											<fmt:formatNumber value="${product.PReturn_1Y * 100}"
-												pattern="0.00" />
-										</div>
-									</div>
 
-									<!--  Modal Code -->
-									<div class="modal fade" id="${product.fundName}" tabindex="-1"
-										role="dialog" aria-labelledby="exampleModalLabel"
-										aria-hidden="true">
-										<div class="modal-dialog" role="document">
-											<div class="modal-content">
-												<div class="modal-header">
-													<h5 class="modal-title" id="exampleModalLabel">Scheme
-														Details</h5>
-													<button type="button" class="close" data-dismiss="modal"
-														aria-label="Close">
-														<span aria-hidden="true">&times;</span>
-													</button>
+								<c:choose>
+									<c:when test="${DATA == 'Y' }">
+										<c:forEach var="product" items="${annivesarylist}">
+											<div class="row">
+												<div class="col-1 radio_style">
+													<input type="radio" name="scheme"
+														value="${product.productScId}">
 												</div>
-												<div class="modal-body">
-													<div class="row">
-														<div class="col-4">
-															<label class="label_style">Fund Name</label>
-														</div>
-														<div class="col-1 radio_style">
-															<label>:</label>
-														</div>
-														<div class="col-7" style="margin-left: -10px;">
-															<label>${product.fundName}</label>
-														</div>
-													</div>
-													
-													<div class="row">
-														<div class="col-4">
-															<label class="label_style">Scheme code</label>
-														</div>
-														<div class="col-1 radio_style">
-															<label>:</label>
-														</div>
-														<div class="col-7" style="margin-left: -10px;">
-															<label>${product.schemeCode}</label>
-														</div>
-													</div>
-
-													<div class="row">
-														<div class="col-4">
-															<label class="label_style">Fund Type</label>
-														</div>
-														<div class="col-1 radio_style">
-															<label>:</label>
-														</div>
-														<div class="col-7" style="margin-left: -10px;">
-															<label>${product.fundType}</label>
-														</div>
-													</div>
-
-													<div class="row">
-														<div class="col-4">
-															<label class="label_style">NAV</label>
-														</div>
-														<div class="col-1 radio_style">
-															<label>:</label>
-														</div>
-														<div class="col-7" style="margin-left: -10px;">
-															<label>${product.nav}</label>
-														</div>
-													</div>
-
-													<div class="row">
-														<div class="col-4">
-															<label class="label_style">NAV Date</label>
-														</div>
-														<div class="col-1 radio_style">
-															<label>:</label>
-														</div>
-														<div class="col-7" style="margin-left: -10px;">
-															<label>${product.nav_Date}</label>
-														</div>
-													</div>
-
-													<div class="row">
-														<div class="col-4">
-															<label class="label_style">Risk</label>
-														</div>
-														<div class="col-1 radio_style">
-															<label>:</label>
-														</div>
-														<div class="col-7" style="margin-left: -10px;">
-															<label>${product.riskometer_value}</label>
-														</div>
-													</div>
-
+												<div class="col-9" style="margin-left: -1px;">
+													<strong><a href="#" data-toggle="modal"
+														data-target="#${product.fundName}">${product.fundName}</a></strong>
 												</div>
-												<div class="modal-footer"></div>
+												<div class="col-2"
+													style="margin-left: -10px; padding-left: 1px;">
+													<fmt:formatNumber value="${product.PReturn_1Y * 100}"
+														pattern="0.00" />
+												</div>
+											</div>
+
+											<!--  Modal Code -->
+											<div class="modal fade" id="${product.fundName}"
+												tabindex="-1" role="dialog"
+												aria-labelledby="exampleModalLabel" aria-hidden="true">
+												<div class="modal-dialog" role="document">
+													<div class="modal-content">
+														<div class="modal-header">
+															<h5 class="modal-title" id="exampleModalLabel">Scheme
+																Details</h5>
+															<button type="button" class="close" data-dismiss="modal"
+																aria-label="Close">
+																<span aria-hidden="true">&times;</span>
+															</button>
+														</div>
+														<div class="modal-body">
+															<div class="row">
+																<div class="col-4">
+																	<label class="label_style">Fund Name</label>
+																</div>
+																<div class="col-1 radio_style">
+																	<label>:</label>
+																</div>
+																<div class="col-7" style="margin-left: -10px;">
+																	<label>${product.fundName}</label>
+																</div>
+															</div>
+
+															<div class="row">
+																<div class="col-4">
+																	<label class="label_style">Scheme code</label>
+																</div>
+																<div class="col-1 radio_style">
+																	<label>:</label>
+																</div>
+																<div class="col-7" style="margin-left: -10px;">
+																	<label>${product.schemeCode}</label>
+																</div>
+															</div>
+
+															<div class="row">
+																<div class="col-4">
+																	<label class="label_style">Fund Type</label>
+																</div>
+																<div class="col-1 radio_style">
+																	<label>:</label>
+																</div>
+																<div class="col-7" style="margin-left: -10px;">
+																	<label>${product.fundType}</label>
+																</div>
+															</div>
+
+															<div class="row">
+																<div class="col-4">
+																	<label class="label_style">NAV</label>
+																</div>
+																<div class="col-1 radio_style">
+																	<label>:</label>
+																</div>
+																<div class="col-7" style="margin-left: -10px;">
+																	<label>${product.nav}</label>
+																</div>
+															</div>
+
+															<div class="row">
+																<div class="col-4">
+																	<label class="label_style">NAV Date</label>
+																</div>
+																<div class="col-1 radio_style">
+																	<label>:</label>
+																</div>
+																<div class="col-7" style="margin-left: -10px;">
+																	<label>${product.nav_Date}</label>
+																</div>
+															</div>
+
+															<div class="row">
+																<div class="col-4">
+																	<label class="label_style">Risk</label>
+																</div>
+																<div class="col-1 radio_style">
+																	<label>:</label>
+																</div>
+																<div class="col-7" style="margin-left: -10px;">
+																	<label>${product.riskometer_value}</label>
+																</div>
+															</div>
+
+														</div>
+														<div class="modal-footer"></div>
+													</div>
+												</div>
+											</div>
+
+											<!--  Modal Code -->
+										</c:forEach>
+
+										<div class="row" style="margin-top: 15px;">
+											<div class="col-6" style="margin: auto;">
+												<a href="" style="text-decoration: none;" id="partieshrf">
+													<button type="button"
+														class="btn btn-outline-info btn-sm btn-block">
+														Create Registry</button>
+												</a>
 											</div>
 										</div>
-									</div>
 
-									<!--  Modal Code -->
-								</c:forEach>
-
-								<div class="row" style="margin-top: 15px;">
-									<div class="col-6" style="margin: auto;">
-										<a href="" style="text-decoration: none;" id="partieshrf"
-											>
-											<button type="button"
-												class="btn btn-outline-info btn-sm btn-block">
-												Create Registry</button>
-										</a>
-									</div>
-								</div>
+									</c:when>
+									<c:when test="${DATA == 'N' }">
+										<span style="color: red;">${error }</span>
+									</c:when>
+								</c:choose>
 
 							</div>
 						</div>
@@ -1018,8 +1071,9 @@
 				<div class="row">
 					<div class="col-md-5 col-lg-5 image_style">
 						<img
-							src="<c:url value="${contextcdn }/resources/images/registry_pic1.png"/>" alt="registry representation"
-							class="img-fluid" style="width: 90%;">
+							src="<c:url value="${contextcdn }/resources/images/registry_pic1.png"/>"
+							alt="registry representation" class="img-fluid"
+							style="width: 90%;">
 					</div>
 					<div class="col-md-6 col-lg-6 contents">
 
@@ -1044,6 +1098,7 @@
 
 	</div>
 	<jsp:include page="include/footer.jsp"></jsp:include>
-	<script src="<c:url value="${contextcdn }/resources/js/freemi.main.js"/>"></script>
+	<script
+		src="<c:url value="${contextcdn }/resources/js/freemi.main.js"/>"></script>
 </body>
 </html>

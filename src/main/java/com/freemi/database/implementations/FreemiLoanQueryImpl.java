@@ -5,9 +5,9 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.freemi.database.interfaces.FreemiLoanQueryRepository;
 import com.freemi.database.service.FreemiLoanQueryService;
 import com.freemi.entity.database.FreemiLoanQuery;
-import com.freemi.repository.interfaces.FreemiLoanQueryRepository;
 
 @Service
 public class FreemiLoanQueryImpl implements FreemiLoanQueryService{

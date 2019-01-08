@@ -9,13 +9,13 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.freemi.database.interfaces.CampaignSignupRepository;
+import com.freemi.database.interfaces.KycStatusRepository;
+import com.freemi.database.interfaces.RegistryPurchaseRecords;
 import com.freemi.database.service.DatabaseEntryManager;
 import com.freemi.entity.database.CampaignSignupForm;
 import com.freemi.entity.investment.FolioCreationStatus;
 import com.freemi.entity.investment.PanValidationStatus;
-import com.freemi.repository.interfaces.CampaignSignupRepository;
-import com.freemi.repository.interfaces.KycStatusRepository;
-import com.freemi.repository.interfaces.RegistryPurchaseRecords;
 
 @Service
 public class DatabaseEntryService implements DatabaseEntryManager{

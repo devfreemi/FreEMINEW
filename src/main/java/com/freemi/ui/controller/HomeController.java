@@ -105,7 +105,7 @@ public class HomeController {
 			model.addAttribute("error", "Please check the security verification");
 			return "login";
 		}else{
-			if(!GoogleSecurity.verifyRecaptcha(request.getParameter("g-recaptcha-response"), "Y", ip, request.getRequestURL().toString())){
+			if(!GoogleSecurity.verifyRecaptcha(request.getParameter("g-recaptcha-response"), "N", ip, request.getRequestURL().toString())){
 				logger.warn("Security token validation failed");
 				model.addAttribute("error", "Security token validation failed!");
 				return "login";

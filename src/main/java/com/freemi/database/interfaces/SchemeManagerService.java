@@ -1,4 +1,4 @@
-package com.freemi.repository.interfaces;
+package com.freemi.database.interfaces;
 import org.springframework.stereotype.Service;
 
 import com.freemi.entity.database.SchemeManager;

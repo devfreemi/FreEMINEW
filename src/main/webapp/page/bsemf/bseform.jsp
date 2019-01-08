@@ -112,8 +112,9 @@
 							<div class="input-group-prepend">
 								<span class="input-group-text" id="basic-addon3">Name</span>
 							</div>
-							<form:input type="text" class="form-control form-control-custom" maxlength="128"
-								id="invName" path="invName" aria-describedby="basic-addon3" />
+							<form:input type="text" class="form-control form-control-custom"
+								maxlength="128" id="invName" path="invName"
+								aria-describedby="basic-addon3" />
 						</div>
 					</div>
 					<div class="form-group col-md-6">
@@ -135,8 +136,9 @@
 							<div class="input-group-prepend">
 								<span class="input-group-text" id="basic-addon3">Email ID</span>
 							</div>
-							<form:input type="text" class="form-control form-control-custom" maxlength="128"
-								id="email" path="email" aria-describedby="basic-addon3" />
+							<form:input type="text" class="form-control form-control-custom"
+								maxlength="128" id="email" path="email"
+								aria-describedby="basic-addon3" />
 						</div>
 					</div>
 					<div class="form-group col-md-6">
@@ -145,8 +147,9 @@
 								<span class="input-group-text" id="basic-addon3">Mobile
 									no.</span>
 							</div>
-							<form:input type="text" class="form-control form-control-custom" maxlength="10" pattern="[0-9]*"
-								id="mobile" path="mobile" aria-describedby="basic-addon3" />
+							<form:input type="text" class="form-control form-control-custom"
+								maxlength="10" pattern="[0-9]*" id="mobile" path="mobile"
+								aria-describedby="basic-addon3" />
 						</div>
 					</div>
 
@@ -181,6 +184,19 @@
 
 				<div class="form-row">
 					<div class="form-group col-md-6">
+						<div class="custom-control custom-radio custom-control-inline">
+							<form:radiobutton path="gender" value="M" id="customRadioInline3"
+								name="customRadioInline3" class="custom-control-input" />
+							<label class="custom-control-label" for="customRadioInline3">Male</label>
+						</div>
+						<div class="custom-control custom-radio custom-control-inline">
+							<form:radiobutton path="gender" value="F" id="customRadioInline4"
+								name="customRadioInline4" class="custom-control-input" />
+							<label class="custom-control-label" for="customRadioInline4">Female</label>
+						</div>
+
+					</div>
+					<div class="form-group col-md-6">
 						<div class="input-group mb-1">
 							<div class="input-group-prepend">
 								<span class="input-group-text" id="basic-addon3">Applicant
@@ -190,23 +206,6 @@
 								id="applicant2Val" path="applicant2"
 								aria-describedby="basic-addon3" />
 						</div>
-					</div>
-
-					<div class="form-group col-md-6">
-						<div class="form-check">
-							<label class="form-check-label"> <form:radiobutton
-									class="form-check-input" path="gender" id="gender" value="M" />
-								Male
-							</label>
-						</div>
-						<div class="form-check">
-							<label class="form-check-label"> <form:radiobutton
-									class="form-check-input" path="gender" id="gender" value="F" />
-								Female
-							</label>
-						</div>
-
-
 					</div>
 
 				</div>
@@ -222,33 +221,24 @@
 					</h5>
 				</div>
 				<div class="form-row">
-					<div class="form-group col-md-6">
 
-						<%-- <label> <form:checkbox type="checkbox" path="nominee.isNominate"
-												id="nominate" value="Y" checked="checked" /> <span
-												class="checkmark"></span> <span
-												style="font-size: 12px; color: #21a35e;"> I wish to nominate
-											</span>
-											</label> --%>
-						<div>
-							<!-- <span
-								style="color: green; position: absolute; margin-left: 20px;">I
-								wish to nominate</span> -->
-							<div style="width: 10px; padding-top: 7px;">
-								<form:radiobutton path="nominee.isNominate" value="Y"
-									id="isNominate" onclick="setDefaultvalues();" label="I wish to nominate" />
-							</div>
+					<div class="col-md-12 col-lg-12">
+						<div class="custom-control custom-radio custom-control-inline">
+							<form:radiobutton path="nominee.isNominate" value="N"
+								id="customRadioInline1" name="customRadioInline1"
+								class="custom-control-input" onclick="setDefaultvalues();" />
+							<label class="custom-control-label" for="customRadioInline1"
+								style="color: red">I do not wish to nominate</label>
 						</div>
-						<div>
-							<span style="color: red; position: absolute; margin-left: 20px;">I
-								do not wish to nominate</span>
-							<div style="width: 10px; padding-top: 7px;">
-								<form:radiobutton path="nominee.isNominate" value="N"
-									id="isNominate" onclick="setDefaultvalues();" />
-							</div>
+						<div class="custom-control custom-radio custom-control-inline">
+							<form:radiobutton path="nominee.isNominate" value="Y"
+								id="customRadioInline2" name="customRadioInline1"
+								class="custom-control-input" onclick="setDefaultvalues();" />
+							<label class="custom-control-label" for="customRadioInline2"
+								style="color: green;"> I wish to nominate</label>
 						</div>
-
 					</div>
+
 				</div>
 
 				<div class="showNomineeForm">
@@ -267,42 +257,6 @@
 
 							<div class="input-group mb-1">
 								<div class="input-group-prepend">
-									<span class="input-group-text" id="basic-addon3">Birth
-										date</span>
-								</div>
-								<form:input type="date" path="nominee.nomineeDOB"
-									class="form-control form-control-custom" id="nomineeDOB" />
-							</div>
-							<span style="color: navy; font-size: 11px;">Age 18 - 65
-								yrs.</span>
-						</div>
-
-					</div>
-					<div class="form-row">
-						<div class="form-group col-md-6">
-							<div class="input-group mb-1">
-								<div class="input-group-prepend">
-									<span class="input-group-text" id="basic-addon3">Address
-									</span>
-								</div>
-								<form:input type="text" class="form-control form-control-custom"
-									id="nomineeAddress1" path="nominee.nomineeAddress1"
-									aria-describedby="basic-addon3" />
-							</div>
-						</div>
-						<div class="form-group col-md-6">
-							<%-- <div class="input-group mb-1">
-												<div class="input-group-prepend">
-													<span class="input-group-text" id="basic-addon3">Address
-														2</span>
-												</div>
-												<form:input type="text" class="form-control form-control-custom"
-													id="nomineeAddress2" path="nominee.nomineeAddress2"
-													aria-describedby="basic-addon3" />
-											</div> --%>
-
-							<div class="input-group mb-1">
-								<div class="input-group-prepend">
 									<span class="input-group-text" id="basic-addon3">Relation</span>
 								</div>
 								<form:select class="custom-select" id="relation"
@@ -314,82 +268,28 @@
 									<option value="Parents">Parents</option>
 								</form:select>
 							</div>
-
 						</div>
 
-					</div>
-
-
-					<div class="form-row">
-						<div class="form-group col-md-6">
-							<%-- <div class="form-check">
-												<form:checkbox class="form-check-input"
-													path="nominee.isNomineeMinor" value="Y" id="gridCheck2" />
-												<label class="form-check-label" for="gridCheck2">
-													Nominee is a minor </label>
-											</div> --%>
-
-							<div>
-								<span
-									style="color: black; position: absolute; margin-left: 20px;">Not
-									minor</span>
-								<div style="width: 10px; padding-top: 7px;">
-									<form:radiobutton path="nominee.isNomineeMinor" value="N"
-										id="isMinor" />
-								</div>
-							</div>
-							<div>
-								<span
-									style="color: black; position: absolute; margin-left: 20px;">Minor
-								</span>
-								<div style="width: 10px; padding-top: 7px;">
-									<form:radiobutton path="nominee.isNomineeMinor" value="Y"
-										id="isMinor" />
-								</div>
-							</div>
-
-						</div>
-						<div class="form-group col-md-6">
-							<div class="input-group mb-1">
-								<div class="input-group-prepend">
-									<span class="input-group-text" id="basic-addon3">Guardian
-										Name (If minor) </span>
-								</div>
-								<form:input type="text" class="form-control form-control-custom"
-									id="guardian" path="nominee.nomineeGuardian"
-									aria-describedby="basic-addon3" />
-							</div>
-						</div>
 					</div>
 
 				</div>
 
 				<div class="sectionheader">
 					<h5>
-						<i class="fas fa-clipboard-check"></i> Declarations
+						<img
+							src="<c:url value="${contextPath}/resources/images/invest/declaration.svg"/>"
+							class="img-fluid" style="height: 15px;"> Declarations
 					</h5>
 				</div>
 
-				<div class="form-row" style="margin-bottom: 5px;">
-					<div class="form-group col-md-1 col-1" style="padding-top: 7px;">
-						<form:checkbox path="ubo" value="Y" />
-					</div>
-					<div class="form-group col-md-11 col-11 agree_Check"
-						style="height: 75px;">
-						<span style="font-size: 12px; color: #575353;"> I have read
-							the <a
-							href="https://mf.adityabirlacapital.com/Pages/Individual/Forms-Downloads/Forms.aspx"
-							target="_blank">Key Information Memorandum, Scheme
-								Information Document / Statement of Additional Information </a> and
-							<a
-							href="https://mf.adityabirlacapital.com/_layouts/ABFSG/MF/downloads/Disclaimer.pdf"
-							target="_blank">Disclaimer</a> for the scheme in which I am
-							investing. <br> In line with regulation under Prevention of
-							Money Laundering Act, 2002 (PMLA), I/We hereby confirm that the
-							funds for this purchase are being debited from my bank account.
-
-						</span>
-					</div>
+				<div class="form-row" style="margin-bottom: 5px;padding-left: 5px;">
+					
+					<div class="custom-control custom-checkbox">
+							<form:checkbox path="ubo" value="Y" id="customCheck1"
+								class="custom-control-input" />
+							<label class="custom-control-label" for="customCheck1">I agree to
+							the terms &amp; conditions </label>
+						</div>
 
 				</div>
 
@@ -449,7 +349,7 @@
 						</div>
 						<form:select class="custom-select" id="accountType"
 							path="bankDetails.accountType">
-							<form:option value="" selected="true">Select Account Type</form:option>
+							<form:option value="">Select Account Type</form:option>
 							<form:options items="${accountTypes}" />
 						</form:select>
 					</div>
@@ -478,7 +378,7 @@
 						</div>
 						<form:select class="custom-select" id="bankName"
 							path="bankDetails.bankName">
-							<form:option value="" selected="true">Select your bank</form:option>
+							<form:option value="">Select your bank</form:option>
 							<%-- <form:option value="ICICI">ICICI Bank</form:option> --%>
 							<form:options items="${bankNames}" />
 

@@ -5,8 +5,8 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.freemi.database.interfaces.KycStatusRepository;
 import com.freemi.entity.database.CustomerKYSStatus;
-import com.freemi.repository.interfaces.KycStatusRepository;
 
 @Service
 @Transactional

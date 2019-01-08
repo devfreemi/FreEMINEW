@@ -10,9 +10,9 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.freemi.database.interfaces.ProductSchemeDetailDao;
+import com.freemi.database.interfaces.ProductSchemeDetailService;
 import com.freemi.entity.database.ProductSchemeDetail;
-import com.freemi.repository.interfaces.ProductSchemeDetailDao;
-import com.freemi.repository.interfaces.ProductSchemeDetailService;
 
 @Service
 public class ProductSchemeDetailServiceImpl implements ProductSchemeDetailService {

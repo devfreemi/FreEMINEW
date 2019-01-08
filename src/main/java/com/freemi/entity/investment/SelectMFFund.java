@@ -1,6 +1,7 @@
 package com.freemi.entity.investment;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -40,6 +41,12 @@ public class SelectMFFund implements Serializable {
 	@Column(name="TRANSACTION_ID")
 	private String transactionID;
 	
+	@Transient
+	private String amcCode;
+	
+	@Column(name="TRANSACTION_TYPE")
+	private String transactionType="PURCHASE";
+	
 	@Column(name="INVEST_TYPE")
 	private String investype="SIP";	//SIP or lumpsum
 	
@@ -51,11 +58,25 @@ public class SelectMFFund implements Serializable {
 	private String schemeType;
 	
 	@Column(name="INVEST_AMOUNT")
-	private long investAmount;
+	private double investAmount;
+	
+	@Column(name="PAYMENT_METHOD")
+	private String paymentMethod;
 	
 	@Column(name="SIP_DATE")
 	private String sipDate;
 	
+	@Column(name="PORTFOLIO")
+	private String portfolio;
+	
+	@Transient
+	private String mobile;
+	
+	@Transient
+	private String pan;
+	
+	@Column(name="ORDER_PLACE_TIME")
+	private Date orderPlaceTime;
 	
 	public long getSerialNo() {
 		return serialNo;
@@ -110,10 +131,11 @@ public class SelectMFFund implements Serializable {
 	public void setSchemeType(String schemeType) {
 		this.schemeType = schemeType;
 	}
-	public long getInvestAmount() {
+	
+	public double getInvestAmount() {
 		return investAmount;
 	}
-	public void setInvestAmount(long investAmount) {
+	public void setInvestAmount(double investAmount) {
 		this.investAmount = investAmount;
 	}
 	public String getSipDate() {
@@ -121,6 +143,48 @@ public class SelectMFFund implements Serializable {
 	}
 	public void setSipDate(String sipDate) {
 		this.sipDate = sipDate;
+	}
+	public String getTransactionType() {
+		return transactionType;
+	}
+	public void setTransactionType(String transactionType) {
+		this.transactionType = transactionType;
+	}
+	public String getMobile() {
+		return mobile;
+	}
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
+	}
+	public String getPan() {
+		return pan;
+	}
+	public void setPan(String pan) {
+		this.pan = pan;
+	}
+	public String getAmcCode() {
+		return amcCode;
+	}
+	public void setAmcCode(String amcCode) {
+		this.amcCode = amcCode;
+	}
+	public String getPortfolio() {
+		return portfolio;
+	}
+	public void setPortfolio(String portfolio) {
+		this.portfolio = portfolio;
+	}
+	public Date getOrderPlaceTime() {
+		return orderPlaceTime;
+	}
+	public void setOrderPlaceTime(Date orderPlaceTime) {
+		this.orderPlaceTime = orderPlaceTime;
+	}
+	public String getPaymentMethod() {
+		return paymentMethod;
+	}
+	public void setPaymentMethod(String paymentMethod) {
+		this.paymentMethod = paymentMethod;
 	}
 	
 

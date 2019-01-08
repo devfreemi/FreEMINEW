@@ -35,6 +35,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.freemi.common.util.CommonConstants;
 import com.freemi.common.util.CommonTask;
+import com.freemi.database.interfaces.ProductSchemeDetailService;
 import com.freemi.database.service.FreemiServiceInterface;
 import com.freemi.entity.database.FreemiLoanQuery;
 import com.freemi.entity.database.ProductSchemeDetail;
@@ -51,7 +52,6 @@ import com.freemi.entity.general.RegistryWish;
 import com.freemi.entity.investment.MFInvestForm;
 import com.freemi.entity.investment.MFInvestmentDates;
 import com.freemi.entity.investment.RegistryFunds;
-import com.freemi.repository.interfaces.ProductSchemeDetailService;
 import com.freemi.ui.restclient.RestClient;
 
 @Controller
@@ -67,7 +67,7 @@ public class Products {
 
 	@Autowired
 	FreemiServiceInterface freemiServiceInterface; 
-	
+
 	@Autowired
 	private Environment env;
 
@@ -142,45 +142,53 @@ public class Products {
 
 	@RequestMapping(value = "/registry-mutual-funds", method = RequestMethod.GET)
 	public String registryMutualReplaced(ModelMap model, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
-	return "redirect:/registry-mutual-funds/";
+		return "redirect:/registry-mutual-funds/";
 	}
 
 
 	@RequestMapping(value = "/registry-mutual-funds/", method = RequestMethod.GET)
 	public String registryDisplay(Model map) {
 		logger.info("@@@@ RegistryController @@@@");
-		List<ProductSchemeDetail> productlist = productSchemeDetailService.findForRegistryBirthDay();
-		List<ProductSchemeDetail> taxsavingSchemelist = productSchemeDetailService.findForTaxSaving();
-		List<ProductSchemeDetail> travelSchemelist = productSchemeDetailService.findForTravel();
 
-		List<ProductSchemeDetail> birthDaytlist = new ArrayList<ProductSchemeDetail>();
-		List<ProductSchemeDetail> annivesarylist = new ArrayList<ProductSchemeDetail>();
-		List<ProductSchemeDetail> taxsavinglist = new ArrayList<ProductSchemeDetail>();
-		if(productlist.size() > 4) {
-			birthDaytlist = new ArrayList<ProductSchemeDetail>(productlist.subList(0, 4));
-		}else {
-			birthDaytlist = new ArrayList<ProductSchemeDetail>(productlist.subList(0, productlist.size()));
+		try{
+			List<ProductSchemeDetail> productlist = productSchemeDetailService.findForRegistryBirthDay();
+			List<ProductSchemeDetail> taxsavingSchemelist = productSchemeDetailService.findForTaxSaving();
+			List<ProductSchemeDetail> travelSchemelist = productSchemeDetailService.findForTravel();
+
+			List<ProductSchemeDetail> birthDaytlist = new ArrayList<ProductSchemeDetail>();
+			List<ProductSchemeDetail> annivesarylist = new ArrayList<ProductSchemeDetail>();
+			List<ProductSchemeDetail> taxsavinglist = new ArrayList<ProductSchemeDetail>();
+			if(productlist.size() > 4) {
+				birthDaytlist = new ArrayList<ProductSchemeDetail>(productlist.subList(0, 4));
+			}else {
+				birthDaytlist = new ArrayList<ProductSchemeDetail>(productlist.subList(0, productlist.size()));
+			}
+
+			if(taxsavingSchemelist.size() > 4) {
+				taxsavinglist = new ArrayList<ProductSchemeDetail>(taxsavingSchemelist.subList(0, 4));
+			}else {
+				taxsavinglist = new ArrayList<ProductSchemeDetail>(taxsavingSchemelist.subList(0, taxsavingSchemelist.size()));
+			}
+
+			if(travelSchemelist.size() > 4) {
+				annivesarylist = new ArrayList<ProductSchemeDetail>(travelSchemelist.subList(0, 4));
+			}else {
+				annivesarylist = new ArrayList<ProductSchemeDetail>(travelSchemelist.subList(0, travelSchemelist.size()));
+			}
+			map.addAttribute("DATA", "Y");
+			map.addAttribute("productlist", birthDaytlist);
+			map.addAttribute("annivesarylist", annivesarylist);
+			map.addAttribute("taxsavinglist", taxsavinglist);
+
+		}catch(Exception e){
+			logger.error("RegistryController - Failed to get data",e);
+			map.addAttribute("DATA","N");
+			map.addAttribute("error", "Failed to get funds. Please try again");
 		}
-
-		if(taxsavingSchemelist.size() > 4) {
-			taxsavinglist = new ArrayList<ProductSchemeDetail>(taxsavingSchemelist.subList(0, 4));
-		}else {
-			taxsavinglist = new ArrayList<ProductSchemeDetail>(taxsavingSchemelist.subList(0, taxsavingSchemelist.size()));
-		}
-
-		if(travelSchemelist.size() > 4) {
-			annivesarylist = new ArrayList<ProductSchemeDetail>(travelSchemelist.subList(0, 4));
-		}else {
-			annivesarylist = new ArrayList<ProductSchemeDetail>(travelSchemelist.subList(0, travelSchemelist.size()));
-		}
-
-
-		map.addAttribute("productlist", birthDaytlist);
-		map.addAttribute("annivesarylist", annivesarylist);
-		map.addAttribute("taxsavinglist", taxsavinglist);
+		
 		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 		logger.info("@@@@ RegistryController Data Load Comleted @@@@");
-		
+
 		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 		return "registry3";
 	}
@@ -307,12 +315,12 @@ public class Products {
 
 	@RequestMapping(value = "/loans/loan-request-processed", method = RequestMethod.GET)
 	public ModelAndView LoanRequestProcessedGet(@ModelAttribute("REQUESTSUCCESS")String requestStatus,@ModelAttribute("requestmessage")String requestmessage,Model map, HttpServletRequest request, HttpServletResponse response) {
-//		String returnUrl="loan-request-success";
+		//		String returnUrl="loan-request-success";
 		ModelAndView view = new ModelAndView("loan-request-success");
 
 		if(requestStatus.isEmpty()){
 			//			logger.info("Emplty");
-//			returnUrl="redirect:/loans";
+			//			returnUrl="redirect:/loans";
 			view.setViewName("redirect:/loans");
 			map.asMap().clear();
 

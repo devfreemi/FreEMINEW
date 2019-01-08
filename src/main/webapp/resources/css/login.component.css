@@ -147,9 +147,7 @@ input:focus::-moz-placeholder{
 .password_reset{
     cursor: pointer;
     float: right;
-    margin-top: -20px;
     margin-bottom: 20px;
-    color: #f6ff76;
     font-size: 14px;
     text-decoration: underline;
 }

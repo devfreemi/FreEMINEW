@@ -10,7 +10,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -31,11 +30,12 @@ public class BseMFInvestForm implements Serializable {
 	private static final long serialVersionUID = 1L;
 	//@Pattern(regexp = "[a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}")
 	
-	@Id
+	
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="SL_NO")
 	private long serialNo;
 	
+	@Id
 	@Column(name="CLIENT_ID")
 	private String clientID;
 	
@@ -74,15 +74,14 @@ public class BseMFInvestForm implements Serializable {
 	@Column(name="EMAIL")
 	private String email;
 	
-	@Transient
-	@Column(name="")
+	@Column(name="MOBILE_NO")
 	private String mobile;
 	
 	@Column(name="DIVIDEND_PAY_MODE")
-	private String dividendPayMode="02";
+	private String dividendPayMode;
 	
 	@Column(name="OCCUPATION_CODE")
-	private String occupation="";
+	private String occupation;
 	
 	@Transient
 	@Column(name="")
@@ -152,7 +151,7 @@ public class BseMFInvestForm implements Serializable {
 	@Column(name="")
 	private String kycType="";
 	
-	@Transient
+	@OneToOne(fetch=FetchType.EAGER, mappedBy="mfForm",cascade=CascadeType.ALL)
 	private MFNominationForm nominee;
 	
 	@OneToOne(fetch=FetchType.EAGER, mappedBy="mfForm",cascade=CascadeType.ALL)
@@ -167,7 +166,7 @@ public class BseMFInvestForm implements Serializable {
 	@Transient
 	private MFInvestmentDates mfInvestDates;
 	
-	@Transient
+	@OneToOne(fetch=FetchType.EAGER, mappedBy="mfForm",cascade=CascadeType.ALL)
 	private AddressDetails addressDetails;
 	
 	@OneToMany(mappedBy="clientID", cascade=CascadeType.ALL)

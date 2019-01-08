@@ -1,21 +1,102 @@
 package com.freemi.entity.investment;
 
-public class MFNominationForm {
+import java.io.Serializable;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.hibernate.annotations.Proxy;
+
+@Entity
+@Table(name="bsemf_customers_nominee")
+@Proxy(lazy=false)
+public class MFNominationForm implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name="SL_NO")
+	private long serialNo;
+	
+	@Column(name="CLIENT_ID")
+	private String clientID;
+	
+	@Column(name="")
 	private String isNominate="N";
+	
+	@Column(name="")
 	private String nomineeName;
+	
+	@Transient
 	private String nomineeAddress1;
+	
+	@Transient
 	private String nomineeAddress2;
+	
+	@Transient
 	private String nomineeState;
+	
+	@Transient
 	private String nomineeCity;
+	
+	@Transient
 	private String nomineeCountry;
+	
+	@Transient
 	private String nomineePercentage;
+	
+	@Transient
 	private String nomineeDOB;
+	
+	@Column(name="")
 	private String nomineeRelation;
+	
+	@Transient
 	private String isNomineeMinor="N";
+	
+	@Transient
 	private String nomineeGuardian;
 	
+	@OneToOne(fetch= FetchType.LAZY, optional=false, cascade=CascadeType.PERSIST)
+	@JoinColumn(name="CLIENT_ID", nullable= false,insertable=false,updatable=false)
+	private BseMFInvestForm mfForm;
 	
+	
+	
+	public long getSerialNo() {
+		return serialNo;
+	}
+	public void setSerialNo(long serialNo) {
+		this.serialNo = serialNo;
+	}
+	public String getClientID() {
+		return clientID;
+	}
+	public void setClientID(String clientID) {
+		this.clientID = clientID;
+	}
+	public BseMFInvestForm getMfForm() {
+		return mfForm;
+	}
+	public void setMfForm(BseMFInvestForm mfForm) {
+		this.mfForm = mfForm;
+	}
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
 	public String getIsNominate() {
 		return isNominate;
 	}

@@ -6,9 +6,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.freemi.database.interfaces.MapSchemeManagerDao;
+import com.freemi.database.interfaces.MapSchemeManagerService;
 import com.freemi.entity.database.MapSchemeManager;
-import com.freemi.repository.interfaces.MapSchemeManagerDao;
-import com.freemi.repository.interfaces.MapSchemeManagerService;
 
 @Service
 public class MapSchemeManagerServiceImpl implements MapSchemeManagerService {

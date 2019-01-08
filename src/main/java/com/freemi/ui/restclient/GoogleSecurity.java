@@ -27,17 +27,18 @@ public class GoogleSecurity {
 					.queryParam("response", captchaRespone);
 
 			ResponseEntity<String> response = null;
-
+			try{
 			System.out.println(urlBuilder.toUriString());
 			response = restTemplate.exchange(urlBuilder.toUriString(), HttpMethod.POST, null, String.class);
 			logger.debug("Response from google security api for mobile number - "+ response.getBody());
-			try{
+			
 				JsonObject jsonObj = (JsonObject) new JsonParser().parse(response.getBody());
 				if(!jsonObj.get("success").getAsBoolean()){
 					flag=false;
 				}
 			}catch(Exception e){
 				logger.error("Unable to prase google recptcha json recaptcha", e.getMessage());
+				flag=false;
 			}
 		}else{
 			logger.info("Google secutiry is tunrned off. Skipping validation.");

@@ -1,4 +1,4 @@
-package com.freemi.repository.interfaces;
+package com.freemi.database.interfaces;
 
 import java.util.List;
 
@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 import com.freemi.entity.database.UserBankDetails;
 
 @Service
-public interface BseCustomerBankDetailsCrudRespository extends JpaRepository<UserBankDetails, Long>{
+public interface BseCustomerBankDetailsCrudRespository extends JpaRepository<UserBankDetails, String>{
 
 	public List<UserBankDetails> getByClientID(String customerId);
+	
+	
 }

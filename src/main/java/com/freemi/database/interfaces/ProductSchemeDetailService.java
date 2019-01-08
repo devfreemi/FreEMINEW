@@ -1,4 +1,4 @@
-package com.freemi.repository.interfaces;
+package com.freemi.database.interfaces;
 import com.freemi.entity.database.ProductSchemeDetail;
 
 import java.util.List;

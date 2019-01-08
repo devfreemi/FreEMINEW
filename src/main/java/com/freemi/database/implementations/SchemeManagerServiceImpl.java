@@ -6,9 +6,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.freemi.database.interfaces.SchemeManagerDao;
+import com.freemi.database.interfaces.SchemeManagerService;
 import com.freemi.entity.database.SchemeManager;
-import com.freemi.repository.interfaces.SchemeManagerDao;
-import com.freemi.repository.interfaces.SchemeManagerService;
 
 @Service
 public class SchemeManagerServiceImpl implements SchemeManagerService {

@@ -149,14 +149,16 @@
 					</div>
 					</div>
 
-					<div>
+					<div class="row">
+						<div class="col-md-12 col-lg-12">
 						<a class="password_reset" href="${pageContext.request.contextPath}/forgotPassword">Forgot
 							Password? </a>
+						</div>
 					</div>
 					
-					<div style="margin-bottom: 20px;">
+					<!-- <div style="margin-bottom: 20px;">
 						<div class="g-recaptcha" data-sitekey="6LdvUoQUAAAAADk77XVS_YlkPTluN9EYCawk1xo6"></div>
-					</div>
+					</div> -->
 					<div class="login_buttons">
 						<button type="submit" id="loginsubmit"
 							class="btn btn-sm btn-block login_button">

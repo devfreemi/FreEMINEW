@@ -26,7 +26,8 @@ public class RestClient {
 //	private final String SERVICE_URL1 = "https://ec2-35-154-76-43.ap-south-1.compute.amazonaws.com/freemibackend";
 //	private final String SERVICE_URL1 = "http://ec2-35-154-76-43.ap-south-1.compute.amazonaws.com:8080/freemibackend";
 //	private final String SERVICE_URL1 = "http://localhost:8090/freemibackend";
-	private final String SERVICE_URL1 = "http://localhost:8080/freemibackend";
+//	private final String SERVICE_URL1 = "http://localhost:8080/freemibackend";
+	private final String SERVICE_URL1 = "http://dev.freemi.in:8080/freemibackend";
 
 	private final String ANONYMOUS_TOKEN = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbm9ueW1vdXMifQ.Ch3VesT2dCyRIDandUkxL87dIoioHCAdsRZzoNx0xNw";
 	

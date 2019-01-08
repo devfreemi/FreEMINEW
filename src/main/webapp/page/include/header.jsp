@@ -27,7 +27,7 @@
 
 				<li class="nav-item dropdown" style="padding-top: 7px;"><img
 					src="<c:url value="${contextcdn}/resources/images/freemi_icon1.png"/>"
-					alt="Loans icon" width="30" height="5" style="float: left;">
+					alt="Loans icon" style="float: left;height: 2rem;">
 					<a class="nav-link dropdown-toggle" style="display: initial;"
 					href="/loans/"
 					id="navbarDropdownLoansLink" data-hover="dropdown"
@@ -44,7 +44,7 @@
 					</div></li>
 				<li class="nav-item dropdown" style="padding-top: 7px;"><img
 					src="<c:url value="${contextcdn}/resources/images/fsecure.png"/>"
-					alt="Insurace" width="30" height="5" style="float: left;"> <a
+					alt="Insurace" style="float: left;height: 2rem;"> <a
 					class="nav-link dropdown-toggle" style="display: initial;"
 					href="/insurance/"
 					id="navbarDropdownInsuranceLink" data-hover="dropdown"
@@ -73,7 +73,7 @@
 						<a class="dropdown-item"
 							href="/credit-card/">Apply for Credit Card</a>
 					</div></li>
-				<li class="nav-item" style="padding-top: 7px;">
+				<%-- <li class="nav-item" style="padding-top: 7px;">
 					<!-- 	<div class="nav-div"> --> <img
 					src="<c:url value="${contextcdn}/resources/images/registry.png"/>"
 					alt="Registry product" class="img-fluid" width="30" height="5"
@@ -82,7 +82,27 @@
 					style="margin-left: 30px; padding: 0;margin-right: 5px;">Mutual Funds<!-- <br> <span
 							class="header_subname">A product of Mutual Funds</span> -->
 				</a> <!-- </div> -->
-				</li>
+				</li> --%>
+				
+				<li class="nav-item dropdown" style="padding-top: 7px;"><img
+					src="<c:url value="${contextcdn}/resources/images/registry.png"/>"
+					alt="Registry product" class="img-fluid" width="30" height="5"
+					style="float: left;"> <a
+					class="nav-link dropdown-toggle" style="display: initial;"
+					href="/mutual-funds/"
+					id="navbarDropdownInsuranceLink" data-hover="dropdown"
+					data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Mutual Funds
+				</a>
+					<div class="dropdown-menu custom-dropdown"
+						aria-labelledby="navbarDropdownInsuranceLink">
+						<a class="dropdown-item"
+							href="/mutual-funds/">Mutual Funds</a> <a
+							class="dropdown-item"
+							href="/products/mutual-funds/top-performing">Top Performing Funds</a> 
+							<!-- <a class="dropdown-item"
+							href="/car-insurance/">Car
+							Insurance</a> -->
+					</div></li>
 
 				<li class="nav-item dropdown" style="padding-top: 7px;"><i
 					class="fas fa-calculator" style="color: darkorange;"

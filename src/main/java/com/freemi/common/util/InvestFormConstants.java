@@ -1,6 +1,5 @@
 package com.freemi.common.util;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -235,6 +234,20 @@ public class InvestFormConstants {
 			put("UL","UTTARAKHAND");
 			put("UP","UTTAR PRADESH");
 			put("WB","WEST BENGAL");
+		}
+	};
+	
+	public static Map<String,String> bsePaymentMethod = new LinkedHashMap<String,String>(){
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		{
+			put("01", "INTERNET BANKING");
+			put("02", "NEFT");
+			put("03", "CARD");
+			put("04", "UPI");
 		}
 	};
 
