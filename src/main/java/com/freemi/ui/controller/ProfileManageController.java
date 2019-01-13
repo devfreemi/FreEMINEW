@@ -292,6 +292,12 @@ public class ProfileManageController{
 	}
 	
 
+	@RequestMapping(value = "/my-dashboard/", method = RequestMethod.GET)
+	public String getMyDashboardAlt(Model map,HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+		return "redirect:/my-dashboard";
+	
+	}
+	
 	@RequestMapping(value = "/my-dashboard", method = RequestMethod.GET)
 	public String getMyDashboard(Model map,HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 		//logger.info("@@@@ Inside Login..");

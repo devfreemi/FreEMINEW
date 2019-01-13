@@ -9,5 +9,7 @@ import com.freemi.entity.investment.BseAllTransactionsView;
 public interface BseTransactionsView extends JpaRepository<BseAllTransactionsView, String> {
 	
 	public List<BseAllTransactionsView> findAllByClientID(String clientid);
+	
+	public BseAllTransactionsView findOneByPortfoilioAndSchemeCodeAndClientIDAndInvestType(String portfolio, String schemeCode, String clientId, String investType);
 
 }

@@ -8,6 +8,7 @@ import com.freemi.entity.database.MfTopFundsInventory;
 import com.freemi.entity.general.UserProfile;
 import com.freemi.entity.investment.BseAllTransactionsView;
 import com.freemi.entity.investment.BseMFInvestForm;
+import com.freemi.entity.investment.MFAdditionalPurchaseForm;
 import com.freemi.entity.investment.SelectMFFund;
 
 @Service
@@ -21,6 +22,7 @@ public interface BseEntryManager {
 	public List<BseMFInvestForm> getCustomerByPan(String pan);
 	public boolean isExisitngCustomer(String pan, String mobile);
 	public String getCustomerPanfromMobile(String mobile);
+	public String getClientIdfromMobile(String mobile);
 	public boolean updateCustomerData(BseMFInvestForm custerProfileData);
 	public boolean updateCustomerBankDetails(UserProfile investorData);
 	public boolean updateCustomerAddress(UserProfile investorData);
@@ -29,7 +31,8 @@ public interface BseEntryManager {
 	public boolean checkIfTransIdExist(String generatedTransId);
 	public boolean savetransactionDetails(SelectMFFund selectedMFFund);
 	public List<BseAllTransactionsView> getCustomerAllTransactionRecords(String clientID, String mobileNumber, String panNumber);
-	
+	public BseAllTransactionsView getFundDetailsForAdditionalPurchase(String portfolio, String schemeCode,String investType, String mobileNumber);
+	public BseAllTransactionsView getFundDetailsForRedemption(String portfolio, String schemeCode,String investType, String mobileNumber);
 	
 	//BSE MF related operations
 	public List<MfTopFundsInventory> getTopMfFunds();

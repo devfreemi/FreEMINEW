@@ -1,6 +1,8 @@
 package com.freemi.common.util;
 
-public class BseClientIdGenerator {
+import java.util.UUID;
+
+public class BseRelatedActions {
 	
 	public static String generateID(String name, String pan, String dob, String mobile, int loopVal){
 		// BSE requires a 10 digit based client ID to be maintained
@@ -37,6 +39,10 @@ public class BseClientIdGenerator {
 		
 		return id;
 		
+	}
+	
+	public static String generateTransactionId(){
+		return Long.toString((Math.abs(UUID.randomUUID().getMostSignificantBits())));
 	}
 
 }

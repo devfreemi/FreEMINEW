@@ -5,10 +5,12 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <title>FreEMI Dashboard</title>
+
 <link
 	href="<c:url value="${contextcdn}/resources/css/my-dashboard.component.css"/>"
 	rel="stylesheet">
@@ -16,6 +18,10 @@
 <link href="<c:url value="${contextcdn}/resources/css/styles.css"/>"
 	rel="stylesheet">
 <jsp:include page="include/bootstrap.jsp"></jsp:include>
+<script src="<c:url value="${contextPath}/resources/js/investment.js" />"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+
+
 </head>
 
 <body class="back_set">
@@ -67,10 +73,10 @@
 									<h6>TOTAL ASSETS</h6>
 								</div>
 								<div class="col-6">
-									<h6>
+									<h4>
 										<i class="fas fa-rupee-sign"> </i>
 										<fmt:formatNumber value="${totalasset }" type="number" />
-									</h6>
+									</h4>
 								</div>
 							</div>
 						</div>
@@ -245,7 +251,7 @@
 															<td>${listVar.schemeName }</td>
 															<td></td>
 															<td></td>
-															<td><fmt:formatNumber value="${listVar.schemeInvestment }" type="number" maxFractionDigits = "3" /></td>
+															<td style="font-weight: 600;"><fmt:formatNumber value="${listVar.schemeInvestment }" type="number" maxFractionDigits = "3" /></td>
 															<td style="text-align: center;">
 																<div class="btn-group">
 																	<button type="button"
@@ -253,9 +259,12 @@
 																		data-toggle="dropdown" aria-haspopup="true"
 																		aria-expanded="false" style="font-size: 11px;">ACTION</button>
 																	<div class="dropdown-menu dropdown-menu-right">
-																		<button class="dropdown-item" type="button" style="font-size: 11px;">Invest More</button>
-																		<button class="dropdown-item" type="button" style="font-size: 11px;">Redeem
+																		<button class="dropdown-item" type="button" style="font-size: 12px;color: #238019;font-weight: 600;" onclick="AdditionalPurchase('${listVar.portfoilio}','${listVar.schemeCode }','${listVar.investType }')">Invest More <i class="fas fa-arrow-left"></i></button>
+																		
+																		<c:if test="${listVar.schemeInvestment > 0 }">
+																		<button class="dropdown-item" type="button" style="font-size: 12px;color: #da2323;font-weight: 600;" onclick="MFRedeem('${listVar.portfoilio}','${listVar.schemeCode }','${listVar.investType }')">Redeem <i class="fas fa-arrow-right"></i>
 																			</button>
+																		</c:if>
 																	</div>
 																</div>
 

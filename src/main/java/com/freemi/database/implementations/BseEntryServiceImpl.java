@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.freemi.common.util.BseClientIdGenerator;
+import com.freemi.common.util.BseRelatedActions;
 import com.freemi.database.interfaces.BseCustomerAddressCrudRepository;
 import com.freemi.database.interfaces.BseCustomerBankDetailsCrudRespository;
 import com.freemi.database.interfaces.BseCustomerCrudRespository;
@@ -23,6 +23,7 @@ import com.freemi.entity.general.UserProfile;
 import com.freemi.entity.investment.AddressDetails;
 import com.freemi.entity.investment.BseAllTransactionsView;
 import com.freemi.entity.investment.BseMFInvestForm;
+import com.freemi.entity.investment.MFAdditionalPurchaseForm;
 import com.freemi.entity.investment.SelectMFFund;
 
 @Service
@@ -68,7 +69,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 				if(loop>=2){
 					logger.warn("Previously generated client ID already exist for another- "+ customerid);
 				}
-				customerid=BseClientIdGenerator.generateID(customerForm.getInvName(), customerForm.getPan1(), null, customerForm.getMobile(),loop++);
+				customerid=BseRelatedActions.generateID(customerForm.getInvName(), customerForm.getPan1(), null, customerForm.getMobile(),loop++);
 				
 			}while(bseCustomerCrudRespository.existsByClientID(customerid));
 			
@@ -255,6 +256,33 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		
 		bseCustomerAddressCrudRepository.save(investorAddress);
 		return flag;
+	}
+
+	@Override
+	public BseAllTransactionsView getFundDetailsForAdditionalPurchase(String portfolio, String schemeCode,String investType,
+			String mobileNumber) {
+		String clientId= bseCustomerCrudRespository.getRegisteredUserClientId(mobileNumber);
+		
+		BseAllTransactionsView selectedFolioTransDetails = bseTransactionsView.findOneByPortfoilioAndSchemeCodeAndClientIDAndInvestType(portfolio, schemeCode, clientId,investType);
+		
+		
+		return selectedFolioTransDetails;
+	}
+
+	@Override
+	public String getClientIdfromMobile(String mobile) {
+		// TODO Auto-generated method stub
+		return bseCustomerCrudRespository.getRegisteredUserClientId(mobile);
+	}
+
+	@Override
+	public BseAllTransactionsView getFundDetailsForRedemption(String portfolio, String schemeCode,String investType,
+			String mobileNumber) {
+		String clientId= bseCustomerCrudRespository.getRegisteredUserClientId(mobileNumber);
+		
+		BseAllTransactionsView selectedFolioTransDetails = bseTransactionsView.findOneByPortfoilioAndSchemeCodeAndClientIDAndInvestType(portfolio, schemeCode, clientId,investType);
+		
+		return selectedFolioTransDetails;
 	}
 
 

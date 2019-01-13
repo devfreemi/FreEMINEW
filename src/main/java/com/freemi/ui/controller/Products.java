@@ -75,7 +75,7 @@ public class Products {
 	public String loginDisplay(Model map) {
 		//logger.info("@@@@ Inside Login..");
 		map.addAttribute("registerForm", new Registerform());
-		logger.info("@@@@ LoginController @@@@");
+		logger.info("@@@@ RegisterController @@@@");
 		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 		return "register";
 	}
@@ -87,7 +87,7 @@ public class Products {
 
 	@RequestMapping(value = "/register.do", method = RequestMethod.POST)
 	public String registerUser(@ModelAttribute("registerForm") @Valid Registerform registerForm, BindingResult bindingResult, ModelMap model) {
-		logger.info("@@@@ Inside Login do..");
+		logger.info("@@@@ Inside Register do..");
 
 		if(bindingResult.hasErrors()){
 			logger.info("Error in register form");
@@ -110,7 +110,7 @@ public class Products {
 			}
 
 		}catch(HttpStatusCodeException  e){
-			logger.info("test failure - " + e.getStatusCode());
+			logger.info("Link failure - " + e.getStatusCode());
 			model.addAttribute("error", "Unable to process request curretnly");
 		} catch (JsonProcessingException e) {
 			model.addAttribute("error","Invalid form data");
@@ -119,7 +119,7 @@ public class Products {
 		}
 
 		model.addAttribute("registerForm", new Registerform());
-		logger.info("@@@@ LoginController @@@@");
+		logger.info("@@@@ RegisterController @@@@");
 		return "register";
 	}
 

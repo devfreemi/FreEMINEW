@@ -20,7 +20,15 @@
 
 <jsp:include page="../include/bootstrap.jsp"></jsp:include>
 </head>
-<body>
+<script type="text/javascript">
+        window.history.forward();
+        function noBack()
+        {
+            window.history.forward();
+        }
+</script>
+
+<body  onLoad="noBack();" onpageshow="if (event.persisted) noBack();" onUnload="">
 	<jsp:include page="../include/header.jsp"></jsp:include>
 	<div class="container">
 

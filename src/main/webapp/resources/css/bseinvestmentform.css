@@ -542,9 +542,33 @@ translate
 	margin-top: 30px;
 }
 
-.transaction-redirect1{
+.transaction-redirect1 {
 	background-color: antiquewhite;
     padding: 3px 10px;
     border-radius: 3px;
     box-shadow: 3px 2px 5px 1px #d0cfcf;
-    }
+}
+    
+    
+ .redeem-form-section{
+     border: 1px solid #bbbcbd;
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: 3px 2px 5px 0px #afa9a9;
+ }
+ 
+ .redeem-h2{
+ 	margin: 10px auto;
+ 	font-size: 19px;
+    font-family: sans-serif;
+    color: #b55027;
+ }
+ 
+ .confirm-label{
+ 	  font-size: 12px;
+ }
+ 
+ .text-md-center{
+    background: #3b80bd;
+    color: #fbfbfb;
+ }
