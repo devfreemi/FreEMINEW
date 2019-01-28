@@ -10,17 +10,16 @@
 <html lang="en">
 <head>
 <title>FreEMI Dashboard</title>
-
+<jsp:include page="include/bootstrap.jsp"></jsp:include>
 <link
 	href="<c:url value="${contextcdn}/resources/css/my-dashboard.component.css"/>"
 	rel="stylesheet">
-
 <link href="<c:url value="${contextcdn}/resources/css/styles.css"/>"
 	rel="stylesheet">
-<jsp:include page="include/bootstrap.jsp"></jsp:include>
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
 <script src="<c:url value="${contextPath}/resources/js/investment.js" />"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
-
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script> -->
 
 </head>
 
@@ -38,7 +37,7 @@
 		<section class="top-section">
 			<div class="row dashboard_content">
 				<div class="col-md-4 col-lg-4 outer_box">
-					<div class="box-dashboard box-style1">
+					<div class="box-dashboard box-style1 animated fadeIn">
 						<div class="header header-back1">
 							<h5>FreEMI Credit</h5>
 						</div>
@@ -59,7 +58,7 @@
 
 				</div>
 				<div class="col-md-4 col-lg-4 outer_box">
-					<div class="box-dashboard box-style2">
+					<div class="box-dashboard box-style2 animated fadeIn" id="dashbox2">
 						<div class="header header-back2">
 							<h5>Registry</h5>
 						</div>
@@ -73,10 +72,10 @@
 									<h6>TOTAL ASSETS</h6>
 								</div>
 								<div class="col-6">
-									<h4>
+									<h5>
 										<i class="fas fa-rupee-sign"> </i>
 										<fmt:formatNumber value="${totalasset }" type="number" />
-									</h4>
+									</h5>
 								</div>
 							</div>
 						</div>
@@ -87,7 +86,7 @@
 
 				</div>
 				<div class="col-md-4 col-lg-4 outer_box">
-					<div class="box-dashboard box-style3">
+					<div class="box-dashboard box-style3 animated fadeIn">
 						<div class="header header-back3">
 							<h5>F-Secure</h5>
 						</div>
@@ -185,7 +184,7 @@
 											<caption>FSecure Purchse History</caption>
 											<thead class="fsecure-records">
 												<tr>
-													<th scope="col">Insrunce Type</th>
+													<th scope="col">Insurance Type</th>
 													<th scope="col">Insurer Name</th>
 													<th scope="col">Nominee Name</th>
 													<th scope="col">Term</th>

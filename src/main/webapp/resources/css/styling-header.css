@@ -1,0 +1,25 @@
+@media only screen and (max-width: 992px) {
+	.icon-for-mobileview {width:30px;float: left; display:inline-block!important;}
+	.logo-styling {height: 45px!important;margin-left:0%!important;}
+	.navbar-nav {margin-left:7%!important;}
+	.styling-header:link { font-size:15px!important;}
+    .signup-styling , .login-styling{font-size:15px!important;}
+}
+
+.bg-dark {background-color: #18445b !important}
+.logo-styling {height: 65px;margin-left:66%;}
+.beta-styling {font-size: 16px; margin-left: -10px;}
+.icon-for-mobileview {display:none;}
+.navbar-nav {margin-left:45%;}
+.navbar-nav li {padding-top: 7px;}
+.nav-link {display:inline;}
+.dropdown-toggle{display: initial;}
+.nav-link-styling{padding: 0;margin-right: 5px;}
+.signup-styling , .login-styling{color: coral;font-size:14px; margin-left: 10px;}
+.styling-header:link {color:#a6e8de!important; font-size:14px; }
+.styling-header:visited {color:#a6e8de!important;}
+.showdrop{background-color:#eae2d1;}
+.navbar-dropdown-hover-effect:hover{background-color:#00475a; color:#a6e8de;}
+
+
+

@@ -15,20 +15,19 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import com.freemi.common.util.CommonConstants;
-import com.freemi.entity.Birla.NewFolioCreateOutput;
-import com.freemi.entity.Birla.NewFolioCreationInput;
-import com.freemi.entity.Birla.NewFolioCreationInput.Request;
-import com.freemi.entity.Birla.SavePostPurchaseMultiRequestInput;
-import com.freemi.entity.Birla.SavePostPurchaseMultiRequestInput.PostSaveJson;
-//import com.freemi.entity.Birla.SavePrePurchaseMultiRequestInput.SchemeDetails;
-import com.freemi.entity.Birla.SavePostSIPMultipleSchemesInput;
-import com.freemi.entity.Birla.SavePostSIPMultipleSchemesInput.PostSIPMultipleSchemes;
-import com.freemi.entity.Birla.SavePrePurchaseMultiRequestInput;
-import com.freemi.entity.Birla.SavePreSIPMultipleSchemesInput;
-import com.freemi.entity.Birla.SavePreSIPMultipleSchemesInput.PreSIPMultipleSchemes;
-import com.freemi.entity.Birla.SavePreSIPMultipleSchemesInput.PreSIPMultipleSchemes.SchemeDetails;
+import com.freemi.entity.birla.NewFolioCreateOutput;
+import com.freemi.entity.birla.NewFolioCreationInput;
+import com.freemi.entity.birla.SavePostPurchaseMultiRequestInput;
+import com.freemi.entity.birla.SavePostSIPMultipleSchemesInput;
+import com.freemi.entity.birla.SavePrePurchaseMultiRequestInput;
+import com.freemi.entity.birla.SavePreSIPMultipleSchemesInput;
+import com.freemi.entity.birla.ValidateAadhaarOTPOutput;
+import com.freemi.entity.birla.NewFolioCreationInput.Request;
+import com.freemi.entity.birla.SavePostPurchaseMultiRequestInput.PostSaveJson;
+import com.freemi.entity.birla.SavePostSIPMultipleSchemesInput.PostSIPMultipleSchemes;
+import com.freemi.entity.birla.SavePreSIPMultipleSchemesInput.PreSIPMultipleSchemes;
+import com.freemi.entity.birla.SavePreSIPMultipleSchemesInput.PreSIPMultipleSchemes.SchemeDetails;
 import com.freemi.entity.database.UserBankDetails;
-import com.freemi.entity.Birla.ValidateAadhaarOTPOutput;
 import com.freemi.entity.general.ClientSystemDetails;
 import com.freemi.entity.investment.FolioCreationStatus;
 import com.freemi.entity.investment.MFInvestForm;
@@ -295,8 +294,8 @@ public class BirlaBeansMapper {
 		
 		SavePrePurchaseMultiRequestInput lumpsum = new SavePrePurchaseMultiRequestInput();
 		SavePrePurchaseMultiRequestInput.LumpsumScheme input = new SavePrePurchaseMultiRequestInput.LumpsumScheme();
-		SavePrePurchaseMultiRequestInput.LumpsumScheme.SchemeDetails scheme = new com.freemi.entity.Birla.SavePrePurchaseMultiRequestInput.LumpsumScheme.SchemeDetails();
-		ArrayList<SavePrePurchaseMultiRequestInput.LumpsumScheme.SchemeDetails> schemeDetails = new ArrayList<com.freemi.entity.Birla.SavePrePurchaseMultiRequestInput.LumpsumScheme.SchemeDetails>();
+		SavePrePurchaseMultiRequestInput.LumpsumScheme.SchemeDetails scheme = new com.freemi.entity.birla.SavePrePurchaseMultiRequestInput.LumpsumScheme.SchemeDetails();
+		ArrayList<SavePrePurchaseMultiRequestInput.LumpsumScheme.SchemeDetails> schemeDetails = new ArrayList<com.freemi.entity.birla.SavePrePurchaseMultiRequestInput.LumpsumScheme.SchemeDetails>();
 		
 		input.setUserId(BirlaConnectorsImpl.USERID);
 		input.setPassword(BirlaConnectorsImpl.PASSWORD);

@@ -1,11 +1,43 @@
 package com.freemi.entity.investment;
 
-public class FolioPaymentStatus {
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+@Entity
+@Table(name="bsemf_transactions_payment_status")
+public class FolioPaymentStatus implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name="")
+	private long serial;
+	
+	
+	@Transient
 	public String folioNumber;
+	
+	@Id
+	@Column(name="TRANSACTION_ID")
 	public String transNumber;
+	
+	@Column(name="PAYMENT_STATUS")
 	private String paymentStatus;
+	
+	@Column(name="PAYMENT_REFERENCE_ID")
 	private String returnCode;
+	
+	
 	public String getFolioNumber() {
 		return folioNumber;
 	}

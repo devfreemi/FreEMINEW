@@ -24,7 +24,7 @@
 						<form:hidden path="schemeName" id="schemeName"/>
 						<form:hidden path="amcCode" id="amcCode"/>
 						<div class="fund-data">Select Investment Type</div>
-						<div class="custom-control custom-radio custom-control-inline">
+						<div class="custom-control custom-radio custom-control-inline" style="">
 							<form:radiobutton path="investype" value="SIP"
 								id="transactionType1" name="transactionType1"
 								class="custom-control-input" />

@@ -531,7 +531,8 @@ translate
 }
 
 .col-form-label{
-	font-weight: bold;
+	/* font-weight: bold; */
+	font-size: 13px;
 }
 
 .purchase-form .form-group{
@@ -571,4 +572,8 @@ translate
  .text-md-center{
     background: #3b80bd;
     color: #fbfbfb;
+ }
+ 
+ .custom-control-label{
+ color: black;
  }

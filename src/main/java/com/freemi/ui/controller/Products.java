@@ -52,7 +52,7 @@ import com.freemi.entity.general.RegistryWish;
 import com.freemi.entity.investment.MFInvestForm;
 import com.freemi.entity.investment.MFInvestmentDates;
 import com.freemi.entity.investment.RegistryFunds;
-import com.freemi.ui.restclient.RestClient;
+import com.freemi.ui.restclient.RestClientProfile;
 
 @Controller
 @Scope("session")
@@ -93,7 +93,7 @@ public class Products {
 			logger.info("Error in register form");
 			return "register";
 		}
-		RestClient client = new RestClient();
+		RestClientProfile client = new RestClientProfile();
 		ResponseEntity<String> response = null;
 		try {
 			response = client.registerUser(registerForm);
@@ -367,7 +367,7 @@ public class Products {
 		//		logger.info(fsecureForm.getDob());
 
 		fsecureForm.setProductCode("2001");
-		RestClient client = new RestClient();
+		RestClientProfile client = new RestClientProfile();
 		ResponseEntity<String> response = null;
 		try {
 			response = client.fsecureRequest(fsecureForm,CommonTask.getClientSystemDetails(request).getClientIpv4Address());

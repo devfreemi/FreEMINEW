@@ -1,6 +1,7 @@
 package com.freemi.entity.investment;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -14,8 +15,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Proxy;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import com.freemi.entity.database.UserBankDetails;
 
@@ -39,33 +43,38 @@ public class BseMFInvestForm implements Serializable {
 	@Column(name="CLIENT_ID")
 	private String clientID;
 	
+	@NotBlank(message="Primary Holder PAn is mandatory")
 	@Column(name="PAN_NO_1")
 	private String pan1="";
 	
 	@Column(name="PAN_NO_2")
 	private String pan2="";
 	
+	@NotBlank(message="Investor name is mandatory")
 	@Column(name=" INVESTOR_1")
 	private String invName="";
 	
 	@Column(name="INVESTOR_2")
 	private String applicant2="";
 	
+	@NotBlank(message="Date of birth is mandatory")
 	@Column(name="INVESTOR_DOB")
 	private String invDOB="";
 	
+	@NotBlank(message="Please provide your gender")
 	@Column(name="GENDER")
 	private String gender="";
 	
 	@Column(name="AADHAAR_INVESTOR_1")
 	private String aadhaar;
 	
+	@NotNull(message="Provide your holding mode")
 	@Column(name="HOLDING_MODE")
 	private String holdingMode;
 	
 	@Transient
 	@Column(name="")
-	private String ubo;
+	private boolean ubo;
 	
 	@Transient
 	@Column(name="")
@@ -74,14 +83,15 @@ public class BseMFInvestForm implements Serializable {
 	@Column(name="EMAIL")
 	private String email;
 	
+	@NotNull(message="Mobile number is mandatory")
 	@Column(name="MOBILE_NO")
 	private String mobile;
 	
 	@Column(name="DIVIDEND_PAY_MODE")
-	private String dividendPayMode;
+	private String dividendPayMode="02";
 	
 	@Column(name="OCCUPATION_CODE")
-	private String occupation;
+	private String occupation="02";
 	
 	@Transient
 	@Column(name="")
@@ -147,6 +157,17 @@ public class BseMFInvestForm implements Serializable {
 	@Column(name="")
 	private String aadhaarVerifyStatusCode="";
 	
+	@Column(name="BSE_REGISTRATION_SUCCESS")
+	private String bseregistrationSuccess="N";
+	
+	@Column(name="AOF_UPLOAD_COMPLETE")
+	private String aofuploadComplete="N";
+	
+	@Column(name="REGISTER_TIME")
+	private Date registrationTime;
+	
+	
+	
 	@Transient
 	@Column(name="")
 	private String kycType="";
@@ -201,7 +222,7 @@ public class BseMFInvestForm implements Serializable {
 
 
 	public void setPan1(String pan1) {
-		this.pan1 = pan1;
+		this.pan1 = pan1.toUpperCase();
 	}
 
 
@@ -211,7 +232,7 @@ public class BseMFInvestForm implements Serializable {
 
 
 	public void setPan2(String pan2) {
-		this.pan2 = pan2;
+		this.pan2 = pan2.toUpperCase();
 	}
 
 
@@ -460,13 +481,15 @@ public class BseMFInvestForm implements Serializable {
 		this.aadhaarbaseKYCrefId = aadhaarbaseKYCrefId;
 	}
 
-	public String getUbo() {
+
+	public boolean isUbo() {
 		return ubo;
 	}
 
-	public void setUbo(String ubo) {
+	public void setUbo(boolean ubo) {
 		this.ubo = ubo;
 	}
+
 
 	public String getTaxStatus() {
 		return taxStatus;
@@ -520,7 +543,34 @@ public class BseMFInvestForm implements Serializable {
 		this.fundPurchaseDetails = fundPurchaseDetails;
 	}
 
+
+	public String getBseregistrationSuccess() {
+		return bseregistrationSuccess;
+	}
+
+
+	public void setBseregistrationSuccess(String bseregistrationSuccess) {
+		this.bseregistrationSuccess = bseregistrationSuccess;
+	}
 	
-	
+
+	public String getAofuploadComplete() {
+		return aofuploadComplete;
+	}
+
+
+	public void setAofuploadComplete(String aofuploadComplete) {
+		this.aofuploadComplete = aofuploadComplete;
+	}
+
+
+	public Date getRegistrationTime() {
+		return registrationTime;
+	}
+
+
+	public void setRegistrationTime(Date registrationTime) {
+		this.registrationTime = registrationTime;
+	}
 	
 }

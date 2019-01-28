@@ -5,12 +5,12 @@ import javax.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.freemi.entity.Birla.ValidateAadhaarOTPOutput;
+import com.freemi.controller.interfaces.InvestmentConnectorInterfaces;
+import com.freemi.entity.birla.ValidateAadhaarOTPOutput;
 import com.freemi.entity.database.UserBankDetails;
 import com.freemi.entity.general.ClientSystemDetails;
 import com.freemi.entity.investment.FolioCreationStatus;
 import com.freemi.entity.investment.MFInvestForm;
-import com.freemi.services.partners.Interfaces.InvestmentConnectorInterfaces;
 
 public class IciciConnectorsImpl implements InvestmentConnectorInterfaces {
 	

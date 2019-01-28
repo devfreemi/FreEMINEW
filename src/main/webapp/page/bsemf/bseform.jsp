@@ -76,11 +76,12 @@
 				<div class="form-group col-md-6">
 					<div class="input-group mb-1">
 						<div class="input-group-prepend">
-							<span class="input-group-text" id="basic-addon3">PAN 1</span>
+							<span class="input-group-text" id="basic-addon3">PAN 1<sup
+								style="color: red">*</sup></span>
 						</div>
 						<form:input type="text" class="form-control form-control-custom"
-							id="pan" style="text-transform: uppercase;" maxlength="10"
-							aria-describedby="basic-addon3" path="pan1" />
+							id="pan1" style="text-transform: uppercase;" maxlength="10"
+							required="required" aria-describedby="basic-addon3" path="pan1" />
 					</div>
 
 				</div>
@@ -90,7 +91,7 @@
 							<span class="input-group-text" id="basic-addon3">PAN 2</span>
 						</div>
 						<form:input type="text" class="form-control form-control-custom"
-							id="pan" style="text-transform: uppercase;" maxlength="10"
+							id="pan2" style="text-transform: uppercase;" maxlength="10"
 							aria-describedby="basic-addon3" path="pan2" />
 					</div>
 
@@ -110,10 +111,11 @@
 					<div class="form-group col-md-6">
 						<div class="input-group mb-1">
 							<div class="input-group-prepend">
-								<span class="input-group-text" id="basic-addon3">Name</span>
+								<span class="input-group-text" id="basic-addon3">Name<sup
+									style="color: red">*</sup></span>
 							</div>
 							<form:input type="text" class="form-control form-control-custom"
-								maxlength="128" id="invName" path="invName"
+								maxlength="128" id="invName" path="invName" required="required"
 								aria-describedby="basic-addon3" />
 						</div>
 					</div>
@@ -121,10 +123,12 @@
 						<div class="input-group mb-1">
 							<div class="input-group-prepend">
 								<span class="input-group-text" id="basic-addon3">Date of
-									Birth</span>
+									Birth<sup style="color: red">*</sup>
+								</span>
 							</div>
-							<form:input type="date" path="invDOB"
+							<form:input type="date" path="invDOB" required="required"
 								class="form-control form-control-custom" id="investorDOB" />
+							<span style="font-size: 10px; color: #d05c41;"><sup>*</sup>Age limit: 18-65 years</span>
 						</div>
 					</div>
 
@@ -134,10 +138,11 @@
 					<div class="form-group col-md-6">
 						<div class="input-group mb-1">
 							<div class="input-group-prepend">
-								<span class="input-group-text" id="basic-addon3">Email ID</span>
+								<span class="input-group-text" id="basic-addon3">Email ID<sup
+									style="color: red">*</sup></span>
 							</div>
 							<form:input type="text" class="form-control form-control-custom"
-								maxlength="128" id="email" path="email"
+								maxlength="128" id="email" path="email" required="required"
 								aria-describedby="basic-addon3" />
 						</div>
 					</div>
@@ -145,11 +150,12 @@
 						<div class="input-group mb-1">
 							<div class="input-group-prepend">
 								<span class="input-group-text" id="basic-addon3">Mobile
-									no.</span>
+									no.<sup style="color: red">*</sup>
+								</span>
 							</div>
 							<form:input type="text" class="form-control form-control-custom"
 								maxlength="10" pattern="[0-9]*" id="mobile" path="mobile"
-								aria-describedby="basic-addon3" />
+								required="required" aria-describedby="basic-addon3" />
 						</div>
 					</div>
 
@@ -160,7 +166,8 @@
 						<div class="input-group mb-1">
 							<div class="input-group-prepend">
 								<span class="input-group-text" id="basic-addon3">Dividend
-									pay mode </span>
+									pay mode<sup style="color: red">*</sup>
+								</span>
 							</div>
 							<form:select class="custom-select" id="dividendPayMode"
 								path="dividendPayMode">
@@ -171,7 +178,8 @@
 					<div class="form-group col-md-6">
 						<div class="input-group mb-1">
 							<div class="input-group-prepend">
-								<span class="input-group-text" id="basic-addon3">Occupation</span>
+								<span class="input-group-text" id="basic-addon3">Occupation<sup
+									style="color: red">*</sup></span>
 							</div>
 							<form:select class="custom-select" id="occupation"
 								path="occupation">
@@ -274,24 +282,7 @@
 
 				</div>
 
-				<div class="sectionheader">
-					<h5>
-						<img
-							src="<c:url value="${contextPath}/resources/images/invest/declaration.svg"/>"
-							class="img-fluid" style="height: 15px;"> Declarations
-					</h5>
-				</div>
 
-				<div class="form-row" style="margin-bottom: 5px;padding-left: 5px;">
-					
-					<div class="custom-control custom-checkbox">
-							<form:checkbox path="ubo" value="Y" id="customCheck1"
-								class="custom-control-input" />
-							<label class="custom-control-label" for="customCheck1">I agree to
-							the terms &amp; conditions </label>
-						</div>
-
-				</div>
 
 			</div>
 
@@ -331,13 +322,14 @@
 				<div class="form-group col-md-6">
 					<div class="input-group mb-1">
 						<div class="input-group-prepend">
-							<span class="input-group-text">Account no.</span>
+							<span class="input-group-text">Account no.<sup
+								style="color: red">*</sup></span>
 						</div>
 						<form:input type="text" class="form-control form-control-custom"
 							id="accountno" path="bankDetails.accountNumber"
 							aria-describedby="basic-addon3" />
 					</div>
-					<span style="font-size: 10px; color: #2f79c7;"><sup>*</sup>Account
+					<span style="font-size: 10px; color: #d05c41;"><sup>*</sup>Account
 						must belong to investor.</span>
 				</div>
 
@@ -348,7 +340,7 @@
 								Type</span>
 						</div>
 						<form:select class="custom-select" id="accountType"
-							path="bankDetails.accountType">
+							required="required" path="bankDetails.accountType">
 							<form:option value="">Select Account Type</form:option>
 							<form:options items="${accountTypes}" />
 						</form:select>
@@ -363,10 +355,11 @@
 				<div class="form-group col-md-6">
 					<div class="input-group mb-1">
 						<div class="input-group-prepend">
-							<span class="input-group-text">IFSC Code</span>
+							<span class="input-group-text">IFSC Code<sup
+								style="color: red">*</sup></span>
 						</div>
 						<form:input type="text" class="form-control form-control-custom"
-							id="ifsc" path="bankDetails.ifscCode"
+							id="ifsc" path="bankDetails.ifscCode" required="required"
 							aria-describedby="basic-addon3" maxlength="11" />
 					</div>
 					<span id="invalidifsc" style="color: red; font-size: 11px;"></span>
@@ -444,10 +437,11 @@
 				<div class="form-group col-md-6">
 					<div class="input-group mb-1">
 						<div class="input-group-prepend">
-							<span class="input-group-text" id="basic-addon3">Address 1</span>
+							<span class="input-group-text" id="basic-addon3">Address 1<sup
+								style="color: red">*</sup></span>
 						</div>
 						<form:input type="text" class="form-control form-control-custom"
-							id="address1" path="addressDetails.address1"
+							required="required" id="address1" path="addressDetails.address1"
 							aria-describedby="basic-addon3" />
 					</div>
 				</div>
@@ -477,10 +471,11 @@
 				<div class="form-group col-md-6">
 					<div class="input-group mb-1">
 						<div class="input-group-prepend">
-							<span class="input-group-text" id="basic-addon3">City</span>
+							<span class="input-group-text" id="basic-addon3">City<sup
+								style="color: red">*</sup></span>
 						</div>
 						<form:input type="text" class="form-control form-control-custom"
-							id="address city" path="addressDetails.city"
+							required="required" id="address city" path="addressDetails.city"
 							aria-describedby="basic-addon3" />
 					</div>
 				</div>
@@ -488,21 +483,23 @@
 				<div class="form-group col-md-6">
 					<div class="input-group mb-1">
 						<div class="input-group-prepend">
-							<span class="input-group-text" id="basic-addon3">Pin Code</span>
+							<span class="input-group-text" id="basic-addon3">Pin Code<sup
+								style="color: red">*</sup></span>
 						</div>
 						<form:input type="text" class="form-control form-control-custom"
-							id="pinCode" path="addressDetails.pinCode"
-							aria-describedby="basic-addon3" />
+							id="pinCode" path="addressDetails.pinCode" maxlength="6"
+							required="required" aria-describedby="basic-addon3" />
 					</div>
 				</div>
 
 				<div class="form-group col-md-6">
 					<div class="input-group mb-1">
 						<div class="input-group-prepend">
-							<span class="input-group-text" id="basic-addon3">State</span>
+							<span class="input-group-text" id="basic-addon3">State<sup
+								style="color: red">*</sup></span>
 						</div>
 						<form:select class="custom-select" id="bankName"
-							path="addressDetails.state">
+							required="required" path="addressDetails.state">
 							<form:option value="" selected="true">Select your State</form:option>
 							<form:options items="${states}" />
 
@@ -549,7 +546,7 @@
 				<div class="col-md-6">
 					<label class="col-5 col-md-5 col-form-label label_design">Gender</label>
 					<label class="col-6 col-md-6 col-form-label label_design1"><span
-						id="genderDisplay" style="text-transform: uppercase;"></span></label>
+						id="genderDisplay"></span></label>
 				</div>
 			</div>
 
@@ -582,11 +579,11 @@
 			</div>
 
 			<div class="row gap_custom">
-				<div class="col-md-6">
+				<!-- <div class="col-md-6">
 					<label class="col-5 col-md-5 col-form-label label_design">Income
 						slab </label> <label class="col-6 col-md-6 col-form-label label_design1"><span
 						id="incomeslabDisplay"></span></label>
-				</div>
+				</div> -->
 				<div class="col-md-6">
 					<label class="col-5 col-md-5 col-form-label label_design">Occupation
 					</label> <label class="col-6 col-md-6 col-form-label label_design1"><span
@@ -594,20 +591,20 @@
 				</div>
 			</div>
 
-			<div class="row gap_custom">
+			<div class="row gap_custom" id="secApplicant">
 				<div class="col-md-6">
-					<label class="col-5 col-md-5 col-form-label label_design">Place
-						of Birth </label> <label
+					<label class="col-5 col-md-5 col-form-label label_design">Second
+						Applicant </label> <label
 						class="col-6 col-md-6 col-form-label label_design1"><span
-						id="birthPlaceDisplay"></span></label>
+						id="secondapplicantName"></span></label>
 				</div>
 				<div class="col-md-6">
-					<label class="col-5 col-md-5 col-form-label label_design">Marital
-						status </label> <label class="col-6 col-md-6 col-form-label label_design1"><span
-						id="maritalDisplay"></span></label>
+					<label class="col-5 col-md-5 col-form-label label_design">Applicant
+						PAN </label> <label class="col-6 col-md-6 col-form-label label_design1"><span
+						id="secondapplicantPan"></span></label>
 				</div>
-
 			</div>
+
 
 			<!-- ---------------------------------------------------------------------------------------------------------  -->
 			<div class="sectionheader">
@@ -636,27 +633,6 @@
 							id="nomineeNameDisplay"></span></label>
 					</div>
 					<div class="col-md-6">
-						<label class="col-5 col-md-5 col-form-label label_design">Date
-							of Birth </label> <label
-							class="col-6 col-md-6 col-form-label label_design1"><span
-							id="nomineeDOBDisplay"></span></label>
-					</div>
-				</div>
-
-
-				<div class="row gap_custom">
-					<div class="col-md-6">
-						<label class="col-5 col-md-5 col-form-label label_design">Address
-						</label> <label class="col-6 col-md-6 col-form-label label_design1"><span
-							id="nomineeaddress1Display"></span></label>
-					</div>
-					<!-- <div class="col-md-6">
-										<label class="col-5 col-md-5 col-form-label label_design">Address
-											2 </label> <label class="col-6 col-md-6 col-form-label label_design1"><span
-											id="nomineeaddress2Display"></span></label>
-									</div> -->
-
-					<div class="col-md-6">
 						<label class="col-5 col-md-5 col-form-label label_design">Relation
 						</label> <label class="col-6 col-md-6 col-form-label label_design1"><span
 							id="nomineeRelationDisplay"></span></label>
@@ -664,113 +640,25 @@
 				</div>
 
 				<!-- <div class="row gap_custom">
-									<div class="col-md-6">
-										<label class="col-5 col-md-5 col-form-label label_design">City
-										</label> <label class="col-6 col-md-6 col-form-label label_design1"><span
-											id="nomineeCityDisplay"></span></label>
-									</div>
-									<div class="col-md-6">
-										<label class="col-5 col-md-5 col-form-label label_design">State
-										</label> <label class="col-6 col-md-6 col-form-label label_design1"><span
-											id="nomineeStateDisplay"></span></label>
-									</div>
-								</div> -->
+					<div class="col-md-6">
+						<label class="col-5 col-md-5 col-form-label label_design">Date
+							of Birth </label> <label
+							class="col-6 col-md-6 col-form-label label_design1"><span
+							id="nomineeDOBDisplay"></span></label>
+					</div>
 
-				<!-- <div class="row gap_custom">
-									<div class="col-md-6">
-										<label class="col-5 col-md-5 col-form-label label_design">Relation
-										</label> <label class="col-6 col-md-6 col-form-label label_design1"><span
-											id="nomineeRelationDisplay"></span></label>
-									</div>
-									<div class="col-md-6">
-										<label class="col-5 col-md-5 col-form-label label_design">Pecentage
-										</label> <label class="col-6 col-md-6 col-form-label label_design1"><span
-											id="nomineePercentageDisplay"></span></label>
-									</div>
-								</div> -->
-
-
+					<div class="col-md-6">
+						<label class="col-5 col-md-5 col-form-label label_design">Relation
+						</label> <label class="col-6 col-md-6 col-form-label label_design1"><span
+							id="nomineeRelationDisplay"></span></label>
+					</div>
+				</div> -->
 
 			</div>
 
 			<!-- End of nominee selecttion -->
 
-			<!-- ---------------------------------------------------------------------------------------------------------  -->
-			<div class="sectionheader">
-				<h5>
-					<i class="fas fa-chart-line"></i> Investment Details
-				</h5>
-			</div>
 
-			<div class="row gap_custom">
-				<div class="col-md-6">
-					<label class="col-5 col-md-5 col-form-label label_design">Mutual
-						Fund Name </label> <label
-						class="col-6 col-md-6 col-form-label label_design1"><span
-						id="fundNameDisplay">${mfInvestForm.selectedFund.fundName }</span></label>
-				</div>
-				<div class="col-md-6">
-					<label class="col-5 col-md-5 col-form-label label_design">Scheme
-						Type </label> <label class="col-6 col-md-6 col-form-label label_design1"><span
-						id="schemeTypeDisplay">${mfInvestForm.selectedFund.schemeOption }</span></label>
-				</div>
-			</div>
-
-			<div class="row gap_custom">
-				<div class="col-md-6">
-					<label class="col-5 col-md-5 col-form-label label_design">Scheme
-						Name </label> <label class="col-6 col-md-6 col-form-label label_design1"><span
-						id="schemeNameDisplay"></span></label>
-				</div>
-				<div class="col-md-6">
-					<label class="col-5 col-md-5 col-form-label label_design">Amount
-					</label> <label class="col-6 col-md-6 col-form-label label_design1"><span
-						id="investAmountDisplay">${mfInvestForm.selectedFund.monthlySavings }</span></label>
-				</div>
-			</div>
-
-			<div class="row gap_custom">
-				<div class="col-md-6">
-					<label class="col-5 col-md-5 col-form-label label_design">Invest
-						Frequency </label> <label
-						class="col-6 col-md-6 col-form-label label_design1"> <c:if
-							test="S{mfInvestForm.mfInvestDates.invFrequency == '12'}">
-							<span id="investmentFrequency">Monthly</span>
-						</c:if> <c:if test="S{mfInvestForm.mfInvestDates.invFrequency == '13'}">
-							<span id="investmentFrequency">Lumpsum</span>
-						</c:if>
-					</label>
-				</div>
-				<div class="col-md-6">
-					<label class="col-5 col-md-5 col-form-label label_design">Investment
-						date </label> <label class="col-6 col-md-6 col-form-label label_design1">
-						<c:if test="${mfInvestForm.investmentType != 'TARGET_PLAN' }">
-							<span id="monthlyInvestDate"></span>
-						</c:if> <c:if test="${mfInvestForm.investmentType == 'TARGET_PLAN' }">
-							<span id="monthlyInvestDate"></span>
-						</c:if>
-					</label>
-				</div>
-			</div>
-
-			<c:if test="${mfInvestForm.investmentType != 'TARGET_PLAN' }">
-				<div class="row gap_custom">
-					<div class="col-md-6">
-						<label class="col-5 col-md-5 col-form-label label_design">Start
-							from </label> <label class="col-6 col-md-6 col-form-label label_design1"><span
-							id="startFrom"></span></label>
-					</div>
-					<div class="col-md-6">
-						<label class="col-5 col-md-5 col-form-label label_design">Till
-							date </label> <label class="col-6 col-md-6 col-form-label label_design1"><span
-							id="investTillDate"></span></label>
-					</div>
-				</div>
-			</c:if>
-
-
-
-			<!-- ---------------------------------------------------------------------------------------------------------  -->
 			<div class="sectionheader">
 				<h5>
 					<i class="fas fa-university"></i> Bank Details
@@ -843,19 +731,28 @@
 				</div>
 			</div>
 
+			<div class="sectionheader">
+				<h5>
+					<img
+						src="<c:url value="${contextPath}/resources/images/invest/declaration.svg"/>"
+						class="img-fluid" style="height: 15px;"> Declarations
+				</h5>
+			</div>
+
+			<div class="form-row" style="margin-bottom: 5px; padding-left: 5px;">
+
+				<div class="custom-control custom-checkbox">
+					<form:checkbox path="ubo" id="customCheck1"
+						class="custom-control-input" />
+					<label class="custom-control-label" for="customCheck1">I
+						agree to the terms &amp; conditions </label>
+				</div>
+
+			</div>
 
 		</div>
 
 	</div>
-
-	<!-- <div class="tab">
-					<div>
-					<span style="color: black;">Please wait while details are processed...</span>
-					</div>
-					</div> -->
-
-	<!-- End of investor details tab  -->
-
 
 
 	<div style="overflow: auto;">

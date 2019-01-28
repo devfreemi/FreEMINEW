@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.freemi.common.util.BseRelatedActions;
+import com.freemi.controller.interfaces.InvestmentConnectorBseInterface;
 import com.freemi.database.interfaces.BseCustomerAddressCrudRepository;
 import com.freemi.database.interfaces.BseCustomerBankDetailsCrudRespository;
 import com.freemi.database.interfaces.BseCustomerCrudRespository;
@@ -42,6 +43,9 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	BseTransCrudRepository bseTransCrudRepository;
 	
 	@Autowired
+	InvestmentConnectorBseInterface investmentConnectorBseInterface;
+	
+	@Autowired
 	TopFundsRepository topFundsRepository;
 	
 	@Autowired
@@ -54,17 +58,32 @@ public class BseEntryServiceImpl implements BseEntryManager {
 
 	@Override
 	public String saveCustomerDetails(BseMFInvestForm customerForm) {
-		// TODO Auto-generated method stub
+		logger.info("saveCustomerDetails(): Begin registration process for customer PAN- "+ customerForm.getPan1());
 		String flag = "SUCCESS";
+		String customerid ="";
+		boolean registerCustomerToBse = false;
 
 		if(bseCustomerCrudRespository.existsByPan1(customerForm.getPan1())){
 			logger.info("Account already exist with given primary PAN number");
-			flag="EXIST";
+//			Check account registered at BSE end. IF status is no, only try to push exiiting customer details to BSE
+			String bseRegisterStatus = bseCustomerCrudRespository.getBseRegistrationStatus(customerForm.getPan1());
+			if(bseRegisterStatus.equals("Y")){
+				logger.info("Customer already registered both at FREEMI and BSE");
+				flag="EXIST";
+			}else{
+				logger.info("Customer registered at FREEMI but BSE registration not complete. Try to register at BSE end only with current details");
+				customerid= bseCustomerCrudRespository.getClientIdFromPan(customerForm.getPan1());
+				customerForm.setClientID(customerid);
+				customerForm.getBankDetails().setClientID(customerid);
+				customerForm.getAddressDetails().setClientID(customerid);
+				customerForm.getNominee().setClientID(customerid);
+				registerCustomerToBse = true;
+			}
 		}else{
 			
 			//Generate client ID
 			int loop =1;
-			String customerid ="";
+			
 			do{
 				if(loop>=2){
 					logger.warn("Previously generated client ID already exist for another- "+ customerid);
@@ -78,13 +97,30 @@ public class BseEntryServiceImpl implements BseEntryManager {
 			customerForm.getBankDetails().setClientID(customerid);
 			customerForm.getAddressDetails().setClientID(customerid);
 			customerForm.getNominee().setClientID(customerid);
+			customerForm.setRegistrationTime(new Date());
 			logger.info("Transaction started to save BSE customer registrastion data");
-			
 			
 			bseCustomerCrudRespository.save(customerForm);
 			bseCustomerCrudRespository.flush();
+			registerCustomerToBse = true;
 			logger.info("Customer record saved successfully to database");
 		}
+		
+		if(registerCustomerToBse){
+			
+			logger.info("Customer registered at FREEMI portal. Begin to push customer details at BSE end");
+			String bseResponse = investmentConnectorBseInterface.saveCustomerRegistration(customerForm, null);
+			if(bseResponse.equalsIgnoreCase("SUCCESS")){
+				//User registration successful at BSE portal
+				bseCustomerCrudRespository.updateBseRegistrationStatus(customerid);
+				logger.info("Customer registration status updated successfully");
+			}else{
+				logger.info("Failed to push customer details to BSE platform. Failure reason- "+ bseResponse);
+				flag = bseResponse;
+			}
+			
+		}
+		
 		return flag;
 	}
 

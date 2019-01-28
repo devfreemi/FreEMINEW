@@ -1,11 +1,17 @@
 package com.freemi.ui.controller;
 
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.freemi.common.util.CommonConstants;
@@ -37,10 +44,11 @@ import com.freemi.database.service.DatabaseEntryManager;
 import com.freemi.entity.database.CampaignSignupForm;
 import com.freemi.entity.general.ClientSystemDetails;
 import com.freemi.entity.general.ContactUsForm;
+import com.freemi.entity.general.Folios;
 import com.freemi.entity.general.ForgotPassword;
 import com.freemi.entity.general.Login;
 import com.freemi.ui.restclient.GoogleSecurity;
-import com.freemi.ui.restclient.RestClient;
+import com.freemi.ui.restclient.RestClientProfile;
 
 
 
@@ -67,15 +75,20 @@ public class HomeController {
 
 
 	@RequestMapping(value = "/login", method = RequestMethod.GET )
-	public String login(Model map, HttpServletRequest request, HttpSession session) {
+	public String login(@RequestParam(name="ref",required=false)String referrerUrl,Model map, HttpServletRequest request, HttpSession session) {
 		//logger.info("@@@@ Inside Login..");
-		map.addAttribute("login", new Login());
 		
 		logger.info("@@@@ LoginController @@@@");
-
+		System.out.println("Referrer url if passed-"+ referrerUrl!=null?referrerUrl:request.getHeader("Referer"));
+		map.addAttribute("login", new Login());
 		//		logger.info("Referer- "+ request.getHeader("Referer"));
 		//		model.addAttribute("returnSite", request.getHeader("Referer"));
-		session.setAttribute("returnSite", request.getHeader("Referer"));
+		System.out.println("url from referrer- "+ request.getHeader("Refrer"));
+		try {
+			session.setAttribute("returnSite", referrerUrl!=null?URLDecoder.decode(referrerUrl, StandardCharsets.UTF_8.toString()):request.getHeader("Referer"));
+		} catch (UnsupportedEncodingException e) {
+			logger.error("Failed to decode string",e);
+		}
 		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 		return "login";
 	}
@@ -125,9 +138,11 @@ public class HomeController {
 					returnUrl="redirect:/";
 				}else
 					returnUrl = "redirect:/"+ uri.getRawPath().split("/products/")[1];
+//					returnUrl = "redirect:/"+uri.getRawPath();
 			} catch (MalformedURLException e1) {
 				// TODO Auto-generated catch block
 				//				e1.printStackTrace();
+				logger.error("Logincontroller post: Failed to form the URL",e1);
 				returnUrl = "redirect:/";
 			}catch(ArrayIndexOutOfBoundsException e){
 				returnUrl = "redirect:/";
@@ -145,7 +160,7 @@ public class HomeController {
 			returnUrl = "redirect:/";
 		}
 
-		RestClient client = new RestClient();
+		RestClientProfile client = new RestClientProfile();
 		ResponseEntity<String> response = null;
 		
 
@@ -175,6 +190,7 @@ public class HomeController {
 			model.addAttribute("error", "Unable to process request currently");
 			returnUrl="login";
 		}
+		logger.info("Returning to URL- "+ returnUrl);
 		return returnUrl;
 	}
 
@@ -236,7 +252,7 @@ public class HomeController {
 			}
 		}
 
-		RestClient client = new RestClient();
+		RestClientProfile client = new RestClientProfile();
 		ResponseEntity<String> response = null;
 		try {
 			response = client.forgotPassword(forgotPasswordForm);
@@ -281,7 +297,7 @@ public class HomeController {
 	public String contactRequestSubmit(@ModelAttribute("contactForm") ContactUsForm contactForm,Model model) {
 		//logger.info("@@@@ Inside Login..");
 		logger.info("@@@@ ContactDoController @@@@");
-		RestClient client = new RestClient();
+		RestClientProfile client = new RestClientProfile();
 		ResponseEntity<String> response = null;
 		try {
 			response = client.contactUs(contactForm);
@@ -354,7 +370,7 @@ public class HomeController {
 			
 			
 			// CAll to send mail from rest api
-			RestClient client = new RestClient();
+			RestClientProfile client = new RestClientProfile();
 			ResponseEntity<String> response = null;
 			try {
 				response = client.campaignSingUp(campaign);
@@ -400,6 +416,20 @@ public class HomeController {
 			e.printStackTrace();
 		}
 	}*/
+	
+	
+	 @RequestMapping(value = "/downloadPDF", method = RequestMethod.GET)
+	    public ModelAndView downloadExcel() {
+	        // create some sample data
+		 	System.out.println("PDF view");
+	        List<Folios> folioList = new ArrayList<Folios>();
+	        Folios f1 = new Folios();
+	        f1.setFolio_No("sdfsdfsd");
+	        f1.setInvestorName("adadad");
+	 
+	        // return a view which will be resolved by an excel view resolver
+	        return new ModelAndView("pdfView", "folioList", folioList);
+	    }
 	
 	
 /*	private Map<String, String> blogLinks(){

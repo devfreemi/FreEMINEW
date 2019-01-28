@@ -1,5 +1,7 @@
 package com.freemi.ui.config;
 
+import java.util.ResourceBundle;
+
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +14,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.springframework.web.servlet.view.ResourceBundleViewResolver;
 
 @Configuration
 @EnableWebMvc
@@ -53,14 +56,29 @@ public void addResourceHandlers(ResourceHandlerRegistry registry) {
   
 }
 
+/*
+//Enable this for pdf view support
+@Bean
+public ViewResolver configureViewResolver1() {
+    ResourceBundleViewResolver viewResolve = new ResourceBundleViewResolver();
+    viewResolve.setOrder(1);
+    viewResolve.setBasename("views");
+    System.out.println("@@@@ ResourceBundleViewResolver @@@@");
+    return viewResolve;
+}*/
+
 @Bean
 public ViewResolver configureViewResolver() {
     InternalResourceViewResolver viewResolve = new InternalResourceViewResolver();
+    viewResolve.setOrder(2);
     viewResolve.setPrefix("/page/");
     viewResolve.setSuffix(".jsp");
     System.out.println("@@@@ configureViewResolver @@@@");
     return viewResolve;
 }
+
+
+
 
 	/*private String decryptPassword(String encryptedText){
 		TextEncryptor t = Encryptors.text("freemipass", "5c0744940b5c369b");

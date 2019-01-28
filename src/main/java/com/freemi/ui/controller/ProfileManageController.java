@@ -31,16 +31,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freemi.common.util.CommonConstants;
 import com.freemi.common.util.CommonTask;
 import com.freemi.common.util.InvestFormConstants;
-import com.freemi.database.service.BseEntryManager;
-import com.freemi.entity.database.UserBankDetails;
+//import com.freemi.database.service.BseEntryManager;
 import com.freemi.entity.general.ProfilePasswordChangeForm;
 import com.freemi.entity.general.ResetPassword;
 import com.freemi.entity.general.UserProfile;
-import com.freemi.entity.investment.BseAllTransactionsView;
-import com.freemi.entity.investment.BseMFInvestForm;
-import com.freemi.entity.investment.SelectMFFund;
+//import com.freemi.entity.investment.BseAllTransactionsView;
 import com.freemi.ui.restclient.GoogleSecurity;
-import com.freemi.ui.restclient.RestClient;
+import com.freemi.ui.restclient.RestClientProfile;
 
 @Controller
 @Scope("session")
@@ -51,8 +48,8 @@ public class ProfileManageController{
 	@Autowired
 	private Environment environment;
 	
-	@Autowired
-	BseEntryManager bseEntryManager;
+	/*@Autowired
+	BseEntryManager bseEntryManager;*/
 	
 	private static final Logger logger = LogManager.getLogger(ProfileManageController.class);
 
@@ -62,13 +59,13 @@ public class ProfileManageController{
 		logger.info("@@@@ Get profile details..");
 		String returnurl = "";
 		int error = 0;
-		RestClient client = new RestClient();
+		RestClientProfile client = new RestClientProfile();
 		ResponseEntity<String> response = null;
 		if(session.getAttribute("token") == null){
 			returnurl="redirect:/login";
 		}else{
 			returnurl="profile";
-			/*
+			
 //			User Profile collection from LDAP			
 			try {
 				response = client.getProfileData(session.getAttribute("userid").toString(), session.getAttribute("token").toString(), CommonTask.getClientSystemDetails(request).getClientIpv4Address());
@@ -99,10 +96,10 @@ public class ProfileManageController{
 				model.addAttribute("error","Error processing request");
 				error =1;
 			}
-			*/
+			
 			
 //			User profile data collection from DB
-			try{
+			/*try{
 				UserProfile profile = bseEntryManager.getCustomerDetailsByMobile(session.getAttribute("userid").toString());
 				
 				model.addAttribute("profileBasic", profile);
@@ -116,7 +113,7 @@ public class ProfileManageController{
 				logger.error("Unable to fetch customer profile data from DB",e);
 				error =1;
 			}
-			
+			*/
 			if(error == 1){
 				model.addAttribute("error","Sorry. Unable to fetch your details currently.");
 				model.addAttribute("profileBasic", new UserProfile());
@@ -128,7 +125,7 @@ public class ProfileManageController{
 			
 		}
 		
-		
+		model.addAttribute("contextcdn", environment.getProperty(CommonConstants.CDN_URL));
 		logger.info("@@@@ ProfileController complete. @@@@");
 		return returnurl;
 	}
@@ -138,12 +135,14 @@ public class ProfileManageController{
 		
 		logger.info("@@@@ ProfileBasicDoController @@@@");
 		String returnurl="";
-		RestClient client = new RestClient();
+		RestClientProfile client = new RestClientProfile();
 		ResponseEntity<String> response = null;
 		if(session.getAttribute("token") == null){
 			returnurl="redirect:/login";
 		}else{
 			returnurl="profile";
+			
+//			Profile data change to ldap server
 			try {
 				response = client.updateProfileData(profile,session.getAttribute("userid").toString(), session.getAttribute("token").toString(),CommonTask.getClientSystemDetails(request).getClientIpv4Address());
 				System.err.println(response.getBody());
@@ -166,7 +165,6 @@ public class ProfileManageController{
 				logger.info("entering finally");
 			}
 			
-			
 		}
 		
 		return returnurl;
@@ -177,13 +175,13 @@ public class ProfileManageController{
 
 		logger.info("@@@@ ProfileAccountDoController @@@@");
 		String returnurl="";
-		RestClient client = new RestClient();
+		RestClientProfile client = new RestClientProfile();
 		ResponseEntity<String> response = null;
 		if(session.getAttribute("token") == null){
 			returnurl="redirect:/login";
 		}else{
 			returnurl="profile";
-			/*
+			
 //			Updating profile details into LDAP database
 			try {
 				response = client.updateProfileData(profileAccount,session.getAttribute("userid").toString(), session.getAttribute("token").toString(),CommonTask.getClientSystemDetails(request).getClientIpv4Address());
@@ -200,10 +198,10 @@ public class ProfileManageController{
 			}finally{
 				logger.info("entering finally");
 			}
-			*/
+			
 			
 //			Updating profile details in DB
-			try{
+			/*try{
 				bseEntryManager.updateCustomerBankDetails(profileAccount);
 				model.addAttribute("success", "Bank Account Details updated successfully");
 				
@@ -211,7 +209,7 @@ public class ProfileManageController{
 			}catch(Exception e){
 				logger.error("Failed to update Investor bank details in profile", e);
 				model.addAttribute("error", "Failed to update your bank details. Please contact admin.");
-			}
+			}*/
 			
 		}
 		
@@ -229,14 +227,16 @@ public class ProfileManageController{
 
 		logger.info("@@@@ ProfileAddressDoController @@@@");
 		
-		try{
+		
+//		Save through Database
+		/*try{
 			bseEntryManager.updateCustomerAddress(profileAddress);
 			model.addAttribute("success", "Address updated successfully");
 			
 		}catch(Exception e){
 			logger.error("Failed to update Investor address in profile", e);
 			model.addAttribute("error", "Failed to update Investor address. Please contact admin.");
-		}
+		}*/
 		
 		model.addAttribute("profileBasic", profile);
 		model.addAttribute("profileAccount", profileAccount);
@@ -260,7 +260,7 @@ public class ProfileManageController{
 
 		logger.info("@@@@ ProfilePasswordChange @@@@");
 		String returnurl="";
-		RestClient client = new RestClient();
+		RestClientProfile client = new RestClientProfile();
 		ResponseEntity<String> response = null;
 		if(session.getAttribute("token") == null){
 			returnurl="redirect:/login";
@@ -308,7 +308,8 @@ public class ProfileManageController{
 		}else{
 			returnurl = "my-dashboard";
 			// Get user's MF order history
-			try{
+			//This code is for new design. COmment out until deployed in prod
+			/*try{
 			List<BseAllTransactionsView> fundsOrder= bseEntryManager.getCustomerAllTransactionRecords(null,session.getAttribute("userid").toString(),null);
 			if(fundsOrder.size()>=1){
 			for(int i=0;i<fundsOrder.size();i++){
@@ -322,9 +323,10 @@ public class ProfileManageController{
 			}catch(Exception ex){
 				map.addAttribute("ORDERHISTORY", "ERROR");
 				logger.error("Failed to fetch cutomer Registry details \n", ex);
-			}
+			}*/
 		}
 		map.addAttribute("totalasset", totalAsset);
+		map.addAttribute("contextcdn", environment.getProperty(CommonConstants.CDN_URL));
 		logger.info("@@@@ DashboardController @@@@");
 		return returnurl;
 //		return "my-dashboard";
@@ -343,7 +345,7 @@ public class ProfileManageController{
 			returnurl="redirect:/login";
 		}else{
 			//validate token
-			RestClient client = new RestClient();
+			RestClientProfile client = new RestClientProfile();
 			ResponseEntity<String> responseEntity = null;
 			
 			try {
@@ -411,7 +413,7 @@ public class ProfileManageController{
 		logger.info("@@@@ ForgotPasswordresetController @@@@");
 		System.out.println(request.getQueryString());
 		String returnurl="";
-		RestClient client = new RestClient();
+		RestClientProfile client = new RestClientProfile();
 		
 		ResponseEntity<String> responseEntity = null;
 		

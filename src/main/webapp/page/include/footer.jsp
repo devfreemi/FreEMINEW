@@ -10,6 +10,7 @@
 						<div class="col-sm-6 col-lg-6"
 							style="margin: auto; font-size: 12px;">
 							<div>
+							<a href="//www.dmca.com/Protection/Status.aspx?ID=4e4b4b9a-9401-4868-bf05-5037775d3bfa" title="DMCA.com Protection Status" class="dmca-badge"> <img src ="https://images.dmca.com/Badges/dmca_protected_sml_120m.png?ID=4e4b4b9a-9401-4868-bf05-5037775d3bfa"  alt="DMCA.com Protection Status" /></a>  <script src="https://images.dmca.com/Badges/DMCABadgeHelper.min.js"> </script>
 								<a href="/products/contact" class="link_color">Contact Us</a>
 							</div>
 							<div>

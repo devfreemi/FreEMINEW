@@ -1,15 +1,12 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <c:set var="contextPath" value="/" />
-<link rel="shortcut icon" type="image/x-icon"
-	href="${contextPath}/freemi.ico" />
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark custom-bg-dark"
 	style="background-color: #18445b !important">
 	<div class="container">
-		<a class="navbar-brand" href="${contextPath}"> <img
-			src="<c:url value="${contextcdn}/resources/images/freemi.png"/>" class="img-fluid"
-			style="height: 45px;" alt="Logo"> <span
+		<a class="navbar-brand" href="${pageContext.request.contextPath}"> <img
+			src="<c:url value="${contextcdn}/resources/images/freemi.png"/>"
+			class="img-fluid" alt="FreEMI logo" style="height: 45px;"> <span
 			style="font-size: 12px; margin-left: -10px;"> <sub> <i>beta</i>
 			</sub>
 		</span>
@@ -27,90 +24,108 @@
 							aria-hidden="true"></i>
 					</span>
 				</a></li>
-				<!-- <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span><i class="fa fa-cogs" style="color: chartreuse; font-size: 14px;" aria-hidden="true"></i> Products</span>
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="freeEmi"><span><img src="assets/images/freeemi.png" width="30" height="5"> freeMI</span></a>
-                        <a class="dropdown-item" href="fsecure"><span><img src="assets/images/fsecure.png" alt="Insurance" width="30" height="5"> F-Secure</span></a>
-                        <a class="dropdown-item" (click)="goToRegistry()"><span><img src="assets/images/registry.jpg" width="30" height="5"> Registry</span> </a>
-                    </div>
-                </li> -->
-				<li class="nav-item">
-					<div class="nav-div">
-						<img src="<c:url value="${contextcdn}/resources/images/freemi_icon1.png"/>" alt="FreEMI logo"
-							width="30" height="5" style="position: absolute;"> <a
-							class="nav-link" style="margin-left: 30px; padding: 0;" href="/products/loans/">Loans <!-- <span
-							class="header_subname"> Loans</span> -->
-						</a>
-					</div>
-				</li>
-				<li class="nav-item">
-					<div class="nav-div">
-						<img src="<c:url value="${contextcdn}/resources/images/fsecure.png"/>" alt="Insurance product"
-							width="30" height="5" style="position: absolute;"> <a
-							class="nav-link" style="margin-left: 30px; padding: 0;" href="/products/fsecure-insurance/">F-Secure <br> <span
-							class="header_subname"> Insurance</span>
-						</a>
-					</div>
 
-				</li>
-				<li class="nav-item">
-					<div class="nav-div">
-						<img src="<c:url value="${contextcdn}/resources/images/registry.png"/>" alt="Mutual fund based product icon"
-							class="img-fluid" width="30" height="5"
-							style="position: absolute;"> <a class="nav-link"
-							href="/products/registry-mutual-funds/"
-							style="margin-left: 30px; padding: 0;">Mutual Fund Registry<!-- <br> <span
-							class="header_subname">A product of Mutual Funds</span> -->
-						</a>
-					</div>
-				</li>
-
-				<!-- <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      Registry
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                      <a class="dropdown-item" href="#">Action</a>
-                      <a class="dropdown-item" href="#">Another action</a>
-                      <a class="dropdown-item" href="#">Something else here</a>
-                      <li class="dropdown-submenu">
-                        <a  class="dropdown-item" tabindex="-1" href="#">Family</a>
-                        <ul class="dropdown-menu">
-                          <li class="dropdown-item"><a tabindex="-1" href="#">Tax Planning</a></li>
-                        </ul>
-                      </li>
-                    </div>
-                </li> -->
-
-				<li class="nav-item">
-                    <a class="nav-link" href="http://blog.freemi.in/freemiblogs/" target="_blank">
-                        <span>
-                            <i class="fas fa-rss" style="color: aqua;" aria-hidden="true"></i> Blogs</span>
-                    </a>
-                </li>
-				<li class="nav-item">
-					<a
-					class="nav-link" href="/products/tax-calculator"> <span>
-							<i class="fas fa-calculator" style="color: darkorange;"
-							aria-hidden="true"></i> Calculator
-					</span>
+				<li class="nav-item dropdown" style="padding-top: 7px;"><img
+					src="<c:url value="${contextcdn}/resources/images/freemi_icon1.png"/>"
+					alt="Loans icon" style="float: left;height: 2rem;">
+					<a class="nav-link dropdown-toggle" style="display: initial;"
+					href="/loans/"
+					id="navbarDropdownLoansLink" data-hover="dropdown"
+					data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Loans
 				</a>
-				</li>
-				<%-- <li class="nav-item">
-                    <a class="nav-link" href="${contextPath}/contact">
-                        <span>
-                            <i class="fas fa-envelope" style="color: whitesmoke;" aria-hidden="true"></i> Contact Us</span>
-                    </a>
-                </li> --%>
+					<div class="dropdown-menu custom-dropdown"
+						aria-labelledby="navbarDropdownLoansLink">
+						<a class="dropdown-item" href="/products/loans/">Home</a> <a
+							class="dropdown-item"
+							href="/loans/">Personal
+							loan</a> <a class="dropdown-item"
+							href="/loans/personal-loan-kolkata">Personal
+							loan in Kolkata</a>
+					</div></li>
+				<li class="nav-item dropdown" style="padding-top: 7px;"><img
+					src="<c:url value="${contextcdn}/resources/images/fsecure.png"/>"
+					alt="Insurace" style="float: left;height: 2rem;"> <a
+					class="nav-link dropdown-toggle" style="display: initial;"
+					href="/insurance/"
+					id="navbarDropdownInsuranceLink" data-hover="dropdown"
+					data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Insurance
+				</a>
+					<div class="dropdown-menu custom-dropdown"
+						aria-labelledby="navbarDropdownInsuranceLink">
+						<a class="dropdown-item"
+							href="/insurance/">Home</a> <a
+							class="dropdown-item"
+							href="/health-insurance/">Health
+							Insurance</a> <a class="dropdown-item"
+							href="/car-insurance/">Car
+							Insurance</a>
+					</div></li>
+				<li class="nav-item dropdown" style="padding-top: 7px;"><img
+					src="${pageContext.request.contextPath}/resources/images/cards/credit-card-ico.svg"
+					class="img-fluid" style="height: 32px;" alt="Credit Card"><a
+					class="nav-link dropdown-toggle" style="display: initial;"
+					href="${pageContext.request.contextPath}/insurance/"
+					id="navbarDropdownInsuranceLink" data-hover="dropdown"
+					data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Cards
+				</a>
+					<div class="dropdown-menu custom-dropdown"
+						aria-labelledby="navbarDropdownInsuranceLink">
+						<a class="dropdown-item"
+							href="/credit-card/">Apply for Credit Card</a>
+					</div></li>
+				<%-- <li class="nav-item" style="padding-top: 7px;">
+					<!-- 	<div class="nav-div"> --> <img
+					src="<c:url value="${contextcdn}/resources/images/registry.png"/>"
+					alt="Registry product" class="img-fluid" width="30" height="5"
+					style="float: left;"> <a class="nav-link"
+					href="mutual-funds/"
+					style="margin-left: 30px; padding: 0;margin-right: 5px;">Mutual Funds<!-- <br> <span
+							class="header_subname">A product of Mutual Funds</span> -->
+				</a> <!-- </div> -->
+				</li> --%>
+				
+				<li class="nav-item dropdown" style="padding-top: 7px;"><img
+					src="<c:url value="${contextcdn}/resources/images/registry.png"/>"
+					alt="Registry product" class="img-fluid" width="30" height="5"
+					style="float: left;"> <a
+					class="nav-link dropdown-toggle" style="display: initial;"
+					href="/mutual-funds/"
+					id="navbarDropdownInsuranceLink" data-hover="dropdown"
+					data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Mutual Funds
+				</a>
+					<div class="dropdown-menu custom-dropdown"
+						aria-labelledby="navbarDropdownInsuranceLink">
+						<a class="dropdown-item"
+							href="/mutual-funds/">Mutual Funds</a> <a
+							class="dropdown-item"
+							href="/products/mutual-funds/top-performing">Top Performing Funds</a> 
+							<!-- <a class="dropdown-item"
+							href="/car-insurance/">Car
+							Insurance</a> -->
+					</div></li>
+
+				<li class="nav-item dropdown" style="padding-top: 7px;"><i
+					class="fas fa-calculator" style="color: darkorange;"
+					aria-hidden="true"></i> <a class="nav-link dropdown-toggle"
+					style="display: initial;" href="/products/tax-calculator"
+					id="navbarDropdownCalLink" data-hover="dropdown"
+					data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Calculators
+				</a>
+					<div class="dropdown-menu custom-dropdown"
+						aria-labelledby="navbarDropdownCalLink">
+						<a class="dropdown-item" href="/products/tax-calculator">Tax
+							Calculator</a> <a class="dropdown-item"
+							href="/mutual-funds/sip-calculator">SIP
+							Calculator</a> <a class="dropdown-item"
+							href="/loans/emi-calculator">EMI
+							Calculator</a>
+					</div></li>
 
 				<c:choose>
 					<c:when test="${not empty sessionScope.loggedSession }">
 						<li class="nav-item dropdown user"><a
 							class="nav-link dropdown-toggle" href="#"
-							id="navbarDropdownMenuLink" data-toggle="dropdown"
+							id="navbarDropdownLogLink" data-toggle="dropdown"
 							aria-haspopup="true" aria-expanded="false"> <img
 								src="<c:url value="${contextcdn}/resources/images/avatar.png"/>"
 								class="img-fluid" style="height: 1.75em; margin-top: -5px;">
@@ -119,10 +134,10 @@
 							</span>
 						</a>
 							<div class="dropdown-menu"
-								aria-labelledby="navbarDropdownMenuLink">
-								<a class="dropdown-item" href="/products/my-dashboard">
-									<i class="fas fa-archive" style="color: rgb(84, 84, 236);"></i>
-									My dashboard
+								aria-labelledby="navbarDropdownLogLink">
+								<a class="dropdown-item" href="/products/my-dashboard"> <i
+									class="fas fa-archive" style="color: rgb(84, 84, 236);"></i> My
+									Dashboard
 								</a> <a class="dropdown-item" href="/products/profile"> <i
 									class="fas fa-user"></i> Profile
 								</a> <a class="dropdown-item" href="/products/logout"> <i

@@ -4,7 +4,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Component;
 
-import com.freemi.entity.Birla.ValidateAadhaarOTPOutput;
+import com.freemi.entity.birla.ValidateAadhaarOTPOutput;
 import com.freemi.entity.general.ClientSystemDetails;
 import com.freemi.entity.investment.FolioCreationStatus;
 import com.freemi.entity.investment.MFInvestForm;

@@ -15,13 +15,14 @@ import org.springframework.web.client.HttpServerErrorException;
 import com.freemi.common.util.CommonConstants;
 import com.freemi.common.util.UIMessages;
 import com.freemi.controller.interfaces.FolioManagementContoller;
+import com.freemi.controller.interfaces.InvestmentConnectorInterfaces;
 import com.freemi.database.service.DatabaseEntryManager;
 import com.freemi.database.service.FreemiServiceInterface;
-import com.freemi.entity.Birla.SavePostPurchaseMultiRequestOutput;
-import com.freemi.entity.Birla.SavePostSIPMultipleSchemesOutput;
-import com.freemi.entity.Birla.ValidateAadhaarOTPOutput;
-import com.freemi.entity.Birla.ValidateAadhaarOutput;
-import com.freemi.entity.Birla.ValidatePANOutput;
+import com.freemi.entity.birla.SavePostPurchaseMultiRequestOutput;
+import com.freemi.entity.birla.SavePostSIPMultipleSchemesOutput;
+import com.freemi.entity.birla.ValidateAadhaarOTPOutput;
+import com.freemi.entity.birla.ValidateAadhaarOutput;
+import com.freemi.entity.birla.ValidatePANOutput;
 import com.freemi.entity.general.ClientSystemDetails;
 import com.freemi.entity.investment.AadhaarVerifyStatus;
 import com.freemi.entity.investment.FolioCreationStatus;
@@ -29,7 +30,6 @@ import com.freemi.entity.investment.MFInvestForm;
 import com.freemi.entity.investment.PanValidationStatus;
 import com.freemi.services.partners.Impl.BirlaConnectorsImpl;
 import com.freemi.services.partners.Impl.BirlaConnectorsImplTest;
-import com.freemi.services.partners.Interfaces.InvestmentConnectorInterfaces;
 
 @Service
 public class FolioManagementImpl implements FolioManagementContoller {

@@ -21,3 +21,20 @@ function MFRedeem(folio,code,type){
 //	console.log(window.location.href);
 	window.location.assign(window.location.href+"/funds-redeem?r="+btoa(folio+"|"+code+"|"+type));
 }
+
+/*$(document).ready(function(){
+	$(".box-style2").hover(
+			function(){
+				console.log("animated")
+				$(this).addClass("animated pulse");
+			});
+});
+
+$(document).ready(function(){
+	$(".box-style2").blur(
+			function(){
+				console.log("remove animated");
+				$(this).removeClass("animated pulse");
+			});
+});*/
+

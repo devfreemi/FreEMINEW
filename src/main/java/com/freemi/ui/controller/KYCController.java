@@ -27,7 +27,8 @@ import com.freemi.common.util.CommonConstants;
 import com.freemi.common.util.CommonTask;
 import com.freemi.controller.implementations.FolioManagementImpl;
 import com.freemi.controller.interfaces.FolioManagementContoller;
-import com.freemi.entity.Birla.ValidateAadhaarOTPOutput;
+import com.freemi.controller.interfaces.RazorpayPayment;
+import com.freemi.entity.birla.ValidateAadhaarOTPOutput;
 import com.freemi.entity.general.AadhaarOTP;
 import com.freemi.entity.investment.AadhaarVerifyStatus;
 import com.freemi.entity.investment.FolioCreationStatus;
@@ -35,7 +36,6 @@ import com.freemi.entity.investment.MFInvestForm;
 import com.freemi.entity.investment.PanValidationStatus;
 import com.freemi.entity.investment.RazorpayPayObj;
 import com.freemi.entity.investment.RazorpayPayObj.RoutePay;
-import com.freemi.services.partners.Interfaces.RazorpayPayment;
 
 @Controller
 @SessionAttributes({"mfInvestForm"})

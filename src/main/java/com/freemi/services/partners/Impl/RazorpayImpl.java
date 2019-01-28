@@ -6,8 +6,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
+import com.freemi.controller.interfaces.RazorpayPayment;
 import com.freemi.entity.investment.RazorpayPayObj;
-import com.freemi.services.partners.Interfaces.RazorpayPayment;
 import com.razorpay.Payment;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;

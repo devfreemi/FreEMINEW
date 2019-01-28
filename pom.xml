@@ -196,6 +196,11 @@
     	<artifactId>spring-boot-devtools</artifactId>
     	<version>1.5.8.RELEASE</version>
     </dependency>
+    <dependency>
+    	<groupId>com.itextpdf</groupId>
+    	<artifactId>itextpdf</artifactId>
+    	<version>5.0.6</version>
+    </dependency>
 	</dependencies>
 
 	 <build>
