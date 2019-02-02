@@ -16,17 +16,17 @@
 			</div>
 			<form:form method="POST"
 				action="${pageContext.request.contextPath}/mutual-funds/purchase.do"
-				commandName="selectFund">
+				commandName="selectFund" onsubmit="return validateFundForm();">
 				<div class="modal-body">
 					<div>
-
+						<div><span style="font-size: 11px; color: red" id="error1"></span></div>
 						<form:hidden path="schemeCode" id="schemecode" />
 						<form:hidden path="schemeName" id="schemeName"/>
 						<form:hidden path="amcCode" id="amcCode"/>
 						<div class="fund-data">Select Investment Type</div>
-						<div class="custom-control custom-radio custom-control-inline" style="">
+						<div class="custom-control custom-radio custom-control-inline">
 							<form:radiobutton path="investype" value="SIP"
-								id="transactionType1" name="transactionType1"
+								id="transactionType1" name="transactionTypeVal"
 								class="custom-control-input" />
 							<label class="custom-control-label" for="transactionType1">SIP
 								(Monthly)</label>
@@ -56,7 +56,7 @@
 
 						<div class="btn-group btn-group-sm btn-group-toggle"
 							data-toggle="buttons" id="radioamount">
-							<label class="btn btn-outline-info"> <input type="radio"
+							<label class="btn btn-outline-info active"> <input type="radio"
 								value="2000" name="options" id="option1" autocomplete="off">
 								2,000
 							</label> <label class="btn btn-outline-info"> <input type="radio"
@@ -78,12 +78,12 @@
 					</div>
 					<div class="form-group">
 						<label for="pan" style="margin-bottom: 0; font-weight: 600;">PAN number</label> <form:input path="pan"
-							type="text" class="form-control fomr-control-sm" id="pan" style="height: 2rem;text-transform: uppercase;" required="required"
+							type="text" class="form-control fomr-control-sm" id="panval" style="height: 2rem;text-transform: uppercase;" required="required"
 							placeholder="PAN" maxlength="10;" />
 					</div>
 					
 					<div class="form-group" id="sipbox">
-						<label for="pan" style="margin-bottom: 0; font-weight: 600;">SIP Date</label>
+						<label for="sipDt" style="margin-bottom: 0; font-weight: 600;">SIP Date</label>
 						<div class="btn-group btn-group-sm btn-group-toggle"
 							data-toggle="buttons" id="radiosip">
 							<label class="btn btn-outline-primary"> <form:radiobutton

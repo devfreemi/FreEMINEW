@@ -10,7 +10,9 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.freemi.entity.bse.ClientMFD;
+import com.freemi.entity.bse.BseOrderEntry;
+import com.freemi.entity.bse.BseRegistrationMFD;
+import com.freemi.entity.bse.BseSipOrderEntry;
 
 public class RestClientBse {
 	
@@ -22,7 +24,7 @@ public class RestClientBse {
 //	private final String SERVICE_URL1 = "http://localhost:8080/freemibackend";
 	private static final String SERVICE_URL1 = "http://dev.freemi.in:8090/bsemfservice";
 	
-	public static String registerUser(ClientMFD form){
+	public static String registerUser(BseRegistrationMFD form){
 		logger.info("Beginning process to send reuest to bse service for registration..");
 		
 		final String url = SERVICE_URL1 + "/createuser";
@@ -47,6 +49,61 @@ public class RestClientBse {
 		if(returnRes.equalsIgnoreCase("100|RECORD INSERTED SUCCESSFULLY")){
 			returnRes = "SUCCESS";
 		}
+		return returnRes;
+	}
+	
+	
+	public static String purchaseRequestProcess(BseOrderEntry form){
+		
+		final String url = SERVICE_URL1 + "/orderlumpsum";
+		ObjectMapper mapper = new ObjectMapper();
+		RestTemplate restTemplate = new RestTemplate();
+		String formdata = null;
+		String returnRes="FAIL";
+		try {
+			formdata = mapper.writeValueAsString(form);
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		logger.info("Requesting purchase with details- "+ formdata);
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
+		HttpEntity<String> entity = new HttpEntity<String>(formdata,headers);
+		
+		ResponseEntity<?> response= restTemplate.postForEntity(url, entity,  String.class);
+		returnRes=response.getBody().toString();
+			logger.info("Response for purchase- "+ response.getBody().toString());
+		/*if(returnRes.equalsIgnoreCase("100|RECORD INSERTED SUCCESSFULLY")){
+			returnRes = "SUCCESS";
+		}*/
+		return returnRes;
+	}
+	
+public static String purchaseSIPRequestProcess(BseSipOrderEntry form){
+		
+		final String url = SERVICE_URL1 + "/ordersip";
+		ObjectMapper mapper = new ObjectMapper();
+		RestTemplate restTemplate = new RestTemplate();
+		String formdata = null;
+		String returnRes="FAIL";
+		try {
+			formdata = mapper.writeValueAsString(form);
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		logger.info("Requesting  SIP purchase with details- "+ formdata);
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
+		HttpEntity<String> entity = new HttpEntity<String>(formdata,headers);
+		
+		ResponseEntity<?> response= restTemplate.postForEntity(url, entity,  String.class);
+		returnRes=response.getBody().toString();
+			logger.info("Response for purchase- "+ response.getBody().toString());
+		/*if(returnRes.equalsIgnoreCase("100|RECORD INSERTED SUCCESSFULLY")){
+			returnRes = "SUCCESS";
+		}*/
 		return returnRes;
 	}
 

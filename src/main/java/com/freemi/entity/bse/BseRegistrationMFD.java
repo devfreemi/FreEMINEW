@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ClientMFD implements Serializable{
+public class BseRegistrationMFD implements Serializable{
 	/**
 	 * 
 	 */
@@ -244,16 +244,16 @@ public class ClientMFD implements Serializable{
 	@JsonProperty
 	private String Cm_mobile="";
 	
-	public ClientMFD() {
+	public BseRegistrationMFD() {
 		System.out.println("@@@ Calling Default Constractor @@@@");
 	}
 	
-	public ClientMFD(String ClientCode) {
+	public BseRegistrationMFD(String ClientCode) {
 		System.out.println("@@@ Calling Client Code Constractor @@@@");
 		this.ClientCode=ClientCode;
 	}
 	
-	public ClientMFD(String ClientCode, String ClientHolding, String ClientTaxstatu, String ClientOccupationcod, String ClientAppname1,
+	public BseRegistrationMFD(String ClientCode, String ClientHolding, String ClientTaxstatu, String ClientOccupationcod, String ClientAppname1,
 			 String ClientDob, String ClientGender,String ClientPan, String ClientType,String ClientAcctype1,String ClientAccno1,String ClientMicrno1, String ClientNeftIfsccode1,
 			 String DefaultBankFlag,String ClientAdd1,String ClientCity,String ClientState,String ClientPincode,String ClientCountry,String ClientEmail,
 			 String ClientCommmode,String ClientDivpaymode,String Cm_mobile) {
@@ -284,7 +284,7 @@ public class ClientMFD implements Serializable{
 		
 		
 	}
-	public ClientMFD(String ClientCode, String ClientHolding, String ClientTaxstatu, String ClientOccupationcod, String ClientAppname1,
+	public BseRegistrationMFD(String ClientCode, String ClientHolding, String ClientTaxstatu, String ClientOccupationcod, String ClientAppname1,
 			String ClientAppname2, String ClientAppname3, String ClientDob, String ClientGender, String ClientGuardian, String ClientPan, String ClientNominee,
             String ClientNomineeRelation, String ClientGuardianpan,String ClientType,
             String ClientDefaultdp, String ClienCdsldpid,String ClientCdslcltid,String ClientNsdldpid,String ClientNsdlcltid,String ClientAcctype1,String ClientAccno1,String ClientMicrno1,

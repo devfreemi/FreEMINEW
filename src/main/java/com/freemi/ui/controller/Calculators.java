@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
+import org.springframework.mobile.device.Device;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -30,6 +31,8 @@ public class Calculators {
 	@RequestMapping(value = "/tax-calculator", method = RequestMethod.GET)
     public String TaxCalculator(Model model, HttpServletRequest request, HttpServletResponse response) {
 		//logger.info("@@@@ Inside Login..");
+//		System.out.println("Device in request desktop?- "+ device.isNormal());
+//		System.out.println("Device in request mobile?- "+ device.isMobile());
 		model.addAttribute("taxCalculatorForm", new TaxCalculatorForm());
 		model.addAttribute("contextcdn", environment.getProperty(CommonConstants.CDN_URL));
        System.out.println("@@@@ TaxCalculatorController @@@@");

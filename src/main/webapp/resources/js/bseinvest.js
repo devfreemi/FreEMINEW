@@ -48,7 +48,7 @@ $(document).on("click", "#radioamount", function() {
 function customamount() {
 	if ($('input:radio[name="options"]:checked')) {
 		console.log("Check active")
-		$('label').removeClass('active');
+		$('#radioamount label').removeClass('active');
 	}
 
 }
@@ -294,7 +294,60 @@ function populateConfirmPage() {
 
 //----------------------------------------------------------------------------------------------------------------------
 
+function onLoadTopPerforming(){
+	var mobile = $("#mobile").value();
+	var pan = $("#pan").value();
+}
 
+function validateFundForm(){
+//	console.log("Request received");
+	var flag = 0;
+	
+	var regex= new RegExp ('^[a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}$');
+	var regexMobile= new RegExp ('^[6-9]{1}[0-9]{9}$');
+	var pan = $("#panbox").val();
+	var transactionType= $("input[name='investype']:checked").val();
+	var minInvestAmount = $("#minVal").text();
+	var investAmount = $("#amount").val();
+	var mobile = $("#mobile").val();
+	var pan = $("#panval").val();
+	var sipDate = $("input[name='sipDate']:checked").val();
+//	console.log(transactionType + " : "+ sipDate + ": " +minInvestAmount + ": "+investAmount+ ": "+mobile+ ": "+pan+ ": ");
+	if(transactionType == 'SIP'){
+		if(typeof sipDate === 'undefined'){
+//			console.log("Date not selected")
+			$("#error1").text("Please select SIP Date");
+			flag1=false;
+		}else{
+			flag1=true;
+		}
+	}
+	if(!regexMobile.test(mobile)){
+		$("#error1").text("Invalid mobile number format!");
+		flag2=false;
+	}else{
+		flag2=true;
+	}
+	if(!regex.test(pan)){
+		$("#error1").text("Invalid PAN format!");
+		flag3=false;
+	}else{
+		flag3=true;
+	}
+	if(Number(investAmount) < Number(minInvestAmount) ){
+		$("#error1").text("Mimimum investment criteria not met.");
+		flag4=false;
+	}else{
+		flag4=true;
+	}
+	if(flag1 && flag2 && flag3 && flag4){
+//		console.log("All conditions met");
+		$("error1").text("");
+		return true;
+	}else{
+		return false;
+	}
+}
 
 
 

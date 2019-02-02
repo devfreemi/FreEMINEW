@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -23,6 +24,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
+import org.springframework.mobile.device.Device;
 import org.springframework.security.web.util.UrlUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -54,6 +56,7 @@ import com.freemi.entity.investment.BseMFInvestForm;
 import com.freemi.entity.investment.MFAdditionalPurchaseForm;
 import com.freemi.entity.investment.MFRedeemForm;
 import com.freemi.entity.investment.SelectMFFund;
+import com.freemi.entity.investment.TransactionStatus;
 
 
 
@@ -82,7 +85,7 @@ public class BsemfController {
 	private Environment env;
 
 	@RequestMapping(value = "/mutual-funds/register", method = RequestMethod.GET)
-	public String home(@ModelAttribute("selectedFund")SelectMFFund selectFund ,Model map, HttpServletRequest request, HttpServletResponse response) {
+	public String home(@ModelAttribute("selectedFund")SelectMFFund selectFund ,Model map, HttpServletRequest request, HttpServletResponse response, Device device) {
 		//logger.info("@@@@ Inside Login..");
 		logger.info("@@@@ BSE New customer register @@@@");
 
@@ -103,6 +106,8 @@ public class BsemfController {
 		map.addAttribute("states", InvestFormConstants.states);
 		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 
+		System.out.println(device.getDevicePlatform());
+		
 		return "bsemf/bse-form-new-customer";
 		//		return "bsemf/test";
 	}
@@ -220,8 +225,7 @@ public class BsemfController {
 				String panNumber = bseEntryManager.getCustomerPanfromMobile(fundChoice.getMobile());
 				fundChoice.setPan(panNumber);
 			}catch(Exception e){
-				logger.error("Database connect issue: unable to fetch customer PAN number", e.getMessage());
-				e.printStackTrace();
+				logger.error("Database connect issue: unable to fetch customer PAN number", e);
 			}
 		}
 		map.addAttribute("selectFund", fundChoice);
@@ -350,8 +354,20 @@ public class BsemfController {
 					//				System.out.println("Data size returned- "+ customerData.size());
 					selectedFund.setClientID(customerData.get(0).getClientID());
 					logger.info("Investor name- "+ customerData.get(0).getInvName());
-
-
+						
+					//Set SIP start date from 
+					if(selectedFund.getInvestype().equalsIgnoreCase("SIP")){
+						int initialMonth = LocalDate.now().getMonth().getValue();
+						int initialYear = LocalDate.now().getYear();
+						int currentday = LocalDate.now().getDayOfMonth();
+						if(Integer.valueOf(selectedFund.getSipDate())>currentday){
+							selectedFund.setSipStartMonth(initialMonth);
+						}else{
+							selectedFund.setSipStartMonth(initialMonth+1);
+						}
+						selectedFund.setSipStartYear(initialYear);
+					}
+						
 
 					//Find customer's portfolio
 					logger.info("Search for customer portfolio for details: "+ selectedFund.getAmcCode() + " : "+ customerData.get(0).getClientID());
@@ -408,6 +424,8 @@ public class BsemfController {
 			returnUrl="redirect:/mutual-funds/top-performing";
 		}
 		map.addAttribute("paymentMethod", InvestFormConstants.bsePaymentMethod);
+		map.addAttribute("calendarmonths", InvestFormConstants.bseInvestMonths);
+		map.addAttribute("sipyear", InvestFormConstants.bseInvestStartYear);
 		map.addAttribute("selectedFund", selectedFund);
 		return returnUrl;
 
@@ -429,16 +447,34 @@ public class BsemfController {
 		logger.info("@@ BSE MF STAR purchase confirm controller @@");
 		String returnUrl = "redirect:/mutual-funds/bse-transaction-status";
 		System.out.println("Client ID - "+ selectedFund.getClientID());
-
-
+		
+//		set sip date if chosen
+		
+		if(selectedFund.getInvestype().equalsIgnoreCase("SIP")){
+			String combineDate = selectedFund.getSipDate()+"/" +Integer.valueOf(selectedFund.getSipStartMonth())+"/"+selectedFund.getSipStartYear();
+//			System.out.println(combineDate);
+//			validate date if prioor to today 	-todo
+			
+			selectedFund.setSipDate(combineDate);
+		}
+		
 		try{
-			boolean flag = bseEntryManager.savetransactionDetails(selectedFund);
-			logger.info("Customer purchase transaction status- "+ flag);
-			redirectAttrs.addAttribute("TRANS_STATUS", "Y");
-			redirectAttrs.addFlashAttribute("TRANS_ID", selectedFund.getTransactionID());
+			TransactionStatus flag = bseEntryManager.savetransactionDetails(selectedFund);
+			logger.info("Customer purchase transaction status- "+ flag.getSuccessFlag());
+			
+			if(flag.getSuccessFlag()!=null && flag.getSuccessFlag().equalsIgnoreCase("S")){
+				redirectAttrs.addAttribute("TRANS_STATUS", "Y");
+				redirectAttrs.addFlashAttribute("TRANS_ID", selectedFund.getTransactionID());
+				redirectAttrs.addFlashAttribute("TRANS_MSG", flag.getStatusMsg());
+			}else if(flag.getSuccessFlag()!=null && flag.getSuccessFlag().equalsIgnoreCase("F")){
+				redirectAttrs.addAttribute("TRANS_STATUS", "N");
+				redirectAttrs.addFlashAttribute("TRANS_MSG", flag.getStatusMsg());
+			}
+			
+			
 		}catch(Exception e){
 
-			logger.error("Unable to save customer transaction request",e.getMessage());
+			logger.error("Unable to save customer transaction request",e);
 			redirectAttrs.addAttribute("TRANS_STATUS", "N");
 		}
 
@@ -539,8 +575,8 @@ public class BsemfController {
 				fundTransaction.setInvestAmount(purchaseForm.getPurchaseAmounts());
 				fundTransaction.setPaymentMethod(purchaseForm.getPaymentMode());
 
-				boolean flag = bseEntryManager.savetransactionDetails(fundTransaction);
-				logger.info("Customer purchase transaction status- "+ flag);
+				TransactionStatus flag = bseEntryManager.savetransactionDetails(fundTransaction);
+				logger.info("Customer purchase transaction status- "+ flag.getSuccessFlag());		//todo
 				redirectAttrs.addAttribute("TRANS_STATUS", "Y");
 				redirectAttrs.addAttribute("TRANS_TYPE", "ADDITIONAL");
 				redirectAttrs.addFlashAttribute("TRANS_ID", purchaseForm.getPurchaseTransid());
@@ -646,8 +682,8 @@ public class BsemfController {
 				logger.info("Redemption amount selected- "+ redeemForm.getRedeemAmounts()* (-1));
 				fundTransaction.setInvestAmount(redeemForm.getRedeemAmounts() * (-1));
 
-				boolean flag = bseEntryManager.savetransactionDetails(fundTransaction);
-				logger.info("Customer purchase transaction status- "+ flag);
+				TransactionStatus flag = bseEntryManager.savetransactionDetails(fundTransaction);
+				logger.info("Customer purchase transaction status- "+ flag.getSuccessFlag());
 				redirectAttrs.addAttribute("TRANS_STATUS", "Y");
 				redirectAttrs.addAttribute("TRANS_TYPE", "REDEEM");
 				redirectAttrs.addFlashAttribute("TRANS_ID", redeemForm.getRedeemTransId());

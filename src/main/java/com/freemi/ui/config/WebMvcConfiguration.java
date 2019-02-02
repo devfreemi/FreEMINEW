@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
@@ -31,32 +32,32 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
 
 	@Override
 	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
-	    configurer.enable();
+		configurer.enable();
 	}
 
 	/*@Bean
 	  public DataSource dataSource() {
 		System.out.println("@@@@ Datasource Created @@@@@@");
 	    DriverManagerDataSource dataSource = new DriverManagerDataSource();
-	    
+
 	    dataSource.setDriverClassName(env.getProperty("spring.datasource.driver-class-name"));
 	    dataSource.setUrl(env.getProperty("spring.datasource.url"));
 	    dataSource.setUsername(env.getProperty("spring.datasource.username"));
 	    dataSource.setPassword(decryptPassword(env.getProperty("spring.datasource.password")));
-	   
+
 	    return dataSource;
 	  }*/
 
 
-@Override
-public void addResourceHandlers(ResourceHandlerRegistry registry) {
-	System.out.println("@@@@ addResourceHandlers @@@@");
-    registry.addResourceHandler("/freemi/**")
-            .addResourceLocations("classpath:/freemi/");
-  
-}
+	@Override
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		System.out.println("@@@@ addResourceHandlers @@@@");
+		registry.addResourceHandler("/freemi/**")
+		.addResourceLocations("classpath:/freemi/");
 
-/*
+	}
+
+	/*
 //Enable this for pdf view support
 @Bean
 public ViewResolver configureViewResolver1() {
@@ -67,15 +68,15 @@ public ViewResolver configureViewResolver1() {
     return viewResolve;
 }*/
 
-@Bean
-public ViewResolver configureViewResolver() {
-    InternalResourceViewResolver viewResolve = new InternalResourceViewResolver();
-    viewResolve.setOrder(2);
-    viewResolve.setPrefix("/page/");
-    viewResolve.setSuffix(".jsp");
-    System.out.println("@@@@ configureViewResolver @@@@");
-    return viewResolve;
-}
+	@Bean
+	public ViewResolver configureViewResolver() {
+		InternalResourceViewResolver viewResolve = new InternalResourceViewResolver();
+		viewResolve.setOrder(2);
+		viewResolve.setPrefix("/page/");
+		viewResolve.setSuffix(".jsp");
+		System.out.println("@@@@ configureViewResolver @@@@");
+		return viewResolve;
+	}
 
 
 
@@ -85,4 +86,10 @@ public ViewResolver configureViewResolver() {
 		System.out.println(t.decrypt(encryptedText));
 		return(t.decrypt(encryptedText));
 	}*/
+
+	@Override
+	public void addInterceptors(InterceptorRegistry registry) {
+		registry.addInterceptor(new DeviceInterceptorCustom());
+		registry.addInterceptor(new RequestInceptorCustom());
+	}
 }

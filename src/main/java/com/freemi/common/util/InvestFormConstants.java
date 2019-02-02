@@ -1,8 +1,11 @@
 package com.freemi.common.util;
 
+import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
+
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 public class InvestFormConstants {
 
@@ -169,7 +172,7 @@ public class InvestFormConstants {
 
 		}
 	};
-	
+
 	public static Map<String,String> accountTypes = new LinkedHashMap<String,String>(){
 		/**
 		 * 
@@ -181,8 +184,8 @@ public class InvestFormConstants {
 			put("CB","Current");
 		}
 	};
-	
-	
+
+
 	public static Map<String,String> states = new TreeMap<String,String>(){
 		/**
 		 * 
@@ -236,7 +239,7 @@ public class InvestFormConstants {
 			put("WB","WEST BENGAL");
 		}
 	};
-	
+
 	public static Map<String,String> bsePaymentMethod = new LinkedHashMap<String,String>(){
 		/**
 		 * 
@@ -248,6 +251,51 @@ public class InvestFormConstants {
 			put("02", "NEFT");
 			put("03", "CARD");
 			put("04", "UPI");
+		}
+	};
+
+	public static Map<Integer,String> bseInvestMonths = new LinkedHashMap<Integer,String>(){
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		{
+			put(1, "January");
+			put(2, "February");
+			put(3, "March");
+			put(4, "April");
+			put(5, "May");
+			put(6, "June");
+			put(7, "July");
+			put(8, "August");
+			put(9, "September");
+			put(10, "October");
+			put(11, "November");
+			put(12, "December");
+
+		}
+	};
+
+
+	public static Map<Integer,String> bseInvestStartYear = new LinkedHashMap<Integer,String>(){
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		{
+			int initialYear = LocalDate.now().getYear();
+			int initialMonth = LocalDate.now().getMonthValue();
+			if(initialMonth==12){
+				for(int i=initialYear; i<=initialYear+1;i++){
+					put(i, Integer.toString(i));
+				}
+			}
+			else{
+				put(initialYear, Integer.toString(initialYear));
+			}
+
 		}
 	};
 

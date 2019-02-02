@@ -1,5 +1,9 @@
 package com.freemi.database.implementations;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -9,10 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.freemi.common.util.BseRelatedActions;
+import com.freemi.common.util.CommonConstants;
 import com.freemi.controller.interfaces.InvestmentConnectorBseInterface;
 import com.freemi.database.interfaces.BseCustomerAddressCrudRepository;
 import com.freemi.database.interfaces.BseCustomerBankDetailsCrudRespository;
 import com.freemi.database.interfaces.BseCustomerCrudRespository;
+import com.freemi.database.interfaces.BseOrderEntryResponseRepository;
+import com.freemi.database.interfaces.BseTransCountCrudRepository;
 import com.freemi.database.interfaces.BseTransCrudRepository;
 import com.freemi.database.interfaces.BseTransactionsView;
 import com.freemi.database.interfaces.PortfolioCrudRepository;
@@ -23,36 +30,44 @@ import com.freemi.entity.database.UserBankDetails;
 import com.freemi.entity.general.UserProfile;
 import com.freemi.entity.investment.AddressDetails;
 import com.freemi.entity.investment.BseAllTransactionsView;
+import com.freemi.entity.investment.BseDailyTransCounter;
 import com.freemi.entity.investment.BseMFInvestForm;
-import com.freemi.entity.investment.MFAdditionalPurchaseForm;
+import com.freemi.entity.investment.BseOrderEntryResponse;
 import com.freemi.entity.investment.SelectMFFund;
+import com.freemi.entity.investment.TransactionStatus;
 
 @Service
 public class BseEntryServiceImpl implements BseEntryManager {
 
 	@Autowired
 	BseCustomerCrudRespository bseCustomerCrudRespository;
-	
+
 	@Autowired
 	BseCustomerAddressCrudRepository bseCustomerAddressCrudRepository;
-	
+
 	@Autowired
 	BseCustomerBankDetailsCrudRespository bseCustomerBankDetailsCrudRespository;
- 
+
 	@Autowired
 	BseTransCrudRepository bseTransCrudRepository;
-	
+
 	@Autowired
 	InvestmentConnectorBseInterface investmentConnectorBseInterface;
-	
+
 	@Autowired
 	TopFundsRepository topFundsRepository;
-	
+
 	@Autowired
 	PortfolioCrudRepository portfolioCrudRepository;
-	
+
 	@Autowired
 	BseTransactionsView bseTransactionsView;
+
+	@Autowired
+	BseTransCountCrudRepository bseTransCountCrudRepository;
+	
+	@Autowired
+	BseOrderEntryResponseRepository bseOrderEntryResponseRepository;
 
 	private static final Logger logger = LogManager.getLogger(BseEntryServiceImpl.class);
 
@@ -65,7 +80,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 
 		if(bseCustomerCrudRespository.existsByPan1(customerForm.getPan1())){
 			logger.info("Account already exist with given primary PAN number");
-//			Check account registered at BSE end. IF status is no, only try to push exiiting customer details to BSE
+			//			Check account registered at BSE end. IF status is no, only try to push exiiting customer details to BSE
 			String bseRegisterStatus = bseCustomerCrudRespository.getBseRegistrationStatus(customerForm.getPan1());
 			if(bseRegisterStatus.equals("Y")){
 				logger.info("Customer already registered both at FREEMI and BSE");
@@ -80,18 +95,18 @@ public class BseEntryServiceImpl implements BseEntryManager {
 				registerCustomerToBse = true;
 			}
 		}else{
-			
+
 			//Generate client ID
 			int loop =1;
-			
+
 			do{
 				if(loop>=2){
 					logger.warn("Previously generated client ID already exist for another- "+ customerid);
 				}
 				customerid=BseRelatedActions.generateID(customerForm.getInvName(), customerForm.getPan1(), null, customerForm.getMobile(),loop++);
-				
+
 			}while(bseCustomerCrudRespository.existsByClientID(customerid));
-			
+
 			System.out.println("Generated login ID for customer with PAN - "+customerForm.getPan1()+ " : " + customerid);
 			customerForm.setClientID(customerid);
 			customerForm.getBankDetails().setClientID(customerid);
@@ -99,15 +114,15 @@ public class BseEntryServiceImpl implements BseEntryManager {
 			customerForm.getNominee().setClientID(customerid);
 			customerForm.setRegistrationTime(new Date());
 			logger.info("Transaction started to save BSE customer registrastion data");
-			
+
 			bseCustomerCrudRespository.save(customerForm);
 			bseCustomerCrudRespository.flush();
 			registerCustomerToBse = true;
 			logger.info("Customer record saved successfully to database");
 		}
-		
+
 		if(registerCustomerToBse){
-			
+
 			logger.info("Customer registered at FREEMI portal. Begin to push customer details at BSE end");
 			String bseResponse = investmentConnectorBseInterface.saveCustomerRegistration(customerForm, null);
 			if(bseResponse.equalsIgnoreCase("SUCCESS")){
@@ -118,22 +133,69 @@ public class BseEntryServiceImpl implements BseEntryManager {
 				logger.info("Failed to push customer details to BSE platform. Failure reason- "+ bseResponse);
 				flag = bseResponse;
 			}
-			
+
 		}
-		
+
 		return flag;
 	}
 
 	@Override
-	public boolean savetransactionDetails(SelectMFFund selectedMFFund) {
+	public TransactionStatus savetransactionDetails(SelectMFFund selectedMFFund) {
 		// TODO Auto-generated method stub
 		boolean flag = true;
 
-		//Generate client ID
+		//Save details to database, process to BSE, update database with response
+		//		try{
 		selectedMFFund.setOrderPlaceTime(new Date());
-		logger.info("Transaction started to save BSE transaction data");
-		bseTransCrudRepository.saveAndFlush(selectedMFFund);
-		return flag;
+		TransactionStatus transStatus = new TransactionStatus();
+		//Generate BSE related ref no
+		StringBuffer ref = new StringBuffer();
+		ref.append("P").append(selectedMFFund.getClientID()).append(Calendar.getInstance().getTimeInMillis());
+		selectedMFFund.setBseRefNo(ref.toString());
+
+//		selectedMFFund = bseTransCrudRepository.saveAndFlush(selectedMFFund);
+		logger.info("MF purchae request saved to database for transaction id- "+ selectedMFFund.getTransactionID());
+		
+
+		//		Generate BSE transaction Reference no
+		Date date = new Date();
+		StringBuffer transNumber = new StringBuffer();
+		transNumber.append((new SimpleDateFormat("yyyyMMdd").format(date))).append(CommonConstants.BSE_MEMBER_ID);
+		long counter= getCurrentDayNextTransCount(date);
+		for(int i=1;i<(6-Long.toString(counter).length());i++){
+			transNumber.append("0");
+		}
+		transNumber.append(Long.toString(counter));
+		
+
+
+		logger.info("Requesting BSE to register transaction for client id- : "+ selectedMFFund.getClientID() + " : TransactionCode: "+ transNumber.toString()+ ": Scheme code: "+ selectedMFFund.getSchemeCode() + " : Amount: "+ selectedMFFund.getInvestAmount());
+
+		//Call BSE
+
+		BseOrderEntryResponse bseResult = investmentConnectorBseInterface.processCustomerPurchaseRequest(selectedMFFund, transNumber.toString());
+		
+		logger.info("Status of requested transaction - "+ bseResult.getSuccessFlag());
+		
+		if(bseResult.getSuccessFlag().equalsIgnoreCase("0")){
+			logger.info("Transaction is successful. Saving request to Database");
+			selectedMFFund = bseTransCrudRepository.saveAndFlush(selectedMFFund);
+			bseOrderEntryResponseRepository.saveAndFlush(bseResult);
+			transStatus.setSuccessFlag("S");
+			transStatus.setStatusMsg(bseResult.getBsereMarks());
+		}else if (bseResult.getSuccessFlag().equalsIgnoreCase("1")){
+			logger.info("Transaction has failed. Transaction declined from saving to database. Reason- "+bseResult.getBsereMarks());
+			transStatus.setSuccessFlag("F");
+			transStatus.setStatusMsg(bseResult.getBsereMarks());
+		}
+		
+		/*}catch(Exception e){
+		logger.error("Failed to save transaction Details for MF Purchase",e);
+		flag = false;
+	}*/
+
+
+		return transStatus;
 	}
 
 	@Override
@@ -141,19 +203,19 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		String clientId = null;
 		List<SelectMFFund> trasactionDetails = null;
 		if(bseCustomerCrudRespository.existsByMobile(value)){
-			 clientId = bseCustomerCrudRespository.getRegisteredUserClientId(value);
-			 trasactionDetails =  bseTransCrudRepository.getByClientID(clientId);
+			clientId = bseCustomerCrudRespository.getRegisteredUserClientId(value);
+			trasactionDetails =  bseTransCrudRepository.getByClientID(clientId);
 		}else{
 			logger.info("No registered BSE customer by mobile number found to show transaction data - "+ value);
 		}
-		
+
 		return trasactionDetails;
 	}
 
 	@Override
 	public List<BseMFInvestForm> getCustomerDetails(String customerId) {
 		// TODO Auto-generated method stub
-		
+
 		return bseCustomerCrudRespository.getByClientID(customerId);
 	}
 
@@ -164,11 +226,11 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		List<BseAllTransactionsView> groupedTransationDetails = null;
 		if(bseCustomerCrudRespository.existsByMobile(mobileNumber)){
 			client = bseCustomerCrudRespository.getRegisteredUserClientId(mobileNumber);
-			 groupedTransationDetails = bseTransactionsView.findAllByClientID(client);
+			groupedTransationDetails = bseTransactionsView.findAllByClientID(client);
 		}else{
 			logger.info("No registered BSE customer by mobile number found to show transaction data - "+ mobileNumber);
 		}
-		
+
 		return groupedTransationDetails;
 	}
 
@@ -176,7 +238,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	public List<MfTopFundsInventory> getTopMfFunds() {
 		// TODO Auto-generated method stub
 		return topFundsRepository.findAll();
-		
+
 	}
 
 	@Override
@@ -218,37 +280,37 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	@Override
 	public UserProfile getCustomerDetailsByMobile(String mobile) {
 		// TODO Auto-generated method stub
-		
+
 		UserProfile userProfile = new UserProfile();
-		
+
 		BseMFInvestForm investorProfileData = bseCustomerCrudRespository.getByMobile(mobile);
 
 		try{
-		userProfile.setUid(investorProfileData.getClientID());
-		userProfile.setMobile(investorProfileData.getMobile());
-		userProfile.setMail(investorProfileData.getEmail());
-		userProfile.setPan(investorProfileData.getPan1());
-		userProfile.setFname(investorProfileData.getInvName());
-		userProfile.setGender(investorProfileData.getGender());
-		
-		userProfile.setAccountHolder(investorProfileData.getInvName());
-		
-		userProfile.setAccountNumber(investorProfileData.getBankDetails().getAccountNumber());
-		userProfile.setIfscCode(investorProfileData.getBankDetails().getIfscCode());
-		userProfile.setBankName(investorProfileData.getBankDetails().getBankName());
-		userProfile.setAccountType(investorProfileData.getBankDetails().getAccountType());
-		userProfile.setBranch(investorProfileData.getBankDetails().getBankBranch());
-		userProfile.setBranchCity(investorProfileData.getBankDetails().getBankCity());
-		userProfile.setAccountState(investorProfileData.getBankDetails().getBranchState());
-		
-		userProfile.setHouseNumber(investorProfileData.getAddressDetails().getAddress1());
-		userProfile.setAddress1(investorProfileData.getAddressDetails().getAddress2());
-		userProfile.setAddress2(investorProfileData.getAddressDetails().getAddress3());
-//		userProfile.setAddress3(addressDetails[2]);
-		userProfile.setCity(investorProfileData.getAddressDetails().getCity());
-		userProfile.setState(investorProfileData.getAddressDetails().getState());
-		userProfile.setPincode(investorProfileData.getAddressDetails().getPinCode());
-		
+			userProfile.setUid(investorProfileData.getClientID());
+			userProfile.setMobile(investorProfileData.getMobile());
+			userProfile.setMail(investorProfileData.getEmail());
+			userProfile.setPan(investorProfileData.getPan1());
+			userProfile.setFname(investorProfileData.getInvName());
+			userProfile.setGender(investorProfileData.getGender());
+
+			userProfile.setAccountHolder(investorProfileData.getInvName());
+
+			userProfile.setAccountNumber(investorProfileData.getBankDetails().getAccountNumber());
+			userProfile.setIfscCode(investorProfileData.getBankDetails().getIfscCode());
+			userProfile.setBankName(investorProfileData.getBankDetails().getBankName());
+			userProfile.setAccountType(investorProfileData.getBankDetails().getAccountType());
+			userProfile.setBranch(investorProfileData.getBankDetails().getBankBranch());
+			userProfile.setBranchCity(investorProfileData.getBankDetails().getBankCity());
+			userProfile.setAccountState(investorProfileData.getBankDetails().getBranchState());
+
+			userProfile.setHouseNumber(investorProfileData.getAddressDetails().getAddress1());
+			userProfile.setAddress1(investorProfileData.getAddressDetails().getAddress2());
+			userProfile.setAddress2(investorProfileData.getAddressDetails().getAddress3());
+			//		userProfile.setAddress3(addressDetails[2]);
+			userProfile.setCity(investorProfileData.getAddressDetails().getCity());
+			userProfile.setState(investorProfileData.getAddressDetails().getState());
+			userProfile.setPincode(investorProfileData.getAddressDetails().getPinCode());
+
 		}catch(Exception e){
 			logger.error("DB to UserProfile entity mapping error",e);
 		}
@@ -262,7 +324,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		UserBankDetails userBankDetails = new UserBankDetails();
 		logger.info("Updating bank details for BSE customer ID- "+ investorBankData.getUid());
 		userBankDetails.setClientID(investorBankData.getUid());
-		
+
 		userBankDetails.setIfscCode(investorBankData.getIfscCode());
 		userBankDetails.setAccountNumber(investorBankData.getAccountNumber());
 		userBankDetails.setBankBranch(investorBankData.getBranch());
@@ -270,7 +332,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		userBankDetails.setBankCity(investorBankData.getBranchCity());
 		userBankDetails.setAccountType(investorBankData.getAccountType());
 		userBankDetails.setBranchState(investorBankData.getAccountState());
-		
+
 		bseCustomerBankDetailsCrudRespository.save(userBankDetails);
 		return flag;
 	}
@@ -279,9 +341,9 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	public boolean updateCustomerAddress(UserProfile investorData) {
 		boolean flag=true;
 		AddressDetails investorAddress = new AddressDetails();
-		
+
 		logger.info("Updating Customer address for BSE customer ID- "+ investorData.getUid());
-		
+
 		investorAddress.setClientID(investorData.getUid());
 		investorAddress.setAddress1(investorData.getHouseNumber());
 		investorAddress.setAddress2(investorData.getAddress1());
@@ -289,7 +351,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		investorAddress.setCity(investorData.getCity());
 		investorAddress.setState(investorData.getState());
 		investorAddress.setPinCode(investorData.getPincode());
-		
+
 		bseCustomerAddressCrudRepository.save(investorAddress);
 		return flag;
 	}
@@ -298,10 +360,10 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	public BseAllTransactionsView getFundDetailsForAdditionalPurchase(String portfolio, String schemeCode,String investType,
 			String mobileNumber) {
 		String clientId= bseCustomerCrudRespository.getRegisteredUserClientId(mobileNumber);
-		
+
 		BseAllTransactionsView selectedFolioTransDetails = bseTransactionsView.findOneByPortfoilioAndSchemeCodeAndClientIDAndInvestType(portfolio, schemeCode, clientId,investType);
-		
-		
+
+
 		return selectedFolioTransDetails;
 	}
 
@@ -315,11 +377,52 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	public BseAllTransactionsView getFundDetailsForRedemption(String portfolio, String schemeCode,String investType,
 			String mobileNumber) {
 		String clientId= bseCustomerCrudRespository.getRegisteredUserClientId(mobileNumber);
-		
+
 		BseAllTransactionsView selectedFolioTransDetails = bseTransactionsView.findOneByPortfoilioAndSchemeCodeAndClientIDAndInvestType(portfolio, schemeCode, clientId,investType);
-		
+
 		return selectedFolioTransDetails;
 	}
 
+	@Override
+	public long getCurrentDayNextTransCount(Date date) {
+		// TODO Auto-generated method stub
+		BseDailyTransCounter b;
+		SimpleDateFormat d = new SimpleDateFormat("yyyy-MM-dd");
+		ArrayList<BseDailyTransCounter> v;
+		int i;
+		String l="0";
+		try{
+			l= bseTransCountCrudRepository.findOneByDate(d.parse(d.format(date)));
+			if(l!=null){
+				i = bseTransCountCrudRepository.increaseCounterByOne(d.parse(d.format(date)));
+				l = bseTransCountCrudRepository.findOneByDate(d.parse(d.format(date)));
+			}else{
+				logger.info("Current day counter not yet set. Setting the value and returning");
+				b = new BseDailyTransCounter();
+				b.setDate(date);
+				b.setDayCounter(1);
+				bseTransCountCrudRepository.saveAndFlush(b);
+				/* v = (ArrayList<BseDailyTransCounter>) bseTransCountCrudRepository.findAll();
+			 for(int j=0;j<v.size();j++){
+				 b= v.get(j);
+			 }*/
+				l= bseTransCountCrudRepository.findOneByDate(d.parse(d.format(date)));
+
+			}
+		}catch(ParseException e){
+			e.printStackTrace();
+		}
+		return Long.valueOf(l);
+	}
+
+
+	/*public static void main(String[] args){
+//		System.out.println(new Random());
+		String s ="NEW|201901302627300006|0|SUMANTA1|26273|DEBA593C|FAILED: DIRECT INV TYPE SCHEME NOT ALLOWED|1";
+		
+		List<String> a = Arrays.asList(s.split("\\|"));
+		System.out.println(a);
+		System.out.println(a.get(1));
+	}*/
 
 }

@@ -1,5 +1,6 @@
 package com.freemi.database.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -8,8 +9,8 @@ import com.freemi.entity.database.MfTopFundsInventory;
 import com.freemi.entity.general.UserProfile;
 import com.freemi.entity.investment.BseAllTransactionsView;
 import com.freemi.entity.investment.BseMFInvestForm;
-import com.freemi.entity.investment.MFAdditionalPurchaseForm;
 import com.freemi.entity.investment.SelectMFFund;
+import com.freemi.entity.investment.TransactionStatus;
 
 @Service
 public interface BseEntryManager {
@@ -29,13 +30,17 @@ public interface BseEntryManager {
 	
 	// Customer MF transactions
 	public boolean checkIfTransIdExist(String generatedTransId);
-	public boolean savetransactionDetails(SelectMFFund selectedMFFund);
+	public TransactionStatus savetransactionDetails(SelectMFFund selectedMFFund);
+	
+	
 	public List<BseAllTransactionsView> getCustomerAllTransactionRecords(String clientID, String mobileNumber, String panNumber);
 	public BseAllTransactionsView getFundDetailsForAdditionalPurchase(String portfolio, String schemeCode,String investType, String mobileNumber);
 	public BseAllTransactionsView getFundDetailsForRedemption(String portfolio, String schemeCode,String investType, String mobileNumber);
 	
 	//BSE MF related operations
 	public List<MfTopFundsInventory> getTopMfFunds();
+	
+	public long getCurrentDayNextTransCount(Date date);
 	
 	//PORTFOLIO Crud respository
 	public List<String> getSelectedAmcPortfolio(String amcCode, String clientId);

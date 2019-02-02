@@ -75,8 +75,17 @@ public class SelectMFFund implements Serializable {
 	@Transient
 	private String pan;
 	
+	@Transient
+	private int sipStartMonth;
+	
+	@Transient
+	private int sipStartYear;
+	
 	@Column(name="ORDER_PLACE_TIME")
 	private Date orderPlaceTime;
+	
+	@Column(name="BSE_REF_NO")
+	private String bseRefNo;
 	
 	public long getSerialNo() {
 		return serialNo;
@@ -186,6 +195,25 @@ public class SelectMFFund implements Serializable {
 	public void setPaymentMethod(String paymentMethod) {
 		this.paymentMethod = paymentMethod;
 	}
+	public String getBseRefNo() {
+		return bseRefNo;
+	}
+	public void setBseRefNo(String bseRefNo) {
+		this.bseRefNo = bseRefNo;
+	}
+	public int getSipStartMonth() {
+		return sipStartMonth;
+	}
+	public void setSipStartMonth(int sipStartMonth) {
+		this.sipStartMonth = sipStartMonth;
+	}
+	public int getSipStartYear() {
+		return sipStartYear;
+	}
+	public void setSipStartYear(int sipStartYear) {
+		this.sipStartYear = sipStartYear;
+	}
+	
 	
 
 }

@@ -37,4 +37,10 @@ public class CommonConstants {
 	public static final String ENCRYPTION_SALT ="5c0744940b5c369b";
 	
 	
+//	BSE DETAILS
+	public static final String BSE_USER_ID = "SUMANTA1";
+	public static final String BSE_MEMBER_ID = "26273";
+	public static final String BSE_CLIENT_CODE = "2627301";
+	
+	
 }
