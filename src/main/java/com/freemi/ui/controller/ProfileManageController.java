@@ -31,13 +31,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freemi.common.util.CommonConstants;
 import com.freemi.common.util.CommonTask;
 import com.freemi.common.util.InvestFormConstants;
+import com.freemi.database.service.BseEntryManager;
 //import com.freemi.database.service.BseEntryManager;
 import com.freemi.entity.general.ProfilePasswordChangeForm;
 import com.freemi.entity.general.ResetPassword;
 import com.freemi.entity.general.UserProfile;
+import com.freemi.entity.investment.BseAllTransactionsView;
 //import com.freemi.entity.investment.BseAllTransactionsView;
 import com.freemi.ui.restclient.GoogleSecurity;
-import com.freemi.ui.restclient.RestClientProfile;
+import com.freemi.ui.restclient.RestClient;
 
 @Controller
 @Scope("session")
@@ -48,8 +50,8 @@ public class ProfileManageController{
 	@Autowired
 	private Environment environment;
 	
-	/*@Autowired
-	BseEntryManager bseEntryManager;*/
+	@Autowired
+	BseEntryManager bseEntryManager;
 	
 	private static final Logger logger = LogManager.getLogger(ProfileManageController.class);
 
@@ -59,7 +61,7 @@ public class ProfileManageController{
 		logger.info("@@@@ Get profile details..");
 		String returnurl = "";
 		int error = 0;
-		RestClientProfile client = new RestClientProfile();
+		RestClient client = new RestClient();
 		ResponseEntity<String> response = null;
 		if(session.getAttribute("token") == null){
 			returnurl="redirect:/login";
@@ -135,7 +137,7 @@ public class ProfileManageController{
 		
 		logger.info("@@@@ ProfileBasicDoController @@@@");
 		String returnurl="";
-		RestClientProfile client = new RestClientProfile();
+		RestClient client = new RestClient();
 		ResponseEntity<String> response = null;
 		if(session.getAttribute("token") == null){
 			returnurl="redirect:/login";
@@ -175,7 +177,7 @@ public class ProfileManageController{
 
 		logger.info("@@@@ ProfileAccountDoController @@@@");
 		String returnurl="";
-		RestClientProfile client = new RestClientProfile();
+		RestClient client = new RestClient();
 		ResponseEntity<String> response = null;
 		if(session.getAttribute("token") == null){
 			returnurl="redirect:/login";
@@ -260,7 +262,7 @@ public class ProfileManageController{
 
 		logger.info("@@@@ ProfilePasswordChange @@@@");
 		String returnurl="";
-		RestClientProfile client = new RestClientProfile();
+		RestClient client = new RestClient();
 		ResponseEntity<String> response = null;
 		if(session.getAttribute("token") == null){
 			returnurl="redirect:/login";
@@ -309,7 +311,7 @@ public class ProfileManageController{
 			returnurl = "my-dashboard";
 			// Get user's MF order history
 			//This code is for new design. COmment out until deployed in prod
-			/*try{
+			try{
 			List<BseAllTransactionsView> fundsOrder= bseEntryManager.getCustomerAllTransactionRecords(null,session.getAttribute("userid").toString(),null);
 			if(fundsOrder.size()>=1){
 			for(int i=0;i<fundsOrder.size();i++){
@@ -323,8 +325,17 @@ public class ProfileManageController{
 			}catch(Exception ex){
 				map.addAttribute("ORDERHISTORY", "ERROR");
 				logger.error("Failed to fetch cutomer Registry details \n", ex);
-			}*/
+			}
+			
+//			Get Profile AOF Status
+			String aofstatus=bseEntryManager.investmentProfileStatus(session.getAttribute("userid").toString());
+			map.addAttribute("PROFILE_STATUS", aofstatus);
+//			map.addAttribute("PROFILE_STATUS", "NOT_FOUND");
+			
 		}
+		
+		
+		
 		map.addAttribute("totalasset", totalAsset);
 		map.addAttribute("contextcdn", environment.getProperty(CommonConstants.CDN_URL));
 		logger.info("@@@@ DashboardController @@@@");
@@ -345,7 +356,7 @@ public class ProfileManageController{
 			returnurl="redirect:/login";
 		}else{
 			//validate token
-			RestClientProfile client = new RestClientProfile();
+			RestClient client = new RestClient();
 			ResponseEntity<String> responseEntity = null;
 			
 			try {
@@ -413,7 +424,7 @@ public class ProfileManageController{
 		logger.info("@@@@ ForgotPasswordresetController @@@@");
 		System.out.println(request.getQueryString());
 		String returnurl="";
-		RestClientProfile client = new RestClientProfile();
+		RestClient client = new RestClient();
 		
 		ResponseEntity<String> responseEntity = null;
 		

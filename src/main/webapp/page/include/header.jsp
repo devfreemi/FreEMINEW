@@ -65,7 +65,7 @@
 					</div></li>
 
 				<li class="nav-item dropdown"> 
-				<img src="${contextcdn}/resources/images/cards/credit-card-ico.svg"
+				<img src="<c:url value="${contextcdn}/resources/images/credit-card-ico.svg"/>"
 					class="img-fluid icon-for-mobileview"  alt="Credit Card"><a
 					class="nav-link dropdown-toggle styling-header " href="/credit-card/"
 					id="navbarDropdownInsuranceLink" data-hover="dropdown"

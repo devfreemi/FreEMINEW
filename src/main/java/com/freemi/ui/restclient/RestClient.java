@@ -21,17 +21,17 @@ import com.freemi.entity.general.Registerform;
 import com.freemi.entity.general.ResetPassword;
 import com.freemi.entity.general.UserProfile;
 
-public class RestClientProfile {
+public class RestClient {
 	
 //	private final String SERVICE_URL1 = "https://ec2-35-154-76-43.ap-south-1.compute.amazonaws.com/freemibackend";
 //	private final String SERVICE_URL1 = "http://ec2-35-154-76-43.ap-south-1.compute.amazonaws.com:8080/freemibackend";
 //	private final String SERVICE_URL1 = "http://localhost:8090/freemibackend";
-//	private final String SERVICE_URL1 = "http://localhost:8080/freemibackend";
-	private final String SERVICE_URL1 = "http://dev.freemi.in:8080/freemibackend";
+	private final String SERVICE_URL1 = "http://localhost:8080/freemibackend";
+//	private final String SERVICE_URL1 = "http://dev.freemi.in:8080/freemibackend";
 
 	private final String ANONYMOUS_TOKEN = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbm9ueW1vdXMifQ.Ch3VesT2dCyRIDandUkxL87dIoioHCAdsRZzoNx0xNw";
 	
-	private static final Logger logger = LogManager.getLogger(RestClientProfile.class);
+	private static final Logger logger = LogManager.getLogger(RestClient.class);
 	
 	
 	public ResponseEntity<String> login(String userid, String password, String ip){
@@ -70,9 +70,9 @@ public class RestClientProfile {
 		RestTemplate restTemplate = new RestTemplate();
 		String formdata= mapper.writeValueAsString(registerForm);
 		System.out.println(registerForm);
-//		HttpHeaders headers = new HttpHeaders();
-//		headers.set("Authorization", ANONYMOUS_TOKEN);
-		HttpEntity<String> entity = new HttpEntity<String>(formdata);
+		HttpHeaders headers = new HttpHeaders();	
+		headers.set("authorization", ANONYMOUS_TOKEN);
+		HttpEntity<String> entity = new HttpEntity<String>(formdata,headers);
 		
 		return restTemplate.postForEntity(url, entity,  String.class);
 	}

@@ -25,6 +25,13 @@
 <script src="<c:url value="${contextPath}/resources/js/pace.min.js" />"></script>
 
 <script src="<c:url value="${contextPath}/resources/js/investment.js" />"></script>
+<style>
+/* #sig-canvas {
+	border: 1px solid #969696;
+    cursor: crosshair;
+    box-shadow: 0 0 6px 0px #b7b3b3;
+} */
+</style>
 </head>
 
 <script type="text/javascript">

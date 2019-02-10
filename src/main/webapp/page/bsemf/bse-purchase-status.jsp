@@ -21,14 +21,14 @@
 <jsp:include page="../include/bootstrap.jsp"></jsp:include>
 </head>
 <script type="text/javascript">
-        window.history.forward();
-        function noBack()
-        {
-            window.history.forward();
-        }
+	window.history.forward();
+	function noBack() {
+		window.history.forward();
+	}
 </script>
 
-<body  onLoad="noBack();" onpageshow="if (event.persisted) noBack();" onUnload="">
+<body onLoad="noBack();" onpageshow="if (event.persisted) noBack();"
+	onUnload="">
 	<jsp:include page="../include/header.jsp"></jsp:include>
 	<div class="container">
 
@@ -36,28 +36,60 @@
 			<div class="row" style="margin: auto;">
 				<div class="col-md-6 col-lg-6"
 					style="margin: auto; text-align: center; padding: 20px; background: aliceblue;">
-					<c:if test="${TRANS_STATUS == 'Y' }">
-						<h5>Order placed successfully</h5>
-						<h6>Transaction Reference No - ${TRANS_ID }</h6>
-					</c:if>
-					<c:if test="${TRANS_STATUS == 'N' }">
-						<h5>Failed to process your request currently. Kindly try
-							after sometime</h5>
-					</c:if>
+					<c:choose>
+						<c:when test="${TRANS_STATUS == 'COMPLETE' }">
+							<h5>Your purchase is complete!</h5>
+
+							<section style="margin-top: 30px;">
+								<div class="row" style="margin: auto;">
+									<div class="col-md-6 col-lg-6"
+										style="margin: auto; text-align: center;">
+										<a class="transaction-redirect1"
+											style="text-decoration: none;"
+											href="${pageContext.request.contextPath}/mutual-funds/top-performing">Place
+											Another Order</a>
+									</div>
+								</div>
+							</section>
+						</c:when>
+
+						<c:when test="${TRANS_STATUS == 'Y' }">
+							<h5>Order placed successfully</h5>
+							<h6>Transaction Reference No - ${TRANS_ID }</h6>
+							
+							<c:if test="${orderUrl.statusCode == '100' }">
+								<a href="${orderUrl.payUrl }">
+									<button>Complete your payment</button>
+								</a>
+							</c:if>
+
+						</c:when>
+						<c:when test="${TRANS_STATUS == 'N' }">
+							<h5>Failed to process your request currently. Kindly try
+								after sometime</h5>
+
+							<section style="margin-top: 30px;">
+								<div class="row" style="margin: auto;">
+									<div class="col-md-6 col-lg-6"
+										style="margin: auto; text-align: center;">
+										<a class="transaction-redirect1"
+											style="text-decoration: none;"
+											href="${pageContext.request.contextPath}/mutual-funds/top-performing">Place
+											Another Order</a>
+									</div>
+								</div>
+							</section>
+						</c:when>
+						<c:when test="${TRANS_STATUS == 'SF' }">
+							<h5>Your transaction is successful, but failed to save
+								request at FreEMI. Admin will help you fix the problem.</h5>
+						</c:when>
+					</c:choose>
 				</div>
 			</div>
 		</section>
 
-		<section style="margin-top: 30px;">
-			<div class="row" style="margin: auto;">
-				<div class="col-md-6 col-lg-6"
-					style="margin: auto; text-align: center;">
-					<a class="transaction-redirect1" style="text-decoration: none;"
-						href="${pageContext.request.contextPath}/mutual-funds/top-performing">Place
-						Another Order</a>
-				</div>
-			</div>
-		</section>
+
 
 	</div>
 </body>

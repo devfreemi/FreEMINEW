@@ -41,34 +41,34 @@ public class UserBankDetails implements Serializable  {
 	
 	@NotNull(message="Valid IFSC code mandatory")
 	@Column(name="IFSC_CODE_1")
-	private String ifscCode;
+	private String ifscCode="";
 	
 	@Column(name="BANK_NAME_1")
-	private String bankName;
+	private String bankName="";
 	
 	@NotNull(message="Valid bank number is mandatory")
 	@Column(name="ACCOUNT_NO_1")
-	private String accountNumber;
+	private String accountNumber="";
 	
 	@Column(name="ACCOUNT_CITY_1")
-	private String bankCity;
+	private String bankCity="";
 	
 	@Column(name="ACCOUNT_STATE_1")
-	private String branchState;
+	private String branchState="";
 	
 	@Transient
 	@Column(name="BANK_ADDRESS_1")
-	private String bankAddress;
+	private String bankAddress="";
 	
 	@Column(name="ACCOUNT_BRANCH_1")
-	private String bankBranch;
+	private String bankBranch="";
 	
 	@Column(name="ACCOUNT_TYPE_1")
 	private String accountType="SB";
 	
 	@Transient
 	@Column(name="")
-	private String accountCountry;
+	private String accountCountry="";
 	
 	@OneToOne(fetch= FetchType.LAZY, optional=false, cascade=CascadeType.PERSIST)
 	@JoinColumn(name="CLIENT_ID", nullable= false,insertable=false,updatable=false)

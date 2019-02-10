@@ -38,37 +38,37 @@ public class MFNominationForm implements Serializable {
 	private String isNominate="N";
 	
 	@Column(name="")
-	private String nomineeName;
+	private String nomineeName="";
 	
 	@Transient
-	private String nomineeAddress1;
+	private String nomineeAddress1="";
 	
 	@Transient
-	private String nomineeAddress2;
+	private String nomineeAddress2="";
 	
 	@Transient
-	private String nomineeState;
+	private String nomineeState="";
 	
 	@Transient
-	private String nomineeCity;
+	private String nomineeCity="";
 	
 	@Transient
-	private String nomineeCountry;
+	private String nomineeCountry="";
 	
 	@Transient
-	private String nomineePercentage;
+	private String nomineePercentage="";
 	
 	@Transient
-	private String nomineeDOB;
+	private String nomineeDOB="";
 	
 	@Column(name="")
-	private String nomineeRelation;
+	private String nomineeRelation="";
 	
 	@Transient
 	private String isNomineeMinor="N";
 	
 	@Transient
-	private String nomineeGuardian;
+	private String nomineeGuardian="";
 	
 	@OneToOne(fetch= FetchType.LAZY, optional=false, cascade=CascadeType.PERSIST)
 	@JoinColumn(name="CLIENT_ID", nullable= false,insertable=false,updatable=false)

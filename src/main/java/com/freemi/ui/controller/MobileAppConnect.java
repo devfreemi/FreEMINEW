@@ -34,7 +34,7 @@ public class MobileAppConnect {
 		String result="";
 		
 		try{
-			FreemiLoanQuery loanRequest = new ObjectMapper().readValue(request.getInputStream(), FreemiLoanQuery.class);
+			/*FreemiLoanQuery loanRequest = new ObjectMapper().readValue(request.getInputStream(), FreemiLoanQuery.class);
 			System.out.println(loanRequest.getAgentCode());
 			if(loanRequest.getAgentCode()!=null){
 			ClientSystemDetails system= CommonTask.getClientSystemDetails(request);
@@ -47,7 +47,8 @@ public class MobileAppConnect {
 			}
 			}else{
 				result="MANDATORY FIELDS MISSING";
-			}
+			}*/
+			return "SUCCESS";
 			
 		}catch(Exception e){
 			logger.error("Error to save loan request received via api. "+ e.getMessage());

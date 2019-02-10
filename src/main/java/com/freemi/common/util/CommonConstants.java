@@ -2,11 +2,15 @@ package com.freemi.common.util;
 
 public class CommonConstants {
 
+//	Environment properties
+	public static final String CDN_URL="link.content.cdn";
+	public static final String BSE_ENABLED="investment.bse.enabled";
+	public static final String BSE_AOF_GENERATION_FOLDR="investment.bse.aoffolder";
 	
 	public static final String ENV_INVESTMENT_ENABLED="INVESTMENT_ENABLED";
 	public static final String INVESTMENT_ENABLED="Y";
 	
-	public static final String CDN_URL="link.content.cdn";
+	
 	
 	public static final String BROKER_CODE = "ARN-141396";
 	public static final String EUIN_CODE = "E241233";
@@ -41,6 +45,8 @@ public class CommonConstants {
 	public static final String BSE_USER_ID = "SUMANTA1";
 	public static final String BSE_MEMBER_ID = "26273";
 	public static final String BSE_CLIENT_CODE = "2627301";
+	
+	
 	
 	
 }

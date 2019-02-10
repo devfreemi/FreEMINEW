@@ -48,7 +48,7 @@ import com.freemi.entity.general.Folios;
 import com.freemi.entity.general.ForgotPassword;
 import com.freemi.entity.general.Login;
 import com.freemi.ui.restclient.GoogleSecurity;
-import com.freemi.ui.restclient.RestClientProfile;
+import com.freemi.ui.restclient.RestClient;
 
 
 
@@ -160,7 +160,7 @@ public class HomeController {
 			returnUrl = "redirect:/";
 		}
 
-		RestClientProfile client = new RestClientProfile();
+		RestClient client = new RestClient();
 		ResponseEntity<String> response = null;
 		
 
@@ -252,7 +252,7 @@ public class HomeController {
 			}
 		}
 
-		RestClientProfile client = new RestClientProfile();
+		RestClient client = new RestClient();
 		ResponseEntity<String> response = null;
 		try {
 			response = client.forgotPassword(forgotPasswordForm);
@@ -297,7 +297,7 @@ public class HomeController {
 	public String contactRequestSubmit(@ModelAttribute("contactForm") ContactUsForm contactForm,Model model) {
 		//logger.info("@@@@ Inside Login..");
 		logger.info("@@@@ ContactDoController @@@@");
-		RestClientProfile client = new RestClientProfile();
+		RestClient client = new RestClient();
 		ResponseEntity<String> response = null;
 		try {
 			response = client.contactUs(contactForm);
@@ -370,7 +370,7 @@ public class HomeController {
 			
 			
 			// CAll to send mail from rest api
-			RestClientProfile client = new RestClientProfile();
+			RestClient client = new RestClient();
 			ResponseEntity<String> response = null;
 			try {
 				response = client.campaignSingUp(campaign);

@@ -10,7 +10,9 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.freemi.entity.bse.BseAOFUploadRequest;
 import com.freemi.entity.bse.BseOrderEntry;
+import com.freemi.entity.bse.BseOrderPaymentRequest;
 import com.freemi.entity.bse.BseRegistrationMFD;
 import com.freemi.entity.bse.BseSipOrderEntry;
 
@@ -101,6 +103,60 @@ public static String purchaseSIPRequestProcess(BseSipOrderEntry form){
 		ResponseEntity<?> response= restTemplate.postForEntity(url, entity,  String.class);
 		returnRes=response.getBody().toString();
 			logger.info("Response for purchase- "+ response.getBody().toString());
+		/*if(returnRes.equalsIgnoreCase("100|RECORD INSERTED SUCCESSFULLY")){
+			returnRes = "SUCCESS";
+		}*/
+		return returnRes;
+	}
+
+	public static String purchasePaymentLink(BseOrderPaymentRequest form){
+		
+		final String url = SERVICE_URL1 + "/orderpayment";
+		ObjectMapper mapper = new ObjectMapper();
+		RestTemplate restTemplate = new RestTemplate();
+		String formdata = null;
+		String returnRes="FAIL";
+		try {
+			formdata = mapper.writeValueAsString(form);
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		logger.info("Requesting  SIP purchase with details- "+ formdata);
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
+		HttpEntity<String> entity = new HttpEntity<String>(formdata,headers);
+		
+		ResponseEntity<?> response= restTemplate.postForEntity(url, entity,  String.class);
+		returnRes=response.getBody().toString();
+			logger.info("Response for order payment- "+ response.getBody().toString());
+		/*if(returnRes.equalsIgnoreCase("100|RECORD INSERTED SUCCESSFULLY")){
+			returnRes = "SUCCESS";
+		}*/
+		return returnRes;
+	}
+	
+public static String uploadAOF(BseAOFUploadRequest form){
+		
+		final String url = SERVICE_URL1 + "/uploadAOF";
+		ObjectMapper mapper = new ObjectMapper();
+		RestTemplate restTemplate = new RestTemplate();
+		String formdata = null;
+		String returnRes="FAIL";
+		try {
+			formdata = mapper.writeValueAsString(form);
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		logger.info("Requesting  SIP purchase with details- "+ formdata);
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
+		HttpEntity<String> entity = new HttpEntity<String>(formdata,headers);
+		
+		ResponseEntity<?> response= restTemplate.postForEntity(url, entity,  String.class);
+		returnRes=response.getBody().toString();
+			logger.info("Response for AOF upload- "+ response.getBody().toString());
 		/*if(returnRes.equalsIgnoreCase("100|RECORD INSERTED SUCCESSFULLY")){
 			returnRes = "SUCCESS";
 		}*/

@@ -19,7 +19,6 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Proxy;
 import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import com.freemi.entity.database.UserBankDetails;
 
@@ -70,7 +69,7 @@ public class BseMFInvestForm implements Serializable {
 	
 	@NotNull(message="Provide your holding mode")
 	@Column(name="HOLDING_MODE")
-	private String holdingMode;
+	private String holdingMode="";
 	
 	@Transient
 	@Column(name="")
@@ -81,11 +80,11 @@ public class BseMFInvestForm implements Serializable {
 	private String declaration;
 	
 	@Column(name="EMAIL")
-	private String email;
+	private String email="";
 	
 	@NotNull(message="Mobile number is mandatory")
 	@Column(name="MOBILE_NO")
-	private String mobile;
+	private String mobile="";
 	
 	@Column(name="DIVIDEND_PAY_MODE")
 	private String dividendPayMode="02";
@@ -152,6 +151,9 @@ public class BseMFInvestForm implements Serializable {
 	@Transient
 	@Column(name="")
 	private String investmentType;
+	
+	@Column(name="SIGNATURE")
+	private String customerSignature="";
 	
 	@Transient
 	@Column(name="")
@@ -571,6 +573,16 @@ public class BseMFInvestForm implements Serializable {
 
 	public void setRegistrationTime(Date registrationTime) {
 		this.registrationTime = registrationTime;
+	}
+
+
+	public String getCustomerSignature() {
+		return customerSignature;
+	}
+
+
+	public void setCustomerSignature(String customerSignature) {
+		this.customerSignature = customerSignature;
 	}
 	
 }

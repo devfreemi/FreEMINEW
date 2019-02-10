@@ -16,6 +16,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		
      security.httpBasic().disable()
 //     .csrf().disable()
+//     .csrf().ignoringAntMatchers("/mutual-funds/aoffile/**").disable()
+     .csrf().ignoringAntMatchers("/mutual-funds/uploadsign","/mutual-funds/uploadsignedaof")
+     .and()
 //     .headers().cacheControl().disable()
      .headers()
      	.httpStrictTransportSecurity().includeSubDomains(true).maxAgeInSeconds(31536000)

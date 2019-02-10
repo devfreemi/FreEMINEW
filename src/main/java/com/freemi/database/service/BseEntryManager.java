@@ -27,6 +27,10 @@ public interface BseEntryManager {
 	public boolean updateCustomerData(BseMFInvestForm custerProfileData);
 	public boolean updateCustomerBankDetails(UserProfile investorData);
 	public boolean updateCustomerAddress(UserProfile investorData);
+	public String investmentProfileStatus(String mobileNumber);
+	
+	public String upddateCustomerFormSignature(String mobile, String pan, String signatureData);
+	public String uploadAOFForm(String mobileNumber, String aofFolderLocation);
 	
 	// Customer MF transactions
 	public boolean checkIfTransIdExist(String generatedTransId);

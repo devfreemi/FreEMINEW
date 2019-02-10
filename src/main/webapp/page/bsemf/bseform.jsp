@@ -509,7 +509,13 @@
 
 			</div>
 
+		<%-- <div class="sectionheader">
+				<h5>Sign your form</h5>
+			</div>
 
+			<div class="form-row">
+			<jsp:include page="sign-panel.jsp"></jsp:include>
+			</div> --%>
 
 		</div>
 	</div>

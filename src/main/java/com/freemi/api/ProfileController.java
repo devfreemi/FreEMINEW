@@ -19,7 +19,7 @@ import com.freemi.entity.general.Login;
 import com.freemi.entity.general.LoginResponse;
 import com.freemi.entity.general.Registerform;
 import com.freemi.entity.general.UserProfile;
-import com.freemi.ui.restclient.RestClientProfile;
+import com.freemi.ui.restclient.RestClient;
 
 @RestController
 @CrossOrigin(origins="*")
@@ -40,7 +40,7 @@ public class ProfileController {
 			logger.info("Login request for user id via api- "+ loginForm.getUsermobile());
 
 
-			RestClientProfile client = new RestClientProfile();
+			RestClient client = new RestClient();
 			ResponseEntity<String> response = null;
 
 			try{
@@ -90,7 +90,7 @@ public class ProfileController {
 			logger.info("Login request for user id via api- "+ registerForm.getMobile());
 
 
-			RestClientProfile client = new RestClientProfile();
+			RestClient client = new RestClient();
 			ResponseEntity<String> response = null;
 
 			response = client.registerUser(registerForm);
@@ -130,7 +130,7 @@ public class ProfileController {
 	public Object apigetProfile(HttpServletRequest request, HttpServletResponse httpResponse){
 		
 		logger.error("Request received to fectch profiel data via api");
-		RestClientProfile client = new RestClientProfile();
+		RestClient client = new RestClient();
 		ResponseEntity<String> response = null;
 		
 		UserProfile profile=null;

@@ -162,7 +162,7 @@
 					<div class="login_buttons">
 						<button type="submit" id="loginsubmit"
 							class="btn btn-sm btn-block login_button">
-							<i class="fa fa-lock"></i>
+							<i class="fas fa-lock"></i>
 							<!-- <i *ngIf="LoginRequestsubmitted" class="fa fa-spinner login_spin" aria-hidden="true"></i> -->
 							Login
 						</button>
@@ -170,7 +170,7 @@
 						<a href="${pageContext.request.contextPath}/register" style="text-decoration: none;">
 							<button type="button" class="btn btn-sm btn-block login_button"
 								style="text-decoration: none;">
-								<i class="fa fa-user-plus"></i> Sign Up
+								<i class="fas fa-user-plus"></i> Sign Up
 							</button>
 						</a>
 					</div>

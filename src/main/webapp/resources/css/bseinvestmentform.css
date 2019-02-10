@@ -577,3 +577,16 @@ translate
  .custom-control-label{
  color: black;
  }
+ 
+ .aofoption{
+     text-align: left;
+    border: 1px solid;
+    margin: 10px;
+    border-radius: 5px;
+    padding: 5px;
+ }
+ 
+ .aofoption>h5{
+     background-color: #5c9fef;
+    padding: 3px;
+    color: #ffff70;}

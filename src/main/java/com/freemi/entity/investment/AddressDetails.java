@@ -37,26 +37,26 @@ public class AddressDetails implements Serializable{
 	private String clientID;
 	
 	@Column(name="ADDRESS_1")
-	private String address1;
+	private String address1="";
 	
 	@Column(name="ADDRESS_2")
-	private String address2;
+	private String address2="";
 	
 	@Column(name="ADDRESS_3")
-	private String address3;
+	private String address3="";
 	
 	@Column(name="CITY")
-	private String city;
+	private String city="";
 	
 	@Column(name="PINCODE")
 	@Size(max=6, message="PIN code must be 6 digit")
-	private String pinCode;
+	private String pinCode="";
 	
 	@Column(name="STATE")
-	private String state;
+	private String state="";
 	
 	@Column(name="COUNTRY")
-	private String country;
+	private String country="";
 	
 	@Transient
 	private String communicationCode;

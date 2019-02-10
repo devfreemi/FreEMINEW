@@ -18,7 +18,8 @@
 	rel="stylesheet">
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
-<script src="<c:url value="${contextPath}/resources/js/investment.js" />"></script>
+<script
+	src="<c:url value="${contextPath}/resources/js/investment.js" />"></script>
 <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script> -->
 
 </head>
@@ -110,6 +111,71 @@
 			</div>
 
 		</section>
+
+
+		<section class="profile-status-section">
+			<div class="row" style="margin: auto;">
+				<div class="col-md-4 col-lg-4">
+					<div class="profile-status-left">
+						<h5 style="background: #dbdee6; padding: 3px;">Profile Status</h5>
+						<c:choose>
+							<c:when test="${PROFILE_STATUS == 'NOT_FOUND' }">
+								<h4 style="font-family: none; color: #e6643c;">Register for investment</h4>
+								<div class="progress" style="margin-bottom: 20px;">
+									<div class="progress-bar progress-bar-striped bg-danger"
+										role="progressbar" style="width: 10%" aria-valuenow="10"
+										aria-valuemin="0" aria-valuemax="100"></div>
+								</div>
+								<a href="/products/mutual-funds/register">
+									<button class="btn btn-sm btn-secondary">Get Registered</button>
+								</a>
+							</c:when>
+
+							<c:when test="${PROFILE_STATUS == 'Y' }">
+								<h4 style="color: #408ad8;font-family: serif;">Investment profile ready.</h4>
+								<div class="progress" style="font-size: 10px;margin-bottom: 20px;">
+									<div class="progress-bar bg-success" role="progressbar"
+										style="width: 100%" aria-valuenow="100" aria-valuemin="0"
+										aria-valuemax="100">Registration Complete</div>
+									
+								</div>
+								<div style="text-align: center;">
+								<!-- <p>Mode of Holding: </p> -->
+								
+								<a href="/products/mutual-funds/pending-payments" style="margin-bottom: 20px;">
+									<button class="btn btn-sm btn-info" style="font-size: 12px;">Complete Pending payments</button>
+								</a>
+								</div>
+							</c:when>
+					
+							<c:when test="${PROFILE_STATUS == 'N' }">
+								<h4 style="color: #2558a7; font-family: serif;">Upload your
+									AOF Form</h4>
+								<div class="progress" style="font-size: 10px;">
+									<div class="progress-bar bg-success" role="progressbar"
+										style="width: 50%" aria-valuenow="50" aria-valuemin="0"
+										aria-valuemax="100">Registered</div>
+									<div class="progress-bar bg-secondary" role="progressbar"
+										style="width: 50%" aria-valuenow="50" aria-valuemin="0"
+										aria-valuemax="100">Complete your profile</div>
+								</div>
+								<p>You need to sign and upload your investment form before
+									you can start investing.</p>
+								<button class="btn btn-sm btn-secondary">Upload AOF</button>
+							</c:when>
+
+							<c:when test="${PROFILE_STATUS == 'E' }">
+								<p>Failed to fetch your profile status!</p>
+							</c:when>
+
+						</c:choose>
+					</div>
+
+				</div>
+			</div>
+
+		</section>
+
 
 		<section class="desctiopn-section">
 			<div class="row" style="margin: auto;">
@@ -250,7 +316,9 @@
 															<td>${listVar.schemeName }</td>
 															<td></td>
 															<td></td>
-															<td style="font-weight: 600;"><fmt:formatNumber value="${listVar.schemeInvestment }" type="number" maxFractionDigits = "3" /></td>
+															<td style="font-weight: 600;"><fmt:formatNumber
+																	value="${listVar.schemeInvestment }" type="number"
+																	maxFractionDigits="3" /></td>
 															<td style="text-align: center;">
 																<div class="btn-group">
 																	<button type="button"
@@ -258,10 +326,17 @@
 																		data-toggle="dropdown" aria-haspopup="true"
 																		aria-expanded="false" style="font-size: 11px;">ACTION</button>
 																	<div class="dropdown-menu dropdown-menu-right">
-																		<button class="dropdown-item" type="button" style="font-size: 12px;color: #238019;font-weight: 600;" onclick="AdditionalPurchase('${listVar.portfoilio}','${listVar.schemeCode }','${listVar.investType }')">Invest More <i class="fas fa-arrow-left"></i></button>
-																		
+																		<button class="dropdown-item" type="button"
+																			style="font-size: 12px; color: #238019; font-weight: 600;"
+																			onclick="AdditionalPurchase('${listVar.portfoilio}','${listVar.schemeCode }','${listVar.investType }')">
+																			Invest More <i class="fas fa-arrow-left"></i>
+																		</button>
+
 																		<c:if test="${listVar.schemeInvestment > 0 }">
-																		<button class="dropdown-item" type="button" style="font-size: 12px;color: #da2323;font-weight: 600;" onclick="MFRedeem('${listVar.portfoilio}','${listVar.schemeCode }','${listVar.investType }')">Redeem <i class="fas fa-arrow-right"></i>
+																			<button class="dropdown-item" type="button"
+																				style="font-size: 12px; color: #da2323; font-weight: 600;"
+																				onclick="MFRedeem('${listVar.portfoilio}','${listVar.schemeCode }','${listVar.investType }')">
+																				Redeem <i class="fas fa-arrow-right"></i>
 																			</button>
 																		</c:if>
 																	</div>

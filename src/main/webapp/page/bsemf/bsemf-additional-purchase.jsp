@@ -61,58 +61,18 @@
 						</div>
 					</div>
 
-					<form:form class="form cf"
+					<form:form class="form cf" id="regForm"
 						action="${pageContext.request.contextPath}/mutual-funds/mfInvestAdditionalPurchase.do"
 						method="POST" commandName="purchaseForm">
-						<div class="wizard">
-							<div class="wizard-inner">
-								<div class="connecting-line"></div>
-								<ul class="nav nav-tabs" role="tablist">
-									<li role="presentation" class="nav-item"><a href="#step1"
-										data-toggle="tab" aria-controls="step1" role="tab"
-										title="Step 1" class="nav-link active"> <span
-											class="round-tab"
-											style="background-color: #e6e6e6; border: none;"> <img
-												class="img-fluid" style="padding: 5px 7px 15px 7px;"
-												src="<c:url value="${contextcdn}/resources/images/invest/purchase-1.svg"/>"
-												alt="Purchase">
-										</span>
-									</a></li>
-									<li role="presentation" class="nav-item"><a href="#step2"
-										data-toggle="tab" aria-controls="step2" role="tab"
-										title="Step 2" class="nav-link disabled"> <span
-											class="round-tab"
-											style="background-color: #e6e6e6; border: none;"> <img
-												class="img-fluid" style="padding: 7px 7px 15px 7px;"
-												src="<c:url value="${contextcdn}/resources/images/invest/confirm.svg"/>"
-												alt="Confirm">
-										</span>
-									</a></li>
-									<!-- <li role="presentation" class="nav-item"><a href="#step3"
-										data-toggle="tab" aria-controls="step3" role="tab"
-										title="Step 3" class="nav-link disabled"> <span
-											class="round-tab"> <i class="fa fa-money"></i>
-										</span>
-									</a></li>
-									<li role="presentation" class="nav-item"><a href="#step4"
-										data-toggle="tab" aria-controls="step4" role="tab"
-										title="Step 4" class="nav-link disabled"> <span
-											class="round-tab"> <i class="fa fa-phone"></i>
-										</span>
-									</a></li>
-									<li role="presentation" class="nav-item"><a href="#step5"
-										data-toggle="tab" aria-controls="step5" role="tab"
-										title="Step 5" class="nav-link disabled"> <span
-											class="round-tab"> <i class="fa fa-check"></i>
-										</span>
-									</a></li> -->
-								</ul>
-							</div>
 
-							<div class="tab-content">
-								<div class="tab-pane active text-center" role="tabpanel"
-									id="step1">
-									<h4 class="text-md-center">1. Scheme Details</h4>
+
+
+
+
+
+						<!-- One "tab" for each step in the form: -->
+						<div class="tab">
+							<h4 class="text-md-center">1. Scheme Details</h4>
 									<div class="row">
 										<%-- <jsp:include page="bseform-redeem.jsp"></jsp:include> --%>
 										<div class="col-md-12 col-lg-12" style="text-align: left;">
@@ -165,7 +125,7 @@
 													class="col-sm-4 col-form-label col-form-label-sm">Purchase
 													Amount:</label>
 												<div class="col-sm-8">
-													<form:input path="purchaseAmounts" id="redeemamount"
+													<form:input path="purchaseAmounts" id="purchaseamount"
 														class="form-control form-control-sm" />
 												</div>
 											</div>
@@ -191,13 +151,13 @@
 														<c:when test="${purchaseForm.investType == 'LUMPSUM' }">
 															<div
 																class="custom-control custom-radio custom-control-inline">
-																<form:radiobutton path="paymentMode" id="paymode1"
+																<form:radiobutton path="paymentMode" name="pay" id="paymode1"
 																	value="NETBANKING" class="custom-control-input" />
 																<label class="custom-control-label" for="paymode1">NETBANKING</label>
 															</div>
 															<div
 																class="custom-control custom-radio custom-control-inline">
-																<form:radiobutton path="paymentMode" id="paymode2"
+																<form:radiobutton path="paymentMode" name="pay" id="paymode2"
 																	value="CARD" class="custom-control-input" />
 																<label class="custom-control-label" for="paymode2">CARD</label>
 															</div>
@@ -209,12 +169,12 @@
 												</div>
 											</div>
 
-											<div class="form-group row">
+											<%-- <div class="form-group row">
 												<div class="col-sm-3" style="margin: auto;">
 													<form:button type="button"
 														class="btn btn-outline-secondary btn-block btn-sm next-step next-button">NEXT</form:button>
 												</div>
-											</div>
+											</div> --%>
 
 										</div>
 
@@ -230,36 +190,10 @@
 												</li>
 									</ul> --%>
 									</div>
-								</div>
-								<!-- <div class="tab-pane" role="tabpanel" id="step2">
-									<h1 class="text-md-center">Step 2</h1>
-									<div class="row"></div>
-									<ul class="list-inline text-md-center">
-										<li><button type="button"
-												class="btn btn-lg btn-common next-step next-button">Next
-												Step</button></li>
-									</ul>
-								</div> -->
-								<!-- <div class="tab-pane" role="tabpanel" id="step3">
-									<h1 class="text-md-center">Step 3</h1>
-									<div class="row"></div>
-									<ul class="list-inline text-md-center">
-										<li><button type="button"
-												class="btn btn-lg btn-common next-step next-button">Next
-												Step</button></li>
-									</ul>
-								</div>
-								<div class="tab-pane" role="tabpanel" id="step4">
-									<h1 class="text-md-center">Step 4</h1>
-									<div class="row"></div>
-									<ul class="list-inline text-md-center">
-										<li><button type="button"
-												class="btn btn-lg btn-common next-step next-button">Next
-												Step</button></li>
-									</ul>
-								</div> -->
-								<div class="tab-pane" role="tabpanel" id="step2">
-									<div class="row">
+						</div>
+
+						<div class="tab">
+							<div class="row">
 										<div class="col-md-12 col-lg-12 purchase-confirm-tab">
 											<h4 class="text-md-center">2. Confirm Details</h4>
 											<!-- ------------------------------  Confirm tab ------------------------------------------------------>
@@ -269,7 +203,7 @@
 													class="col-sm-4 col-form-label col-form-label-sm">Folio
 													No:</label>
 												<div class="col-sm-8">
-													<label class="confirm-label" id="folioconf"></label>
+													<label class="confirm-label" id="folioconf">${purchaseForm.portfolio }</label>
 												</div>
 											</div>
 
@@ -278,7 +212,7 @@
 													class="col-sm-4 col-form-label col-form-label-sm">Scheme
 													Name:</label>
 												<div class="col-sm-8">
-													<label class="confirm-label" id="fundnameconf"></label>
+													<label class="confirm-label" id="fundnameconf">${purchaseForm.fundName }</label>
 												</div>
 											</div>
 
@@ -287,7 +221,7 @@
 													class="col-sm-4 col-form-label col-form-label-sm">Investment
 													Type:</label>
 												<div class="col-sm-8">
-													<label class="confirm-label" id="investtypeconf"></label>
+													<label class="confirm-label" id="investtypeconf">${purchaseForm.investType }</label>
 
 												</div>
 											</div>
@@ -318,18 +252,16 @@
 												<div class="col-sm-8">
 
 													<div class="custom-control custom-checkbox">
-														<form:checkbox path="agreePolicy" class="custom-control-input"
-															id="agreepolicyconf" /> <label
-															class="custom-control-label" for="agreepolicyconf">
-															<span style="font-size: 11px;">
-															Liquid Schemes Subscriptions: <strong>01.00 pm</strong>
-															<br>
-															Liquid Schemes Redemptions &amp; Switch Out: <strong>02:00 pm</strong>
-															<br>
-															All other Schemes Purchases, Redemptions &amp; Switch Out: <strong>02.15:00 pm</strong>
-															<br>
-															</span>
-												</label>
+														<form:checkbox path="agreePolicy"
+															class="custom-control-input" id="agreepolicyconf" />
+														<label class="custom-control-label" for="agreepolicyconf">
+															<span style="font-size: 11px;"> Liquid Schemes
+																Subscriptions: <strong>01.00 pm</strong> <br>
+																Liquid Schemes Redemptions &amp; Switch Out: <strong>02:00
+																	pm</strong> <br> All other Schemes Purchases, Redemptions
+																&amp; Switch Out: <strong>02.15:00 pm</strong> <br>
+														</span>
+														</label>
 													</div>
 
 												</div>
@@ -338,24 +270,32 @@
 
 											<!-- End of confirm tab -->
 
-											<div class="form-group row">
+											<%-- <div class="form-group row">
 												<div class="col-sm-3" style="margin: auto;">
 													<form:button type="submit"
 														class="btn btn-outline-secondary btn-block btn-sm">Submit</form:button>
 												</div>
-											</div>
+											</div> --%>
 										</div>
 									</div>
-								</div>
-								<div class="clearfix"></div>
-							</div>
-
 						</div>
+
+						<div style="overflow: auto;">
+							<div style="float: right;">
+								<form:button type="button" class="btn btn-sm btn-info"  id="prevBtn" onclick="nextPrev(-1)"><i class="fas fa-arrow-left"></i> Previous</form:button>
+								<form:button type="button" class="btn btn-sm btn-success" id="nextBtn" onclick="nextPrev(1)">Next <i class="fas fa-angle-right"></i></form:button>
+							</div>
+						</div>
+
+						<!-- Circles which indicates the steps of the form: -->
+						<div style="text-align: center; margin-top: 40px;">
+							<span class="step"></span> <span class="step"></span>
+						</div>
+
+
+
 					</form:form>
 				</section>
-
-
-
 			</div>
 			<div class="col-md-5 col-lg-5"></div>
 		</div>
@@ -363,8 +303,90 @@
 	</div>
 
 
-
+<%-- 
 	<script
-		src="<c:url value="${contextPath}/resources/js/multistep.js" />"></script>
+		src="<c:url value="${contextPath}/resources/js/multistep.js" />"></script> --%>
+		
+	<script type="text/javascript">
+	var currentTab = 0; // Current tab is set to be the first tab (0)
+	showTab(currentTab); // Display the current tab
+
+	function showTab(n) {
+		// This function will display the specified tab of the form ...
+		var x = document.getElementsByClassName("tab");
+		x[n].style.display = "block";
+		// ... and fix the Previous/Next buttons:
+		if (n == 0) {
+			document.getElementById("prevBtn").style.display = "none";
+		} else {
+			document.getElementById("prevBtn").style.display = "inline";
+		}
+		if (n == (x.length - 1)) {
+			document.getElementById("nextBtn").innerHTML = "Submit";
+			
+			$("#redeemamountconf").text($("#purchaseamount").val());
+			$("#paymodeconf").text($("#input[name='pay']:checked").val());
+		} else {
+			document.getElementById("nextBtn").innerHTML = "Next";
+		}
+		// ... and run a function that displays the correct step indicator:
+		fixStepIndicator(n)
+	}
+
+	function nextPrev(n) {
+		// This function will figure out which tab to display
+		var x = document.getElementsByClassName("tab");
+		// Exit the function if any field in the current tab is invalid:
+		if (n == 1 && !validateForm())
+			return false;
+		// Hide the current tab:
+		x[currentTab].style.display = "none";
+		// Increase or decrease the current tab by 1:
+		currentTab = currentTab + n;
+		// if you have reached the end of the form... :
+		if (currentTab >= x.length) {
+			//...the form gets submitted:
+			document.getElementById("regForm").submit();
+			return false;
+		}
+		// Otherwise, display the correct tab:
+		showTab(currentTab);
+	}
+
+	function validateForm() {
+		// This function deals with validation of the form fields
+		var x, y, i, valid = true;
+		x = document.getElementsByClassName("tab");
+		y = x[currentTab].getElementsByTagName("input");
+		// A loop that checks every input field in the current tab:
+		for (i = 0; i < y.length; i++) {
+			// If a field is empty...
+			if (y[i].value == "") {
+				// add an "invalid" class to the field:
+				y[i].className += " invalid";
+				// and set the current valid status to false:
+				valid = false;
+			}
+		}
+		// If the valid status is true, mark the step as finished and valid:
+		if (valid) {
+			document.getElementsByClassName("step")[currentTab].className += " finish";
+		}
+		return valid; // return the valid status
+	}
+
+	function fixStepIndicator(n) {
+		// This function removes the "active" class of all steps...
+		var i, x = document.getElementsByClassName("step");
+		for (i = 0; i < x.length; i++) {
+			x[i].className = x[i].className.replace(" active", "");
+		}
+		//... and adds the "active" class to the current step:
+		x[n].className += " active";
+	}
+	
+
+</script>
+	
 </body>
 </html>

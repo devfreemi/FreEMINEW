@@ -1,5 +1,16 @@
 package com.freemi.database.implementations;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.StringReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,6 +46,13 @@ import com.freemi.entity.investment.BseMFInvestForm;
 import com.freemi.entity.investment.BseOrderEntryResponse;
 import com.freemi.entity.investment.SelectMFFund;
 import com.freemi.entity.investment.TransactionStatus;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.html.simpleparser.HTMLWorker;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.tool.xml.XMLWorkerHelper;
 
 @Service
 public class BseEntryServiceImpl implements BseEntryManager {
@@ -65,7 +83,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 
 	@Autowired
 	BseTransCountCrudRepository bseTransCountCrudRepository;
-	
+
 	@Autowired
 	BseOrderEntryResponseRepository bseOrderEntryResponseRepository;
 
@@ -127,7 +145,11 @@ public class BseEntryServiceImpl implements BseEntryManager {
 			String bseResponse = investmentConnectorBseInterface.saveCustomerRegistration(customerForm, null);
 			if(bseResponse.equalsIgnoreCase("SUCCESS")){
 				//User registration successful at BSE portal
+				try{
 				bseCustomerCrudRespository.updateBseRegistrationStatus(customerid);
+				}catch(Exception e){
+					logger.error("Failed to update customer successful registration status to database, notify admin");
+				}
 				logger.info("Customer registration status updated successfully");
 			}else{
 				logger.info("Failed to push customer details to BSE platform. Failure reason- "+ bseResponse);
@@ -145,54 +167,64 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		boolean flag = true;
 
 		//Save details to database, process to BSE, update database with response
-		//		try{
-		selectedMFFund.setOrderPlaceTime(new Date());
 		TransactionStatus transStatus = new TransactionStatus();
-		//Generate BSE related ref no
-		StringBuffer ref = new StringBuffer();
-		ref.append("P").append(selectedMFFund.getClientID()).append(Calendar.getInstance().getTimeInMillis());
-		selectedMFFund.setBseRefNo(ref.toString());
+		BseOrderEntryResponse bseResult =null;
+		try{
+			selectedMFFund.setOrderPlaceTime(new Date());
 
-//		selectedMFFund = bseTransCrudRepository.saveAndFlush(selectedMFFund);
-		logger.info("MF purchae request saved to database for transaction id- "+ selectedMFFund.getTransactionID());
-		
+			//Generate BSE related ref no
+			StringBuffer ref = new StringBuffer();
+			ref.append("P").append(selectedMFFund.getClientID().substring(6)).append(Calendar.getInstance().getTimeInMillis());
+			selectedMFFund.setBseRefNo(ref.toString());
 
-		//		Generate BSE transaction Reference no
-		Date date = new Date();
-		StringBuffer transNumber = new StringBuffer();
-		transNumber.append((new SimpleDateFormat("yyyyMMdd").format(date))).append(CommonConstants.BSE_MEMBER_ID);
-		long counter= getCurrentDayNextTransCount(date);
-		for(int i=1;i<(6-Long.toString(counter).length());i++){
-			transNumber.append("0");
+			//		selectedMFFund = bseTransCrudRepository.saveAndFlush(selectedMFFund);
+			logger.info("MF purchae request saved to database for transaction id- "+ selectedMFFund.getTransactionID());
+
+
+			//		Generate BSE transaction Reference no
+			Date date = new Date();
+			StringBuffer transNumber = new StringBuffer();
+			transNumber.append((new SimpleDateFormat("yyyyMMdd").format(date))).append(CommonConstants.BSE_MEMBER_ID);
+			long counter= getCurrentDayNextTransCount(date);
+			for(int i=1;i<(6-Long.toString(counter).length());i++){
+				transNumber.append("0");
+			}
+			transNumber.append(Long.toString(counter));
+
+
+
+			logger.info("Requesting BSE to register transaction for client id- : "+ selectedMFFund.getClientID() + " : TransactionCode: "+ transNumber.toString()+ ": Scheme code: "+ selectedMFFund.getSchemeCode() + " : Amount: "+ selectedMFFund.getInvestAmount());
+
+			//Call BSE
+
+			bseResult = investmentConnectorBseInterface.processCustomerPurchaseRequest(selectedMFFund, transNumber.toString());
+
+			logger.info("Status of requested transaction - "+ bseResult.getSuccessFlag());
+
+			if(bseResult.getSuccessFlag().equalsIgnoreCase("0")){
+				logger.info("Transaction is successful. Saving request to Database");
+				selectedMFFund = bseTransCrudRepository.saveAndFlush(selectedMFFund);
+				bseOrderEntryResponseRepository.saveAndFlush(bseResult);
+				transStatus.setSuccessFlag("S");
+				transStatus.setStatusMsg(bseResult.getBsereMarks());
+			}else if (bseResult.getSuccessFlag().equalsIgnoreCase("000")){
+				logger.info("Transaction disabled. Reason- "+bseResult.getBsereMarks());
+				transStatus.setSuccessFlag("S");
+				transStatus.setStatusMsg(bseResult.getBsereMarks());
+			}else{
+				logger.info("Transaction has failed. Transaction declined from saving to database. Reason- "+bseResult.getBsereMarks());
+				transStatus.setSuccessFlag("F");
+				transStatus.setStatusMsg(bseResult.getBsereMarks());
+			}
+
+		}catch(Exception e){
+			logger.error("Failed to save transaction Details for MF Purchase",e);
+			if(bseResult.getSuccessFlag().equalsIgnoreCase("0")){
+				transStatus.setSuccessFlag("SF");		// success in 
+				transStatus.setStatusMsg("Transaction successful in BSE but failed to save at FREEMI.");
+				flag = false;
+			}
 		}
-		transNumber.append(Long.toString(counter));
-		
-
-
-		logger.info("Requesting BSE to register transaction for client id- : "+ selectedMFFund.getClientID() + " : TransactionCode: "+ transNumber.toString()+ ": Scheme code: "+ selectedMFFund.getSchemeCode() + " : Amount: "+ selectedMFFund.getInvestAmount());
-
-		//Call BSE
-
-		BseOrderEntryResponse bseResult = investmentConnectorBseInterface.processCustomerPurchaseRequest(selectedMFFund, transNumber.toString());
-		
-		logger.info("Status of requested transaction - "+ bseResult.getSuccessFlag());
-		
-		if(bseResult.getSuccessFlag().equalsIgnoreCase("0")){
-			logger.info("Transaction is successful. Saving request to Database");
-			selectedMFFund = bseTransCrudRepository.saveAndFlush(selectedMFFund);
-			bseOrderEntryResponseRepository.saveAndFlush(bseResult);
-			transStatus.setSuccessFlag("S");
-			transStatus.setStatusMsg(bseResult.getBsereMarks());
-		}else if (bseResult.getSuccessFlag().equalsIgnoreCase("1")){
-			logger.info("Transaction has failed. Transaction declined from saving to database. Reason- "+bseResult.getBsereMarks());
-			transStatus.setSuccessFlag("F");
-			transStatus.setStatusMsg(bseResult.getBsereMarks());
-		}
-		
-		/*}catch(Exception e){
-		logger.error("Failed to save transaction Details for MF Purchase",e);
-		flag = false;
-	}*/
 
 
 		return transStatus;
@@ -416,13 +448,83 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	}
 
 
-	/*public static void main(String[] args){
-//		System.out.println(new Random());
-		String s ="NEW|201901302627300006|0|SUMANTA1|26273|DEBA593C|FAILED: DIRECT INV TYPE SCHEME NOT ALLOWED|1";
+	@Override
+	public String investmentProfileStatus(String mobileNumber) {
+		logger.info("Search for customer BSE ID");
+		String flag = "F";
+		String aofUploadStatus = "";
+		try{
+		if(bseCustomerCrudRespository.existsByMobile(mobileNumber)){
+			aofUploadStatus=bseCustomerCrudRespository.getBseRegistrationAOFStatus(mobileNumber);
+			flag= aofUploadStatus;
+		}else{
+			flag="NOT_FOUND";
+		}
+		}catch(Exception e){
+			logger.error("Failed to query database to get customer AOF upload status", e);
+			flag="E";
+		}
+		return flag;
+	}
+
+	@Override
+	public String upddateCustomerFormSignature(String mobile, String pan, String signatureData) {
+		logger.info("Processing to update customer signature for BSE profile- "+ mobile);
+		int result = 0;
+		String flag="SUCCESS";
+		try{
+			result = bseCustomerCrudRespository.uploadCustomerSignature(mobile, pan, signatureData);
+			logger.info("Status for signature update- "+ result);
+		}catch(Exception e){
+			logger.error("Failed to update customer signature data. ",e);
+			flag="FAIL";
+		}
+		return flag;
+	}
+	
+
+
+		@Override
+		public String uploadAOFForm(String mobileNumber, String aofFolderLocation) {
+			
+			logger.info("Begining process to upload AOF Form.");
+			String currentStatus = "SUCCESS";
+			
+			try{
+				if(bseCustomerCrudRespository.existsByMobile(mobileNumber)){
+					currentStatus=bseCustomerCrudRespository.getBseRegistrationAOFStatus(mobileNumber);
+					if(currentStatus.equalsIgnoreCase("N")){
+//						call BSE
+						
+						
+					}else{
+						currentStatus="DUPLICATE_REQUEST";
+					}
+				}else{
+					currentStatus="USER_NOT_FOUND";
+				}
+				}catch(Exception e){
+					logger.error("Failed to query database to get customer AOF upload status and upload", e);
+					currentStatus="ERROR";
+				}
+			return currentStatus;
+		}
 		
+		/*		public static void main(String[] args){
+		//		System.out.println(new Random());
+		String s ="NEW|201901302627300006|0|SUMANTA1|26273|DEBA593C|FAILED: DIRECT INV TYPE SCHEME NOT ALLOWED|1";
+
 		List<String> a = Arrays.asList(s.split("\\|"));
 		System.out.println(a);
 		System.out.println(a.get(1));
+		System.out.println(Calendar.getInstance().getTimeInMillis());
+		String k = "<html><body> This is my Project </body></html>";
+		
+		
+		
+		System.out.println("copmplete");
+		
+
 	}*/
 
 }

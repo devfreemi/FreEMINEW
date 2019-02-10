@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import javax.websocket.server.PathParam;
 
 import org.apache.jasper.tagplugins.jstl.core.Url;
 import org.apache.logging.log4j.LogManager;
@@ -24,6 +25,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
+import org.springframework.data.repository.query.Param;
 import org.springframework.mobile.device.Device;
 import org.springframework.security.web.util.UrlUtils;
 import org.springframework.stereotype.Controller;
@@ -35,24 +37,33 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.freemi.common.util.BseAOFGenerator;
 import com.freemi.common.util.BseRelatedActions;
 import com.freemi.common.util.CommonConstants;
 import com.freemi.common.util.InvestFormConstants;
 import com.freemi.controller.interfaces.InvestmentConnectorBseInterface;
 import com.freemi.database.interfaces.ProductSchemeDetailService;
 import com.freemi.database.service.BseEntryManager;
+import com.freemi.entity.bse.BseOrderPaymentRequest;
+import com.freemi.entity.bse.BseOrderPaymentResponse;
 import com.freemi.entity.database.MfTopFundsInventory;
 import com.freemi.entity.investment.BseAllTransactionsView;
 import com.freemi.entity.investment.BseMFInvestForm;
+import com.freemi.entity.investment.CustomerSignature;
 import com.freemi.entity.investment.MFAdditionalPurchaseForm;
 import com.freemi.entity.investment.MFRedeemForm;
 import com.freemi.entity.investment.SelectMFFund;
@@ -77,7 +88,7 @@ public class BsemfController {
 
 	@Autowired
 	private BseEntryManager bseEntryManager;
-	
+
 	@Autowired
 	InvestmentConnectorBseInterface investmentConnectorBseInterface;
 
@@ -107,7 +118,7 @@ public class BsemfController {
 		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 
 		System.out.println(device.getDevicePlatform());
-		
+
 		return "bsemf/bse-form-new-customer";
 		//		return "bsemf/test";
 	}
@@ -117,12 +128,12 @@ public class BsemfController {
 
 		logger.info("BSE MF STAR Customer Register post controller");
 		String returnUrl = "bsemf/bse-registration-status";
-		
+
 		if(!investForm.isUbo()){
 			map.addAttribute("error", "Confirm the policy");
 			return "bsemf/bse-form-new-customer";
 		}
-		
+
 		if(bindResult.hasErrors()){
 			map.addAttribute("error", bindResult.getFieldError().getDefaultMessage());
 			return "bsemf/bse-form-new-customer";
@@ -153,7 +164,7 @@ public class BsemfController {
 			if(flag.equalsIgnoreCase("false")){
 			returnUrl= "bsemf/bse-form-new-customer";
 			map.addAttribute("error", "Customer issue with given PAN no.");
-			
+
 		}*/
 		}catch(Exception e){
 			returnUrl= "bsemf/bse-form-new-customer";
@@ -167,237 +178,328 @@ public class BsemfController {
 	}
 
 	@RequestMapping(value = "/mutual-funds/mf-registration-status", method = RequestMethod.GET)
-	public String mfRegistrationStatusGet(@ModelAttribute("STATUS") String status,@ModelAttribute("mfInvestForm") BseMFInvestForm investForm, ModelMap map, HttpServletRequest request, HttpServletResponse response) {
+	public String mfRegistrationStatusGet(@ModelAttribute("STATUS") String status,@ModelAttribute("mfInvestForm") BseMFInvestForm investForm, ModelMap map, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 
 		logger.info("mf-registration-status Get controller");
 		String returnUrl = "bsemf/bse-registration-status";
-		if(investForm.getMobile()==null){
+		session.setAttribute("mfRegisterdUser", investForm);
+		/*if(investForm.getMobile()==null){
 			map.clear();
 			returnUrl= "redirect:/mutual-funds/top-performing";
-		}
+		}*/
 		return returnUrl;
 
 	}
 
-	@RequestMapping(value = "/mutual-funds/top-performing", method = RequestMethod.GET)
-	public String AllMfFundsView(@RequestParam(name="info",required=false)String correctInfoAfterLogin,Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+	@RequestMapping(value = "/mutual-funds/uploadsign", method = RequestMethod.POST)
+	@ResponseBody
+	public String mfRegisterSignature(/*@RequestBody CustomerSignature sign,@ModelAttribute("mfInvestForm") BseMFInvestForm investForm,*/ ModelMap map, HttpServletRequest request, HttpServletResponse response,HttpSession session) {
 
-		logger.info("MF Funds Inventory");
-		List<MfTopFundsInventory> topFunds = null;
-		/*List<ProductSchemeDetail> allFunds = productSchemeDetailService.findForRegistryBirthDay();
+		logger.info("mf-signature-udpate post controller");
+		String returnResponse = "SUCCESS";
+		try{
+			BseMFInvestForm investForm = (BseMFInvestForm) session.getAttribute("mfRegisterdUser");
+			System.out.println(investForm);
+			if(investForm.getMobile()!=""){
+
+				String customerSignature = request.getParameter("sign1");
+				System.out.println(request.getParameter("sign1"));
+				System.out.println(request.getParameter("sign2"));
+				System.out.println(request.getParameter("sign3"));
+				//		System.out.println(sign.getSign1());
+
+				System.out.println("Request received for- "+investForm.getMobile());
+				investForm.setCustomerSignature(customerSignature);
+
+				String flag1= BseAOFGenerator.aofGenerator(investForm, investForm.getMobile(), "", "VERIFIED", env.getProperty(CommonConstants.BSE_AOF_GENERATION_FOLDR));
+
+				String result= bseEntryManager.upddateCustomerFormSignature(investForm.getMobile(), investForm.getPan1(), investForm.getCustomerSignature());
+				/*if(investForm.getMobile()==null){
+			map.clear();
+			returnResponse= "NO_MOBILE";
+		}*/
+				if(result.equalsIgnoreCase("SUCCESS")){
+					map.addAttribute("AOF", "COMPLETE");
+				}else{
+					map.addAttribute("AOF", "FAIL");
+
+				}
+			}else{
+				logger.info("User BSERegister form not found in session. Request denied. User need to login to complete task.");
+				returnResponse = "REQUEST_DENIED";
+			}
+		}catch(NullPointerException ex){
+			logger.error("No registration sesssion found, Rejecting request");
+			returnResponse = "REQUEST_INVALID";
+		}
+
+		return returnResponse;
+
+	}
+
+	@RequestMapping(value = "/mutual-funds/uploadsignedaof", method = RequestMethod.GET)
+	@ResponseBody
+	public String getAOFFile(HttpServletRequest request, HttpServletResponse response,HttpSession session) {
+
+		logger.info("mf-signature-udpate post controller");
+		String returnUrl = "SUCCESS";
+
+		try{
+			BseMFInvestForm investForm = (BseMFInvestForm) session.getAttribute("mfRegisterdUser");
+			
+			if(investForm.getMobile()!=""){
+				String requestedMobile= request.getParameter("mobile");
+				
+				if(requestedMobile.equalsIgnoreCase(investForm.getMobile())){
+					
+				}else{
+					logger.info("Mobile number do not match with holding session form data. Request rejected. Session no:"+ investForm.getMobile() + " : Requested mobile: "+ requestedMobile);
+					returnUrl="FAIL";
+				}
+				
+				//		String result= bseEntryManager.upddateCustomerFormSignature(investForm.getMobile(), investForm.getPan1(), investForm.getCustomerSignature());
+				/*if(investForm.getMobile()==null){
+			map.clear();
+			returnUrl= "redirect:/mutual-funds/top-performing";
+		}*/
+				/*if(result.equalsIgnoreCase("SUCCESS")){
+			map.addAttribute("AOF", "COMPLETE");
+		}else{
+			map.addAttribute("AOF", "FAIL");
+
+		}*/
+
+			}else{
+				returnUrl="REQUEST_DENIED";
+			}
+		}catch(Exception e){
+			logger.error("Error with service", e);
+			returnUrl="INTERNAL_ERROR";
+		}
+			return returnUrl;
+
+		}
+
+
+		@RequestMapping(value = "/mutual-funds/top-performing", method = RequestMethod.GET)
+		public String AllMfFundsView(@RequestParam(name="info",required=false)String correctInfoAfterLogin,Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+
+			logger.info("MF Funds Inventory");
+			List<MfTopFundsInventory> topFunds = null;
+			/*List<ProductSchemeDetail> allFunds = productSchemeDetailService.findForRegistryBirthDay();
 		map.addAttribute("mffunds", allFunds);
 		System.out.println("Funds size- "+ allFunds.size());
 		for(int i=0;i<allFunds.size();i++){
 			System.out.println(allFunds.get(i).getFundName());
 		}
 
-		 */
+			 */
 
-		if(correctInfoAfterLogin!=null){
-			logger.info("Error code received for transaction - "+ correctInfoAfterLogin);
-			if(correctInfoAfterLogin.equals("01")){
-				map.addAttribute("error", "Provided details mismatch with registered details. Transaction aborted. Please try again.");
+			if(correctInfoAfterLogin!=null){
+				logger.info("Error code received for transaction - "+ correctInfoAfterLogin);
+				if(correctInfoAfterLogin.equals("01")){
+					map.addAttribute("error", "Provided details mismatch with registered details. Transaction aborted. Please try again.");
+				}
 			}
-		}
-		if(session.getAttribute("topFunds")!=null){
-			topFunds = (List<MfTopFundsInventory>) session.getAttribute("topFunds");
-			logger.info("Serving top funds from session - "+ topFunds.size());
-			map.addAttribute("FUNDSFOUND", "Y");
-			map.addAttribute("topFunds", topFunds);
-			System.out.println("Total funds");
-		}else{
-			logger.info("Get top funds from database");
-			try{
-				topFunds =  bseEntryManager.getTopMfFunds();
+			if(session.getAttribute("topFunds")!=null){
+				topFunds = (List<MfTopFundsInventory>) session.getAttribute("topFunds");
+				logger.info("Serving top funds from session - "+ topFunds.size());
 				map.addAttribute("FUNDSFOUND", "Y");
 				map.addAttribute("topFunds", topFunds);
-				session.setAttribute("topFunds", topFunds);
-				System.out.println("Total funds received- "+ topFunds.size());
-			}catch(Exception e){
-				logger.error("Error fetching Funds list. Please try after sometime");
-				map.addAttribute("FUNDSFOUND", "N");
-			}
-		}
-		SelectMFFund fundChoice = new SelectMFFund();
-		if(session.getAttribute("token")!=null){
-			fundChoice.setMobile(session.getAttribute("userid").toString());
-			try{
-				String panNumber = bseEntryManager.getCustomerPanfromMobile(fundChoice.getMobile());
-				fundChoice.setPan(panNumber);
-			}catch(Exception e){
-				logger.error("Database connect issue: unable to fetch customer PAN number", e);
-			}
-		}
-		map.addAttribute("selectFund", fundChoice);
-		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
-		String returnUrl = "bsemf/top-performing-funds";
-
-		return returnUrl;
-
-	}
-	
-
-	@RequestMapping(value = "/mutual-funds/view-order-history", method = RequestMethod.GET)
-	public String viewOrderHistory( Model map, HttpServletRequest request, HttpServletResponse response) {
-
-		logger.info("MF Funds Inventory");
-
-		List<SelectMFFund> orderHistory = bseEntryManager.getMFOrderHistory("DEBASISH87");
-		List<BseMFInvestForm> customerDetails = bseEntryManager.getCustomerDetails("DEBASISH87");
-
-		System.out.println("Funds size- "+ orderHistory.size());
-		System.out.println("Cusotmer details- "+ customerDetails.size());
-		System.out.println("Customer PAN- "+ customerDetails.get(0).getPan1());
-
-		//		System.out.println("Customer purchase totals- "+ customerDetails.get(0).getFundPurchaseDetails().size());
-
-		for(int i=0;i<orderHistory.size();i++){
-			System.out.println(orderHistory.get(i).getInvestAmount());
-		}
-
-		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
-		String returnUrl = "bsemf/order-history";
-
-		return returnUrl;
-
-	}
-
-
-	@RequestMapping(value = "/mutual-funds/purchase.do", method = RequestMethod.POST)
-	public String bsemfTrasactionPost(@ModelAttribute("selectFund") SelectMFFund selectedFund,BindingResult bindResult, Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session,RedirectAttributes redirectAttrs) {
-
-		logger.info("BSE MF STAR Purchse.do post controller");
-		String returnUrl = "redirect:/mutual-funds/top-performing";
-
-		
-		if(bindResult.hasErrors()){
-			map.addAttribute("error", bindResult.getFieldError().getDefaultMessage());
-			return "bsemf/bse-form-new-customer";
-		}
-
-		try{
-			//Check if existing BSE registered customer or not
-			boolean flag = bseEntryManager.isExisitngCustomer(selectedFund.getPan(), selectedFund.getMobile());
-			logger.info("Is existing customer? - "+ selectedFund.getPan()+ " : "+ flag);
-			session.setAttribute("selectFund", selectedFund);
-			if(flag && session.getAttribute("token")==null){
-
-				session.setAttribute("NEXT_URL", "/mutual-funds/purchase");
-				redirectAttrs.addAttribute("ref", URLEncoder.encode(request.getRequestURL().toString(), StandardCharsets.UTF_8.toString()));
-				returnUrl="redirect:/login";
-			}else if((flag && session.getAttribute("token")!=null)){
-				//				If logged in account PAN and mobile do not match with provided PAN. Revert back to page which should pick up correct details from session now overriding 
-
-				String pan = bseEntryManager.getCustomerPanfromMobile(session.getAttribute("userid").toString());
-
-
-				if(!session.getAttribute("userid").toString().equalsIgnoreCase(selectedFund.getMobile()) && ! pan.equalsIgnoreCase(selectedFund.getPan())){
-					logger.warn("Customer logged in with another mobile than provided during form fillup. Also the PAN number is different. Redirecting back to fund selection page and override information with current details");
-					logger.warn("Data provided during form fillup:[ "+ selectedFund.getPan() + " : "+ selectedFund.getMobile() + "] Data from session user:["+pan+ " : "+session.getAttribute("userid").toString()+"]");
-
-					redirectAttrs.addFlashAttribute("USERINFO", "01");
-					returnUrl = "redirect:/mutual-funds/top-performing";
-				}else{
-					returnUrl="redirect:/mutual-funds/purchase";
-				}
-
+				System.out.println("Total funds");
 			}else{
-				redirectAttrs.addFlashAttribute("selectedFund", selectedFund);
-				returnUrl="redirect:/mutual-funds/register";
+				logger.info("Get top funds from database");
+				try{
+					topFunds =  bseEntryManager.getTopMfFunds();
+					map.addAttribute("FUNDSFOUND", "Y");
+					map.addAttribute("topFunds", topFunds);
+					session.setAttribute("topFunds", topFunds);
+					System.out.println("Total funds received- "+ topFunds.size());
+				}catch(Exception e){
+					logger.error("Error fetching Funds list. Please try after sometime");
+					map.addAttribute("FUNDSFOUND", "N");
+				}
 			}
-		}catch(Exception e){
-			logger.error("Failed to check customer in databaes",e);
+			SelectMFFund fundChoice = new SelectMFFund();
+			if(session.getAttribute("token")!=null){
+				fundChoice.setMobile(session.getAttribute("userid").toString());
+				try{
+					String panNumber = bseEntryManager.getCustomerPanfromMobile(fundChoice.getMobile());
+					fundChoice.setPan(panNumber);
+				}catch(Exception e){
+					logger.error("Database connect issue: unable to fetch customer PAN number", e);
+				}
+			}
+			map.addAttribute("selectFund", fundChoice);
+			map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
+			String returnUrl = "bsemf/top-performing-funds";
+
+			return returnUrl;
 
 		}
-		/*try{
+
+
+		@RequestMapping(value = "/mutual-funds/view-order-history", method = RequestMethod.GET)
+		public String viewOrderHistory( Model map, HttpServletRequest request, HttpServletResponse response) {
+
+			logger.info("MF Funds Inventory");
+
+			List<SelectMFFund> orderHistory = bseEntryManager.getMFOrderHistory("DEBASISH87");
+			List<BseMFInvestForm> customerDetails = bseEntryManager.getCustomerDetails("DEBASISH87");
+
+			System.out.println("Funds size- "+ orderHistory.size());
+			System.out.println("Cusotmer details- "+ customerDetails.size());
+			System.out.println("Customer PAN- "+ customerDetails.get(0).getPan1());
+
+			//		System.out.println("Customer purchase totals- "+ customerDetails.get(0).getFundPurchaseDetails().size());
+
+			for(int i=0;i<orderHistory.size();i++){
+				System.out.println(orderHistory.get(i).getInvestAmount());
+			}
+
+			map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
+			String returnUrl = "bsemf/order-history";
+
+			return returnUrl;
+
+		}
+
+
+		@RequestMapping(value = "/mutual-funds/purchase.do", method = RequestMethod.POST)
+		public String bsemfTrasactionPost(@ModelAttribute("selectFund") SelectMFFund selectedFund,BindingResult bindResult, Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session,RedirectAttributes redirectAttrs) {
+
+			logger.info("BSE MF STAR Purchse.do post controller");
+			String returnUrl = "redirect:/mutual-funds/top-performing";
+
+
+			if(bindResult.hasErrors()){
+				map.addAttribute("error", bindResult.getFieldError().getDefaultMessage());
+				return "bsemf/bse-form-new-customer";
+			}
+
+			try{
+				//Check if existing BSE registered customer or not
+				boolean flag = bseEntryManager.isExisitngCustomer(selectedFund.getPan(), selectedFund.getMobile());
+				logger.info("Is existing customer? - "+ selectedFund.getPan()+ " : "+ flag);
+				session.setAttribute("selectFund", selectedFund);
+				if(flag && session.getAttribute("token")==null){
+
+					session.setAttribute("NEXT_URL", "/mutual-funds/purchase");
+					redirectAttrs.addAttribute("ref", URLEncoder.encode(request.getRequestURL().toString(), StandardCharsets.UTF_8.toString()));
+					returnUrl="redirect:/login";
+				}else if((flag && session.getAttribute("token")!=null)){
+					//				If logged in account PAN and mobile do not match with provided PAN. Revert back to page which should pick up correct details from session now overriding 
+
+					String pan = bseEntryManager.getCustomerPanfromMobile(session.getAttribute("userid").toString());
+
+
+					if(!session.getAttribute("userid").toString().equalsIgnoreCase(selectedFund.getMobile()) && ! pan.equalsIgnoreCase(selectedFund.getPan())){
+						logger.warn("Customer logged in with another mobile than provided during form fillup. Also the PAN number is different. Redirecting back to fund selection page and override information with current details");
+						logger.warn("Data provided during form fillup:[ "+ selectedFund.getPan() + " : "+ selectedFund.getMobile() + "] Data from session user:["+pan+ " : "+session.getAttribute("userid").toString()+"]");
+
+						redirectAttrs.addFlashAttribute("USERINFO", "01");
+						returnUrl = "redirect:/mutual-funds/top-performing";
+					}else{
+						returnUrl="redirect:/mutual-funds/purchase";
+					}
+
+				}else{
+					redirectAttrs.addFlashAttribute("selectedFund", selectedFund);
+					returnUrl="redirect:/mutual-funds/register";
+				}
+			}catch(Exception e){
+				logger.error("Failed to check customer in databaes",e);
+
+			}
+			/*try{
 		boolean flag = bseEntryManager.savetransactionDetails(selectedFund);
 		logger.info("Customer purchase transaction status- "+ flag);
 		}catch(Exception e){
 			logger.error("Unable to save customer transaction request",e.getMessage());
 		}*/
 
-		return returnUrl;
+			return returnUrl;
 
-		/*redirectAttrs.addFlashAttribute("selectedFund", selectedFund);
+			/*redirectAttrs.addFlashAttribute("selectedFund", selectedFund);
 		returnUrl="redirect:/mutual-funds/register";
 		return returnUrl;*/
 
-	}
+		}
 
 
-	@RequestMapping(value = "/mutual-funds/purchase", method = RequestMethod.GET)
-	public String bseMfPurchaseAfterLogin(Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session,RedirectAttributes redirectAttrs) {
+		@RequestMapping(value = "/mutual-funds/purchase", method = RequestMethod.GET)
+		public String bseMfPurchaseAfterLogin(Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session,RedirectAttributes redirectAttrs) {
 
-		logger.info("BSE MF STAR Purhcase Get controller");
-		String returnUrl = "bsemf/bse-mf-purchase";
+			logger.info("BSE MF STAR Purhcase Get controller");
+			String returnUrl = "bsemf/bse-mf-purchase";
 
-		List<BseMFInvestForm> customerData = null;	
-		SelectMFFund selectedFund = null;
-		if(session.getAttribute("token")!=null){
-			
-			try{
-				
-				selectedFund = (SelectMFFund) session.getAttribute("selectFund");
-				logger.info("Purchase order start for- "+ selectedFund.getSchemeName() + " : "+ selectedFund.getSchemeCode());
-				
-				String pan = bseEntryManager.getCustomerPanfromMobile(session.getAttribute("userid").toString());
+			List<BseMFInvestForm> customerData = null;	
+			SelectMFFund selectedFund = null;
+			if(session.getAttribute("token")!=null){
 
-				if(!session.getAttribute("userid").toString().equalsIgnoreCase(selectedFund.getMobile()) || ! pan.equalsIgnoreCase(selectedFund.getPan())){
-					logger.warn("Customer logged in with another mobile than provided during form fillup. Also the PAN number is different. Redirecting back to fund selection page and override information with current details");
-					logger.warn("Data provided during form fillup:[ "+ selectedFund.getPan() + " : "+ selectedFund.getMobile() + "] Data from session user:["+pan+ " : "+session.getAttribute("userid").toString()+"]");
+				try{
 
-					redirectAttrs.addFlashAttribute("USERINFO", "01");
-					returnUrl = "redirect:/mutual-funds/top-performing";
-				}else{
-					logger.info("Customer log in data matches with form data.");
-					customerData =  bseEntryManager.getCustomerByPan(selectedFund.getPan());
-					//				System.out.println("Data size returned- "+ customerData.size());
-					selectedFund.setClientID(customerData.get(0).getClientID());
-					logger.info("Investor name- "+ customerData.get(0).getInvName());
-						
-					//Set SIP start date from 
-					if(selectedFund.getInvestype().equalsIgnoreCase("SIP")){
-						int initialMonth = LocalDate.now().getMonth().getValue();
-						int initialYear = LocalDate.now().getYear();
-						int currentday = LocalDate.now().getDayOfMonth();
-						if(Integer.valueOf(selectedFund.getSipDate())>currentday){
-							selectedFund.setSipStartMonth(initialMonth);
-						}else{
-							selectedFund.setSipStartMonth(initialMonth+1);
-						}
-						selectedFund.setSipStartYear(initialYear);
-					}
-						
+					selectedFund = (SelectMFFund) session.getAttribute("selectFund");
+					logger.info("Purchase order start for- "+ selectedFund.getSchemeName() + " : "+ selectedFund.getSchemeCode());
 
-					//Find customer's portfolio
-					logger.info("Search for customer portfolio for details: "+ selectedFund.getAmcCode() + " : "+ customerData.get(0).getClientID());
-					List<String> customerPortfolios = bseEntryManager.getSelectedAmcPortfolio(selectedFund.getAmcCode(), customerData.get(0).getClientID());
+					String pan = bseEntryManager.getCustomerPanfromMobile(session.getAttribute("userid").toString());
 
-					//Generate Transaction ID and check if already existing
-					String transId = generateTransId();
+					if(!session.getAttribute("userid").toString().equalsIgnoreCase(selectedFund.getMobile()) || ! pan.equalsIgnoreCase(selectedFund.getPan())){
+						logger.warn("Customer logged in with another mobile than provided during form fillup. Also the PAN number is different. Redirecting back to fund selection page and override information with current details");
+						logger.warn("Data provided during form fillup:[ "+ selectedFund.getPan() + " : "+ selectedFund.getMobile() + "] Data from session user:["+pan+ " : "+session.getAttribute("userid").toString()+"]");
 
-					selectedFund.setTransactionID(transId);
-
-					System.out.println("Portfolio size- "+ customerPortfolios.size());
-					if(customerPortfolios.size()== 0){
-						customerPortfolios.add("NEW");
+						redirectAttrs.addFlashAttribute("USERINFO", "01");
+						returnUrl = "redirect:/mutual-funds/top-performing";
 					}else{
-						selectedFund.setPortfolio(customerPortfolios.get(0));
+						logger.info("Customer log in data matches with form data.");
+						customerData =  bseEntryManager.getCustomerByPan(selectedFund.getPan());
+						//				System.out.println("Data size returned- "+ customerData.size());
+						selectedFund.setClientID(customerData.get(0).getClientID());
+						logger.info("Investor name- "+ customerData.get(0).getInvName());
+
+						//Set SIP start date from 
+						if(selectedFund.getInvestype().equalsIgnoreCase("SIP")){
+							int initialMonth = LocalDate.now().getMonth().getValue();
+							int initialYear = LocalDate.now().getYear();
+							int currentday = LocalDate.now().getDayOfMonth();
+							if(Integer.valueOf(selectedFund.getSipDate())>currentday){
+								selectedFund.setSipStartMonth(initialMonth);
+							}else{
+								selectedFund.setSipStartMonth(initialMonth+1);
+							}
+							selectedFund.setSipStartYear(initialYear);
+						}
+
+
+						//Find customer's portfolio
+						logger.info("Search for customer portfolio for details: "+ selectedFund.getAmcCode() + " : "+ customerData.get(0).getClientID());
+						List<String> customerPortfolios = bseEntryManager.getSelectedAmcPortfolio(selectedFund.getAmcCode(), customerData.get(0).getClientID());
+
+						//Generate Transaction ID and check if already existing
+						String transId = generateTransId();
+
+						selectedFund.setTransactionID(transId);
+
+						System.out.println("Portfolio size- "+ customerPortfolios.size());
+						if(customerPortfolios.size()== 0){
+							customerPortfolios.add("NEW");
+						}else{
+							selectedFund.setPortfolio(customerPortfolios.get(0));
+						}
+						map.addAttribute("amcPortFolio", customerPortfolios);
+
+
+
+						map.addAttribute("customerData", customerData.get(0));
+						map.addAttribute("GETDATA", "S");
 					}
-					map.addAttribute("amcPortFolio", customerPortfolios);
 
-
-
-					map.addAttribute("customerData", customerData.get(0));
-					map.addAttribute("GETDATA", "S");
+				}catch(Exception e){
+					logger.error("Unable to query database to fetch customer data- ",e);
+					map.addAttribute("GETDATA", "F");
 				}
 
-			}catch(Exception e){
-				logger.error("Unable to query database to fetch customer data- ",e);
-				map.addAttribute("GETDATA", "F");
-			}
-
-			/*try{
+				/*try{
 				//Find customer's portfolio
 				logger.info("Search for customer portfolio for details: "+ selectedFund.getAmcCode() + " : "+ customerData.get(0).getClientID());
 				List<String> customerPortfolios = bseEntryManager.getSelectedAmcPortfolio(selectedFund.getAmcCode(), customerData.get(0).getClientID());
@@ -418,378 +520,453 @@ public class BsemfController {
 				logger.error("Failed to get customer portfolio");
 				e.printStackTrace();
 			}
-			 */
+				 */
 
-		}else{
-			returnUrl="redirect:/mutual-funds/top-performing";
-		}
-		map.addAttribute("paymentMethod", InvestFormConstants.bsePaymentMethod);
-		map.addAttribute("calendarmonths", InvestFormConstants.bseInvestMonths);
-		map.addAttribute("sipyear", InvestFormConstants.bseInvestStartYear);
-		map.addAttribute("selectedFund", selectedFund);
-		return returnUrl;
-
-	}
-
-	private String generateTransId() {
-		boolean transIdExist=false;
-		String transId =null;
-		do{
-			transId = BseRelatedActions.generateTransactionId();
-			transIdExist = bseEntryManager.checkIfTransIdExist(transId);
-		}while(transIdExist);
-		return transId;
-	}
-
-	@RequestMapping(value = "/mutual-funds/mfPurchaseConfirm.do", method = RequestMethod.POST)
-	public String bsePurchaseConfirmPost(@ModelAttribute("selectedFund") SelectMFFund selectedFund,BindingResult bindResult, Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session,final RedirectAttributes redirectAttrs) {
-
-		logger.info("@@ BSE MF STAR purchase confirm controller @@");
-		String returnUrl = "redirect:/mutual-funds/bse-transaction-status";
-		System.out.println("Client ID - "+ selectedFund.getClientID());
-		
-//		set sip date if chosen
-		
-		if(selectedFund.getInvestype().equalsIgnoreCase("SIP")){
-			String combineDate = selectedFund.getSipDate()+"/" +Integer.valueOf(selectedFund.getSipStartMonth())+"/"+selectedFund.getSipStartYear();
-//			System.out.println(combineDate);
-//			validate date if prioor to today 	-todo
-			
-			selectedFund.setSipDate(combineDate);
-		}
-		
-		try{
-			TransactionStatus flag = bseEntryManager.savetransactionDetails(selectedFund);
-			logger.info("Customer purchase transaction status- "+ flag.getSuccessFlag());
-			
-			if(flag.getSuccessFlag()!=null && flag.getSuccessFlag().equalsIgnoreCase("S")){
-				redirectAttrs.addAttribute("TRANS_STATUS", "Y");
-				redirectAttrs.addFlashAttribute("TRANS_ID", selectedFund.getTransactionID());
-				redirectAttrs.addFlashAttribute("TRANS_MSG", flag.getStatusMsg());
-			}else if(flag.getSuccessFlag()!=null && flag.getSuccessFlag().equalsIgnoreCase("F")){
-				redirectAttrs.addAttribute("TRANS_STATUS", "N");
-				redirectAttrs.addFlashAttribute("TRANS_MSG", flag.getStatusMsg());
+			}else{
+				returnUrl="redirect:/mutual-funds/top-performing";
 			}
-			
-			
-		}catch(Exception e){
+			map.addAttribute("paymentMethod", InvestFormConstants.bsePaymentMethod);
+			map.addAttribute("calendarmonths", InvestFormConstants.bseInvestMonths);
+			map.addAttribute("sipyear", InvestFormConstants.bseInvestStartYear);
+			map.addAttribute("selectedFund", selectedFund);
+			return returnUrl;
 
-			logger.error("Unable to save customer transaction request",e);
-			redirectAttrs.addAttribute("TRANS_STATUS", "N");
 		}
 
-		return returnUrl;
+		private String generateTransId() {
+			boolean transIdExist=false;
+			String transId =null;
+			do{
+				transId = BseRelatedActions.generateTransactionId();
+				transIdExist = bseEntryManager.checkIfTransIdExist(transId);
+			}while(transIdExist);
+			return transId;
+		}
 
-	}
+		@RequestMapping(value = "/mutual-funds/mfPurchaseConfirm.do", method = RequestMethod.POST)
+		public String bsePurchaseConfirmPost(@ModelAttribute("selectedFund") SelectMFFund selectedFund,BindingResult bindResult, Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session,final RedirectAttributes redirectAttrs) {
 
-	@RequestMapping(value = "/my-dashboard/additional-purchase", method = RequestMethod.GET)
-	public String bsemfFundsPurchaseModeGet(@RequestParam("p") String purchasedata,@ModelAttribute("TRANS_ID") String transId,Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+			logger.info("@@ BSE MF STAR purchase confirm controller @@");
+			String returnUrl = "redirect:/mutual-funds/bse-transaction-status";
+			System.out.println("Client ID - "+ selectedFund.getClientID());
 
-		logger.info("@@ BSE MF STAR purchase confirm controller @@");
-		String returnUrl = "bsemf/bsemf-additional-purchase";
+			//		set sip date if chosen
 
-		List<String> decodedString= Arrays.asList(Base64Coder.decodeString(purchasedata).toString().split("\\|"));
-		System.out.println(decodedString);
+			if(selectedFund.getInvestype().equalsIgnoreCase("SIP")){
+				String combineDate = selectedFund.getSipDate()+"/" +Integer.valueOf(selectedFund.getSipStartMonth())+"/"+selectedFund.getSipStartYear();
+				//			System.out.println(combineDate);
+				//			validate date if prioor to today 	-todo
 
-		MFAdditionalPurchaseForm purchaseForm = new MFAdditionalPurchaseForm();
-		if(session.getAttribute("userid").toString()!=null || session.getAttribute("token").toString()!=null){
-			if(purchasedata!=null){
+				selectedFund.setSipDate(combineDate);
+			}
 
-				try{
-					String portfolio =decodedString.get(0)!=null?decodedString.get(0):"NA";
-					String schemeCode = decodedString.get(1)!=null?decodedString.get(1):"NA";
-					String investType = decodedString.get(2)!=null?decodedString.get(2):"SIP";
-					BseAllTransactionsView bseSeletedFundDetails= bseEntryManager.getFundDetailsForAdditionalPurchase(portfolio, schemeCode,investType, session.getAttribute("userid").toString());
-					purchaseForm.setPortfolio(bseSeletedFundDetails.getPortfoilio());
-					purchaseForm.setFundName(bseSeletedFundDetails.getSchemeName());
-					purchaseForm.setSchemeCode(bseSeletedFundDetails.getSchemeCode());
-					purchaseForm.setInvestType(bseSeletedFundDetails.getInvestType()!=null?bseSeletedFundDetails.getInvestType():"LUMPSUM");
-					purchaseForm.setTotalAvailableAmount(bseSeletedFundDetails.getSchemeInvestment());
-					String transactionId = generateTransId();
-					logger.info("Generated transaction ID of initiated transaction for additional purhcase-  "+ transactionId);
-					purchaseForm.setPurchaseTransid(transactionId);
+			try{
+				TransactionStatus flag = bseEntryManager.savetransactionDetails(selectedFund);
+				logger.info("Customer purchase transaction status- "+ flag.getSuccessFlag());
 
-				}catch(Exception e){
-					logger.error("Failed to fetch selected funds's transaction details",e);
-					map.addAttribute("error", "Failed to fetch the curret investment details");
+				if(flag.getSuccessFlag()!=null && flag.getSuccessFlag().equalsIgnoreCase("S")){
+					redirectAttrs.addAttribute("TRANS_STATUS", "Y");
+					redirectAttrs.addFlashAttribute("TRANS_ID", selectedFund.getTransactionID());
+					redirectAttrs.addFlashAttribute("TRANS_MSG", flag.getStatusMsg());
+				}else if(flag.getSuccessFlag()!=null && flag.getSuccessFlag().equalsIgnoreCase("F")){
+					redirectAttrs.addAttribute("TRANS_STATUS", "N");
+					redirectAttrs.addFlashAttribute("TRANS_MSG", flag.getStatusMsg());
+				}else{
+					redirectAttrs.addAttribute("TRANS_STATUS", "SF");
+					redirectAttrs.addFlashAttribute("TRANS_MSG", flag.getStatusMsg());
+				}
+
+			}catch(Exception e){
+
+				logger.error("Unable to save customer transaction request",e);
+				redirectAttrs.addAttribute("TRANS_STATUS", "N");
+			}
+			redirectAttrs.addFlashAttribute("CLIENT_CODE", selectedFund.getClientID());	
+			return returnUrl;
+
+		}
+
+		@RequestMapping(value = "/my-dashboard/additional-purchase", method = RequestMethod.GET)
+		public String bsemfFundsPurchaseModeGet(@RequestParam("p") String purchasedata,@ModelAttribute("TRANS_ID") String transId,Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+
+			logger.info("@@ BSE MF STAR purchase confirm controller @@");
+			String returnUrl = "bsemf/bsemf-additional-purchase";
+
+			List<String> decodedString= Arrays.asList(Base64Coder.decodeString(purchasedata).toString().split("\\|"));
+			System.out.println(decodedString);
+
+			MFAdditionalPurchaseForm purchaseForm = new MFAdditionalPurchaseForm();
+			if(session.getAttribute("userid").toString()!=null || session.getAttribute("token").toString()!=null){
+				if(purchasedata!=null){
+
+					try{
+						String portfolio =decodedString.get(0)!=null?decodedString.get(0):"NA";
+						String schemeCode = decodedString.get(1)!=null?decodedString.get(1):"NA";
+						String investType = decodedString.get(2)!=null?decodedString.get(2):"SIP";
+						BseAllTransactionsView bseSeletedFundDetails= bseEntryManager.getFundDetailsForAdditionalPurchase(portfolio, schemeCode,investType, session.getAttribute("userid").toString());
+						purchaseForm.setPortfolio(bseSeletedFundDetails.getPortfoilio());
+						purchaseForm.setFundName(bseSeletedFundDetails.getSchemeName());
+						purchaseForm.setSchemeCode(bseSeletedFundDetails.getSchemeCode());
+						purchaseForm.setInvestType(bseSeletedFundDetails.getInvestType()!=null?bseSeletedFundDetails.getInvestType():"LUMPSUM");
+						purchaseForm.setTotalAvailableAmount(bseSeletedFundDetails.getSchemeInvestment());
+						String transactionId = generateTransId();
+						logger.info("Generated transaction ID of initiated transaction for additional purhcase-  "+ transactionId);
+						purchaseForm.setPurchaseTransid(transactionId);
+
+					}catch(Exception e){
+						logger.error("Failed to fetch selected funds's transaction details",e);
+						map.addAttribute("error", "Failed to fetch the curret investment details");
+					}
+				}else{
+					logger.warn("Purchase details missing. Redirecting to my dashboard");
+					returnUrl="redirect:/my-dashboard";
 				}
 			}else{
-				logger.warn("Purchase details missing. Redirecting to my dashboard");
-				returnUrl="redirect:/my-dashboard";
+				logger.warn("User session not found to carry out additional purcahse. Redirecting to login.");
+				returnUrl="redirect:/login";
 			}
-		}else{
-			logger.warn("User session not found to carry out additional purcahse. Redirecting to login.");
-			returnUrl="redirect:/login";
-		}
 
-		/*MFAdditionalPurchaseForm purchaseForm = new MFAdditionalPurchaseForm();
+			/*MFAdditionalPurchaseForm purchaseForm = new MFAdditionalPurchaseForm();
 		purchaseForm.setPortfolio(portfolio);
 		purchaseForm.setSchemeCode(schemeCode);
 		purchaseForm.setInvestType(investType.toUpperCase());*/
 
 
 
-		map.addAttribute("purchaseForm", purchaseForm);
-		map.addAttribute("data", purchasedata);
-		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
-		return returnUrl;
-	}
-
-	@RequestMapping(value = "/mutual-funds/mfInvestAdditionalPurchase.do", method = RequestMethod.GET)
-	public String bseAdditionalPurchaseGet(HttpServletRequest request, HttpServletResponse response) {
-		return "redirect:/";
-	}
-
-	@RequestMapping(value = "/mutual-funds/mfInvestAdditionalPurchase.do", method = RequestMethod.POST)
-	public String bseAdditionalPurchasePost(@ModelAttribute("purchaseForm") @Valid MFAdditionalPurchaseForm purchaseForm,BindingResult bindResult, Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session,final RedirectAttributes redirectAttrs) {
-
-		logger.info("@@ BSE MF STAR purchase confirm do controller @@");
-		String returnUrl = "redirect:/mutual-funds/bse-transaction-status";
-		System.out.println("Purchase initiated against Folio no - "+ purchaseForm.getPortfolio());
-
-		System.out.println("Is cutout policy agreed for purchase?- "+ purchaseForm.isAgreePolicy());
-
-		if(bindResult.hasErrors()){
-			logger.error("Error processing redeem request",bindResult.getFieldError().getDefaultMessage());
-			map.addAttribute("error", bindResult.getFieldError().getDefaultMessage());
-			return "bsemf/bsemf-additional-purchase";
-		}
-		if(!purchaseForm.isAgreePolicy()){
-			logger.warn("Policy not agreed for transaction.");
-			map.addAttribute("error", "Please agree to the policy for transaction.");
-			return "bsemf/bsemf-additional-purchase";
+			map.addAttribute("purchaseForm", purchaseForm);
+			map.addAttribute("data", purchasedata);
+			map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
+			return returnUrl;
 		}
 
-		if(session.getAttribute("purchaseForm")!=null){
+		@RequestMapping(value = "/mutual-funds/mfInvestAdditionalPurchase.do", method = RequestMethod.GET)
+		public String bseAdditionalPurchaseGet(HttpServletRequest request, HttpServletResponse response) {
+			return "redirect:/";
+		}
 
-			SelectMFFund fundTransaction = new SelectMFFund();
-			try{
-				String clientId= bseEntryManager.getClientIdfromMobile(session.getAttribute("userid").toString());
-				System.out.println("Client id - "+ clientId);
-				fundTransaction.setClientID(clientId);
-				fundTransaction.setPortfolio(purchaseForm.getPortfolio());
-				fundTransaction.setSchemeCode(purchaseForm.getSchemeCode());
-				fundTransaction.setTransactionID(purchaseForm.getPurchaseTransid());
-				fundTransaction.setInvestype(fundTransaction.getInvestype());
-				fundTransaction.setTransactionType("PURCHASE");
-				fundTransaction.setInvestAmount(purchaseForm.getPurchaseAmounts());
-				fundTransaction.setPaymentMethod(purchaseForm.getPaymentMode());
+		@RequestMapping(value = "/mutual-funds/mfInvestAdditionalPurchase.do", method = RequestMethod.POST)
+		public String bseAdditionalPurchasePost(@ModelAttribute("purchaseForm") @Valid MFAdditionalPurchaseForm purchaseForm,BindingResult bindResult, Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session,final RedirectAttributes redirectAttrs) {
 
-				TransactionStatus flag = bseEntryManager.savetransactionDetails(fundTransaction);
-				logger.info("Customer purchase transaction status- "+ flag.getSuccessFlag());		//todo
-				redirectAttrs.addAttribute("TRANS_STATUS", "Y");
-				redirectAttrs.addAttribute("TRANS_TYPE", "ADDITIONAL");
-				redirectAttrs.addFlashAttribute("TRANS_ID", purchaseForm.getPurchaseTransid());
-			}catch(Exception e){
+			logger.info("@@ BSE MF STAR purchase confirm do controller @@");
+			String returnUrl = "redirect:/mutual-funds/bse-transaction-status";
+			System.out.println("Purchase initiated against Folio no - "+ purchaseForm.getPortfolio());
+			String clientId = "";
+			System.out.println("Is cutout policy agreed for purchase?- "+ purchaseForm.isAgreePolicy());
 
-				logger.error("Unable to save customer transaction request for additional purchase",e);
-				//			redirectAttrs.addAttribute("TRANS_STATUS", "N");
-				map.addAttribute("error", "Failed to save your request for additional purchase. Please try again.");
-				returnUrl="bsemf/bsemf-additional-purchase";
+			if(bindResult.hasErrors()){
+				logger.error("Error processing redeem request",bindResult.getFieldError().getDefaultMessage());
+				map.addAttribute("error", bindResult.getFieldError().getDefaultMessage());
+				return "bsemf/bsemf-additional-purchase";
 			}
-		}else{
-			logger.warn("Fund session not found for execution. Redirecting out");
-			returnUrl ="redirect:/products/";
-		}
-		return returnUrl;
+			if(!purchaseForm.isAgreePolicy()){
+				logger.warn("Policy not agreed for transaction.");
+				map.addAttribute("error", "Please agree to the policy for transaction.");
+				return "bsemf/bsemf-additional-purchase";
+			}
 
-	}
+			if(session.getAttribute("purchaseForm")!=null){
 
+				SelectMFFund fundTransaction = new SelectMFFund();
+				try{
+					clientId= bseEntryManager.getClientIdfromMobile(session.getAttribute("userid").toString());
+					System.out.println("Client id - "+ clientId);
+					fundTransaction.setClientID(clientId);
+					fundTransaction.setPortfolio(purchaseForm.getPortfolio());
+					fundTransaction.setSchemeCode(purchaseForm.getSchemeCode());
+					fundTransaction.setTransactionID(purchaseForm.getPurchaseTransid());
+					fundTransaction.setInvestype(fundTransaction.getInvestype());
+					fundTransaction.setTransactionType("PURCHASE");
+					fundTransaction.setInvestAmount(purchaseForm.getPurchaseAmounts());
+					fundTransaction.setPaymentMethod(purchaseForm.getPaymentMode());
 
-	@RequestMapping(value = "/my-dashboard/funds-redeem", method = RequestMethod.GET)
-	public String bsemfFundsRedeemGet(@RequestParam("r") String purchasedata,@ModelAttribute("TRANS_STATUS") String transStatus,@ModelAttribute("TRANS_ID") String transId,Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+					TransactionStatus flag = bseEntryManager.savetransactionDetails(fundTransaction);
+					logger.info("Customer purchase transaction status- "+ flag.getSuccessFlag());		//todo
+					redirectAttrs.addAttribute("TRANS_STATUS", "Y");
+					redirectAttrs.addAttribute("TRANS_TYPE", "ADDITIONAL");
+					redirectAttrs.addFlashAttribute("TRANS_ID", purchaseForm.getPurchaseTransid());
+				}catch(Exception e){
 
-		logger.info("@@ BSE MF STAR purchase confirm controller @@");
-		String returnUrl = "bsemf/bsemf-redeem";
-
-		List<String> decodedString= Arrays.asList(Base64Coder.decodeString(purchasedata).toString().split("\\|"));
-		System.out.println(decodedString);
-
-		MFRedeemForm redeemForm = new MFRedeemForm();
-
-		try{
-			String portfolio =decodedString.get(0)!=null?decodedString.get(0):"NA";
-			String schemeCode = decodedString.get(1)!=null?decodedString.get(1):"NA";
-			String investType = decodedString.get(2)!=null?decodedString.get(2):"NA";
-			BseAllTransactionsView bseSeletedFundDetails= bseEntryManager.getFundDetailsForRedemption(portfolio, schemeCode,investType, session.getAttribute("userid").toString());
-
-			if(bseSeletedFundDetails.getSchemeInvestment()<=0){
-				map.addAttribute("FUNDAVAILABLE", "N");
-				map.addAttribute("error", "No fund value to redeem. Please select appropriate fund for redemption.");
+					logger.error("Unable to save customer transaction request for additional purchase",e);
+					//			redirectAttrs.addAttribute("TRANS_STATUS", "N");
+					map.addAttribute("error", "Failed to save your request for additional purchase. Please try again.");
+					returnUrl="bsemf/bsemf-additional-purchase";
+				}
 			}else{
-				map.addAttribute("FUNDAVAILABLE", "Y");
-				redeemForm.setPortfolio(bseSeletedFundDetails.getPortfoilio());
-				redeemForm.setFundName(bseSeletedFundDetails.getSchemeName());
-				redeemForm.setSchemeCode(bseSeletedFundDetails.getSchemeCode());
-				redeemForm.setInvestType(bseSeletedFundDetails.getInvestType()!=null?bseSeletedFundDetails.getInvestType():"NA");
-				redeemForm.setTotalValue(bseSeletedFundDetails.getSchemeInvestment());
-				redeemForm.setRedeemAmounts(bseSeletedFundDetails.getSchemeInvestment());
-				String transactionId = generateTransId();
-				logger.info("Generated transaction ID of initiated transaction for additional purhcase-  "+ transactionId);
-				redeemForm.setRedeemTransId(transactionId);
+				logger.warn("Fund session not found for execution. Redirecting out");
+				returnUrl ="redirect:/products/";
 			}
+			redirectAttrs.addFlashAttribute("CLIENT_CODE", clientId);	
 
-		}catch(Exception e){
-			logger.error("Failed to fetch selected funds's transaction details",e);
-			map.addAttribute("error", "Failed to fetch the curret investment details");
+			return returnUrl;
+
 		}
 
-		map.addAttribute("mfRedeemForm", redeemForm);
-		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
-		return returnUrl;
-	}
 
-	@RequestMapping(value = "/mutual-funds/mfInvestRedeem.do", method = RequestMethod.GET)
-	public String bseRedeemFundGet(HttpServletRequest request, HttpServletResponse response) {
-		return "redirect:/";
-	}
+		@RequestMapping(value = "/my-dashboard/funds-redeem", method = RequestMethod.GET)
+		public String bsemfFundsRedeemGet(@RequestParam("r") String purchasedata,@ModelAttribute("TRANS_STATUS") String transStatus,@ModelAttribute("TRANS_ID") String transId,Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 
-	@RequestMapping(value = "/mutual-funds/mfInvestRedeem.do", method = RequestMethod.POST)
-	public String bseRedeemFundPost(@ModelAttribute("mfRedeemForm") @Valid MFRedeemForm redeemForm,BindingResult bindResult, Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session,final RedirectAttributes redirectAttrs) {
+			logger.info("@@ BSE MF STAR purchase confirm controller @@");
+			String returnUrl = "bsemf/bsemf-redeem";
 
-		logger.info("@@ BSE MF STAR redeem process do controller @@");
-		String returnUrl = "redirect:/mutual-funds/bse-transaction-status";
-		System.out.println("Purchase initiated against Folio no - "+ redeemForm.getPortfolio());
+			List<String> decodedString= Arrays.asList(Base64Coder.decodeString(purchasedata).toString().split("\\|"));
+			System.out.println(decodedString);
 
-		System.out.println("Is policy agreed?- "+ redeemForm.isAgreePolicy());
+			MFRedeemForm redeemForm = new MFRedeemForm();
 
-
-		if(bindResult.hasErrors()){
-			logger.error("Error processing redeem request",bindResult.getFieldError());
-			map.addAttribute("FUNDAVAILABLE", "Y");
-			map.addAttribute("error", bindResult.getFieldError().getDefaultMessage());
-			return "bsemf/bsemf-redeem";
-		}
-		if(!redeemForm.isAgreePolicy()){
-			logger.warn("Policy not agreed for transaction.");
-			map.addAttribute("error", "Please agree to the policy for transaction.");
-			map.addAttribute("FUNDAVAILABLE", "Y");
-			return "bsemf/bsemf-redeem";
-		}
-
-		if(session.getAttribute("mfRedeemForm")!=null){
-
-			SelectMFFund fundTransaction = new SelectMFFund();
 			try{
-				String clientId= bseEntryManager.getClientIdfromMobile(session.getAttribute("userid").toString());
-				System.out.println("Client id - "+ clientId);
-				fundTransaction.setClientID(clientId);
-				fundTransaction.setPortfolio(redeemForm.getPortfolio());
-				fundTransaction.setSchemeCode(redeemForm.getSchemeCode());
-				fundTransaction.setTransactionID(redeemForm.getRedeemTransId());
-				fundTransaction.setInvestype(redeemForm.getInvestType());
-				fundTransaction.setTransactionType("REDEEM");
-				logger.info("Redemption amount selected- "+ redeemForm.getRedeemAmounts()* (-1));
-				fundTransaction.setInvestAmount(redeemForm.getRedeemAmounts() * (-1));
+				String portfolio =decodedString.get(0)!=null?decodedString.get(0):"NA";
+				String schemeCode = decodedString.get(1)!=null?decodedString.get(1):"NA";
+				String investType = decodedString.get(2)!=null?decodedString.get(2):"NA";
+				BseAllTransactionsView bseSeletedFundDetails= bseEntryManager.getFundDetailsForRedemption(portfolio, schemeCode,investType, session.getAttribute("userid").toString());
 
-				TransactionStatus flag = bseEntryManager.savetransactionDetails(fundTransaction);
-				logger.info("Customer purchase transaction status- "+ flag.getSuccessFlag());
-				redirectAttrs.addAttribute("TRANS_STATUS", "Y");
-				redirectAttrs.addAttribute("TRANS_TYPE", "REDEEM");
-				redirectAttrs.addFlashAttribute("TRANS_ID", redeemForm.getRedeemTransId());
+				if(bseSeletedFundDetails.getSchemeInvestment()<=0){
+					map.addAttribute("FUNDAVAILABLE", "N");
+					map.addAttribute("error", "No fund value to redeem. Please select appropriate fund for redemption.");
+				}else{
+					map.addAttribute("FUNDAVAILABLE", "Y");
+					redeemForm.setPortfolio(bseSeletedFundDetails.getPortfoilio());
+					redeemForm.setFundName(bseSeletedFundDetails.getSchemeName());
+					redeemForm.setSchemeCode(bseSeletedFundDetails.getSchemeCode());
+					redeemForm.setInvestType(bseSeletedFundDetails.getInvestType()!=null?bseSeletedFundDetails.getInvestType():"NA");
+					redeemForm.setTotalValue(bseSeletedFundDetails.getSchemeInvestment());
+					redeemForm.setRedeemAmounts(bseSeletedFundDetails.getSchemeInvestment());
+					String transactionId = generateTransId();
+					logger.info("Generated transaction ID of initiated transaction for additional purhcase-  "+ transactionId);
+					redeemForm.setRedeemTransId(transactionId);
+				}
+
 			}catch(Exception e){
+				logger.error("Failed to fetch selected funds's transaction details",e);
+				map.addAttribute("error", "Failed to fetch the curret investment details");
+			}
 
-				logger.error("Unable to save customer transaction request for additional purchase",e);
+			map.addAttribute("mfRedeemForm", redeemForm);
+			map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
+			return returnUrl;
+		}
+
+		@RequestMapping(value = "/mutual-funds/mfInvestRedeem.do", method = RequestMethod.GET)
+		public String bseRedeemFundGet(HttpServletRequest request, HttpServletResponse response) {
+			return "redirect:/";
+		}
+
+		@RequestMapping(value = "/mutual-funds/mfInvestRedeem.do", method = RequestMethod.POST)
+		public String bseRedeemFundPost(@ModelAttribute("mfRedeemForm") @Valid MFRedeemForm redeemForm,BindingResult bindResult, Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session,final RedirectAttributes redirectAttrs) {
+
+			logger.info("@@ BSE MF STAR redeem process do controller @@");
+			String returnUrl = "redirect:/mutual-funds/bse-transaction-status";
+			System.out.println("Purchase initiated against Folio no - "+ redeemForm.getPortfolio());
+
+			System.out.println("Is policy agreed?- "+ redeemForm.isAgreePolicy());
+
+
+			if(bindResult.hasErrors()){
+				logger.error("Error processing redeem request",bindResult.getFieldError());
 				map.addAttribute("FUNDAVAILABLE", "Y");
-				map.addAttribute("error", "Failed to save your request for additional purchase. Please try again.");
-				returnUrl="bsemf/bsemf-redeem";
+				map.addAttribute("error", bindResult.getFieldError().getDefaultMessage());
+				return "bsemf/bsemf-redeem";
 			}
-		}else{
-			logger.warn("Redeem form data session not found. Redirecting out of transaction");
-			returnUrl="redirect:/products/";
+			if(!redeemForm.isAgreePolicy()){
+				logger.warn("Policy not agreed for transaction.");
+				map.addAttribute("error", "Please agree to the policy for transaction.");
+				map.addAttribute("FUNDAVAILABLE", "Y");
+				return "bsemf/bsemf-redeem";
+			}
+
+			if(session.getAttribute("mfRedeemForm")!=null){
+
+				SelectMFFund fundTransaction = new SelectMFFund();
+				try{
+					String clientId= bseEntryManager.getClientIdfromMobile(session.getAttribute("userid").toString());
+					System.out.println("Client id - "+ clientId);
+					fundTransaction.setClientID(clientId);
+					fundTransaction.setPortfolio(redeemForm.getPortfolio());
+					fundTransaction.setSchemeCode(redeemForm.getSchemeCode());
+					fundTransaction.setTransactionID(redeemForm.getRedeemTransId());
+					fundTransaction.setInvestype(redeemForm.getInvestType());
+					fundTransaction.setTransactionType("REDEEM");
+					logger.info("Redemption amount selected- "+ redeemForm.getRedeemAmounts()* (-1));
+					fundTransaction.setInvestAmount(redeemForm.getRedeemAmounts() * (-1));
+
+					TransactionStatus flag = bseEntryManager.savetransactionDetails(fundTransaction);
+
+					if(flag.getSuccessFlag().equalsIgnoreCase("S")){
+						redirectAttrs.addFlashAttribute("CLIENT_CODE", fundTransaction.getClientID());						
+					}
+					logger.info("Customer purchase transaction status- "+ flag.getSuccessFlag());
+					redirectAttrs.addAttribute("TRANS_STATUS", "Y");
+					//				redirectAttrs.addAttribute("TRANS_TYPE", "REDEEM");				--todo
+
+					redirectAttrs.addFlashAttribute("TRANS_ID", redeemForm.getRedeemTransId());
+
+				}catch(Exception e){
+
+					logger.error("Unable to save customer transaction request for additional purchase",e);
+					map.addAttribute("FUNDAVAILABLE", "Y");
+					map.addAttribute("error", "Failed to save your request for additional purchase. Please try again.");
+					returnUrl="bsemf/bsemf-redeem";
+				}
+			}else{
+				logger.warn("Redeem form data session not found. Redirecting out of transaction");
+				returnUrl="redirect:/products/";
+			}
+
+			return returnUrl;
+
 		}
 
-		return returnUrl;
-
-	}
 
 
+		@RequestMapping(value = "/mutual-funds/bse-transaction-complete", method = RequestMethod.GET)
+		public String bseMFTransactionCallback(Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 
-	@RequestMapping(value = "/mutual-funds/bse-transaction-status", method = RequestMethod.GET)
-	public String bseMFTransactionStatus(@ModelAttribute("TRANS_STATUS") String transStatus,@ModelAttribute("TRANS_ID") String transId,Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+			logger.info("@@ BSE MF STAR purchase confirm controller after callback @@");
+			String returnUrl = "bsemf/bse-purchase-status";
+			map.addAttribute("TRANS_STATUS", "COMPLETE");
+			//		map.addAttribute("TRANS_ID",transId);
+			return returnUrl;
+		}
 
-		logger.info("@@ BSE MF STAR purchase confirm controller @@");
-		String returnUrl = "bsemf/bse-purchase-status";
-		map.addAttribute("TRANS_STATUS", transStatus);
-		map.addAttribute("TRANS_ID",transId);
-		return returnUrl;
-	}
+		@RequestMapping(value = "/mutual-funds/bse-transaction-status", method = RequestMethod.GET)
+		public String bseMFTransactionStatus(@ModelAttribute("TRANS_STATUS") String transStatus,@ModelAttribute("CLIENT_CODE") String clienCode,@ModelAttribute("TRANS_ID") String transId,Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 
-	@RequestMapping("/download/{fileName:.+}")
-	public void downloadPDFResource( HttpServletRequest request,
-			HttpServletResponse response,
-			@PathVariable("fileName") String fileName, @RequestHeader String referer)
-	{
-		System.out.println("File download");
-		//If user is not authorized - he should be thrown out from here itself
-		if(referer != null && !referer.isEmpty()) {
-			//do nothing
-			//or send error
-		} 
+			logger.info("@@ BSE MF STAR purchase confirm controller @@");
+			String returnUrl = "bsemf/bse-purchase-status";
 
-
-		//Authorized user will download the file
-		/*String dataDirectory = request.getServletContext().getRealPath("/WEB-INF/downloads/pdf/");*/
+			if(clienCode.isEmpty()){
+				returnUrl = "redirect:/mutual-funds/top-performing";
+			}
+			else{
+				if(transStatus.equalsIgnoreCase("Y") || transStatus.equalsIgnoreCase("SF")){
+					BseOrderPaymentRequest orderUrl = new BseOrderPaymentRequest();
+					orderUrl.setClientCode(clienCode);
+					orderUrl.setMemberCode(CommonConstants.BSE_MEMBER_ID);
+					orderUrl.setLogOutURL("http://localhost:8080/products/mutual-funds/bse-transaction-complete");
+					BseOrderPaymentResponse orderUrlReponse= investmentConnectorBseInterface.getPaymentUrl(orderUrl);
+					map.addAttribute("orderUrl", orderUrlReponse);
+				}
 
 
+				map.addAttribute("TRANS_STATUS", transStatus);
+				map.addAttribute("TRANS_ID",transId);
+			}
+			return returnUrl;
+		}
 
-		String dataDirectory = "E:\\logs\\PDF";
-		Path file = Paths.get(dataDirectory, fileName);
-		System.out.println(file.toString());
-		if (Files.exists(file))
+		@RequestMapping(value = "/mutual-funds/pending-payments", method = RequestMethod.GET)
+		public String bseMFTransactionStatus(Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+
+			logger.info("@@ BSE MF STAR purchase confirm controller @@");
+			String returnUrl = "refirect:/mutual-funds/my-dashboard";
+
+			if(session.getAttribute("userid").toString()!=null || session.getAttribute("token").toString()!=null){
+				String clientId= bseEntryManager.getClientIdfromMobile(session.getAttribute("userid").toString());
+				BseOrderPaymentRequest orderUrl = new BseOrderPaymentRequest();
+				orderUrl.setClientCode(clientId);
+				orderUrl.setMemberCode(CommonConstants.BSE_MEMBER_ID);
+				orderUrl.setLogOutURL("http://localhost:8080/products/mutual-funds/my-dashboard");
+				BseOrderPaymentResponse orderUrlReponse= investmentConnectorBseInterface.getPaymentUrl(orderUrl);
+				map.addAttribute("orderUrl", orderUrlReponse);
+				returnUrl="redirect:"+orderUrlReponse.getPayUrl();
+			}
+			else{
+
+				returnUrl = "redirect:/login";
+
+				/*map.addAttribute("TRANS_STATUS", transStatus);
+			map.addAttribute("TRANS_ID",transId);*/
+			}
+			return returnUrl;
+		}
+
+
+		@RequestMapping("/download/aof/{fileName:.+}")
+		public void downloadPDFResource( HttpServletRequest request,
+				HttpServletResponse response,
+				@PathVariable("fileName") String fileName,/*@ModelAttribute("mfInvestForm") BseMFInvestForm investForm,*/ @RequestHeader String referer)	
 		{
-			response.setContentType("application/pdf");
-			response.addHeader("Content-Disposition", "attachment; filename="+fileName);
-			try
+			System.out.println("File download");
+			//If user is not authorized - he should be thrown out from here itself
+			if(referer != null && !referer.isEmpty()) {
+				//do nothing
+				//or send error
+			} 
+
+
+			//Authorized user will download the file
+			/*String dataDirectory = request.getServletContext().getRealPath("/WEB-INF/downloads/pdf/");*/
+
+
+
+			String dataDirectory = env.getProperty(CommonConstants.BSE_AOF_GENERATION_FOLDR);
+			//		String dataDirectory = "E:\\AOF";
+			Path file = Paths.get(dataDirectory, fileName);
+			System.out.println(file.toString());
+			String flag = "SUCCESS";
+
+			/*if(!Files.exists(file)){
+			BseAOFGenerator.aofGenerator(investForm,fileName, "", "VERIFIED", dataDirectory);
+		}*/
+
+			if (Files.exists(file))
 			{
-				Files.copy(file, response.getOutputStream());
-				response.getOutputStream().flush();
-				System.out.println("Send response");
+				//			response.setContentType("application/pdf");
+				response.setContentType("application/octet-stream");
+				response.addHeader("Content-Disposition", "attachment; filename="+fileName);
+				try
+				{
+					Files.copy(file, response.getOutputStream());
+					response.getOutputStream().flush();
+					System.out.println("Send response");
+				}
+				catch (IOException ex) {
+					ex.printStackTrace();
+				}
+			}else{
+				//			System.out.println("File not found");
+				logger.info("No file exists or coud be generated!");
+
 			}
-			catch (IOException ex) {
-				ex.printStackTrace();
-			}
-		}else{
-			System.out.println("File not found");
+
+
+
 		}
-		System.out.println("Complete");
-	}
 
 
-	@ModelAttribute("taxStatus")
-	public Map<String, String> getTaxStatus() {
-		Map<String, String> taxStatus = new HashMap<String,String>();
-		taxStatus.put("01", "INDIVIDUAL");
-		taxStatus.put("03", "HUF");
-		taxStatus.put("04", "COMPANY");
-		taxStatus.put("06", "PARTNERSHIP FIRM");
-		taxStatus.put("07", "BODY CORPORATE");
-		taxStatus.put("08", "TRUST");
-		taxStatus.put("09", "SOCIETY");
-		taxStatus.put("13", "SOLE PROPRIETORSHIP");
-		return taxStatus;
-	}
+		@ModelAttribute("taxStatus")
+		public Map<String, String> getTaxStatus() {
+			Map<String, String> taxStatus = new HashMap<String,String>();
+			taxStatus.put("01", "INDIVIDUAL");
+			taxStatus.put("03", "HUF");
+			taxStatus.put("04", "COMPANY");
+			taxStatus.put("06", "PARTNERSHIP FIRM");
+			taxStatus.put("07", "BODY CORPORATE");
+			taxStatus.put("08", "TRUST");
+			taxStatus.put("09", "SOCIETY");
+			taxStatus.put("13", "SOLE PROPRIETORSHIP");
+			return taxStatus;
+		}
 
 
-	@ModelAttribute("holingNature")
-	public Map<String, String> mfHoldingNature() {
+		@ModelAttribute("holingNature")
+		public Map<String, String> mfHoldingNature() {
 
-		// To keep the order as entered below
-		Map<String, String> holdingNature = new LinkedHashMap<String,String>();
-		holdingNature.put("SI", "Single");
-		holdingNature.put("JO", "Joint");
-		holdingNature.put("AS", "Anyone or Survivor");
+			// To keep the order as entered below
+			Map<String, String> holdingNature = new LinkedHashMap<String,String>();
+			holdingNature.put("SI", "Single");
+			holdingNature.put("JO", "Joint");
+			holdingNature.put("AS", "Anyone or Survivor");
 
-		return holdingNature;
-	}
-	/*
+			return holdingNature;
+		}
+		/*
 	public static void main(String[] main){
 		Long h = UUID.randomUUID().getMostSignificantBits();
 		System.out.println(h);
 		System.out.println(Math.abs(h));
 	}*/
 
-	/*public static void main(String[] args){
+		/*public static void main(String[] args){
 		System.out.println(Encryptors.text("9051472645", "12").encrypt("asdasd"));
 
 		System.out.println(DigestUtils.md5Hex("sdfsdf"));
@@ -799,7 +976,7 @@ public class BsemfController {
 
 	}*/
 
-	/*	private static byte[] hexStringToByteArray(String hex) {
+		/*	private static byte[] hexStringToByteArray(String hex) {
         Pattern replace = Pattern.compile("^0x");
         String s = replace.matcher(hex).replaceAll("");
 
@@ -812,39 +989,39 @@ public class BsemfController {
         return b;
     }*/
 
-	@ExceptionHandler(MissingServletRequestParameterException.class)
-	public ModelAndView handleMissingParams(MissingServletRequestParameterException ex) {
-		String name = ex.getParameterName();
-		logger.info(name + " parameter is missing on requested url. Returning to home url");
-		// Actual exception handling
-		ModelAndView view = new ModelAndView("redirect:/");
-		return view;
-	}
-
-	@ExceptionHandler(HttpSessionRequiredException.class)
-	public ModelAndView handleMissingSessionHandler(HttpSessionRequiredException ex, HttpServletRequest request) {
-		String name = ex.getExpectedAttribute();
-		logger.info("Ecxception was reveived for missing parameters.");
-		String returnUrl ="redirect:/";
-		logger.info(name + " missing");
-		// Actual exception handling
-		if(name.equals("selectedFund")){
-			returnUrl = "redirect:/mutual-funds/top-performing";
+		@ExceptionHandler(MissingServletRequestParameterException.class)
+		public ModelAndView handleMissingParams(MissingServletRequestParameterException ex) {
+			String name = ex.getParameterName();
+			logger.info(name + " parameter is missing on requested url. Returning to home url");
+			// Actual exception handling
+			ModelAndView view = new ModelAndView("redirect:/");
+			return view;
 		}
-		ModelAndView view = new ModelAndView(returnUrl);
-		return view;
-	}
-	
-	@ExceptionHandler(IllegalArgumentException.class)
-	public ModelAndView illegalArgumentException(IllegalArgumentException ex, HttpServletRequest request) {
-		
-		logger.info("illegalArgumentException was reveived for missing parameters.- "+ request.getRequestURI());
-		String returnUrl ="redirect:/";
-		// Actual exception handling
-		returnUrl = "redirect:/mutual-funds/top-performing";
-		ModelAndView view = new ModelAndView(returnUrl);
-		return view;
-	}
+
+		@ExceptionHandler(HttpSessionRequiredException.class)
+		public ModelAndView handleMissingSessionHandler(HttpSessionRequiredException ex, HttpServletRequest request) {
+			String name = ex.getExpectedAttribute();
+			logger.info("Ecxception was reveived for missing parameters.");
+			String returnUrl ="redirect:/";
+			logger.info(name + " missing");
+			// Actual exception handling
+			if(name.equals("selectedFund")){
+				returnUrl = "redirect:/mutual-funds/top-performing";
+			}
+			ModelAndView view = new ModelAndView(returnUrl);
+			return view;
+		}
+
+		@ExceptionHandler(IllegalArgumentException.class)
+		public ModelAndView illegalArgumentException(IllegalArgumentException ex, HttpServletRequest request) {
+
+			logger.info("illegalArgumentException was reveived for missing parameters.- "+ request.getRequestURI());
+			String returnUrl ="redirect:/";
+			// Actual exception handling
+			returnUrl = "redirect:/mutual-funds/top-performing";
+			ModelAndView view = new ModelAndView(returnUrl);
+			return view;
+		}
 
 
-}
+	}
