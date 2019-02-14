@@ -56,7 +56,7 @@
 						<c:when test="${TRANS_STATUS == 'Y' }">
 							<h5>Order placed successfully</h5>
 							<h6>Transaction Reference No - ${TRANS_ID }</h6>
-							
+
 							<c:if test="${orderUrl.statusCode == '100' }">
 								<a href="${orderUrl.payUrl }">
 									<button>Complete your payment</button>
@@ -65,8 +65,12 @@
 
 						</c:when>
 						<c:when test="${TRANS_STATUS == 'N' }">
-							<h5>Failed to process your request currently. Kindly try
-								after sometime</h5>
+							<div class="alert alert-danger" role="alert">Failed to
+								process your request currently. Kindly try after sometime</div>
+
+							<div>
+								<span style="font-size: 11px; font-weight: 600;">${MSG }</span>
+							</div>
 
 							<section style="margin-top: 30px;">
 								<div class="row" style="margin: auto;">

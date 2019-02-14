@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.freemi.entity.investment.BseMFInvestForm;
+import com.freemi.entity.investment.BseOrderEntryResponse;
 
 public interface BseCustomerCrudRespository extends JpaRepository<BseMFInvestForm, Long>{
 
@@ -23,7 +24,7 @@ public interface BseCustomerCrudRespository extends JpaRepository<BseMFInvestFor
 	public String getCustomerPanNumberFromMobile(@Param("mobile") String mobile);
 	
 	@Query("select c.clientID from BseMFInvestForm c where c.mobile= :mobile")
-	public String getRegisteredUserClientId(@Param("mobile") String mobile );
+	public String getClientIdFromMobile(@Param("mobile") String mobile );
 	
 	@Query("select c.clientID from BseMFInvestForm c where c.pan1= :pan")
 	public String getClientIdFromPan(@Param("pan") String pan );
@@ -51,4 +52,6 @@ public interface BseCustomerCrudRespository extends JpaRepository<BseMFInvestFor
 	@Modifying
 	@Query("update BseMFInvestForm b set b.aofuploadComplete= 'Y' where b.mobile= :mobile")
 	public int updateAofUploadStatus(@Param("mobile") String mobile);
+	
+	
 }

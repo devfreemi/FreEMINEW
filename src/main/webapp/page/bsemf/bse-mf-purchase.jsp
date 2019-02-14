@@ -137,7 +137,7 @@
 					</c:if>
 
 					<!-- <h5>Payment Option</h5> -->
-					<div class="form-group row">
+					<%-- <div class="form-group row">
 						<label for="schemeName" class="col-sm-3 col-form-label">Payment
 							Option</label>
 						<div class="col-sm-9" style="margin: auto;">
@@ -160,7 +160,7 @@
 								<label class="custom-control-label" for="paymentRadio3">UPI</label>
 							</div>
 						</div>
-					</div>
+					</div> --%>
 					<div class="custom-control custom-checkbox"
 						style="height: 150px; overflow-y: auto;">
 						<input type="checkbox" class="custom-control-input"

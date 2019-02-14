@@ -7,6 +7,8 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,6 +23,7 @@ import com.freemi.entity.bse.BseAOFUploadResponse;
 import com.freemi.entity.bse.BseOrderEntry;
 import com.freemi.entity.bse.BseOrderPaymentRequest;
 import com.freemi.entity.bse.BseOrderPaymentResponse;
+import com.freemi.entity.bse.BsePaymentStatus;
 import com.freemi.entity.bse.BseRegistrationMFD;
 import com.freemi.entity.bse.BseSipOrderEntry;
 import com.freemi.entity.investment.BseMFInvestForm;
@@ -152,6 +155,31 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 		}
 		return flag;
 	}
+	
+	@Override
+	public String BseOrderPaymentStatus(String clientId, String orderNo) {
+		logger.info("Get payment status fro payment order- "+ orderNo);
+		String response = "";
+		BseOrderPaymentResponse orderResponse = new BseOrderPaymentResponse();
+		if(env.getProperty(CommonConstants.BSE_ENABLED).equalsIgnoreCase("Y")){
+			try{
+				BsePaymentStatus requestForm=  BseBeansMapper.BsePaymentStatusRequestToBse(clientId, orderNo);
+				logger.info("Begin BSE service invoke process for payment status");
+				response = RestClientBse.orderPaymentStatus(requestForm);
+//				BseBeansMapper.bseOrderPayemtResultMapper(orderResponse, response);
+				
+				
+			}catch(Exception e){
+				logger.error("Failed during proceesing of BSE SIP registration details to BSE platform",e);
+				//			result="BSE_CONN_FAIL";
+				response= "ERROR";
+			}
+		}else{
+			logger.info("BSE connction is currently disabled");
+			orderResponse.setStatusCode("000");
+		}
+		return response;
+	}
 
 
 	public static void main(String[] args){
@@ -181,5 +209,7 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 			System.out.println("No file");
 		}
 	}
+
+	
 
 }

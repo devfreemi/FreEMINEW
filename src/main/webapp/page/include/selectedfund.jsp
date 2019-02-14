@@ -33,7 +33,7 @@
 						</div>
 						<div class="custom-control custom-radio custom-control-inline">
 							<form:radiobutton path="investype" value="LUMPSUM"
-								id="transactionType2" name="transactionType2"
+								id="transactionType2" name="transactionTypeVal"
 								class="custom-control-input" />
 							<label class="custom-control-label" for="transactionType2">
 								LUMPSUM</label>
@@ -52,6 +52,7 @@
 							<form:input path="investAmount" id="amount" class="form-control" value="2000"
 								onkeyup="customamount();" aria-label="Small" required="required"
 								style="height: 2rem;" aria-describedby="inputGroup-sizing-sm" />
+							<!-- <div id="amntmsg" style="color: red;"></div> -->
 						</div>
 
 						<div class="btn-group btn-group-sm btn-group-toggle"
@@ -111,7 +112,9 @@
 								25
 							</label>
 						</div>
-						
+						<div>
+						<span id="selectmsg" style="color: red; font-size: 11px;"></span>
+						</div>
 					</div>
 
 				</div>

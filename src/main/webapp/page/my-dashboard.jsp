@@ -81,7 +81,10 @@
 							</div>
 						</div>
 						<div class="footer_link">
+							<a href="/products/mutual-funds/view-purchase-history">
 							<span>VIEW DETAILS</span>
+							</a>
+							
 						</div>
 					</div>
 

@@ -5,10 +5,12 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.freemi.entity.bse.BseOrderPaymentResponse;
 import com.freemi.entity.database.MfTopFundsInventory;
 import com.freemi.entity.general.UserProfile;
 import com.freemi.entity.investment.BseAllTransactionsView;
 import com.freemi.entity.investment.BseMFInvestForm;
+import com.freemi.entity.investment.BseOrderEntryResponse;
 import com.freemi.entity.investment.SelectMFFund;
 import com.freemi.entity.investment.TransactionStatus;
 
@@ -35,6 +37,8 @@ public interface BseEntryManager {
 	// Customer MF transactions
 	public boolean checkIfTransIdExist(String generatedTransId);
 	public TransactionStatus savetransactionDetails(SelectMFFund selectedMFFund);
+	public List<BseOrderEntryResponse> getAllPurchaseHistory(String clientId);
+	
 	
 	
 	public List<BseAllTransactionsView> getCustomerAllTransactionRecords(String clientID, String mobileNumber, String panNumber);

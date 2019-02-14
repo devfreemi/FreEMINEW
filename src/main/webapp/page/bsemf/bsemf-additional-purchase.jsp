@@ -65,11 +65,6 @@
 						action="${pageContext.request.contextPath}/mutual-funds/mfInvestAdditionalPurchase.do"
 						method="POST" commandName="purchaseForm">
 
-
-
-
-
-
 						<!-- One "tab" for each step in the form: -->
 						<div class="tab">
 							<h4 class="text-md-center">1. Scheme Details</h4>

@@ -47,8 +47,10 @@ $(document).on("click", "#radioamount", function() {
 
 function customamount() {
 	if ($('input:radio[name="options"]:checked')) {
-		console.log("Check active")
+//		console.log("Check active")
 		$('#radioamount label').removeClass('active');
+		
+
 	}
 
 }
@@ -291,4 +293,56 @@ function populateConfirmPage() {
 	//	$("#").text($("#").val());
 
 }
+
+
+function validateFundForm(){
+	var radioValue = $("input[name='investype']:checked").val();
+//	console.log(radioValue);
+	if(radioValue == 'SIP'){
+		var sipdate = $("input[name='sipDate']:checked").val();
+		
+		if(typeof sipdate === 'undefined'){
+			$("#selectmsg").text("Please select your SIP date");
+			return false;
+		}else{
+//			console.log(sipdate);
+			$("#selectmsg").text("");
+		}
+	}
+	
+//	validate amount
+	 var purchaseamount = $("#amount").val();
+	 var minimumPurchase= $("#minVal").text();
+	 
+	 //console.log("Remeem amount- "+ redeemamount);
+	  if(!isNaN(purchaseamount)){
+//		  $("#invalidamnt").text("");
+		  //$("#nextBtn").removeAttr("disabled");
+	  if(minimumPurchase > purchaseamount){
+		//  console.log("Invalid")
+		  $("#selectmsg").text("Minimum purchase amount criteria not met");
+//		  $("#nextBtn").attr("disabled", "disabled");
+		  return false;
+	  }else{
+		  //console.log("valid")
+		  $("#selectmsg").text("");
+//		  $("#nextBtn").removeAttr("disabled");
+	  }
+	  }else{
+		  /*$("#invalidamnt").text("Invalid number");
+		  $("#nextBtn").attr("disabled", "disabled");*/
+		  $("#selectmsg").text("Invalid number");
+		  return false;
+	  }
+	  
+	  if(purchaseamount < 0){
+		  $("#selectmsg").text("Invalid entry!");
+		  return false;
+	  }
+	
+	
+	return true;
+}
+
+
 

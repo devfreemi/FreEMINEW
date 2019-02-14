@@ -18,5 +18,7 @@ public interface InvestmentConnectorBseInterface {
 	public BseOrderEntryResponse processCustomerPurchaseRequest(SelectMFFund selectedFund, String transactionNumber);
 	
 	public BseOrderPaymentResponse getPaymentUrl(BseOrderPaymentRequest request);
+	
+	public String BseOrderPaymentStatus(String clientId, String orderNo);
 
 }

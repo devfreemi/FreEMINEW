@@ -1098,7 +1098,7 @@ e.printStackTrace();
 		
 		
 		MFNominationForm n = new MFNominationForm();
-		n.setNomineeName("madhuparna sarkar");
+		n.setNomineeName("SUMANTA MAHANTY");
 		n.setNomineeRelation("adasdasd");
 		BseMFInvestForm m = new BseMFInvestForm();
 		m.setPan1("cqops7539c");

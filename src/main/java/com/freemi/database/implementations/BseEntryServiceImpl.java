@@ -36,6 +36,7 @@ import com.freemi.database.interfaces.BseTransactionsView;
 import com.freemi.database.interfaces.PortfolioCrudRepository;
 import com.freemi.database.interfaces.TopFundsRepository;
 import com.freemi.database.service.BseEntryManager;
+import com.freemi.entity.bse.BseOrderPaymentResponse;
 import com.freemi.entity.database.MfTopFundsInventory;
 import com.freemi.entity.database.UserBankDetails;
 import com.freemi.entity.general.UserProfile;
@@ -235,7 +236,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		String clientId = null;
 		List<SelectMFFund> trasactionDetails = null;
 		if(bseCustomerCrudRespository.existsByMobile(value)){
-			clientId = bseCustomerCrudRespository.getRegisteredUserClientId(value);
+			clientId = bseCustomerCrudRespository.getClientIdFromMobile(value);
 			trasactionDetails =  bseTransCrudRepository.getByClientID(clientId);
 		}else{
 			logger.info("No registered BSE customer by mobile number found to show transaction data - "+ value);
@@ -257,7 +258,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		String client=null;
 		List<BseAllTransactionsView> groupedTransationDetails = null;
 		if(bseCustomerCrudRespository.existsByMobile(mobileNumber)){
-			client = bseCustomerCrudRespository.getRegisteredUserClientId(mobileNumber);
+			client = bseCustomerCrudRespository.getClientIdFromMobile(mobileNumber);
 			groupedTransationDetails = bseTransactionsView.findAllByClientID(client);
 		}else{
 			logger.info("No registered BSE customer by mobile number found to show transaction data - "+ mobileNumber);
@@ -391,7 +392,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	@Override
 	public BseAllTransactionsView getFundDetailsForAdditionalPurchase(String portfolio, String schemeCode,String investType,
 			String mobileNumber) {
-		String clientId= bseCustomerCrudRespository.getRegisteredUserClientId(mobileNumber);
+		String clientId= bseCustomerCrudRespository.getClientIdFromMobile(mobileNumber);
 
 		BseAllTransactionsView selectedFolioTransDetails = bseTransactionsView.findOneByPortfoilioAndSchemeCodeAndClientIDAndInvestType(portfolio, schemeCode, clientId,investType);
 
@@ -402,13 +403,13 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	@Override
 	public String getClientIdfromMobile(String mobile) {
 		// TODO Auto-generated method stub
-		return bseCustomerCrudRespository.getRegisteredUserClientId(mobile);
+		return bseCustomerCrudRespository.getClientIdFromMobile(mobile);
 	}
 
 	@Override
 	public BseAllTransactionsView getFundDetailsForRedemption(String portfolio, String schemeCode,String investType,
 			String mobileNumber) {
-		String clientId= bseCustomerCrudRespository.getRegisteredUserClientId(mobileNumber);
+		String clientId= bseCustomerCrudRespository.getClientIdFromMobile(mobileNumber);
 
 		BseAllTransactionsView selectedFolioTransDetails = bseTransactionsView.findOneByPortfoilioAndSchemeCodeAndClientIDAndInvestType(portfolio, schemeCode, clientId,investType);
 
@@ -508,6 +509,22 @@ public class BseEntryServiceImpl implements BseEntryManager {
 					currentStatus="ERROR";
 				}
 			return currentStatus;
+		}
+
+		@Override
+		public List<BseOrderEntryResponse> getAllPurchaseHistory(String clientId) {
+			logger.info("Begining process to upload AOF Form.");
+			List<BseOrderEntryResponse> getAllOrders = null;
+			
+			try{
+//				if(bseCustomerCrudRespository.existsByMobile(mobileNumber)){
+				getAllOrders=bseOrderEntryResponseRepository.findAllByClientCode(clientId);
+					logger.info("Total purchase history found for custmer- "+ clientId + " : "+ getAllOrders.size());
+				
+				}catch(Exception e){
+					logger.error("Failed to query database to get customer AOF upload status and upload", e);
+				}
+			return getAllOrders;
 		}
 		
 		/*		public static void main(String[] args){

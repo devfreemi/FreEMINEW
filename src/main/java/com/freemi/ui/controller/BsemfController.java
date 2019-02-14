@@ -63,6 +63,7 @@ import com.freemi.entity.bse.BseOrderPaymentResponse;
 import com.freemi.entity.database.MfTopFundsInventory;
 import com.freemi.entity.investment.BseAllTransactionsView;
 import com.freemi.entity.investment.BseMFInvestForm;
+import com.freemi.entity.investment.BseOrderEntryResponse;
 import com.freemi.entity.investment.CustomerSignature;
 import com.freemi.entity.investment.MFAdditionalPurchaseForm;
 import com.freemi.entity.investment.MFRedeemForm;
@@ -828,7 +829,7 @@ public class BsemfController {
 		}
 
 		@RequestMapping(value = "/mutual-funds/bse-transaction-status", method = RequestMethod.GET)
-		public String bseMFTransactionStatus(@ModelAttribute("TRANS_STATUS") String transStatus,@ModelAttribute("CLIENT_CODE") String clienCode,@ModelAttribute("TRANS_ID") String transId,Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+		public String bseMFTransactionStatus(@ModelAttribute("TRANS_STATUS") String transStatus,@ModelAttribute("CLIENT_CODE") String clienCode,@ModelAttribute("TRANS_ID") String transId,@ModelAttribute("TRANS_MSG")String transMessage, Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 
 			logger.info("@@ BSE MF STAR purchase confirm controller @@");
 			String returnUrl = "bsemf/bse-purchase-status";
@@ -846,9 +847,9 @@ public class BsemfController {
 					map.addAttribute("orderUrl", orderUrlReponse);
 				}
 
-
 				map.addAttribute("TRANS_STATUS", transStatus);
 				map.addAttribute("TRANS_ID",transId);
+				map.addAttribute("MSG", transMessage);
 			}
 			return returnUrl;
 		}
@@ -877,6 +878,78 @@ public class BsemfController {
 			map.addAttribute("TRANS_ID",transId);*/
 			}
 			return returnUrl;
+		}
+		
+		
+		@RequestMapping(value = "/mutual-funds/view-purchase-history", method = RequestMethod.GET)
+		public String bseMFViewpurchaseHistory(Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+
+			logger.info("@@ BSE MF STAR purchase confirm controller @@");
+			String returnUrl = "bsemf/bsemf-purchase-history";
+
+			if(session.getAttribute("userid").toString()!=null || session.getAttribute("token").toString()!=null){
+				String clientId= bseEntryManager.getClientIdfromMobile(session.getAttribute("userid").toString());
+				if(!clientId.isEmpty()){
+					List<BseOrderEntryResponse> purchaseHistoryList= bseEntryManager.getAllPurchaseHistory(clientId);
+					if(purchaseHistoryList!=null){
+//						map.addAttribute("PURCHASE_LIST", "SUCCESS");
+						if(purchaseHistoryList.size()>=1){
+							map.addAttribute("PURCHASE_LIST", "SUCCESS");
+							map.addAttribute("PURCHASE_ORDERS", purchaseHistoryList);
+						}else{
+							map.addAttribute("PURCHASE_LIST", "NONE");
+						}
+						
+					}else{
+						map.addAttribute("PURCHASE_LIST", "ERROR");
+					}
+				}else{
+					logger.info("Customer client Id not found");
+					map.addAttribute("PURCHASE_LIST", "ID_NOT_FOUND");
+				}
+				
+			}
+			else{
+				returnUrl = "redirect:/login";
+				/*map.addAttribute("TRANS_STATUS", transStatus);
+			map.addAttribute("TRANS_ID",transId);*/
+			}
+			return returnUrl;
+		}
+		
+		
+		@RequestMapping(value = "/mutual-funds/orderpaymentStatus", method = RequestMethod.GET)
+		@ResponseBody
+		public String getPurchasepaymentStatus(@RequestParam(name="client",required=false)String clientId, @RequestParam(name="order",required=false)String orderNo,Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+			
+			logger.info("Order Payment status requested- ");
+			String returnFlag ="FAIL";
+			
+			System.out.println("Data- "+ clientId + " " + orderNo);
+			if(session.getAttribute("token")==null){
+				logger.info("No session found for requesting user. Invalidating request");
+				returnFlag="NO_SESSIION";
+			}else{
+				if(clientId==null || orderNo == null){
+					logger.info("Parameters data not found");
+					returnFlag="INVALID_REQUEST";
+				}else{
+					
+				
+				
+				String resp= investmentConnectorBseInterface.BseOrderPaymentStatus(clientId, orderNo);
+				
+				List<String> res = Arrays.asList(resp.split("\\|"));
+				/*if(res.get(0).equals("100")){
+					
+				}else{
+					
+				}*/
+				returnFlag = res.get(1);
+				}
+			}
+			
+			return returnFlag;
 		}
 
 
@@ -1023,5 +1096,7 @@ public class BsemfController {
 			return view;
 		}
 
+		
+		
 
 	}

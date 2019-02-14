@@ -14,6 +14,7 @@ import com.freemi.entity.bse.BseAOFUploadRequest;
 import com.freemi.entity.bse.BseAOFUploadResponse;
 import com.freemi.entity.bse.BseOrderEntry;
 import com.freemi.entity.bse.BseOrderPaymentResponse;
+import com.freemi.entity.bse.BsePaymentStatus;
 import com.freemi.entity.bse.BseRegistrationMFD;
 import com.freemi.entity.bse.BseSipOrderEntry;
 import com.freemi.entity.investment.BseMFInvestForm;
@@ -158,9 +159,12 @@ public static BseSipOrderEntry transactionSIPOrderToBseBeans(SelectMFFund fundDe
 		response.setTransactionType(res.get(0));
 		response.setUniqueReferenceNo(res.get(1));
 		response.setOrderNoOrSipRegNo(res.get(2));
-		response.setClientCode(res.get(3));
+		/*response.setClientCode(res.get(3));
 		response.setUserId(res.get(4));
-		response.setMemberId(res.get(5));
+		response.setMemberId(res.get(5));*/
+		response.setUserId(res.get(3));
+		response.setMemberId(res.get(4));
+		response.setClientCode(res.get(5));
 		response.setBsereMarks(res.get(6));
 		response.setSuccessFlag(res.get(7));
 		response.setIntRefNo(internalRefNo);
@@ -214,6 +218,15 @@ public static BseSipOrderEntry transactionSIPOrderToBseBeans(SelectMFFund fundDe
 		
 		
 		
+	}
+	
+	public static BsePaymentStatus BsePaymentStatusRequestToBse(String clientId, String orderNo){
+		BsePaymentStatus requestForm = new BsePaymentStatus();
+		requestForm.setClientcode(clientId);
+		requestForm.setOrderno(orderNo);
+		requestForm.setSegment("BSEMF");
+		
+		return requestForm;
 	}
 
 }
