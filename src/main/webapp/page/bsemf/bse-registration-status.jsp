@@ -54,12 +54,14 @@
 						</p>
 					</div>
 					<div>
-						
-							
+
+
 						<div class="progress">
-							<div class="progress-bar bg-success" role="progressbar" id="myBar"
-								style="width: 50%" aria-valuenow="50" aria-valuemin="0"
-								aria-valuemax="100"><span id="statusp">Invest profile status 50%</span> </div>
+							<div class="progress-bar bg-success" role="progressbar"
+								id="myBar" style="width: 50%" aria-valuenow="50"
+								aria-valuemin="0" aria-valuemax="100">
+								<span id="statusp">Invest profile status 50%</span>
+							</div>
 
 						</div>
 						<!-- <div class="progress">
@@ -71,7 +73,7 @@
 								aria-valuemin="0" aria-valuemax="100">Upload signed form</div>
 
 						</div> -->
-						
+
 						<h4 style="font-size: 20px; color: #da7437;">What are the
 							next steps?</h4>
 						<div class="row">
@@ -80,55 +82,56 @@
 									<h5>Option 1</h5>
 									<ul style="list-style: none;">
 										<li>1. Download and print the form</li>
-										<li>2. Sign the form<br> Where to
-											sign?
-											<!-- <div style="margin-top: 5px;"> -->
-												<!-- Button trigger modal -->
-												<!-- <button type="button" class="btn btn-outline-primary btn-sm"
+										<li>2. Sign the form<br> Where to sign? <!-- <div style="margin-top: 5px;"> -->
+											<!-- Button trigger modal --> <!-- <button type="button" class="btn btn-outline-primary btn-sm"
 													style="font-size: 12px;" data-toggle="modal"
-													data-target="#exampleModal">See Sample file</button> -->
-											<span style="font-size: 12px; text-decoration: underline; color: #e86835; cursor: pointer;" data-toggle="modal" data-target="#exampleModal">See Sample file</span>
-											<!-- </div> -->
-												<!-- Modal -->
-												<div class="modal fade" id="exampleModal" tabindex="-1"
-													role="dialog" aria-labelledby="exampleModalLabel"
-													aria-hidden="true">
-													<div class="modal-dialog" role="document">
-														<div class="modal-content">
-															<div class="modal-header">
-																<h5 class="modal-title" id="exampleModalLabel">Sample
-																	file</h5>
-																<button type="button" class="close" data-dismiss="modal"
-																	aria-label="Close">
-																	<span aria-hidden="true">&times;</span>
-																</button>
-															</div>
-															<div class="modal-body">
-																<embed
-																	src="https://s3.ap-south-1.amazonaws.com/freemi-product/files/pdf/file1.pdf"
-																	frameborder="0" width="100%" height="400px">
-															</div>
-															<!-- <div class="modal-footer">
+													data-target="#exampleModal">See Sample file</button> --> <span
+											style="font-size: 12px; text-decoration: underline; color: #e86835; cursor: pointer;"
+											data-toggle="modal" data-target="#exampleModal">See
+												Sample file</span> <!-- </div> --> <!-- Modal -->
+											<div class="modal fade" id="exampleModal" tabindex="-1"
+												role="dialog" aria-labelledby="exampleModalLabel"
+												aria-hidden="true">
+												<div class="modal-dialog" role="document">
+													<div class="modal-content">
+														<div class="modal-header">
+															<h5 class="modal-title" id="exampleModalLabel">Sample
+																file</h5>
+															<button type="button" class="close" data-dismiss="modal"
+																aria-label="Close">
+																<span aria-hidden="true">&times;</span>
+															</button>
+														</div>
+														<div class="modal-body">
+															<embed
+																src="https://s3.ap-south-1.amazonaws.com/freemi-product/files/pdf/file1.pdf"
+																frameborder="0" width="100%" height="400px">
+														</div>
+														<!-- <div class="modal-footer">
 												<button type="button" class="btn btn-secondary"
 													data-dismiss="modal">Close</button>
 												<button type="button" class="btn btn-primary">Save
 													changes</button>
 											</div> -->
-														</div>
 													</div>
 												</div>
-											</li>
+											</div>
+										</li>
 
 										<li>3. Upload the signed form</li>
 									</ul>
 
-									<div style="margin-top: 20px; text-align: center;">
-										<a href="/products/download/aof/1.pdf" tabindex="_blank">
-											<button type="button" class="btn btn-sm btn-info">
-												<i class="fas fa-download"></i> Download your form
-											</button>
-										</a>
-									</div>
+									<c:if test="${not empty investForm.pan1}">
+										<div style="margin-top: 20px; text-align: center;">
+											<input type="hidden" id="mobdata" value="${investForm.mobile}">
+											<a href="/products/download/aof/${investForm.pan1}.pdf"
+												target="_blank">
+												<button type="button" class="btn btn-sm btn-info">
+													<i class="fas fa-download"></i> Download your form
+												</button>
+											</a>
+										</div>
+									</c:if>
 								</div>
 
 							</div>
@@ -141,7 +144,7 @@
 									</ul>
 									<div style="margin-top: 20px;">
 
-										<div style="margin-top: 5px;text-align: center;">
+										<div style="margin-top: 5px; text-align: center;">
 											<!-- Button trigger modal -->
 
 											<img
@@ -152,8 +155,8 @@
 												style="font-size: 12px;" data-toggle="modal"
 												data-target="#exampleModal1">Applicant 1</button>
 											<button type="button" class="btn btn-outline-primary btn-sm"
-											style="font-size: 12px;" data-toggle="modal"
-											data-target="#exampleModal2">Applicant 2</button>
+												style="font-size: 12px;" data-toggle="modal"
+												data-target="#exampleModal2">Applicant 2</button>
 
 										</div>
 
@@ -236,16 +239,13 @@
 						<span id="signuploadstatus"></span>
 						<div>
 							<button class="btn btn-sm btn-primary" id="aofuploadbtn"
-								hidden="hidden">UPLOAD YOUR AOF</button>
+								hidden="hidden" onclick="initiateAOFUpload();">UPLOAD YOUR AOF</button>
 						</div>
-						
+
 					</div>
 				</div>
 			</div>
-			<div>
-							<button class="btn btn-sm btn-primary" id="aofuploadbtn2" onclick="move(75)"
-								>MANIPUATE PROGRESS</button>
-						</div>
+			<div></div>
 		</section>
 
 		<section style="background-color: aliceblue; padding: 30px 0px;">
@@ -261,7 +261,7 @@
 						</div>
 					</div>
 					<button class="btn btn-sm btn-outline-secondary" type="button"
-						style="margin-top: 20px;">UPLOAD YOUR SIGNED FILE</button>
+						style="margin-top: 20px;" >UPLOAD YOUR SIGNED FILE</button>
 				</div>
 			</div>
 
@@ -495,17 +495,18 @@
 										.text(
 												"Failed to submit your signature. Please try again.");
 							});
-					
+		}
+		
 					function initiateAOFUpload() {
 
-						/* console.log("signature- "+ $("#sig-dataUrl").text()); */
+						 console.log("signature- "+ $("#mobdata").val());
 						$
-								.post(
+								.get(
 										"/products/mutual-funds/uploadsignedaof",
 										/* $.post("/products/api/saveloanquery", */
 
 										{
-											mobile : $("#sig-dataUrl").text(),
+											mobile : $("#mobdata").val()
 										},
 										function(data, status) {
 											/* alert("Data: " + data + "\nStatus: " + status); */
@@ -514,9 +515,16 @@
 												
 												$("#signuploadstatus")
 														.text(
-																"Your AOF form is signed and ready for upload.");
+																"Your AOF uploaded successfully. Registration process complete.");
 												$("#aofuploadbtn").removeAttr('hidden');
 												move(100);
+												
+											}
+											if (data == 'FAIL') {
+												$('#exampleModal1').modal('hide');
+												$("#signuploadstatus")
+														.text(
+																"Failed to upload your AOF. Kindly contact Admin.");
 												
 											}
 											if (data == 'REQUEST_DENIED') {
@@ -534,7 +542,7 @@
 											$('#exampleModal1').modal('hide');
 											$("#signuploadstatus")
 													.text(
-															"Failed to submit your signature. Please try again.");
+															"Failed to make request. Please try again.");
 										});
 			/* 	}); */
 		}

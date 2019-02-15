@@ -23,9 +23,11 @@ import org.apache.jasper.tagplugins.jstl.core.Url;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.config.ResourceNotFoundException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
 import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpStatus;
 import org.springframework.mobile.device.Device;
 import org.springframework.security.web.util.UrlUtils;
 import org.springframework.stereotype.Controller;
@@ -43,6 +45,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -141,7 +144,8 @@ public class BsemfController {
 		}
 
 		try{
-			String flag = bseEntryManager.saveCustomerDetails(investForm);
+//			String flag = bseEntryManager.saveCustomerDetails(investForm);		//enable after test --todo
+			String flag ="SUCCESS";
 			logger.info("Customer registration status- "+ flag);
 			if(!flag.equalsIgnoreCase("SUCCESS")){
 				returnUrl= "bsemf/bse-form-new-customer";
@@ -182,12 +186,17 @@ public class BsemfController {
 	public String mfRegistrationStatusGet(@ModelAttribute("STATUS") String status,@ModelAttribute("mfInvestForm") BseMFInvestForm investForm, ModelMap map, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 
 		logger.info("mf-registration-status Get controller");
+		System.out.println("Type of holding- "+ investForm.getHoldingMode());
 		String returnUrl = "bsemf/bse-registration-status";
+		
+//		investForm.setPan1("as"); 	
+		System.out.println(investForm.getPan1());
 		session.setAttribute("mfRegisterdUser", investForm);
 		/*if(investForm.getMobile()==null){
 			map.clear();
 			returnUrl= "redirect:/mutual-funds/top-performing";
 		}*/
+		map.addAttribute("investForm", investForm);
 		return returnUrl;
 
 	}
@@ -203,18 +212,20 @@ public class BsemfController {
 			System.out.println(investForm);
 			if(investForm.getMobile()!=""){
 
-				String customerSignature = request.getParameter("sign1");
+				String customerSignature1 = request.getParameter("sign1");
 				System.out.println(request.getParameter("sign1"));
 				System.out.println(request.getParameter("sign2"));
 				System.out.println(request.getParameter("sign3"));
 				//		System.out.println(sign.getSign1());
 
 				System.out.println("Request received for- "+investForm.getMobile());
-				investForm.setCustomerSignature(customerSignature);
-
-				String flag1= BseAOFGenerator.aofGenerator(investForm, investForm.getMobile(), "", "VERIFIED", env.getProperty(CommonConstants.BSE_AOF_GENERATION_FOLDR));
-
-				String result= bseEntryManager.upddateCustomerFormSignature(investForm.getMobile(), investForm.getPan1(), investForm.getCustomerSignature());
+				investForm.setCustomerSignature(customerSignature1);
+				String result="";
+				String flag1= BseAOFGenerator.aofGenerator(investForm, investForm.getMobile(), env.getProperty("investment.bse.aoffile.logo"), "VERIFIED", env.getProperty(CommonConstants.BSE_AOF_GENERATION_FOLDR));
+				if(flag1.equalsIgnoreCase("SUCCESS")){
+					logger.info("Signed AOF file generation complete for customer- "+ investForm.getPan1());
+					 result= bseEntryManager.upddateCustomerFormSignature(investForm.getMobile(), investForm.getPan1(), investForm.getCustomerSignature());
+				}
 				/*if(investForm.getMobile()==null){
 			map.clear();
 			returnResponse= "NO_MOBILE";
@@ -244,17 +255,19 @@ public class BsemfController {
 
 		logger.info("mf-signature-udpate post controller");
 		String returnUrl = "SUCCESS";
-
+		
 		try{
 			BseMFInvestForm investForm = (BseMFInvestForm) session.getAttribute("mfRegisterdUser");
 			
 			if(investForm.getMobile()!=""){
 				String requestedMobile= request.getParameter("mobile");
-				
+				System.out.println("Get mobile no- "+ request.getParameter("mobdata"));
 				if(requestedMobile.equalsIgnoreCase(investForm.getMobile())){
-					
+//					returnUrl="SUCCESS";
+					//call api to upload pdf
+					System.out.println("Call API");
 				}else{
-					logger.info("Mobile number do not match with holding session form data. Request rejected. Session no:"+ investForm.getMobile() + " : Requested mobile: "+ requestedMobile);
+					logger.info("Mobile number do not match with holding session form data. Request rejected. Session mobile no:"+ investForm.getMobile() + " : Requested mobile: "+ requestedMobile);
 					returnUrl="FAIL";
 				}
 				
@@ -956,7 +969,7 @@ public class BsemfController {
 		@RequestMapping("/download/aof/{fileName:.+}")
 		public void downloadPDFResource( HttpServletRequest request,
 				HttpServletResponse response,
-				@PathVariable("fileName") String fileName,/*@ModelAttribute("mfInvestForm") BseMFInvestForm investForm,*/ @RequestHeader String referer)	
+				@PathVariable("fileName") String fileName,/*@ModelAttribute("mfInvestForm") BseMFInvestForm investForm,*/ @RequestHeader String referer,HttpSession session)	
 		{
 			System.out.println("File download");
 			//If user is not authorized - he should be thrown out from here itself
@@ -965,7 +978,7 @@ public class BsemfController {
 				//or send error
 			} 
 
-
+			
 			//Authorized user will download the file
 			/*String dataDirectory = request.getServletContext().getRealPath("/WEB-INF/downloads/pdf/");*/
 
@@ -977,14 +990,21 @@ public class BsemfController {
 			System.out.println(file.toString());
 			String flag = "SUCCESS";
 
-			/*if(!Files.exists(file)){
-			BseAOFGenerator.aofGenerator(investForm,fileName, "", "VERIFIED", dataDirectory);
-		}*/
+			if(!Files.exists(file)){
+				
+			BseMFInvestForm investForm =(BseMFInvestForm) session.getAttribute("mfRegisterdUser"); 	
+			if(investForm!=null){
+				BseAOFGenerator.aofGenerator(investForm,fileName, env.getProperty("investment.bse.aoffile.logo"), "VERIFIED", dataDirectory);
+				
+			}else{
+				logger.info("No session data found to generate file!");
+			}
+			}
 
 			if (Files.exists(file))
 			{
-				//			response.setContentType("application/pdf");
-				response.setContentType("application/octet-stream");
+				response.setContentType("application/pdf");
+//				response.setContentType("application/octet-stream");
 				response.addHeader("Content-Disposition", "attachment; filename="+fileName);
 				try
 				{
@@ -1096,7 +1116,12 @@ public class BsemfController {
 			return view;
 		}
 
-		
+		@ExceptionHandler(ResourceNotFoundException.class)
+		@ResponseStatus(value=HttpStatus.NOT_FOUND)
+		public String pageNotFound(HttpServletRequest request, Exception ex){
+			logger.info("Controlleradvice- page not found"+ request.getRequestURI());
+			return "pagenotfound";
+		}
 		
 
 	}

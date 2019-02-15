@@ -312,14 +312,14 @@ function validateFundForm(){
 	
 //	validate amount
 	 var purchaseamount = $("#amount").val();
-	 var minimumPurchase= $("#minVal").text();
+	 var minimumPurchase=$("#minVal").text();
 	 
-	 //console.log("Remeem amount- "+ redeemamount);
+	 console.log(parseFloat(purchaseamount).toFixed(2) +  " - "+ minimumPurchase);
 	  if(!isNaN(purchaseamount)){
 //		  $("#invalidamnt").text("");
 		  //$("#nextBtn").removeAttr("disabled");
-	  if(minimumPurchase > purchaseamount){
-		//  console.log("Invalid")
+	  if(parseFloat(purchaseamount) < parseFloat(minimumPurchase) ){
+//		  console.log("Invalid")
 		  $("#selectmsg").text("Minimum purchase amount criteria not met");
 //		  $("#nextBtn").attr("disabled", "disabled");
 		  return false;

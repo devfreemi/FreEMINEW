@@ -30,11 +30,11 @@
 		<div class="dashboard_header">
 			<span>DASHBOARD</span>
 		</div>
-
+<!-- 
 		<div class="home-view">
 			<span>HOME VIEW</span>
 		</div>
-
+ -->
 		<section class="top-section">
 			<div class="row dashboard_content">
 				<div class="col-md-4 col-lg-4 outer_box">
@@ -81,7 +81,7 @@
 							</div>
 						</div>
 						<div class="footer_link">
-							<a href="/products/mutual-funds/view-purchase-history">
+							<a href="/products/mutual-funds/view-purchase-history" style="text-decoration: none;color: white;">
 							<span>VIEW DETAILS</span>
 							</a>
 							

@@ -589,4 +589,10 @@ translate
  .aofoption>h5{
      background-color: #5c9fef;
     padding: 3px;
-    color: #ffff70;}
+    color: #ffff70;
+  }
+  
+  .purchase-history-table > td {
+  border: 1px solid red;
+}
+  }

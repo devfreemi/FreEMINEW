@@ -83,7 +83,7 @@
 					src="<c:url value="${contextcdn}/resources/images/registry.png"/>"
 					alt="Registry product" class="img-fluid icon-for-mobileview"> 
 					<a class="nav-link nav-link-styling styling-header"
-					href="/mutual-funds/">Mutual Fund<!-- <br> <span
+					href="/products/mutual-funds/top-performing">Top performning funds<!-- <br> <span
 							class="header_subname">A product of Mutual Funds</span> -->
 				</a> <!-- </div> -->
 				</li>

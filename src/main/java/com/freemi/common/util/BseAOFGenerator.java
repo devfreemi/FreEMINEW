@@ -58,7 +58,8 @@ public class BseAOFGenerator {
 			cell71.setPaddingTop(15);
 			Image img;
 			try {
-				img = Image.getInstance("E:\\BITBUCKET REPOSITORY\\freemi\\src\\main\\webapp\\resources\\images\\freemi.png");
+//				img = Image.getInstance("E:\\BITBUCKET REPOSITORY\\freemi\\src\\main\\webapp\\resources\\images\\freemi.png");
+				img = Image.getInstance(imageAbsPath);
 //				img = Image.get
 				img.setAlt("FREEMI AOF FORM");
 				Chunk c21 = new Chunk(img, 1, 1);
@@ -120,7 +121,7 @@ public class BseAOFGenerator {
 			cell5.setHorizontalAlignment(Element.ALIGN_LEFT);
 			cell5.setVerticalAlignment(Element.ALIGN_MIDDLE);
 
-			PdfPCell cell6 = new PdfPCell(new Paragraph(""));
+			PdfPCell cell6 = new PdfPCell(new Paragraph(CommonConstants.EUIN_CODE,f2));
 			cell6.setBorderColor(BaseColor.BLACK);
 			// cell6.setPaddingLeft(10);
 			cell6.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -868,7 +869,7 @@ public class BseAOFGenerator {
 			table2 = new PdfPTable(1); // 1 column.
 			table2.setWidthPercentage(100); //Width 100%
 
-			cell7 = new PdfPCell(new Paragraph("Nominee Address: "+ investForm.getNominee().getNomineeAddress1() + ", "+ investForm.getNominee().getNomineeAddress2(),f2)); //append string add value
+			cell7 = new PdfPCell(new Paragraph("Nominee Address: "+ investForm.getNominee().getNomineeAddress1() + " "+ investForm.getNominee().getNomineeAddress2(),f2)); //append string add value
 			cell7.setBorderColor(BaseColor.BLACK);
 			cell7.setHorizontalAlignment(Element.ALIGN_LEFT);
 			cell7.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -984,6 +985,7 @@ public class BseAOFGenerator {
 			cell11.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			cell11.setBorderColor(BaseColor.BLACK);
 			Image img1;
+			if(investForm.getCustomerSignature()!=""){
 			try {
 				Base64 decoder = new Base64();
 			    byte[] imageByte = decoder.decode(investForm.getCustomerSignature().split(",")[1]);
@@ -1003,7 +1005,9 @@ public class BseAOFGenerator {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} 
-			
+			}else{
+				cell11.addElement(new Paragraph("",f2));
+			}
 			
 
 			table4.addCell(cell11);

@@ -7,7 +7,11 @@ function AdditionalPurchase(folio,code,type){
 //	var base64 = btoa(x);
 //	console.log(base64);
 //	console.log(window.location.href);
-	window.location.assign(window.location.href+"/additional-purchase?p="+btoa(folio+"|"+code+"|"+type));
+	if(folio == 'NEW'){
+		alert("You cannot make additional purhcase until portfolio is assigned!");
+	}else{
+		window.location.assign(window.location.href+"/additional-purchase?p="+btoa(folio+"|"+code+"|"+type));
+	}
 }
 
 function MFRedeem(folio,code,type){
@@ -19,7 +23,11 @@ function MFRedeem(folio,code,type){
 //	var base64 = btoa(x);
 //	console.log(base64);
 //	console.log(window.location.href);
+	if(folio == 'NEW'){
+		alert("No portfolio number to redeem your investment! Please wait for portfolio number.");
+	}else{
 	window.location.assign(window.location.href+"/funds-redeem?r="+btoa(folio+"|"+code+"|"+type));
+	}
 }
 
 /*$(document).ready(function(){
