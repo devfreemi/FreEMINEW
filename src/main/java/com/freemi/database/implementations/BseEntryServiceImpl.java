@@ -32,6 +32,7 @@ import com.freemi.database.interfaces.BseCustomerCrudRespository;
 import com.freemi.database.interfaces.BseOrderEntryResponseRepository;
 import com.freemi.database.interfaces.BseTransCountCrudRepository;
 import com.freemi.database.interfaces.BseTransCrudRepository;
+import com.freemi.database.interfaces.BseTransHistoryViewCrudRepository;
 import com.freemi.database.interfaces.BseTransactionsView;
 import com.freemi.database.interfaces.PortfolioCrudRepository;
 import com.freemi.database.interfaces.TopFundsRepository;
@@ -45,6 +46,7 @@ import com.freemi.entity.investment.BseAllTransactionsView;
 import com.freemi.entity.investment.BseDailyTransCounter;
 import com.freemi.entity.investment.BseMFInvestForm;
 import com.freemi.entity.investment.BseOrderEntryResponse;
+import com.freemi.entity.investment.BsemfTransactionHistory;
 import com.freemi.entity.investment.SelectMFFund;
 import com.freemi.entity.investment.TransactionStatus;
 import com.itextpdf.text.Document;
@@ -87,6 +89,9 @@ public class BseEntryServiceImpl implements BseEntryManager {
 
 	@Autowired
 	BseOrderEntryResponseRepository bseOrderEntryResponseRepository;
+	
+	@Autowired
+	BseTransHistoryViewCrudRepository bseTransHistoryViewCrudRepository;
 
 	private static final Logger logger = LogManager.getLogger(BseEntryServiceImpl.class);
 
@@ -512,13 +517,14 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		}
 
 		@Override
-		public List<BseOrderEntryResponse> getAllPurchaseHistory(String clientId) {
+		public List<BsemfTransactionHistory> getAllPurchaseHistory(String clientId) {
 			logger.info("Begining process to upload AOF Form.");
-			List<BseOrderEntryResponse> getAllOrders = null;
+			List<BsemfTransactionHistory> getAllOrders = null;
 			
 			try{
 //				if(bseCustomerCrudRespository.existsByMobile(mobileNumber)){
-				getAllOrders=bseOrderEntryResponseRepository.findAllByClientCode(clientId);
+//				getAllOrders=bseOrderEntryResponseRepository.findAllByClientCode(clientId);
+				getAllOrders = bseTransHistoryViewCrudRepository.findAllByClienId(clientId);
 					logger.info("Total purchase history found for custmer- "+ clientId + " : "+ getAllOrders.size());
 				
 				}catch(Exception e){

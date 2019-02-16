@@ -178,18 +178,17 @@ public static BseSipOrderEntry transactionSIPOrderToBseBeans(SelectMFFund fundDe
 	
 	public static BseAOFUploadRequest AOFFormtoBseBeanMapper(byte[] aoffile, String clientCode){
 		BseAOFUploadRequest response = new BseAOFUploadRequest();
+		StringBuffer fileName = new StringBuffer(CommonConstants.BSE_MEMBER_ID);
+		fileName.append(clientCode).append(new SimpleDateFormat("ddMMyyyy")).append(".TIFF");
 		response.setFlag("UCC");
-
+		response.setDocumentType("Image/TIFF");
 		response.setMemberCode(CommonConstants.BSE_MEMBER_ID);
 		response.setClientCode(clientCode);
-		response.setFileName("");
-		response.setDocumentType("");
+		response.setFileName(fileName.toString());
 		response.setpFileBytes(aoffile);
 		response.setFiller1("NULL");
 		response.setFiller2("NULL");
 		return response;
-		
-		
 		
 	}
 	

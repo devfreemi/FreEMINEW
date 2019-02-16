@@ -133,21 +133,27 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 
 	@Override
 	public String uploadAOFForm(String mobileNumber, String aoffolderLocation, String clientCode) {
-		logger.info("Covery AOF form details to BSE format and process");
+		logger.info("Convert AOF form details to BSE format and process");
 		String flag="SUCCESS";
 		BseAOFUploadResponse aofresp = new BseAOFUploadResponse();
 		byte[] filearray = null;
 		Path filepath = Paths.get(aoffolderLocation, mobileNumber+".pdf");
 		if(Files.exists(filepath)){
 			try {
-				filearray = Files.readAllBytes(new File("/path/to/file").toPath());
+				filearray = Files.readAllBytes(new File(filepath.toString()).toPath());
 				BseAOFUploadRequest r = BseBeansMapper.AOFFormtoBseBeanMapper(filearray, clientCode);
 				String responseText = RestClientBse.uploadAOF(r);
-				BseBeansMapper.BseAOFUploadResponsetoBean(aofresp, responseText);
+				logger.info("Response for AOF upload against customer : "+ clientCode + " : "+ responseText);
+//				BseBeansMapper.BseAOFUploadResponsetoBean(aofresp, responseText);
+				if(!responseText.equalsIgnoreCase("Uploaded")){
+//					logger
+					flag="FAIL";
+				}
 			} catch (IOException e) {
 				logger.error("Failed to query BSE to upload AOF form", e);
 				aofresp.setStatusCode("999");
 				aofresp.setStatusCode("FAILED_CONN");
+				flag="ERROR";
 			}
 		}else{
 			logger.info("AOF File does not exist for upload!");
@@ -181,7 +187,7 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 		return response;
 	}
 
-
+/*
 	public static void main(String[] args){
 		Path filepath = Paths.get("E:/AOF/", "8777777777"+".pdf");
 		if(Files.exists(filepath)){
@@ -208,7 +214,7 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 		}else{
 			System.out.println("No file");
 		}
-	}
+	}*/
 
 	
 

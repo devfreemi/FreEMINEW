@@ -17,19 +17,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import javax.websocket.server.PathParam;
 
-import org.apache.jasper.tagplugins.jstl.core.Url;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.config.ResourceNotFoundException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.mobile.device.Device;
-import org.springframework.security.web.util.UrlUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -39,7 +35,6 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -51,9 +46,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freemi.common.util.BseAOFGenerator;
 import com.freemi.common.util.BseRelatedActions;
 import com.freemi.common.util.CommonConstants;
@@ -67,7 +59,7 @@ import com.freemi.entity.database.MfTopFundsInventory;
 import com.freemi.entity.investment.BseAllTransactionsView;
 import com.freemi.entity.investment.BseMFInvestForm;
 import com.freemi.entity.investment.BseOrderEntryResponse;
-import com.freemi.entity.investment.CustomerSignature;
+import com.freemi.entity.investment.BsemfTransactionHistory;
 import com.freemi.entity.investment.MFAdditionalPurchaseForm;
 import com.freemi.entity.investment.MFRedeemForm;
 import com.freemi.entity.investment.SelectMFFund;
@@ -144,8 +136,8 @@ public class BsemfController {
 		}
 
 		try{
-//			String flag = bseEntryManager.saveCustomerDetails(investForm);		//enable after test --todo
-			String flag ="SUCCESS";
+			String flag = bseEntryManager.saveCustomerDetails(investForm);		//enable after test --todo
+//			String flag ="SUCCESS";
 			logger.info("Customer registration status- "+ flag);
 			if(!flag.equalsIgnoreCase("SUCCESS")){
 				returnUrl= "bsemf/bse-form-new-customer";
@@ -251,10 +243,10 @@ public class BsemfController {
 
 	@RequestMapping(value = "/mutual-funds/uploadsignedaof", method = RequestMethod.GET)
 	@ResponseBody
-	public String getAOFFile(HttpServletRequest request, HttpServletResponse response,HttpSession session) {
+	public String uploadSignedAOFFile(HttpServletRequest request, HttpServletResponse response,HttpSession session) {
 
 		logger.info("mf-signature-udpate post controller");
-		String returnUrl = "SUCCESS";
+		String result = "SUCCESS";
 		
 		try{
 			BseMFInvestForm investForm = (BseMFInvestForm) session.getAttribute("mfRegisterdUser");
@@ -264,11 +256,19 @@ public class BsemfController {
 				System.out.println("Get mobile no- "+ request.getParameter("mobdata"));
 				if(requestedMobile.equalsIgnoreCase(investForm.getMobile())){
 //					returnUrl="SUCCESS";
+					String clientCode = bseEntryManager.getClientIdfromMobile(requestedMobile);
 					//call api to upload pdf
-					System.out.println("Call API");
+					
+					
+				System.out.println("Call API");
+				result= investmentConnectorBseInterface.uploadAOFForm(requestedMobile, env.getProperty(CommonConstants.BSE_AOF_GENERATION_FOLDR), clientCode);
+					
+				if(result.equalsIgnoreCase("SUCCESS")){
+					//update code to upload AOF status to database
+				}
 				}else{
 					logger.info("Mobile number do not match with holding session form data. Request rejected. Session mobile no:"+ investForm.getMobile() + " : Requested mobile: "+ requestedMobile);
-					returnUrl="FAIL";
+					result="SESSION_MOB_MISMATCH";
 				}
 				
 				//		String result= bseEntryManager.upddateCustomerFormSignature(investForm.getMobile(), investForm.getPan1(), investForm.getCustomerSignature());
@@ -284,13 +284,13 @@ public class BsemfController {
 		}*/
 
 			}else{
-				returnUrl="REQUEST_DENIED";
+				result="REQUEST_DENIED";
 			}
 		}catch(Exception e){
 			logger.error("Error with service", e);
-			returnUrl="INTERNAL_ERROR";
+			result="INTERNAL_ERROR";
 		}
-			return returnUrl;
+			return result;
 
 		}
 
@@ -899,11 +899,12 @@ public class BsemfController {
 
 			logger.info("@@ BSE MF STAR purchase confirm controller @@");
 			String returnUrl = "bsemf/bsemf-purchase-history";
-
+			
+			try{
 			if(session.getAttribute("userid").toString()!=null || session.getAttribute("token").toString()!=null){
 				String clientId= bseEntryManager.getClientIdfromMobile(session.getAttribute("userid").toString());
 				if(!clientId.isEmpty()){
-					List<BseOrderEntryResponse> purchaseHistoryList= bseEntryManager.getAllPurchaseHistory(clientId);
+					List<BsemfTransactionHistory> purchaseHistoryList= bseEntryManager.getAllPurchaseHistory(clientId);
 					if(purchaseHistoryList!=null){
 //						map.addAttribute("PURCHASE_LIST", "SUCCESS");
 						if(purchaseHistoryList.size()>=1){
@@ -926,6 +927,9 @@ public class BsemfController {
 				returnUrl = "redirect:/login";
 				/*map.addAttribute("TRANS_STATUS", transStatus);
 			map.addAttribute("TRANS_ID",transId);*/
+			}
+			}catch(NullPointerException e){
+				returnUrl = "redirect:/login";
 			}
 			return returnUrl;
 		}
@@ -1116,12 +1120,12 @@ public class BsemfController {
 			return view;
 		}
 
-		@ExceptionHandler(ResourceNotFoundException.class)
+		/*@ExceptionHandler(ResourceNotFoundException.class)
 		@ResponseStatus(value=HttpStatus.NOT_FOUND)
 		public String pageNotFound(HttpServletRequest request, Exception ex){
 			logger.info("Controlleradvice- page not found"+ request.getRequestURI());
 			return "pagenotfound";
-		}
+		}*/
 		
 
 	}

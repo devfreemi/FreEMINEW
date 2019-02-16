@@ -344,7 +344,7 @@ public class BseAOFGenerator {
 			cell11 = new PdfPCell();
 
 			c1 = new Chunk("Country: ",f1);
-			c2 = new Chunk(investForm.getAddressDetails().getCountry(),f2);
+			c2 = new Chunk(investForm.getAddressDetails().getCountry()==""?"INDIA":investForm.getAddressDetails().getCountry(),f2);
 			p11 = new Phrase();
 			p11.add(c1);
 			p11.add(c2);
@@ -710,7 +710,7 @@ public class BseAOFGenerator {
 			cell11 = new PdfPCell(new Paragraph("A/C Type: "+ investForm.getBankDetails().getAccountType(),f1));
 			table4.addCell(cell11);
 
-			cell11 = new PdfPCell(new Paragraph("IFSC Code: "+ investForm.getBankDetails().getAccountType(),f1));
+			cell11 = new PdfPCell(new Paragraph("IFSC Code: "+ investForm.getBankDetails().getIfscCode(),f1));
 			table4.addCell(cell11);
 
 			document.add(table4);
@@ -765,7 +765,7 @@ public class BseAOFGenerator {
 			cell11 = new PdfPCell();
 
 			c1 = new Chunk("State: ",f1);
-			c2 = new Chunk(investForm.getBankDetails().getBankCity(),f2);
+			c2 = new Chunk(investForm.getBankDetails().getBranchState(),f2);
 			p11 = new Phrase();
 			p11.add(c1);
 			p11.add(c2);
@@ -980,8 +980,8 @@ public class BseAOFGenerator {
 			cell11 = new PdfPCell();
 			cell11.setHorizontalAlignment(Element.ALIGN_CENTER);
 			cell11.setPaddingLeft(10);
-			cell11.setPaddingTop(10);
-			cell11.setFixedHeight(30);
+			cell11.setPaddingTop(5);
+			cell11.setFixedHeight(50);
 			cell11.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			cell11.setBorderColor(BaseColor.BLACK);
 			Image img1;
@@ -1054,12 +1054,12 @@ public class BseAOFGenerator {
 
 	}	
 
-
+/*
 	public static void main(String[] args) {
 		//String k = "<html><body> This is my Project </body></html>";
 
 
-		/*try {
+		try {
 FileInputStream s = new FileInputStream(new File("E:\\A\\\\PDFG\\\\htm1.txt"));
 BufferedReader br = new BufferedReader( new InputStreamReader(s));
 StringBuilder sb = new StringBuilder();
@@ -1073,8 +1073,8 @@ k = sb.toString();
 }catch(Exception e) {
 
 }
-		 */
-		/*try {
+		 
+		try {
 
 OutputStream file = new FileOutputStream(new File("D:\\DEBA\\PDFG\\Test.pdf"));
 Document document = new Document();
@@ -1086,7 +1086,7 @@ document.close();
 file.close();
 } catch (Exception e) {
 e.printStackTrace();
-}*/
+}
 		AddressDetails a =new AddressDetails();
 		//		Nominee
 
@@ -1128,5 +1128,5 @@ e.printStackTrace();
 	}
 
 
-
+*/
 }

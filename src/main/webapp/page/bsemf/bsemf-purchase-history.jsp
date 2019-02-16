@@ -38,7 +38,7 @@
 				<c:choose>
 					<c:when test="${PURCHASE_LIST =='ID_NOT_FOUND' }">
 						<div>
-							<h5>You do not seem registered for investment to view this
+							<h5 style="color: #e24c67; font-family: serif;">You do not seem registered for investment to view this
 								page.</h5>
 							<h5>Get Registered here</h5>
 							<span>*If you think you have already invested, kindly
@@ -47,12 +47,15 @@
 					</c:when>
 
 					<c:when test="${PURCHASE_LIST =='ERROR' }">
-						<h5>failed to fetch your purchase history. Please try after
+						<h5 style="color: #e24c67; font-family: serif;">Failed to fetch your purchase history. Please try after
 							sometime</h5>
 					</c:when>
 
 					<c:when test="${PURCHASE_LIST =='NONE' }">
-						<h5>No purchase history found</h5>
+						<h5 style="color: #2793e2; font-family: serif;">No purchase history found</h5>
+						<div style="text-align: center;">
+						<a href="/products/mutual-funds/top-performing"><button class="btn btn-sm btn-info">Make your 1<sup>st</sup>Investment</button></a>
+						</div>
 					</c:when>
 
 					<c:when test="${PURCHASE_LIST =='SUCCESS' }">
@@ -65,6 +68,11 @@
 									style="background: #3db4d0; color: #fff29e; font-size: 15px;">
 									<tr>
 										<th scope="col">TRANSACTION REFERENCE</th>
+										<th scope="col">SCHEME CODE</th>
+										<th scope="col">INVESTMENT TYPE</th>
+										<th scope="col">SIP START DATE</th>
+										<th scope="col">SIP END DATE</th>
+										<th scope="col">INVEST AMOUNT</th>
 										<th scope="col">INVEST DATE</th>
 										<th scope="col">ORDER NO</th>
 										<th scope="col">STATUS</th>
@@ -74,13 +82,18 @@
 
 									<c:forEach var="listVar" items="${PURCHASE_ORDERS}">
 										<tr>
-											<td>${listVar.uniqueReferenceNo }</td>
-											<td>${listVar.createdOn }</td>
-											<td>${listVar.orderNoOrSipRegNo }</td>
+											<td>${listVar.transactionId }</td>
+											<td>${listVar.schemeCode }</td>
+											<td>${listVar.investType }</td>
+											<td>${listVar.sipStartDate }</td>
+											<td>${listVar.sipEndDate }</td>
+											<td>${listVar.investAmount }</td>
+											<td>${listVar.orderTime }</td>
+											<td>${listVar.orderNo }</td>
 											<td style="text-align: center;">
 												<button class="btn btn-sm btn-secondary"
-													onclick="getbseOrderPaymentStatus('${listVar.clientCode}','${listVar.orderNoOrSipRegNo }' )">View
-													Transaction status</button>
+													onclick="getbseOrderPaymentStatus('${listVar.clienId}','${listVar.orderNo }' )">
+													Payment Status</button>
 
 											</td>
 										</tr>
