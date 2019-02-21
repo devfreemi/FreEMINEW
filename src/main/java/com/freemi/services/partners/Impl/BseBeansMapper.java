@@ -1,8 +1,11 @@
 package com.freemi.services.partners.Impl;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -12,11 +15,14 @@ import org.apache.logging.log4j.Logger;
 import com.freemi.common.util.CommonConstants;
 import com.freemi.entity.bse.BseAOFUploadRequest;
 import com.freemi.entity.bse.BseAOFUploadResponse;
+import com.freemi.entity.bse.BseApiResponse;
+import com.freemi.entity.bse.BseEMandateRegistration;
 import com.freemi.entity.bse.BseOrderEntry;
 import com.freemi.entity.bse.BseOrderPaymentResponse;
 import com.freemi.entity.bse.BsePaymentStatus;
 import com.freemi.entity.bse.BseRegistrationMFD;
 import com.freemi.entity.bse.BseSipOrderEntry;
+import com.freemi.entity.database.UserBankDetails;
 import com.freemi.entity.investment.BseMFInvestForm;
 import com.freemi.entity.investment.BseOrderEntryResponse;
 import com.freemi.entity.investment.SelectMFFund;
@@ -118,20 +124,28 @@ public static BseSipOrderEntry transactionSIPOrderToBseBeans(SelectMFFund fundDe
 		}
 		bseOrderForm.setUniqueRefNo(uniqueReferenceNo);
 		bseOrderForm.setUserID(CommonConstants.BSE_USER_ID);
-		bseOrderForm.setMemberId(CommonConstants.BSE_MEMBER_ID);
+		bseOrderForm.setMemberCode(CommonConstants.BSE_MEMBER_ID);
 		bseOrderForm.setClientCode(fundDetails.getClientID());		// Customer's client ID
-		bseOrderForm.setStartDate(fundDetails.getSipDate());
+		bseOrderForm.setTransMode("P");
+		bseOrderForm.setStartDate((new SimpleDateFormat("dd/MM/yyyy")).format(fundDetails.getSipStartDate()));
 		bseOrderForm.setFrequencyType("MONTHLY");
 		bseOrderForm.setFrequencyAllowed("1");
 		bseOrderForm.setInstallmentAmount(Double.toString(fundDetails.getInvestAmount()));
-		bseOrderForm.setNoOfInstallment("60");		//to do 5 years by default selected for now 
-		bseOrderForm.setFIRSTORDERFLAG("N");		//to do for first payment
-		bseOrderForm.setSchemeCd(fundDetails.getSchemeCode());
+		bseOrderForm.setNoOfInstallment(Integer.toString(fundDetails.getNoOfInstallments()));		//to do 5 years by default selected for now 
+		
+		if(fundDetails.isPayFirstInstallment()){
+			bseOrderForm.setFirstOrderFlag("Y");		//to do for first payment
+			bseOrderForm.setOrderVal(Double.toString(fundDetails.getInvestAmount()));	//to do for all redeem 
+		}else{
+			bseOrderForm.setFirstOrderFlag("N");		//to do for first payment
+			bseOrderForm.setOrderVal("");	//to do for all redeem
+		}
+		bseOrderForm.setSchemeCode(fundDetails.getSchemeCode());
 		bseOrderForm.setBuySell("P");
 		bseOrderForm.setBuySellType("FRESH");
-		bseOrderForm.setDPTxn("P");
-		bseOrderForm.setOrderVal(Double.toString(fundDetails.getInvestAmount()));	//to do for all redeem 
-		bseOrderForm.setQty("");
+		bseOrderForm.setDpTxnMode("P");
+		
+		bseOrderForm.setQty("1");
 		bseOrderForm.setAllRedeem("N");		// to do
 		bseOrderForm.setFolioNo(fundDetails.getPortfolio().equalsIgnoreCase("NEW")?"":fundDetails.getPortfolio());
 		bseOrderForm.setRemarks("Purchase Request");
@@ -140,7 +154,7 @@ public static BseSipOrderEntry transactionSIPOrderToBseBeans(SelectMFFund fundDe
 		bseOrderForm.setSubBrCode("");
 		bseOrderForm.setEuin("");
 		bseOrderForm.setEuinVal("N");
-		bseOrderForm.setMinRedeem("");
+		bseOrderForm.setMinRedeem("Y");
 		bseOrderForm.setDPC("N");
 		bseOrderForm.setIPAdd("");
 		bseOrderForm.setPassword("");
@@ -172,7 +186,28 @@ public static BseSipOrderEntry transactionSIPOrderToBseBeans(SelectMFFund fundDe
 		
 		return response;
 		
+	}
+	
+	
+	public static BseOrderEntryResponse siptransactionOrderReponseToBeans(BseOrderEntryResponse response, String responseText, String internalRefNo){
+		List<String> res = Arrays.asList(responseText.split("\\|"));
+//		BseorderEntryResponse response = new BseorderEntryResponse();
+//		SIP Response NEW|201902202627300003|26273|DEBA593C|SUMANTA1|214516|SIP HAS BEEN REGISTERED, SIP REG NO IS : 214516|0
 		
+		response.setTransactionType(res.get(0));
+		response.setUniqueReferenceNo(res.get(1));
+		response.setUserId(res.get(2));
+		response.setMemberId(res.get(3));
+		response.setClientCode(res.get(4));
+		
+		response.setOrderNoOrSipRegNo(res.get(5));
+		response.setBsereMarks(res.get(6));
+		response.setSuccessFlag(res.get(7));
+		
+		response.setIntRefNo(internalRefNo);
+		response.setCreatedOn(new Date());
+		
+		return response;
 		
 	}
 	
@@ -227,5 +262,57 @@ public static BseSipOrderEntry transactionSIPOrderToBseBeans(SelectMFFund fundDe
 		
 		return requestForm;
 	}
+	
+	public static BseEMandateRegistration bankDetailsToBseBeans(UserBankDetails bankDetails,String amount, String clientCode,Date startDate, Date endDate){
+		BseEMandateRegistration requestForm = new BseEMandateRegistration();
+		
+		requestForm.setClientCode(clientCode);
+		requestForm.setAmount(amount);
+		requestForm.setMandateType("X");
+		requestForm.setAccountNo(bankDetails.getAccountNumber());
+		requestForm.setAccType(bankDetails.getAccountType());
+		requestForm.setIFSCCODE(bankDetails.getIfscCode().toUpperCase());
+		requestForm.setSTARTDATE((new SimpleDateFormat("dd/MM/yyyy")).format(startDate));
+		requestForm.setENDDATE((new SimpleDateFormat("dd/MM/yyyy")).format(endDate));
+		
+		return requestForm;
+	}
+	
+	
+	public static BseApiResponse emandateRegResponseToBean(String apiResponse){
+		BseApiResponse response = new BseApiResponse();
+		
+		try{
+		List<String> res = Arrays.asList(apiResponse.split("\\|"));
+		int length = res.size();
+		if(length == 2){
+			response.setStatusCode(res.get(0));
+			response.setRemarks(res.get(1));
+		}else if(length==3){
+			response.setStatusCode(res.get(0));
+			response.setRemarks(res.get(1));
+			response.setResponseCode(res.get(2));
+		}else{
+			logger.error("emandateRegResponseToBean(): Response length expectation mismatch. Check response for more paramateres returned");
+			response.setStatusCode(res.get(0));
+			response.setRemarks(res.get(1));
+		}
+		}catch(Exception e){
+			logger.error("emandateRegResponseToBean(): Error while parsing BSE api response",e);
+			response.setStatusCode("000");
+			response.setRemarks("Internal Error. Failed to parse Response.");
+		}
+		
+		return response;
+	}
+	
+/*	public static void main(String[] args ){
+		Date d  = new Date();
+		Calendar c = Calendar.getInstance();
+	    c.setTime(d);
+	    c.add(Calendar.YEAR, 10);
+	    d.setTime(c.getTimeInMillis());
+	    System.out.println((new SimpleDateFormat("dd/MM/yyyy")).format(d));
+	}*/
 
 }

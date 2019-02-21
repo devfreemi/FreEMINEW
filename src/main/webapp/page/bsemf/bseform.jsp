@@ -128,8 +128,8 @@
 							</div>
 							<form:input type="date" path="invDOB" required="required"
 								class="form-control form-control-custom" id="investorDOB" />
-							<span style="font-size: 10px; color: #d05c41;"><sup>*</sup>Age limit: 18-65 years</span>
 						</div>
+						<span style="font-size: 10px; color: #d05c41;"><sup>*</sup>Age limit: 18-65 years</span>
 					</div>
 
 				</div>

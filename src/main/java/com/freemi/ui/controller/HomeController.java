@@ -75,7 +75,7 @@ public class HomeController {
 
 
 	@RequestMapping(value = "/login", method = RequestMethod.GET )
-	public String login(@RequestParam(name="ref",required=false)String referrerUrl,Model map, HttpServletRequest request, HttpSession session) {
+	public String login(@RequestParam(name="ref",required=false)String referrerUrl,@RequestParam(name="mf",required=false)String msStatus,Model map, HttpServletRequest request, HttpSession session) {
 		//logger.info("@@@@ Inside Login..");
 		
 		logger.info("@@@@ LoginController @@@@");

@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -20,12 +21,15 @@ import com.freemi.common.util.CommonConstants;
 import com.freemi.controller.interfaces.InvestmentConnectorBseInterface;
 import com.freemi.entity.bse.BseAOFUploadRequest;
 import com.freemi.entity.bse.BseAOFUploadResponse;
+import com.freemi.entity.bse.BseApiResponse;
+import com.freemi.entity.bse.BseEMandateRegistration;
 import com.freemi.entity.bse.BseOrderEntry;
 import com.freemi.entity.bse.BseOrderPaymentRequest;
 import com.freemi.entity.bse.BseOrderPaymentResponse;
 import com.freemi.entity.bse.BsePaymentStatus;
 import com.freemi.entity.bse.BseRegistrationMFD;
 import com.freemi.entity.bse.BseSipOrderEntry;
+import com.freemi.entity.database.UserBankDetails;
 import com.freemi.entity.investment.BseMFInvestForm;
 import com.freemi.entity.investment.BseOrderEntryResponse;
 import com.freemi.entity.investment.SelectMFFund;
@@ -71,7 +75,7 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 			//		Order Entry processing for lumpsum - fresh
 			if(selectedFund.getInvestype().equals("LUMPSUM")){
 				try{
-					logger.info("Convert form data to BSE format data");
+					logger.info("Convert form data to BSE lumpsum format data");
 					BseOrderEntry bseMfOrderForm=  BseBeansMapper.transactionOrderToBseBeans(selectedFund, transactionNumber);
 					logger.info("Begin BSE service invoke process");
 					result = RestClientBse.purchaseRequestProcess(bseMfOrderForm);
@@ -84,12 +88,12 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 			}
 			//		Order process request for SIP
 			else if(selectedFund.getInvestype().equals("SIP")){
-				logger.info("Convert form data to BSE format data");
+				logger.info("Convert form data to BSE SIP Request format data");
 				try{
 					BseSipOrderEntry bseMfSipOrderForm=  BseBeansMapper.transactionSIPOrderToBseBeans(selectedFund, transactionNumber);
 					logger.info("Begin BSE service invoke process");
 					result = RestClientBse.purchaseSIPRequestProcess(bseMfSipOrderForm);
-					BseBeansMapper.transactionOrderReponseToBeans(bseOrderResp, result, selectedFund.getBseRefNo());
+					BseBeansMapper.siptransactionOrderReponseToBeans(bseOrderResp, result, selectedFund.getBseRefNo());
 				}catch(Exception e){
 					logger.error("Failed during proceesing of BSE SIP registration details to BSE platform",e);
 					//			result="BSE_CONN_FAIL";
@@ -126,7 +130,7 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 			}
 		}else{
 			logger.info("BSE connction is currently disabled");
-			orderResponse.setStatusCode("000");
+			orderResponse.setStatusCode(CommonConstants.BSE_API_SERVICE_DISABLED);
 		}
 		return orderResponse;
 	}
@@ -182,9 +186,35 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 			}
 		}else{
 			logger.info("BSE connction is currently disabled");
-			orderResponse.setStatusCode("000");
+			orderResponse.setStatusCode(CommonConstants.BSE_API_SERVICE_DISABLED);
 		}
 		return response;
+	}
+
+	@Override
+	public BseApiResponse emandateRegistration(UserBankDetails bankDetails,String amount, String clientCode, Date startDate, Date endDate) {
+		logger.info("Get bank account e-mandate registered for client id- "+ clientCode + " : bank no- " + bankDetails.getAccountNumber().substring(bankDetails.getAccountNumber().length()-4));
+		String response = "";
+		BseApiResponse bseresponse = new BseApiResponse();
+		if(env.getProperty(CommonConstants.BSE_ENABLED).equalsIgnoreCase("Y")){
+			try{
+//				BsePaymentStatus requestForm=  BseBeansMapper.BsePaymentStatusRequestToBse(clientId, orderNo);
+				BseEMandateRegistration registerForm = BseBeansMapper.bankDetailsToBseBeans(bankDetails, amount, clientCode,startDate,endDate);
+				logger.info("Begin BSE service invoke process for payment status");
+				response = RestClientBse.eMandateRegistration(registerForm);
+				bseresponse= BseBeansMapper.emandateRegResponseToBean(response);
+				
+			}catch(Exception e){
+				logger.error("Failed during proceesing of BSE SIP registration details to BSE platform",e);
+				//			result="BSE_CONN_FAIL";
+				response= "ERROR";
+			}
+		}else{
+			logger.info("BSE connction is currently disabled");
+			bseresponse.setStatusCode(CommonConstants.BSE_API_SERVICE_DISABLED);
+			bseresponse.setRemarks("BSE Service is disabled");
+		}
+		return bseresponse;
 	}
 
 /*

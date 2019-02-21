@@ -36,6 +36,12 @@
 			<div class="row" style="margin: auto;">
 				<div class="col-md-6 col-lg-6"
 					style="margin: auto; text-align: center; padding: 20px; background: aliceblue;">
+					
+					<div class="" style="margin-bottom: 2rem;">
+					 <img
+						class="d-block img-fluid" style="height: 2rem;margin: auto;"
+						src="<c:url value="${contextcdn}/resources/images/invest/transact_bse.svg"/>" alt="Transact">
+					</div>
 					<c:choose>
 						<c:when test="${TRANS_STATUS == 'COMPLETE' }">
 							<h5>Your purchase is complete!</h5>
@@ -56,11 +62,28 @@
 						<c:when test="${TRANS_STATUS == 'Y' }">
 							<h5>Order placed successfully</h5>
 							<h6>Transaction Reference No - ${TRANS_ID }</h6>
-
+							
+							<c:if test="${FIRST_PAY == 'Y' }">
 							<c:if test="${orderUrl.statusCode == '100' }">
 								<a href="${orderUrl.payUrl }">
-									<button>Complete your payment</button>
+									<button class="btn btn-sm btn-success">Complete your payment</button>
 								</a>
+							</c:if>
+							</c:if>
+							<c:if test="${not empty EMANDATE}">
+							<c:choose>
+								<c:when test="${EMANDATE == 'S' }">
+								<div>
+								<span>E-mandate registered successfully</span>
+								</div>
+								</c:when>
+								<c:when test="${EMANDATE == 'F' }">
+								<div>
+								<span>Failed to register bank for E-mandate. Please contact admin.</span>
+								</div>
+								</c:when>
+							</c:choose>
+								<p>${MANDATE_REMARKS }</p>
 							</c:if>
 
 						</c:when>

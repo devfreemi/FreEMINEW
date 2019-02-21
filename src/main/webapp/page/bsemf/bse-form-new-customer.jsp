@@ -95,7 +95,12 @@
 			</div>
 		</div>
 	</div>
-
+	
+	<!-- BSE MF  -->
+	<section class="bse-display" style="background: #ffecc9; padding: 5px;margin-bottom: -60px;">
+	<jsp:include page="./bsestarmfpowered.jsp"></jsp:include>
+	</section>
+	<!-- END BSE MF  -->
 	<jsp:include page="../include/footer.jsp"></jsp:include>
 
 </body>

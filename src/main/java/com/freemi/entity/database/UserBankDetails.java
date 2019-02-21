@@ -1,6 +1,7 @@
 package com.freemi.entity.database;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -69,6 +70,22 @@ public class UserBankDetails implements Serializable  {
 	@Transient
 	@Column(name="")
 	private String accountCountry="";
+	
+	@Column(name="EMANDATE_COMPLETE")
+	private boolean eMandateComplete=false;
+	
+	@Column(name="EMANDATE_START_DATE")
+	private Date eMandateStartDate;
+	
+	@Column(name="EMANDATE_END_DATE")
+	private Date eMandateEndDate;
+	
+	@Column(name="EMANDATE_REF_NO")
+	private String eMandateRefNo;
+	
+	@Column(name="EMANDATE_PROCESS_DATE")
+	private Date eMandateProcessDate;
+	
 	
 	@OneToOne(fetch= FetchType.LAZY, optional=false, cascade=CascadeType.PERSIST)
 	@JoinColumn(name="CLIENT_ID", nullable= false,insertable=false,updatable=false)
@@ -180,6 +197,46 @@ public class UserBankDetails implements Serializable  {
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	public boolean iseMandateComplete() {
+		return eMandateComplete;
+	}
+
+	public void seteMandateComplete(boolean eMandateComplete) {
+		this.eMandateComplete = eMandateComplete;
+	}
+
+	public Date geteMandateProcessDate() {
+		return eMandateProcessDate;
+	}
+
+	public void seteMandateProcessDate(Date eMandateProcessDate) {
+		this.eMandateProcessDate = eMandateProcessDate;
+	}
+
+	public Date geteMandateStartDate() {
+		return eMandateStartDate;
+	}
+
+	public void seteMandateStartDate(Date eMandateStartDate) {
+		this.eMandateStartDate = eMandateStartDate;
+	}
+
+	public Date geteMandateEndDate() {
+		return eMandateEndDate;
+	}
+
+	public void seteMandateEndDate(Date eMandateEndDate) {
+		this.eMandateEndDate = eMandateEndDate;
+	}
+
+	public String geteMandateRefNo() {
+		return eMandateRefNo;
+	}
+
+	public void seteMandateRefNo(String eMandateRefNo) {
+		this.eMandateRefNo = eMandateRefNo;
 	}
 	
 

@@ -16,6 +16,8 @@
 <link
 	href="<c:url value="${contextPath}/resources/css/bseinvestmentform.css"/>"
 	rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Roboto'
+	rel='stylesheet'>
 <link
 	href="<c:url value="${contextPath}/resources/css/pace-theme.css"/>"
 	rel="stylesheet">
@@ -43,7 +45,7 @@
 		<div class="row" style="margin: auto;">
 			<div class="col-md-8 col-lg-8">
 				<div class="mf-style1">
-					<h1 style="font-size: 28px; border-bottom: 2px solid #ec8655;">Investments
+					<h1 style="font-size: 1.75rem; border-bottom: 2px solid #ff9a20;">Investments
 						at your tips</h1>
 					<ul>
 						<li><i class="fas fa-check-circle" style="color: #30c730;"></i>
@@ -104,17 +106,18 @@
 			</div>
 		</div>
 	</section>
-	
+
 	<c:if test="${error != null }">
 		<div>
-			<span style="color: red;font-size: 11px;">${error }</span>
+			<span style="color: red; font-size: 11px;">${error }</span>
 		</div>
 	</c:if>
 	<c:if test="${FUNDSFOUND=='Y' }">
 		<section class="fund-explorer">
 
-			<div class="row" style="margin: auto;">
-				<div class="col-md-12 col-lg-12" style="margin-bottom: 30px;">
+			<div class="row" style="margin: auto; padding-top: 30px;">
+				<div class="col-md-12 col-lg-12"
+					style="margin-bottom: 30px; text-align: center;">
 					<h2 style="font-size: 26px;">Discover and explore top
 						performing funds</h2>
 				</div>
@@ -138,9 +141,13 @@
 									<div></div>
 								</div>
 								<div class="row card-text card-text-custom">
-									<div class="col-7">
+									<div class="col-5">
 										<p>
 											<%-- 	NAV (${funds.nav_Date }) <br> ${funds.nav } --%>
+											SIP Minimum <br>
+											<fmt:formatNumber type="number" maxFractionDigits="3"
+												value="${funds.sipMinInstallAmnt }" />
+
 										</p>
 									</div>
 									<%-- <div class="col-5">
@@ -153,16 +160,16 @@
 								</div> --%>
 									<div class="col-7">
 										<p>
-											Minimum Investment <br> <i class="fas fa-rupee-sign"></i>
+											Lumpsum Minimum <br> <i class="fas fa-rupee-sign"></i>
 											<fmt:formatNumber type="number" maxFractionDigits="3"
-												value="${funds.minPurchase }" />
+												value="${funds.lumpsumminPurchaseAmt }" />
 										</p>
 									</div>
 
 								</div>
 
 								<button type="button" class="btn btn-info btn-sm mf-btn-custom"
-									onclick="invest('${funds.schemeCode }','${funds.schemeName }', '${funds.minPurchase }','${funds.amcCode }');">
+									onclick="bseinvest('${funds.schemeCode }','${funds.schemeName }', '${funds.lumpsumminPurchaseAmt }','${funds.amcCode }','${funds.sipMinInstallAmnt }');">
 									INVEST</button>
 							</div>
 						</div>
@@ -185,7 +192,7 @@
 		</section>
 	</c:if>
 
-	<section class="top-funds-discuss">
+	<section class="top-funds-discuss" style="margin-bottom: 4rem;">
 		<div class="row" style="margin: auto;">
 			<div class="col-md-9 col-lg-9">
 				<h4>Let the experts do their jobs</h4>
@@ -194,29 +201,23 @@
 					advisors on the basis of their trailing returns during different
 					financial cycle. This may help stakeholders to make wiser decisions
 					about their investment and save time from enormous research
-					required. Based on this, one can check the performance, NAV, returns, etc of the performing Mutual Funds quickly to make suitable decision as reuired.
-					
+					required. Based on this, one can check the performance, NAV,
+					returns, etc of the performing Mutual Funds quickly to make
+					suitable decision as reuired.
+
 				</p>
 			</div>
 			<div class="col-md-3 col-lg-3"></div>
 		</div>
 	</section>
-
+	<!-- BSE MF  -->
+	<section class="bse-display"
+		style="background: #ffecc9; padding: 5px; margin-bottom: -60px;">
+		<jsp:include page="./bsestarmfpowered.jsp"></jsp:include>
+	</section>
+	<!-- END BSE MF  -->
 	<jsp:include page="../include/footer.jsp"></jsp:include>
 	<jsp:include page="../include/selectedfund.jsp"></jsp:include>
-	<script>
-		function invest(mfCode, mfName, minimum, amcCode) {
-			console.log("Reached- " + mfCode + " " + mfName);
-			$("#myModal").modal();
-			$("#schemeNameTitle").text(mfName);
-			$("#schemeName").val(mfName);
-			$("#minVal").text(minimum);
-			$("#schemecode").val(mfCode);
-			$("#amcCode").val(amcCode);
-			return true;
-		}
-	</script>
-
 
 </body>
 </html>

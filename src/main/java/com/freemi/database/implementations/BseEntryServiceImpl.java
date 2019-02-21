@@ -30,6 +30,7 @@ import com.freemi.database.interfaces.BseCustomerAddressCrudRepository;
 import com.freemi.database.interfaces.BseCustomerBankDetailsCrudRespository;
 import com.freemi.database.interfaces.BseCustomerCrudRespository;
 import com.freemi.database.interfaces.BseOrderEntryResponseRepository;
+import com.freemi.database.interfaces.BseTop15lsSipViewCrudReositry;
 import com.freemi.database.interfaces.BseTransCountCrudRepository;
 import com.freemi.database.interfaces.BseTransCrudRepository;
 import com.freemi.database.interfaces.BseTransHistoryViewCrudRepository;
@@ -37,6 +38,7 @@ import com.freemi.database.interfaces.BseTransactionsView;
 import com.freemi.database.interfaces.PortfolioCrudRepository;
 import com.freemi.database.interfaces.TopFundsRepository;
 import com.freemi.database.service.BseEntryManager;
+import com.freemi.entity.bse.BseApiResponse;
 import com.freemi.entity.bse.BseOrderPaymentResponse;
 import com.freemi.entity.database.MfTopFundsInventory;
 import com.freemi.entity.database.UserBankDetails;
@@ -45,6 +47,7 @@ import com.freemi.entity.investment.AddressDetails;
 import com.freemi.entity.investment.BseAllTransactionsView;
 import com.freemi.entity.investment.BseDailyTransCounter;
 import com.freemi.entity.investment.BseMFInvestForm;
+import com.freemi.entity.investment.BseMFTop15lsSip;
 import com.freemi.entity.investment.BseOrderEntryResponse;
 import com.freemi.entity.investment.BsemfTransactionHistory;
 import com.freemi.entity.investment.SelectMFFund;
@@ -92,6 +95,9 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	
 	@Autowired
 	BseTransHistoryViewCrudRepository bseTransHistoryViewCrudRepository;
+	
+	@Autowired
+	BseTop15lsSipViewCrudReositry bseTop15lsSipViewCrudReositry;
 
 	private static final Logger logger = LogManager.getLogger(BseEntryServiceImpl.class);
 
@@ -183,9 +189,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 			ref.append("P").append(selectedMFFund.getClientID().substring(6)).append(Calendar.getInstance().getTimeInMillis());
 			selectedMFFund.setBseRefNo(ref.toString());
 
-			//		selectedMFFund = bseTransCrudRepository.saveAndFlush(selectedMFFund);
 			logger.info("MF purchae request saved to database for transaction id- "+ selectedMFFund.getTransactionID());
-
 
 			//		Generate BSE transaction Reference no
 			Date date = new Date();
@@ -197,8 +201,6 @@ public class BseEntryServiceImpl implements BseEntryManager {
 			}
 			transNumber.append(Long.toString(counter));
 
-
-
 			logger.info("Requesting BSE to register transaction for client id- : "+ selectedMFFund.getClientID() + " : TransactionCode: "+ transNumber.toString()+ ": Scheme code: "+ selectedMFFund.getSchemeCode() + " : Amount: "+ selectedMFFund.getInvestAmount());
 
 			//Call BSE
@@ -209,8 +211,12 @@ public class BseEntryServiceImpl implements BseEntryManager {
 
 			if(bseResult.getSuccessFlag().equalsIgnoreCase("0")){
 				logger.info("Transaction is successful. Saving request to Database");
+
+				if(CommonConstants.BSE_CALL_TEST_ENABLED.equalsIgnoreCase("N")){
 				selectedMFFund = bseTransCrudRepository.saveAndFlush(selectedMFFund);
 				bseOrderEntryResponseRepository.saveAndFlush(bseResult);
+				}
+				
 				transStatus.setSuccessFlag("S");
 				transStatus.setStatusMsg(bseResult.getBsereMarks());
 			}else if (bseResult.getSuccessFlag().equalsIgnoreCase("000")){
@@ -531,6 +537,66 @@ public class BseEntryServiceImpl implements BseEntryManager {
 					logger.error("Failed to query database to get customer AOF upload status and upload", e);
 				}
 			return getAllOrders;
+		}
+
+		@Override
+		public List<BseMFTop15lsSip> getTopFunds() {
+			
+			return bseTop15lsSipViewCrudReositry.findAll();
+		}
+
+		@Override
+		public UserBankDetails getCustomerBankDetails(String clientCode) {
+			
+			UserBankDetails bank = null;
+			try{
+				bank= bseCustomerBankDetailsCrudRespository.findOneByClientID(clientCode);
+			}catch(Exception e){
+				logger.error("Failed to query database to fetch customer bank details",e);
+			}
+			
+			return bank;
+		}
+
+		@Override
+		public BseApiResponse updateEmdandateStatus(String mobileNumber, String amount) {
+			logger.info("Emandate update process begin for customer- "+ mobileNumber + " : amount- "+ amount);
+			
+			BseApiResponse apiresponse =null;
+			try{
+				String clientCode = bseCustomerCrudRespository.getClientIdFromMobile(mobileNumber);
+				UserBankDetails bankDetails = bseCustomerBankDetailsCrudRespository.findOneByClientID(clientCode);
+				Date startDate= new Date();
+//				Setting registration for 10 years
+				Date endDate  = new Date();
+				Calendar c = Calendar.getInstance();
+			    c.setTime(endDate);
+			    c.add(Calendar.YEAR, 10);
+			    endDate.setTime(c.getTimeInMillis());
+				
+				 apiresponse = investmentConnectorBseInterface.emandateRegistration(bankDetails, amount,clientCode, startDate,endDate);
+				if(apiresponse.getStatusCode().equals("100")){
+					logger.info("Emandate completed for customer successfully for cusotmner-" + mobileNumber + ": Response code: "+ apiresponse.getStatusCode() + " : "+ apiresponse.getRemarks());
+					logger.info("Update bank emandate status to database...");
+					SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd");
+//					SimpleDateFormat bseFormat = new SimpleDateFormat("dd/MM/yyyy");
+					bseCustomerBankDetailsCrudRespository.updateEmandateStatus(clientCode, 
+							bankDetails.getAccountNumber(), true, 
+							dbFormat.parse(dbFormat.format(startDate)), 
+							dbFormat.parse(dbFormat.format(endDate)), 
+							apiresponse.getResponseCode(), 
+							dbFormat.parse(dbFormat.format(new Date()))
+							);
+					
+				}else{
+					logger.info("Failed to update e-mandate. Reason: "+ apiresponse.getStatusCode() + " : "+ apiresponse.getRemarks());
+				}
+				
+			}catch(Exception e){
+				logger.error("updateEmdandateStatus(): error while trying to perform e-mandate registration",e);
+			}
+			
+			return apiresponse;
 		}
 		
 		/*		public static void main(String[] args){

@@ -368,8 +368,8 @@ translate
 /* Mutual funds explorer */
 .mf-style1 {
 	padding: 5px;	
-	font-family: Roboto, system-ui, -apple-system, BlinkMacSystemFont,
-		Segoe UI, Oxygen, Ubuntu, Cantarell, Droid Sans, Helvetica Neue;
+	/* font-family: Roboto, system-ui, -apple-system, BlinkMacSystemFont,
+		Segoe UI, Oxygen, Ubuntu, Cantarell, Droid Sans, Helvetica Neue; */
 	-webkit-font-smoothing: antialiased;
 }
 
@@ -464,8 +464,8 @@ translate
 	/* background:  -webkit-linear-gradient(to top, #0f3443, #34e89e),url('/products/resources/images/mf-back1.jpg')center no-repeat;  Chrome 10-25, Safari 5.1-6
 	background:  linear-gradient(to top right, #0f3443, #34e89e),url('/products/resources/images/mf-back1.jpg')center no-repeat; W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+
      */
-    background: url('/products/resources/images/mf-back1.jpg')center no-repeat;  /* Chrome 10-25, Safari 5.1-6 */
-	background: url('/products/resources/images/mf-back1.jpg')center no-repeat; /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: linear-gradient( rgba(55, 74, 226, 0.67) 100%, rgba(0, 0, 0, 0.85)100%),url(/products/resources/images/vector1.png)center no-repeat;  /* Chrome 10-25, Safari 5.1-6 */
+	background: linear-gradient( rgba(55, 74, 226, 0.67) 100%, rgba(0, 0, 0, 0.85)100%),url(/products/resources/images/vector1.png)center no-repeat; /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     font-size: 11px;
 }
 .card-text-custom{
@@ -502,9 +502,13 @@ translate
 }
 
 .fund-explorer-top{
-	background-color: #0c4d8e;
+	/* background-color: #0c4d8e; */
     color: white;
     padding: 5px;
+    background: #000046;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to right, #1CB5E0, #000046);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to right, #1CB5E0, #000046); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    
 }
 
 .mf-btn-custom{

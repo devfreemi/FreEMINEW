@@ -33,8 +33,14 @@ public class RestClient {
 	
 //	private final String SERVICE_URL1 = "https://ec2-35-154-76-43.ap-south-1.compute.amazonaws.com/freemibackend";
 //	private final String SERVICE_URL1 = "http://ec2-35-154-76-43.ap-south-1.compute.amazonaws.com:8080/freemibackend";
+	
+	/*local*/
 //	private final String SERVICE_URL1 = "http://localhost:8090/freemibackend";
+	
+	/*production*/
 //	private final String SERVICE_URL1 = "http://localhost:8080/freemibackend";
+	
+	/*prod*/
 	private final String SERVICE_URL1 = "http://dev.freemi.in:8080/freemibackend";
 	
 //	@Value("${profile.service.url}")
@@ -205,6 +211,15 @@ public class RestClient {
 		headers.set("requestingIp", requestingIp);
 		headers.set("userid", userid);
 //		HttpEntity<String> entity = new HttpEntity<String>(formdata,headers);
+		HttpEntity<String> entity = new HttpEntity<String>(headers);
+		return restTemplate.postForEntity(url, entity,  String.class);
+	}
+	
+	public ResponseEntity<String> isUserExisitng(String mobile) throws JsonProcessingException{
+		final String url = SERVICE_URL1 + "/checkUserExist/"+mobile;
+		RestTemplate restTemplate = new RestTemplate();
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", ANONYMOUS_TOKEN);
 		HttpEntity<String> entity = new HttpEntity<String>(headers);
 		return restTemplate.postForEntity(url, entity,  String.class);
 	}

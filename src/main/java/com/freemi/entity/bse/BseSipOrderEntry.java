@@ -8,40 +8,43 @@ public class BseSipOrderEntry implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	private String TransactionCode;
-	 private String UniqueRefNo;
-	 private String UserID;
-	 private String MemberId;
-	 private String ClientCode;
-	 private String StartDate;
-	 private String FrequencyType;
-	 private String FrequencyAllowed;
-	 private String InstallmentAmount;
-	 private String NoOfInstallment;
-	 private String FIRSTORDERFLAG;
-	 private String SchemeCd;
-	 private String BuySell;
-	 private String BuySellType;
-	 private String DPTxn;
-	 private String OrderVal;
-	 private String Qty;
-	 private String AllRedeem;
-	 private String FolioNo;
-	 private String Remarks;
-	 private String KYCStatus;
-	 private String RefNo;
-	 private String SubBrCode;
-	 private String Euin;
-	 private String EuinVal;
-	 private String MinRedeem;
-	 private String DPC;
-	 private String IPAdd;
-	 private String Password;
-	 private String PassKey;
-	 private String Parma1;
-	 private String Param2;
-	 private String Param3;
+	private String UniqueRefNo;
+	private String UserID;
+	private String MemberCode;
+	private String ClientCode;
+	private String TransMode;
+	private String StartDate;
+	private String FrequencyType;
+	private String FrequencyAllowed;
+	private String InstallmentAmount;
+	private String NoOfInstallment;
+	private String FirstOrderFlag;
+	private String SchemeCode;
+	private String BuySell;
+	private String BuySellType;
+	private String DpTxnMode;
+	private String OrderVal;
+	private String Qty;
+	private String AllRedeem;
+	private String FolioNo;
+	private String Remarks;
+	private String KYCStatus;
+	private String RefNo;
+	private String SubBrCode;
+	private String Euin;
+	private String EuinVal;
+	private String MinRedeem;
+	private String DPC;
+	private String IPAdd;
+	private String Password;
+	private String PassKey;
+	private String Parma1;
+	private String Param2;
+	private String Param3;
+	
+	
 	public String getTransactionCode() {
 		return TransactionCode;
 	}
@@ -60,17 +63,23 @@ public class BseSipOrderEntry implements Serializable {
 	public void setUserID(String userID) {
 		UserID = userID;
 	}
-	public String getMemberId() {
-		return MemberId;
+	public String getMemberCode() {
+		return MemberCode;
 	}
-	public void setMemberId(String memberId) {
-		MemberId = memberId;
+	public void setMemberCode(String memberCode) {
+		MemberCode = memberCode;
 	}
 	public String getClientCode() {
 		return ClientCode;
 	}
 	public void setClientCode(String clientCode) {
 		ClientCode = clientCode;
+	}
+	public String getTransMode() {
+		return TransMode;
+	}
+	public void setTransMode(String transMode) {
+		TransMode = transMode;
 	}
 	public String getStartDate() {
 		return StartDate;
@@ -102,17 +111,17 @@ public class BseSipOrderEntry implements Serializable {
 	public void setNoOfInstallment(String noOfInstallment) {
 		NoOfInstallment = noOfInstallment;
 	}
-	public String getFIRSTORDERFLAG() {
-		return FIRSTORDERFLAG;
+	public String getFirstOrderFlag() {
+		return FirstOrderFlag;
 	}
-	public void setFIRSTORDERFLAG(String fIRSTORDERFLAG) {
-		FIRSTORDERFLAG = fIRSTORDERFLAG;
+	public void setFirstOrderFlag(String firstOrderFlag) {
+		FirstOrderFlag = firstOrderFlag;
 	}
-	public String getSchemeCd() {
-		return SchemeCd;
+	public String getSchemeCode() {
+		return SchemeCode;
 	}
-	public void setSchemeCd(String schemeCd) {
-		SchemeCd = schemeCd;
+	public void setSchemeCode(String schemeCode) {
+		SchemeCode = schemeCode;
 	}
 	public String getBuySell() {
 		return BuySell;
@@ -126,11 +135,11 @@ public class BseSipOrderEntry implements Serializable {
 	public void setBuySellType(String buySellType) {
 		BuySellType = buySellType;
 	}
-	public String getDPTxn() {
-		return DPTxn;
+	public String getDpTxnMode() {
+		return DpTxnMode;
 	}
-	public void setDPTxn(String dPTxn) {
-		DPTxn = dPTxn;
+	public void setDpTxnMode(String dpTxnMode) {
+		DpTxnMode = dpTxnMode;
 	}
 	public String getOrderVal() {
 		return OrderVal;
@@ -243,6 +252,7 @@ public class BseSipOrderEntry implements Serializable {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-	 
-	 
+	
+	
+
 }

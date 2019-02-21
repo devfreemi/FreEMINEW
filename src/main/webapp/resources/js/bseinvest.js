@@ -1,3 +1,6 @@
+var minsip=0;
+var minlumpsum=0;
+
 $(document).ready(function() {
 	$("#ifsc").blur(function() {
 		var regex = new RegExp('^[a-zA-Z]{4}[0][0-9a-zA-Z]{6}$');
@@ -57,10 +60,13 @@ function customamount() {
 
 $(document).on("click", "#transactionType1", function() {
 	$("#sipbox").show();
+	$("#minvalreq").text(minsip);
+	
 });
 
 $(document).on("click", "#transactionType2", function() {
 	$("#sipbox").hide();
+	$("#minvalreq").text(minlumpsum);
 });
 
 
@@ -296,7 +302,16 @@ function populateConfirmPage() {
 
 
 function validateFundForm(){
+	var panregex = new RegExp('^[a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}$');
 	var radioValue = $("input[name='investype']:checked").val();
+	var pandata = $("#panval").val();
+	if(!(panregex.test(pandata))){
+		$("#selectmsg").text("Invalid PAN number format!");
+		return false;
+	}else{
+		$("#selectmsg").text("");
+	}
+	
 //	console.log(radioValue);
 	if(radioValue == 'SIP'){
 		var sipdate = $("input[name='sipDate']:checked").val();
@@ -311,26 +326,30 @@ function validateFundForm(){
 	}
 	
 //	validate amount
+	var minimumPurchase = 0;
 	 var purchaseamount = $("#amount").val();
-	 var minimumPurchase=$("#minVal").text();
 	 
-	 console.log(parseFloat(purchaseamount).toFixed(2) +  " - "+ minimumPurchase);
+	 minimumPurchase=$("#minvalreq").text();
+	 
+//	 console.log(parseFloat(purchaseamount).toFixed(2) +  " - "+ minimumPurchase);
 	  if(!isNaN(purchaseamount)){
+		  console.log("NOT NAN");
 //		  $("#invalidamnt").text("");
 		  //$("#nextBtn").removeAttr("disabled");
 	  if(parseFloat(purchaseamount) < parseFloat(minimumPurchase) ){
-//		  console.log("Invalid")
+		  console.log("Amount is less");
 		  $("#selectmsg").text("Minimum purchase amount criteria not met");
 //		  $("#nextBtn").attr("disabled", "disabled");
 		  return false;
 	  }else{
-		  //console.log("valid")
+		  console.log("valid");
 		  $("#selectmsg").text("");
 //		  $("#nextBtn").removeAttr("disabled");
 	  }
 	  }else{
 		  /*$("#invalidamnt").text("Invalid number");
 		  $("#nextBtn").attr("disabled", "disabled");*/
+		  conosle.log("NAN")
 		  $("#selectmsg").text("Invalid number");
 		  return false;
 	  }
@@ -341,6 +360,35 @@ function validateFundForm(){
 	  }
 	
 	
+	return true;
+}
+
+
+
+function bseinvest(mfCode, mfName, lumpsumMinimum, amcCode, sipMin) {
+	console.log("Reached- " + mfCode + " " + mfName);
+	var radioValue = $("input[name='investype']:checked").val();
+//	console.log("Selected- " + radioValue);
+	minsip=sipMin;
+	minlumpsum=lumpsumMinimum;
+	$("#myModal").modal();
+	$("#schemeNameTitle").text(mfName);
+	$("#schemeName").val(mfName);
+	
+	
+	if (radioValue == 'SIP') {
+		$("#sipbox").show();
+		$("#minvalreq").text(minsip);
+	} else if (radioValue == 'LUMPSUM') {
+		$("#sipbox").hide();
+		$("#minvalreq").text(minlumpsum);
+	} else {
+		$("#sipbox").hide();
+		$("#minvalreq").text("0");
+	}
+	$("#minValls").hide();
+	$("#schemecode").val(mfCode);
+	$("#amcCode").val(amcCode);
 	return true;
 }
 

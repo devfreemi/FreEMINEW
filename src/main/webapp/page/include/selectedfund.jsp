@@ -40,9 +40,9 @@
 						</div>
 					</div>
 
-					<div style="margin-top: 20px;">
+					<div style="margin-top: 15px;">
 						<div class="fund-data">
-							Investment amount (Minimum: <i class="fas fa-rupee-sign"></i><span id="minVal"
+							Investment amount (Minimum: <i class="fas fa-rupee-sign"></i><span id="minvalreq"
 								style="color: #dc7931;"></span>)
 						</div>
 						<div class="input-group input-group-sm mb-2">
@@ -83,7 +83,7 @@
 							placeholder="PAN" maxlength="10;" />
 					</div>
 					
-					<div class="form-group" id="sipbox">
+					<div class="form-group mb-1" id="sipbox">
 						<label for="sipDt" style="margin-bottom: 0; font-weight: 600;">SIP Date</label>
 						<div class="btn-group btn-group-sm btn-group-toggle"
 							data-toggle="buttons" id="radiosip">
@@ -113,10 +113,13 @@
 							</label>
 						</div>
 						<div>
-						<span id="selectmsg" style="color: red; font-size: 11px;"></span>
-						</div>
+						
 					</div>
 
+				</div>
+				<div>
+				<span id="selectmsg" style="color: red; font-size: 11px;"></span>
+						</div>
 				</div>
 				<div class="modal-footer">
 					<form:button type="submit" class="btn btn-success btn-sm btn-block">BUY NOW <i

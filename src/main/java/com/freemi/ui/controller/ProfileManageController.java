@@ -68,7 +68,8 @@ public class ProfileManageController{
 		}else{
 			returnurl="profile";
 			
-//			User Profile collection from LDAP			
+//			User Profile collection from LDAP	
+			/*
 			try {
 				response = client.getProfileData(session.getAttribute("userid").toString(), session.getAttribute("token").toString(), CommonTask.getClientSystemDetails(request).getClientIpv4Address());
 //				logger.info(response.getBody());
@@ -98,10 +99,10 @@ public class ProfileManageController{
 				model.addAttribute("error","Error processing request");
 				error =1;
 			}
-			
+			*/
 			
 //			User profile data collection from DB
-			/*try{
+			try{
 				UserProfile profile = bseEntryManager.getCustomerDetailsByMobile(session.getAttribute("userid").toString());
 				
 				model.addAttribute("profileBasic", profile);
@@ -115,7 +116,7 @@ public class ProfileManageController{
 				logger.error("Unable to fetch customer profile data from DB",e);
 				error =1;
 			}
-			*/
+			
 			if(error == 1){
 				model.addAttribute("error","Sorry. Unable to fetch your details currently.");
 				model.addAttribute("profileBasic", new UserProfile());

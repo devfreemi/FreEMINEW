@@ -5,12 +5,13 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.freemi.entity.bse.BseOrderPaymentResponse;
+import com.freemi.entity.bse.BseApiResponse;
 import com.freemi.entity.database.MfTopFundsInventory;
+import com.freemi.entity.database.UserBankDetails;
 import com.freemi.entity.general.UserProfile;
 import com.freemi.entity.investment.BseAllTransactionsView;
 import com.freemi.entity.investment.BseMFInvestForm;
-import com.freemi.entity.investment.BseOrderEntryResponse;
+import com.freemi.entity.investment.BseMFTop15lsSip;
 import com.freemi.entity.investment.BsemfTransactionHistory;
 import com.freemi.entity.investment.SelectMFFund;
 import com.freemi.entity.investment.TransactionStatus;
@@ -32,6 +33,9 @@ public interface BseEntryManager {
 	public boolean updateCustomerAddress(UserProfile investorData);
 	public String investmentProfileStatus(String mobileNumber);
 	
+	public UserBankDetails getCustomerBankDetails(String clientCode);
+	public BseApiResponse updateEmdandateStatus(String clientCode, String accNumber);
+	
 	public String upddateCustomerFormSignature(String mobile, String pan, String signatureData);
 	public String uploadAOFForm(String mobileNumber, String aofFolderLocation);
 	
@@ -48,6 +52,7 @@ public interface BseEntryManager {
 	
 	//BSE MF related operations
 	public List<MfTopFundsInventory> getTopMfFunds();
+	public List<BseMFTop15lsSip> getTopFunds();
 	
 	public long getCurrentDayNextTransCount(Date date);
 	

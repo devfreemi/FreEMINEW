@@ -75,11 +75,23 @@ public class SelectMFFund implements Serializable {
 	@Transient
 	private String pan;
 	
+	@Column(name="SIP_START_FROM")
+	private Date sipStartDate;
+	
+	@Column(name="NO_OF_INSTALLMENTS")
+	private int noOfInstallments;
+	
 	@Transient
 	private int sipStartMonth;
 	
 	@Transient
 	private int sipStartYear;
+	
+	@Column(name="PAYFIRSTINSTALLMENT")
+	private boolean payFirstInstallment;
+	
+	@Transient
+	private boolean eMandateRegRequired;
 	
 	@Column(name="ORDER_PLACE_TIME")
 	private Date orderPlaceTime;
@@ -212,6 +224,31 @@ public class SelectMFFund implements Serializable {
 	}
 	public void setSipStartYear(int sipStartYear) {
 		this.sipStartYear = sipStartYear;
+	}
+	public Date getSipStartDate() {
+		return sipStartDate;
+	}
+	public void setSipStartDate(Date sipStartDate) {
+		this.sipStartDate = sipStartDate;
+	}
+	public int getNoOfInstallments() {
+		return noOfInstallments;
+	}
+	public void setNoOfInstallments(int noOfInstallments) {
+		this.noOfInstallments = noOfInstallments;
+	}
+	
+	public boolean iseMandateRegRequired() {
+		return eMandateRegRequired;
+	}
+	public void seteMandateRegRequired(boolean eMandateRegRequired) {
+		this.eMandateRegRequired = eMandateRegRequired;
+	}
+	public boolean isPayFirstInstallment() {
+		return payFirstInstallment;
+	}
+	public void setPayFirstInstallment(boolean payFirstInstallment) {
+		this.payFirstInstallment = payFirstInstallment;
 	}
 	
 	
