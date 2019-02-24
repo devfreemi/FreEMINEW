@@ -17,6 +17,7 @@ public class Registerform implements Serializable {
 	private String email;
 	private String mobile;
 	private String customerID;
+	private String registrationref="DEFAULT";
 	
 /*	private String username;
 	private String registermobile;
@@ -54,6 +55,13 @@ public class Registerform implements Serializable {
 		this.customerID = customerID;
 	}
 	
+	
+	public String getRegistrationref() {
+		return registrationref;
+	}
+	public void setRegistrationref(String registrationref) {
+		this.registrationref = registrationref;
+	}
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}

@@ -4,7 +4,7 @@
 <form:form id="regForm"
 	action="${pageContext.request.contextPath}/mutual-funds/mfInvestRegister.do"
 	method="POST" commandName="mfInvestForm">
-
+	
 	<!-- Circles which indicates the steps of the form: -->
 	<div style="text-align: center;">
 		<span class="step"></span> <span class="step"></span> <span
@@ -42,7 +42,9 @@
 				</c:if>
 
 			</div>
-
+			
+			<form:hidden path="profileRegRequired"/>
+			
 			<div class="form-row">
 				<div class="form-group col-md-6">
 					<div class="input-group mb-1">

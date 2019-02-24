@@ -10,7 +10,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -24,11 +23,11 @@ import com.freemi.entity.general.Registerform;
 import com.freemi.entity.general.ResetPassword;
 import com.freemi.entity.general.UserProfile;
 
-//@Component
+//@PropertySource("classpath:application.properties")
 public class RestClient {
 	
 	
-/*	@Autowired
+	/*@Autowired
 	Environment env;*/
 	
 //	private final String SERVICE_URL1 = "https://ec2-35-154-76-43.ap-south-1.compute.amazonaws.com/freemibackend";
@@ -40,7 +39,7 @@ public class RestClient {
 	/*production*/
 //	private final String SERVICE_URL1 = "http://localhost:8080/freemibackend";
 	
-	/*prod*/
+	/*DEV*/
 	private final String SERVICE_URL1 = "http://dev.freemi.in:8080/freemibackend";
 	
 //	@Value("${profile.service.url}")
@@ -82,6 +81,8 @@ public class RestClient {
 	}
 	
 	public ResponseEntity<String> registerUser(Registerform registerForm) throws JsonProcessingException{
+		
+		
 		final String url = SERVICE_URL1 + "/publicenv/registerUser";
 		ObjectMapper mapper = new ObjectMapper();
 		RestTemplate restTemplate = new RestTemplate();

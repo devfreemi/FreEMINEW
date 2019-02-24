@@ -22,6 +22,7 @@
 	cursor: crosshair;
 	box-shadow: 0 0 6px 0px #b7b3b3;
 }
+
 </style>
 </head>
 <body>
@@ -40,7 +41,7 @@
 			</ol>
 		</nav>
 
-		<section style="padding: 20px 0px; font-family: lato light;">
+		<section style="padding: 20px 0px;">
 			<div class="row"
 				style="margin: auto; border: 1px solid #c1bdb8; padding: 20px 0px;">
 				<div class="col-md-10 col-lg-10"
@@ -56,7 +57,7 @@
 					<div>
 
 
-						<div class="progress">
+						<div class="progress mb-3">
 							<div class="progress-bar bg-success" role="progressbar"
 								id="myBar" style="width: 50%" aria-valuenow="50"
 								aria-valuemin="0" aria-valuemax="100">
@@ -127,7 +128,7 @@
 											<a href="/products/download/aof/${investForm.pan1}.pdf"
 												target="_blank">
 												<button type="button" class="btn btn-sm btn-info">
-													<i class="fas fa-download"></i> Download your form
+													<i class="fas fa-download"></i> Download your form <i class="fas fa-download"></i>
 												</button>
 											</a>
 										</div>
@@ -172,7 +173,7 @@
 															<img
 																src="<c:url value="${contextcdn}/resources/images/invest/sign1.png"/>"
 																class="img-fluid" style="height: 48px;"
-																alt="Signature panel"> Signature Panel
+																alt="Signature panel"> E-Signature Panel
 														</h5>
 														<button type="button" class="close" data-dismiss="modal"
 															aria-label="Close">
@@ -237,9 +238,13 @@
 						<!-- <button type="button" class="btn btn-info">AOF Ready for upload</button> -->
 						<%-- <jsp:include page="aof-form-generation.jsp"></jsp:include>	 --%>
 						<span id="signuploadstatus"></span>
-						<div>
+						<div id="aofuploadbutton">
 							<button class="btn btn-sm btn-primary" id="aofuploadbtn"
-								hidden="hidden" onclick="initiateAOFUpload();">UPLOAD YOUR AOF</button>
+								hidden="hidden" onclick="initiateAOFUpload();">UPLOAD YOUR AOF <i class="fas fa-upload"></i></button>
+							<a href="/products/mutual-funds/purchase" id="purchasecon" hidden="hidden">
+							<button class="btn btn-sm btn-success"
+								>COMPLETE PURCHASE <i class="fas fa-shopping-cart"></i></button>
+							</a>
 						</div>
 
 					</div>
@@ -516,15 +521,24 @@
 												$("#signuploadstatus")
 														.text(
 																"Your AOF uploaded successfully. Registration process complete.");
-												$("#aofuploadbtn").removeAttr('hidden');
+												$("#aofuploadbtn").hide();
+												$("#purchasecon").removeAttr('hidden');
 												move(100);
 												
 											}
-											if (data == 'FAIL') {
+											if (data == 'INTERNAL_ERROR') {
 												$('#exampleModal1').modal('hide');
 												$("#signuploadstatus")
 														.text(
 																"Failed to upload your AOF. Kindly contact Admin.");
+												
+											}
+											
+											if (data == 'SESSION_MOB_MISMATCH') {
+												$('#exampleModal1').modal('hide');
+												$("#signuploadstatus")
+														.text(
+																"Session data mismatch. Kindly contact admin");
 												
 											}
 											if (data == 'REQUEST_DENIED') {

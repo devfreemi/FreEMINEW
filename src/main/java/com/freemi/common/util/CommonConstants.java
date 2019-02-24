@@ -53,6 +53,8 @@ public class CommonConstants {
 	public static final String BSE_API_SERVICE_ERROR = "999";
 	
 	
+//	Others
+	public static final String GENERATE_PASSWORD_BY_FREEMI = "GENERATE_PASS_MF_REGISTER";
 	
 	
 }

@@ -75,7 +75,7 @@ public class HomeController {
 
 
 	@RequestMapping(value = "/login", method = RequestMethod.GET )
-	public String login(@RequestParam(name="ref",required=false)String referrerUrl,@RequestParam(name="mf",required=false)String msStatus,Model map, HttpServletRequest request, HttpSession session) {
+	public String login(@RequestParam(name="ref",required=false)String referrerUrl,@RequestParam(name="mf",required=false)String mfStatus,Model map, HttpServletRequest request, HttpSession session) {
 		//logger.info("@@@@ Inside Login..");
 		
 		logger.info("@@@@ LoginController @@@@");
@@ -137,7 +137,7 @@ public class HomeController {
 				if(uri.getRawPath().contains("/register") || uri.getRawPath().contains("/forgotPassword") || uri.getRawPath().contains("/resetPassword")){
 					returnUrl="redirect:/";
 				}else
-					returnUrl = "redirect:/"+ uri.getRawPath().split("/products/")[1];
+					returnUrl = "redirect:/"+ uri.getRawPath().split("/products/")[1].replace(".do", "");
 //					returnUrl = "redirect:/"+uri.getRawPath();
 			} catch (MalformedURLException e1) {
 				// TODO Auto-generated catch block
@@ -186,7 +186,7 @@ public class HomeController {
 				model.addAttribute("error", "Service url not found");
 			returnUrl="login";
 		}catch(Exception e){
-			logger.error(e.getMessage());
+			logger.error("Error while trying to login",e);
 			model.addAttribute("error", "Unable to process request currently");
 			returnUrl="login";
 		}
@@ -442,5 +442,41 @@ public class HomeController {
 		
 	}
 	*/
+	 
+	 /*@RequestMapping(value = "/products/error", method = RequestMethod.GET)
+	    public ModelAndView renderErrorPage(HttpServletRequest httpRequest) {
+	         
+	        ModelAndView errorPage = new ModelAndView("errorPage");
+	        String errorMsg = "";
+	        int httpErrorCode = getErrorCode(httpRequest);
+	        
+	        System.out.println("Error code generated- "+ httpErrorCode);
+	        switch (httpErrorCode) {
+	            case 400: {
+	                errorMsg = "Http Error Code: 400. Bad Request";
+	                break;
+	            }
+	            case 401: {
+	                errorMsg = "Http Error Code: 401. Unauthorized";
+	                break;
+	            }
+	            case 404: {
+	                errorMsg = "Http Error Code: 404. Resource not found";
+	                break;
+	            }
+	            case 500: {
+	                errorMsg = "Http Error Code: 500. Internal Server Error";
+	                break;
+	            }
+	        }
+	        errorPage.addObject("errorMsg", errorMsg);
+	        return errorPage;
+	    }
+	 
+	 private int getErrorCode(HttpServletRequest httpRequest) {
+	        return (Integer) httpRequest
+	          .getAttribute("javax.servlet.error.status_code");
+	    }*/
+	 
 	
 }

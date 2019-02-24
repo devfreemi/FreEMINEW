@@ -168,11 +168,12 @@ public class BseMFInvestForm implements Serializable {
 	@Column(name="REGISTER_TIME")
 	private Date registrationTime;
 	
-	
-	
 	@Transient
 	@Column(name="")
 	private String kycType="";
+	
+	@Transient
+	private boolean profileRegRequired=false;
 	
 	@OneToOne(fetch=FetchType.EAGER, mappedBy="mfForm",cascade=CascadeType.ALL)
 	private MFNominationForm nominee;
@@ -583,6 +584,16 @@ public class BseMFInvestForm implements Serializable {
 
 	public void setCustomerSignature(String customerSignature) {
 		this.customerSignature = customerSignature;
+	}
+
+
+	public boolean isProfileRegRequired() {
+		return profileRegRequired;
+	}
+
+
+	public void setProfileRegRequired(boolean profileRegRequired) {
+		this.profileRegRequired = profileRegRequired;
 	}
 	
 }

@@ -45,7 +45,7 @@
 <body onload="nextPrev(0);">
 
 	<jsp:include page="../include/header.jsp"></jsp:include>
-	<div class="container-fluid">
+	<div class="container-fluid" style="margin-bottom: 4rem;">
 
 		<nav aria-label="breadcrumb">
 			<ol class="breadcrumb" style="margin-left: 0px;">

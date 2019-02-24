@@ -5,6 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+
 <title>FreEMI MF</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="Copyright" content="Copyright 2018 @ freemi.in" />
@@ -19,6 +20,12 @@
 <script src="<c:url value="${contextcdn}/resources/js/pace.min.js" />"></script>
 
 <jsp:include page="../include/bootstrap.jsp"></jsp:include>
+<link href='https://fonts.googleapis.com/css?family=Arsenal' rel='stylesheet'>
+<style type="text/css">
+td{
+border: 1px solid #8b8e90;
+}
+</style>
 </head>
 <script type="text/javascript">
 	window.history.forward();
@@ -36,16 +43,17 @@
 			<div class="row" style="margin: auto;">
 				<div class="col-md-6 col-lg-6"
 					style="margin: auto; text-align: center; padding: 20px; background: aliceblue;">
-					
+
 					<div class="" style="margin-bottom: 2rem;">
-					 <img
-						class="d-block img-fluid" style="height: 2rem;margin: auto;"
-						src="<c:url value="${contextcdn}/resources/images/invest/transact_bse.svg"/>" alt="Transact">
+						<img class="d-block img-fluid" style="height: 2rem; margin: auto;"
+							src="<c:url value="${contextcdn}/resources/images/invest/transact_bse.svg"/>"
+							alt="Transact">
 					</div>
+					
 					<c:choose>
 						<c:when test="${TRANS_STATUS == 'COMPLETE' }">
 							<h5>Your purchase is complete!</h5>
-
+							<h6>${ORDER_STATUS }</h6>
 							<section style="margin-top: 30px;">
 								<div class="row" style="margin: auto;">
 									<div class="col-md-6 col-lg-6"
@@ -60,29 +68,53 @@
 						</c:when>
 
 						<c:when test="${TRANS_STATUS == 'Y' }">
-							<h5>Order placed successfully</h5>
-							<h6>Transaction Reference No - ${TRANS_ID }</h6>
-							
+							<h5>Your order placed successfully</h5>
+							<div class="row">
+								<div class="col-md-12 col-lg-12" style="margin-bottom: 2rem;">
+									<table style="box-shadow: 1px 3px 4px 0px #b1b1b1;">
+										<tr>
+											<td><label>Fund Name</label></td>
+											<td>${TRANSACTION_REPORT.fundName }</td>
+										</tr>
+										<tr>
+											<td><label>Transaction Reference no</label></td>
+											<td>${TRANS_ID }</td>
+										</tr>
+										<tr>
+											<td><label>Order No</label></td>
+											<td>${TRANSACTION_REPORT.bseOrderNoFromResponse }</td>
+										</tr>
+									</table>
+								</div>
+								<%-- <div class="col-md-6 col-lg-6">Fund Name</div>
+							<div class="col-md-6 col-lg-6">${TRANSACTION_REPORT.fundName }</div> --%>
+							</div>
+
+
+							<%-- 	<h6>Transaction Reference No - ${TRANS_ID }</h6> --%>
+
 							<c:if test="${FIRST_PAY == 'Y' }">
-							<c:if test="${orderUrl.statusCode == '100' }">
-								<a href="${orderUrl.payUrl }">
-									<button class="btn btn-sm btn-success">Complete your payment</button>
-								</a>
-							</c:if>
+								<c:if test="${orderUrl.statusCode == '100' }">
+									<a href="${orderUrl.payUrl }">
+										<button class="btn btn-sm btn-success">Complete your
+											payment</button>
+									</a>
+								</c:if>
 							</c:if>
 							<c:if test="${not empty EMANDATE}">
-							<c:choose>
-								<c:when test="${EMANDATE == 'S' }">
-								<div>
-								<span>E-mandate registered successfully</span>
-								</div>
-								</c:when>
-								<c:when test="${EMANDATE == 'F' }">
-								<div>
-								<span>Failed to register bank for E-mandate. Please contact admin.</span>
-								</div>
-								</c:when>
-							</c:choose>
+								<c:choose>
+									<c:when test="${EMANDATE == 'S' }">
+										<div>
+											<span>E-mandate registered successfully</span>
+										</div>
+									</c:when>
+									<c:when test="${EMANDATE == 'F' }">
+										<div>
+											<span>Failed to register bank for E-mandate. Please
+												contact admin.</span>
+										</div>
+									</c:when>
+								</c:choose>
 								<p>${MANDATE_REMARKS }</p>
 							</c:if>
 
@@ -115,8 +147,6 @@
 				</div>
 			</div>
 		</section>
-
-
 
 	</div>
 </body>

@@ -25,3 +25,11 @@
 <!-- <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script> -->
 
 <jsp:include page="./GoogleHeadTag.jsp"></jsp:include>
+<link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+
+<style>
+body {
+    font-family: 'Roboto';
+    font-weight: 300;
+}
+</style>

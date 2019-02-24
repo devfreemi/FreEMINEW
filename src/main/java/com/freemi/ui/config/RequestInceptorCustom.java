@@ -59,15 +59,20 @@ public class RequestInceptorCustom  extends HandlerInterceptorAdapter {
 	  Object handler, 
 	  ModelAndView modelAndView) throws Exception {
 	    try{
-		String looged = request.getAttribute("LOGGED").toString(); 
-		if(looged== "FALSE"){
+		String logged = request.getAttribute("LOGGED").toString(); 
+		if(logged== "FALSE"){
 			modelAndView.setViewName("redirect:/login");
+		}
+		if(modelAndView!=null){
+			logger.info("[postHandle][" + " " + "]- "+modelAndView.getViewName());
+		}else{
+			logger.info("[postHandle][modelAndviwe is null]");
 		}
 	    }catch(NullPointerException e){
 	    	logger.error("attribute null");
 	    }
 		
-	    logger.info("[postHandle][" + " " + "]- "+modelAndView.getViewName());
+	   
 	    
 	}
 
