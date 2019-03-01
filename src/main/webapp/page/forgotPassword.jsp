@@ -22,8 +22,7 @@
 </head>
 <body class="back_set">
 	<jsp:include page="include/header.jsp"></jsp:include>
-	<div class="container freemi_container"
-		style="background-color: rgb(3, 86, 155);">
+	<div class="container freemi_container" style="">
 
 		<div class="freemi-logo">
 			<img src="<c:url value="${contextcdn}/resources/images/f.png"/>"
@@ -38,7 +37,8 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-md-6 col-lg-6 form_div" style="margin: auto;">
+			<div class="col-md-6 col-lg-6 form_div"
+				style="margin: auto;">
 				<div class="row">
 					<c:choose>
 						<c:when test="${not empty success }">
@@ -64,7 +64,7 @@
 					action="${pageContext.request.contextPath}/forgotPassword.do"
 					commandName="forgotPasswordForm">
 
-					<div class="form-group" style="margin-bottom: 50px;">
+					<%-- <div class="form-group" style="margin-bottom: 50px;">
 						<span class="span_style"> <i
 							class="fas fa-mobile-alt icon_style"
 							style="font-size: 30px; margin-top: 5px;"></i> <form:input
@@ -73,19 +73,23 @@
 								placeholder="Your 10-digit registered mobile number"
 								maxlength="10" />
 						</span>
+					</div> --%>
+					<div class="md-form">
+					<i class="fas fa-mobile-alt prefix"></i>
+						<form:input path="" type="text" id="form1" pattern="[0-9]{10}" maxlength="10" class="form-control form-control-sm" placeholder="10 digit mobile number"></form:input> 
 					</div>
 					<div style="margin-bottom: 20px;">
 						<div class="g-recaptcha"
 							data-sitekey="6LdvUoQUAAAAADk77XVS_YlkPTluN9EYCawk1xo6"></div>
 					</div>
 
-					<button type="submit" class="btn btn-block btn-sm login_button">
+					<button type="submit" class="btn btn-block btn-sm btn-primary">
 						<!-- <i *ngIf="spinner" class="fa fa-spinner login_spin" aria-hidden="true"></i> -->
 						Reset Password
 					</button>
 					<a href="${pageContext.request.contextPath}/login"
-						style="text-decoration: none">
-						<button type="button" class="btn btn-block btn-sm login_button">
+						style="text-decoration: none; margin-top: 10px;">
+						<button type="button" class="btn btn-block btn-sm btn-primary">
 							<span> <i class="fas fa-backward"></i> Back
 							</span>
 						</button>

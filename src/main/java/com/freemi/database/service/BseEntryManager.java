@@ -33,11 +33,13 @@ public interface BseEntryManager {
 	public boolean updateCustomerAddress(UserProfile investorData);
 	public String investmentProfileStatus(String mobileNumber);
 	
+	public BseMFInvestForm getCustomerInvetFormData(String mobile);
+	
 	public UserBankDetails getCustomerBankDetails(String clientCode);
 	public BseApiResponse updateEmdandateStatus(String clientCode, String accNumber);
 	
 	public String upddateCustomerFormSignature(String mobile, String pan, String signatureData);
-	public String uploadAOFForm(String mobileNumber, String aofFolderLocation);
+	public String uploadAOFFormStatus(String mobileNumber, String status);
 	
 	// Customer MF transactions
 	public boolean checkIfTransIdExist(String generatedTransId);

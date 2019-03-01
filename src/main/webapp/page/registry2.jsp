@@ -87,7 +87,7 @@
 	}
 </style>
  <!--  Include Header -->
-   <jsp:include page="include/header1.jsp"></jsp:include>
+   <jsp:include page="include/header.jsp"></jsp:include>
    
   <body class="register_page">
      <jsp:include page="include/menu.jsp"></jsp:include>

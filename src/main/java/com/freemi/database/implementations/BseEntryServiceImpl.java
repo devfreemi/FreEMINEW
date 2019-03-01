@@ -29,6 +29,7 @@ import com.freemi.controller.interfaces.InvestmentConnectorBseInterface;
 import com.freemi.database.interfaces.BseCustomerAddressCrudRepository;
 import com.freemi.database.interfaces.BseCustomerBankDetailsCrudRespository;
 import com.freemi.database.interfaces.BseCustomerCrudRespository;
+import com.freemi.database.interfaces.BseCustomerNomineeCrudRepository;
 import com.freemi.database.interfaces.BseOrderEntryResponseRepository;
 import com.freemi.database.interfaces.BseTop15lsSipViewCrudReositry;
 import com.freemi.database.interfaces.BseTransCountCrudRepository;
@@ -50,6 +51,7 @@ import com.freemi.entity.investment.BseMFInvestForm;
 import com.freemi.entity.investment.BseMFTop15lsSip;
 import com.freemi.entity.investment.BseOrderEntryResponse;
 import com.freemi.entity.investment.BsemfTransactionHistory;
+import com.freemi.entity.investment.MFNominationForm;
 import com.freemi.entity.investment.SelectMFFund;
 import com.freemi.entity.investment.TransactionStatus;
 import com.itextpdf.text.Document;
@@ -98,6 +100,9 @@ public class BseEntryServiceImpl implements BseEntryManager {
 
 	@Autowired
 	BseTop15lsSipViewCrudReositry bseTop15lsSipViewCrudReositry;
+	
+	@Autowired
+	BseCustomerNomineeCrudRepository bseCustomerNomineeCrudRepository;
 
 	private static final Logger logger = LogManager.getLogger(BseEntryServiceImpl.class);
 
@@ -475,7 +480,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 			}
 		}catch(Exception e){
 			logger.error("Failed to query database to get customer AOF upload status", e);
-			flag="E";
+			flag="ERROR";
 		}
 		return flag;
 	}
@@ -486,8 +491,13 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		int result = 0;
 		String flag="SUCCESS";
 		try{
-			result = bseCustomerCrudRespository.uploadCustomerSignature(mobile, pan, signatureData);
-			logger.info("Status for signature update- "+ result);
+			if(bseCustomerCrudRespository.existsByMobile(mobile)){
+				String clientId = bseCustomerCrudRespository.getClientIdFromMobile(mobile);
+				result = bseCustomerCrudRespository.uploadCustomerSignature(clientId, pan, signatureData);
+				logger.info("Status for signature update- "+ result);
+			}else{
+				logger.info("Cusotmer not found to update signature- "+ mobile);
+			}
 		}catch(Exception e){
 			logger.error("Failed to update customer signature data. ",e);
 			flag="FAIL";
@@ -498,26 +508,18 @@ public class BseEntryServiceImpl implements BseEntryManager {
 
 
 	@Override
-	public String uploadAOFForm(String mobileNumber, String aofFolderLocation) {
+	public String uploadAOFFormStatus(String mobileNumber, String uploadStatus) {
 
 		logger.info("Begining process to upload AOF Form.");
 		String currentStatus = "SUCCESS";
 
 		try{
-			if(bseCustomerCrudRespository.existsByMobile(mobileNumber)){
-				currentStatus=bseCustomerCrudRespository.getBseRegistrationAOFStatus(mobileNumber);
-				if(currentStatus.equalsIgnoreCase("N")){
-					//						call BSE
-
-
-				}else{
-					currentStatus="DUPLICATE_REQUEST";
-				}
-			}else{
-				currentStatus="USER_NOT_FOUND";
+			int i = bseCustomerCrudRespository.updateAofUploadStatus(mobileNumber);
+			if(i==0){
+				currentStatus ="FAIL";
 			}
 		}catch(Exception e){
-			logger.error("Failed to query database to get customer AOF upload status and upload", e);
+			logger.error("Failed to update cusotmer AOF upload status to database", e);
 			currentStatus="ERROR";
 		}
 		return currentStatus;
@@ -598,6 +600,33 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		}
 
 		return apiresponse;
+	}
+
+	@Override
+	public BseMFInvestForm getCustomerInvetFormData(String mobile) {
+		logger.info("Querying to get registered investment form data for mobile- "+ mobile);
+		BseMFInvestForm investmentFormdata = null;
+		try{
+			if(bseCustomerCrudRespository.existsByMobile(mobile)){
+				String clientId = bseCustomerCrudRespository.getClientIdFromMobile(mobile);
+				investmentFormdata = bseCustomerCrudRespository.findOneByClientID(clientId);
+				AddressDetails address = bseCustomerAddressCrudRepository.findOneByClientID(clientId);
+				UserBankDetails bank = bseCustomerBankDetailsCrudRespository.getOne(clientId);
+				MFNominationForm nominee = bseCustomerNomineeCrudRepository.findOneByClientID(clientId);
+				System.out.println("Address- "+ address + " : Bank: "+ bank);
+				
+				investmentFormdata.setAddressDetails(address!=null?address:new AddressDetails());
+				investmentFormdata.setBankDetails(bank!=null?bank:new UserBankDetails());
+				investmentFormdata.setNominee(nominee!=null?nominee:new MFNominationForm());
+				
+			}else{
+				logger.info("Cusotmer invest form data not found!");
+			}
+		}catch(Exception e){
+			logger.error("Failed to query database to fetch customer details",e);
+		}
+
+		return investmentFormdata;
 	}
 
 	/*		public static void main(String[] args){

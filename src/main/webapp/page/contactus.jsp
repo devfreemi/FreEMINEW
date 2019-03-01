@@ -12,7 +12,7 @@
 </head>
 <body class="back_set">
 <!--  Include Header -->
-   <jsp:include page="include/header1.jsp"></jsp:include>
+   <jsp:include page="include/header.jsp"></jsp:include>
     <jsp:include page="include/banner_contactus.jsp"></jsp:include>  
     <main role="main" class="main" id="div1" onload="formOnLoad();">
 

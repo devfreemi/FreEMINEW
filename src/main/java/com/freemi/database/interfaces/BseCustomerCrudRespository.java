@@ -9,7 +9,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.freemi.entity.investment.BseMFInvestForm;
-import com.freemi.entity.investment.BseOrderEntryResponse;
 
 public interface BseCustomerCrudRespository extends JpaRepository<BseMFInvestForm, Long>{
 
@@ -19,6 +18,8 @@ public interface BseCustomerCrudRespository extends JpaRepository<BseMFInvestFor
 	public boolean existsByMobile(String mobile);
 	public boolean existsByPan1(String pan);
 	public boolean existsByClientID(String clientID);
+	
+	public BseMFInvestForm findOneByClientID(String clientId);
 	
 	@Query("select c.pan1 from BseMFInvestForm c where c.mobile= :mobile")
 	public String getCustomerPanNumberFromMobile(@Param("mobile") String mobile);
@@ -42,8 +43,8 @@ public interface BseCustomerCrudRespository extends JpaRepository<BseMFInvestFor
 	
 	@Transactional
 	@Modifying
-	@Query("update BseMFInvestForm b set b.customerSignature= :sign where b.mobile= :mobile and b.pan1= :pan")
-	public int uploadCustomerSignature(@Param("mobile") String mobile,@Param("pan") String pan,@Param("sign") String signature);
+	@Query("update BseMFInvestForm b set b.customerSignature= :sign where b.clientID= :clientId and b.pan1= :pan")
+	public int uploadCustomerSignature(@Param("clientId") String clientId,@Param("pan") String pan,@Param("sign") String signature);
 	
 	@Query("select c.aofuploadComplete from BseMFInvestForm c where c.mobile= :mobile")
 	public String getAofUploadStatus(@Param("mobile") String mobile);

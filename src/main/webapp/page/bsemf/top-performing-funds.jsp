@@ -27,6 +27,8 @@
 <body>
 	<jsp:include page="../include/GoogleBodyTag.jsp"></jsp:include>
 	<jsp:include page="../include/header.jsp"></jsp:include>
+	<!-- <div class="container"> -->
+	
 	<div class="container-fluid">
 		<nav aria-label="breadcrumb">
 			<ol class="breadcrumb" style="margin-left: 0px;">
@@ -192,7 +194,7 @@
 		</section>
 	</c:if>
 
-	<section class="top-funds-discuss" style="margin-bottom: 4rem;">
+	<!-- <section class="top-funds-discuss" style="margin-bottom: 4rem;">
 		<div class="row" style="margin: auto;">
 			<div class="col-md-9 col-lg-9">
 				<h4>Let the experts do their jobs</h4>
@@ -209,13 +211,18 @@
 			</div>
 			<div class="col-md-3 col-lg-3"></div>
 		</div>
-	</section>
+	</section> -->
+	
+<!-- 	</div> -->
 	<!-- BSE MF  -->
 	<section class="bse-display"
 		style="background: #ffecc9; padding: 5px; margin-bottom: -60px;">
 		<jsp:include page="./bsestarmfpowered.jsp"></jsp:include>
 	</section>
 	<!-- END BSE MF  -->
+	
+
+	
 	<jsp:include page="../include/footer.jsp"></jsp:include>
 	<jsp:include page="../include/selectedfund.jsp"></jsp:include>
 

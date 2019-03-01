@@ -96,11 +96,11 @@
                     </div>
 
                     <div>
-                        <button type="submit" id="registerSubmit" class="btn btn-sm btn-block login_button" >
+                        <button type="submit" id="registerSubmit" class="btn btn-sm btn-block btn-primary" >
                             <span>Register</span>
                         </button>
-                        <a href="${pageContext.request.contextPath}/login" style="text-decoration: none;">
-                        <button type="button" class="btn btn-sm btn-block login_button">
+                        <a href="${pageContext.request.contextPath}/login" style="text-decoration: none;margin-top: 10px;">
+                        <button type="button" class="btn btn-sm btn-block btn-primary">
                             <!-- <i class="fa fa-backward" aria-hidden="true"></i> -->
                             <span>
                                 Already registered? Login

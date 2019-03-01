@@ -46,6 +46,7 @@ $(document).on("click", "#radioamount", function() {
 	var x = $("input[type='radio'][name='options']:checked").val();
 	/* console.log("Test" + $("input[type='radio'][name='options']:checked").val()); */
 	$("#amount").val(x);
+	$("input[type='radio'][name='options']:checked").css("background","red");
 });
 
 function customamount() {
@@ -233,7 +234,7 @@ function populateConfirmPage() {
 	//	$("#").text($("#genderDisplay").val());
 
 	$("#taxStatusDisplay").text($("#taxStatus :selected").text());
-	$("#holdingModeDisplay").text("Individual");
+	$("#holdingModeDisplay").text($("#holdingMode :selected").text());
 	/* $("#taxStatusDisplay").text("taxStatus"); */
 	
 	

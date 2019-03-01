@@ -55,12 +55,12 @@ import com.freemi.ui.restclient.RestClient;
 @Controller
 @Scope("session")
 public class HomeController {
-	
+
 	private static final Logger logger = LogManager.getLogger(HomeController.class);
 
 	@Autowired
 	private DatabaseEntryManager databaseEntryManager ;//= (DatabaseEntryManager) BeanUtil.getBean(DatabaseEntryService.class);
-	
+
 	@Autowired
 	private Environment env;
 
@@ -77,7 +77,7 @@ public class HomeController {
 	@RequestMapping(value = "/login", method = RequestMethod.GET )
 	public String login(@RequestParam(name="ref",required=false)String referrerUrl,@RequestParam(name="mf",required=false)String mfStatus,Model map, HttpServletRequest request, HttpSession session) {
 		//logger.info("@@@@ Inside Login..");
-		
+
 		logger.info("@@@@ LoginController @@@@");
 		System.out.println("Referrer url if passed-"+ referrerUrl!=null?referrerUrl:request.getHeader("Referer"));
 		map.addAttribute("login", new Login());
@@ -89,6 +89,19 @@ public class HomeController {
 		} catch (UnsupportedEncodingException e) {
 			logger.error("Failed to decode string",e);
 		}
+
+		if(mfStatus!=null){
+			if(mfStatus.equals("00")){
+				map.addAttribute("info", "Kindly login to complete your purchase.");
+			}
+			else if(mfStatus.equals("01"))
+			{
+				map.addAttribute("info", "Kindly login to complete your registration process.");
+			}else{
+				map.addAttribute("info", "");
+			}
+		}
+
 		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 		return "login";
 	}
@@ -104,12 +117,12 @@ public class HomeController {
 		//		logger.info("Referer- "+ request.getHeader("Referer"));
 		//		String referer = request.getHeader("Referer");
 		System.out.println("Recpcha form resuest- "+ request.getParameter("g-recaptcha-response"));
-		
+
 		String ip = CommonTask.getClientSystemIp(request);
-		
+
 		if(bindingResult.hasErrors()){
 			logger.info("Error in login form");
-//			model.addAttribute("error", "Invalid form data");
+			//			model.addAttribute("error", "Invalid form data");
 			model.addAttribute("error", bindingResult.getFieldError().getDefaultMessage());
 			return "login";
 		}
@@ -138,7 +151,7 @@ public class HomeController {
 					returnUrl="redirect:/";
 				}else
 					returnUrl = "redirect:/"+ uri.getRawPath().split("/products/")[1].replace(".do", "");
-//					returnUrl = "redirect:/"+uri.getRawPath();
+				//					returnUrl = "redirect:/"+uri.getRawPath();
 			} catch (MalformedURLException e1) {
 				// TODO Auto-generated catch block
 				//				e1.printStackTrace();
@@ -162,7 +175,7 @@ public class HomeController {
 
 		RestClient client = new RestClient();
 		ResponseEntity<String> response = null;
-		
+
 
 		try{
 			response= client.login(login.getUsermobile(), login.getUserpassword(), ip);
@@ -222,7 +235,7 @@ public class HomeController {
 		logger.info("@@@@ ForgotPasswordController @@@@");
 		map.addAttribute("forgotPasswordForm", new ForgotPassword());
 		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
-		
+
 		return "forgotPassword";
 	}
 
@@ -269,7 +282,7 @@ public class HomeController {
 		}
 
 		//		model.addAttribute("forgotPasswordForm", forgotPasswordForm);
-		
+
 		return "forgotPassword";
 	}
 
@@ -282,7 +295,7 @@ public class HomeController {
 		//		String 
 		map.addAttribute("contactForm", contactForm);
 		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
-		
+
 		return "contact";
 	}
 
@@ -314,14 +327,14 @@ public class HomeController {
 			model.addAttribute("error","Error processing request");
 		}
 
-		
+
 		return "contact";
 	}
 
-	
 
 
-/*	@RequestMapping(value = "/terms-conditions", method = RequestMethod.GET)
+
+	/*	@RequestMapping(value = "/terms-conditions", method = RequestMethod.GET)
 	public String getTermsConditions(Model map) {
 		//logger.info("@@@@ Inside Login..");
 		logger.info("@@@@ Terms & conditions Controller @@@@");
@@ -355,36 +368,36 @@ public class HomeController {
 		CampaignSignupForm campaign = new CampaignSignupForm();
 		session.setAttribute("campaignsubmitted", 1);
 		ClientSystemDetails details= CommonTask.getClientSystemDetails(request);
-		
+
 		try{
-		if(!mobile.isEmpty()){
-			campaign.setMobile(mobile);
-			campaign.setEmail(email);
-			campaign.setLocation(location);
-			campaign.setUserrequestingagent(details.getClientBrowser());
-			campaign.setUsersystemip(details.getClientIpv4Address());
-			campaign.setTimeStamp(new Date());
-			campaign.setAgree(agree);
-			
-			databaseEntryManager.saveCampaignEntry(campaign);
-			
-			
-			// CAll to send mail from rest api
-			RestClient client = new RestClient();
-			ResponseEntity<String> response = null;
-			try {
-				response = client.campaignSingUp(campaign);
-				logger.debug("Campaign mail send response- "+ response.getBody());
+			if(!mobile.isEmpty()){
+				campaign.setMobile(mobile);
+				campaign.setEmail(email);
+				campaign.setLocation(location);
+				campaign.setUserrequestingagent(details.getClientBrowser());
+				campaign.setUsersystemip(details.getClientIpv4Address());
+				campaign.setTimeStamp(new Date());
+				campaign.setAgree(agree);
 
-			}catch(HttpStatusCodeException  e){
-				logger.info("test failure - " + e.getStatusCode());
-			} catch (JsonProcessingException e) {
-			}catch(Exception e){
+				databaseEntryManager.saveCampaignEntry(campaign);
+
+
+				// CAll to send mail from rest api
+				RestClient client = new RestClient();
+				ResponseEntity<String> response = null;
+				try {
+					response = client.campaignSingUp(campaign);
+					logger.debug("Campaign mail send response- "+ response.getBody());
+
+				}catch(HttpStatusCodeException  e){
+					logger.info("test failure - " + e.getStatusCode());
+				} catch (JsonProcessingException e) {
+				}catch(Exception e){
+				}
+
+			}}catch(Exception e){
+				logger.error("Unable to save campaign data-"+ e.getMessage());
 			}
-
-		}}catch(Exception e){
-			logger.error("Unable to save campaign data-"+ e.getMessage());
-		}
 
 		return "SUCCESS";
 	}
@@ -416,40 +429,40 @@ public class HomeController {
 			e.printStackTrace();
 		}
 	}*/
-	
-	
-	 @RequestMapping(value = "/downloadPDF", method = RequestMethod.GET)
-	    public ModelAndView downloadExcel() {
-	        // create some sample data
-		 	System.out.println("PDF view");
-	        List<Folios> folioList = new ArrayList<Folios>();
-	        Folios f1 = new Folios();
-	        f1.setFolio_No("sdfsdfsd");
-	        f1.setInvestorName("adadad");
-	 
-	        // return a view which will be resolved by an excel view resolver
-	        return new ModelAndView("pdfView", "folioList", folioList);
-	    }
-	
-	
-/*	private Map<String, String> blogLinks(){
+
+
+	@RequestMapping(value = "/downloadPDF", method = RequestMethod.GET)
+	public ModelAndView downloadExcel() {
+		// create some sample data
+		System.out.println("PDF view");
+		List<Folios> folioList = new ArrayList<Folios>();
+		Folios f1 = new Folios();
+		f1.setFolio_No("sdfsdfsd");
+		f1.setInvestorName("adadad");
+
+		// return a view which will be resolved by an excel view resolver
+		return new ModelAndView("pdfView", "folioList", folioList);
+	}
+
+
+	/*	private Map<String, String> blogLinks(){
 		Map<String, String> blogs = new HashMap<String,String>();
 		blogs.put("Why Insuracne??", "/products/blogs/why-insurance");
 		blogs.put("All about life insurance", "/products/blogs/why-insurance");
-		
+
 		return blogs;
-		
-		
+
+
 	}
-	*/
-	 
-	 /*@RequestMapping(value = "/products/error", method = RequestMethod.GET)
+	 */
+
+	/*@RequestMapping(value = "/products/error", method = RequestMethod.GET)
 	    public ModelAndView renderErrorPage(HttpServletRequest httpRequest) {
-	         
+
 	        ModelAndView errorPage = new ModelAndView("errorPage");
 	        String errorMsg = "";
 	        int httpErrorCode = getErrorCode(httpRequest);
-	        
+
 	        System.out.println("Error code generated- "+ httpErrorCode);
 	        switch (httpErrorCode) {
 	            case 400: {
@@ -472,11 +485,11 @@ public class HomeController {
 	        errorPage.addObject("errorMsg", errorMsg);
 	        return errorPage;
 	    }
-	 
+
 	 private int getErrorCode(HttpServletRequest httpRequest) {
 	        return (Integer) httpRequest
 	          .getAttribute("javax.servlet.error.status_code");
 	    }*/
-	 
-	
+
+
 }

@@ -224,7 +224,7 @@ public class RestClientBse {
 			returnRes=response.getBody().toString();
 			logger.info("Response for AOF upload- "+ response.getBody().toString());
 		}else{
-			returnRes = "SUCCESS";
+			returnRes = "Uploaded";
 		}
 		return returnRes;
 	}

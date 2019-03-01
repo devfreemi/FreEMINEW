@@ -43,26 +43,25 @@
 		</div>
 		<div class="row" style="margin: auto;">
 			<div class="col-md-12 col-lg-12">
-				<div class="accordion md-accordion accordion-1" id="accordionEx23"
-					role="tablist">
+				<div id="accordion">
 					<div class="card">
-						<div class="card-header red lighten-3 z-depth-1" role="tab"
-							id="heading96">
-
-							<h5 class="text-uppercase mb-0 py-1">
-								<a class="white-text font-weight-bold" data-toggle="collapse"
-									href="#collapse96" aria-expanded="true"
-									aria-controls="collapse96"> <span class="profile"> <i
-										class="fas fa-user"
+						<div class="card-header" id="headingOne">
+							<h5 class="mb-0">
+								<button class="btn btn-link" data-toggle="collapse"
+									data-target="#collapseOne" aria-expanded="true"
+									aria-controls="collapseOne">
+									<span class="profile"> <i class="fas fa-user"
 										style="font-size: 22px; margin-right: 10px;"></i> BASIC
 										PROFILE DETAILS
-								</span>
-								</a>
+									</span>
+								</button>
 							</h5>
 						</div>
 
-						<div id="collapse96" class="collapse show" role="tabpanel" aria-labelledby="heading96" data-parent="#accordionEx23">
+						<div id="collapseOne" class="collapse show"
+							aria-labelledby="headingOne" data-parent="#accordion">
 							<div class="card-body">
+
 								<div class="row">
 									<div class="col-md-6 col-lg-6">
 										<!-- Basic user details form -->
@@ -72,7 +71,28 @@
 											<!-- <div>Data - {{profileData | json }}</div> -->
 											<!-- <div>Data - {{profileData.fname }}</div> -->
 											<form:hidden path="uid" />
-											
+											<div class="form-group">
+												<div class="row">
+													<div class="col-md-4 col-lg-4">
+														<label>AADHAAR number</label>
+													</div>
+													<div class="col-md-8 col-lg-8">
+														<div class="input-group input-group-sm mb-3"
+															style="margin-bottom: 0;">
+															<form:input type="text"
+																class="form-control form-control-sm" path="aadhaar" />
+															<div class="input-group-append">
+																<span class="input-group-text" id="basic-addon2"
+																	style="padding: 1px 7px;"> <img
+																	src="<c:url value="${contextPath}/resources/images/aadhaar_icon.png"/>"
+																	class="img-fluid" style="height: 30px;" alt="A">
+																</span>
+															</div>
+														</div>
+														<!-- <span style="font-size: 12px;">*Click the icon to sync data</span> -->
+													</div>
+												</div>
+											</div>
 
 											<div class="form-group">
 												<div class="row">
@@ -87,8 +107,8 @@
 																readonly="true" />
 															<div class="input-group-append">
 																<span class="input-group-text" id="basic-addon2">
-																	<i class="fas fa-id-card" aria-hidden="true"
-																	></i>
+																	<i class="far fa-id-card" aria-hidden="true"
+																	style="color: rgb(77, 152, 238); font-size: 24px;"></i>
 																</span>
 															</div>
 														</div>
@@ -109,7 +129,7 @@
 																readonly="true" />
 															<div class="input-group-append">
 																<span class="input-group-text" id="basic-addon2">
-																	<i class="fas fa-user" aria-hidden="true"></i>
+																	<i class="fa fa-user" aria-hidden="true"></i>
 																</span>
 															</div>
 														</div>
@@ -180,30 +200,6 @@
 													</div>
 												</div>
 											</div>
-											
-											<div class="form-group">
-												<div class="row">
-													<div class="col-md-4 col-lg-4">
-														<label>AADHAAR number (Optional)</label>
-													</div>
-													<div class="col-md-8 col-lg-8">
-														<div class="input-group input-group-sm mb-3"
-															style="margin-bottom: 0;">
-															<form:input type="text"
-																class="form-control form-control-sm" path="aadhaar" />
-															<div class="input-group-append">
-																<span class="input-group-text" id="basic-addon2"
-																	style="padding: 1px 7px;background: transparent;"> <img
-																	src="<c:url value="${contextPath}/resources/images/aadhaar_icon.png"/>"
-																	class="img-fluid" style="height: 20px;" alt="A">
-																</span>
-															</div>
-														</div>
-														<!-- <span style="font-size: 12px;">*Click the icon to sync data</span> -->
-													</div>
-												</div>
-											</div> 
-											
 											<div class="form-group">
 												<div class="row">
 													<div class="col-md-4 col-lg-4"></div>
@@ -258,7 +254,7 @@
 												</div>
 
 												<button type="submit"
-													class="btn btn-sm btn-block btn-info button_block" style="margin-bottom: 10px;">
+													class="btn btn-sm btn-block btn-info button_block">
 													<span> Reset Password</span>
 												</button>
 												<button type="button"
@@ -280,21 +276,20 @@
 						</div>
 					</div>
 					<div class="card">
-					
-						<div class="card-header red lighten-3 z-depth-1" role="tab"
-							id="heading97">
-
-							<h5 class="text-uppercase mb-0 py-1">
-								<a class="white-text font-weight-bold" data-toggle="collapse"
-									href="#collapse97" aria-expanded="true"
-									aria-controls="collapse97"> <span class="profile"> <i class="fas fa-university"
+						<div class="card-header" id="headingTwo">
+							<h5 class="mb-0">
+								<button class="btn btn-link collapsed" data-toggle="collapse"
+									data-target="#collapseTwo" aria-expanded="false"
+									aria-controls="collapseTwo">
+									<span class="profile"> <i class="fas fa-university"
 										style="font-size: 22px; margin-right: 10px;"
 										aria-hidden="true"></i> BANK ACCOUNT DETAILS
 									</span>
-								</a>
+								</button>
 							</h5>
 						</div>
-						<div id="collapse97" class="collapse" role="tabpanel" aria-labelledby="heading97" data-parent="#accordionEx23">
+						<div id="collapseTwo" class="collapse"
+							aria-labelledby="headingTwo" data-parent="#accordion">
 							<div class="card-body">
 
 								<div class="row">
@@ -464,21 +459,20 @@
 						</div>
 					</div>
 					<div class="card">
-					<div class="card-header red lighten-3 z-depth-1" role="tab"
-							id="heading98">
-
-							<h5 class="text-uppercase mb-0 py-1">
-								<a class="white-text font-weight-bold" data-toggle="collapse"
-									href="#collapse98" aria-expanded="true"
-									aria-controls="collapse98"> <span class="profile"> <i class="fas fa-address-card"
+						<div class="card-header" id="headingThree">
+							<h5 class="mb-0">
+								<button class="btn btn-link collapsed" data-toggle="collapse"
+									data-target="#collapseThree" aria-expanded="false"
+									aria-controls="collapseThree">
+									<span class="profile"> <i class="fas fa-address-card"
 										style="font-size: 22px; margin-right: 10px;"
 										aria-hidden="true"></i> INVESTOR ADDRESS
 									</span>
-								</a>
+								</button>
 							</h5>
 						</div>
-						
-						<div id="collapse98" class="collapse" role="tabpanel" aria-labelledby="heading98" data-parent="#accordionEx23">
+						<div id="collapseThree" class="collapse"
+							aria-labelledby="headingThree" data-parent="#accordion">
 							<div class="card-body">
 
 								<div class="row">

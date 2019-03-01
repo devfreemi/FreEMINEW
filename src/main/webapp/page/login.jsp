@@ -12,14 +12,16 @@
 	rel="stylesheet">
 <link href="<c:url value="${contextcdn}/resources/css/styles.css"/>"
 	rel="stylesheet">
- <link href="<c:url value="${contextcdn}/resources/css/animate.css"/>" type="text/css" rel="stylesheet">
+<link href="<c:url value="${contextcdn}/resources/css/animate.css"/>"
+	type="text/css" rel="stylesheet">
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>FreEMI online login</title>
 <meta http-equiv="cache-control" content="max-age=0" />
 <meta http-equiv="cache-control" content="no-cache" />
 <meta http-equiv="expires" content="0" />
 
-<meta name="keywords" content="freemi login, Sign up for free Online Mutual Fund account, Get best health insurance by signup, get Instant credit by signup" />
+<meta name="keywords"
+	content="freemi login, Sign up for free Online Mutual Fund account, Get best health insurance by signup, get Instant credit by signup" />
 <meta name="Copyright" content="Copyright 2018 @ freemi.in" />
 <meta name="author" content="https://www.freemi.in" />
 <meta name="description"
@@ -51,7 +53,7 @@
 
 		<div class="row">
 			<div class="col-md-6 col-lg-6 form_div animated fadeInLeft"
-				style="margin: auto; background: #d8d8d8e3;">
+				style="margin: auto; background: #ffffffe3;">
 
 				<div>
 					<form:errors path="usermobile" cssClass="error" />
@@ -59,25 +61,32 @@
 				<div>
 					<form:errors path="userpassword" cssClass="error" />
 				</div>
-				
+
 				<c:choose>
-						<c:when test="${not empty success }">
-							<div class="col-md-12 col-lg-12 alert alert-primary" 
-								style="text-align: center;">
-								<span> ${success}</span>
-							</div>
-						</c:when>
-						<c:when test="${not empty error }">
-							<div class="col-md-12 col-lg-12 alert alert-danger" 
-								style="text-align: center;">
-								<span>${error}</span>
-							</div>
-						</c:when>
-						<c:otherwise>
-							<span></span>
-						</c:otherwise>
-					</c:choose>
-				<form:form method="POST" action="${pageContext.request.contextPath}/login.do"
+					<c:when test="${not empty success }">
+						<div class="col-md-12 col-lg-12 alert alert-primary"
+							style="text-align: center;">
+							<span> ${success}</span>
+						</div>
+					</c:when>
+					<c:when test="${not empty error }">
+						<div class="col-md-12 col-lg-12 alert alert-danger"
+							style="text-align: center;">
+							<span>${error}</span>
+						</div>
+					</c:when>
+					<c:otherwise>
+						<span></span>
+					</c:otherwise>
+				</c:choose>
+				<c:if test="${not empty info }">
+				<div>
+				<span style="color: #ff7623;font-weight: 400;font-size: 13px;">${info }</span>
+				</div>
+				</c:if>
+				
+				<form:form method="POST"
+					action="${pageContext.request.contextPath}/login.do"
 					commandName="login">
 					<%-- <div class="form-group"
 						style="padding-left: 10px; padding-right: 10px;">
@@ -95,9 +104,9 @@
 					</div> --%>
 
 					<div class="form-row">
-					<div class="col-md-12 mb-1">
-						<label for="validationCustomUsername">Mobile Number</label>
-						<div class="input-group">
+						<div class="col-md-12 mb-1">
+							<%--<label for="validationCustomUsername">Mobile Number</label>
+							 <div class="input-group">
 							<div class="input-group-prepend">
 								<span class="input-group-text" id="inputGroupPrepend" style="padding: 1px 10px;">
 								<img src="<c:url value="${contextcdn}/resources/images/mobile.png"/>"
@@ -110,9 +119,17 @@
 								oninput="validateForm();" pattern="[0-9]{10}" maxlength="10"
 									autocomplete="off"
 								/>
-							<!-- <div class="invalid-feedback">Please choose a username.</div> -->
+								
+						</div> --%>
+
+							<div class="md-form">
+								<i class="fas fa-mobile-alt prefix" id="mobico"></i> <form:input type="text" style="padding-left: 5px;" id="validationCustomUsername"
+									class="form-control form-control-sm" path="usermobile" 
+								onkeyup="validateForm();" pattern="[0-9]{10}" maxlength="10"
+									autocomplete="off" placeholder="Mobile number"></form:input> 
+							</div>
+							<span id="msg1" style="font-size: 11px;"></span>
 						</div>
-					</div>
 					</div>
 
 
@@ -127,48 +144,59 @@
 							</span>
 						</div>
 					</div> --%>
-					
+
+					<%-- 
 					<div class="form-row">
-					<div class="col-md-12 mb-1">
-						<label for="validationPassword">Password</label>
-						<div class="input-group">
-							<div class="input-group-prepend">
-								<span class="input-group-text" id="inputGroupPrepend" style="padding: 1px 15px;">
-								<img src="<c:url value="${contextcdn}/resources/images/pass.png"/>"
-								class="img-fluid" style="height: 34px;">
-								</span>
-							</div>
-							<form:input type="password" class="form-control"
-								id="validationPassword" placeholder="Password"
-								aria-describedby="inputGroupPrepend" path="userpassword"
-								  maxlength="24" oninput="validateForm();"
-									autocomplete="off"
-								/>
-							<!-- <div class="invalid-feedback">Please choose a username.</div> -->
+						<div class="col-md-12 mb-1">
+							<label for="validationPassword">Password</label>
+							<div class="input-group">
+								<div class="input-group-prepend">
+									<span class="input-group-text" id="inputGroupPrepend"
+										style="padding: 1px 15px;"> <img
+										src="<c:url value="${contextcdn}/resources/images/pass.png"/>"
+										class="img-fluid" style="height: 34px;">
+									</span>
+								</div>
+								<form:input type="password" class="form-control"
+									id="validationPassword" placeholder="Password"
+									aria-describedby="inputGroupPrepend" path="userpassword"
+									maxlength="24" oninput="validateForm();" autocomplete="off" />
+								<!-- <div class="invalid-feedback">Please choose a username.</div> -->
+							</div> 
+							
+							
 						</div>
-					</div>
-					</div>
+					</div>--%>
+					
+					<div class="md-form">
+								<i class="fas fa-lock prefix"></i> <form:input type="password" style="padding-left: 5px;"
+									 class="form-control form-control-sm" path="userpassword" id="validationPassword"
+									maxlength="24" oninput="validateForm();"
+									autocomplete="off" placeholder="Password"></form:input> 
+							</div>
 
 					<div class="row">
 						<div class="col-md-12 col-lg-12">
-						<a class="password_reset" href="${pageContext.request.contextPath}/forgotPassword">Forgot
-							Password? </a>
+							<a class="password_reset"
+								href="${pageContext.request.contextPath}/forgotPassword">Forgot
+								Password? </a>
 						</div>
 					</div>
-					
+
 					<!-- <div style="margin-bottom: 20px;">
 						<div class="g-recaptcha" data-sitekey="6LdvUoQUAAAAADk77XVS_YlkPTluN9EYCawk1xo6"></div>
 					</div> -->
 					<div class="login_buttons">
 						<button type="submit" id="loginsubmit"
-							class="btn btn-sm btn-block login_button">
+							class="btn btn-sm btn-block btn-primary">
 							<i class="fas fa-lock"></i>
 							<!-- <i *ngIf="LoginRequestsubmitted" class="fa fa-spinner login_spin" aria-hidden="true"></i> -->
 							Login
 						</button>
 
-						<a href="${pageContext.request.contextPath}/register" style="text-decoration: none;">
-							<button type="button" class="btn btn-sm btn-block login_button"
+						<a href="${pageContext.request.contextPath}/register"
+							style="text-decoration: none; margin-top: 10px">
+							<button type="button" class="btn btn-sm btn-block btn-primary"
 								style="text-decoration: none;">
 								<i class="fas fa-user-plus"></i> Sign Up
 							</button>

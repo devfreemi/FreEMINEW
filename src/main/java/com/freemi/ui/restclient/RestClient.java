@@ -40,7 +40,8 @@ public class RestClient {
 //	private final String SERVICE_URL1 = "http://localhost:8080/freemibackend";
 	
 	/*DEV*/
-	private final String SERVICE_URL1 = "http://dev.freemi.in:8080/freemibackend";
+//	private final String SERVICE_URL1 = "http://dev.freemi.in:8080/freemibackend";
+	private final String SERVICE_URL1 = "http://13.232.249.130:8080/freemibackend";
 	
 //	@Value("${profile.service.url}")
 //	private String SERVICE_URL1 = env.getProperty("profile.service.url");

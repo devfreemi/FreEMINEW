@@ -33,10 +33,11 @@ public class BseAOFGenerator {
 	public static String aofGenerator(BseMFInvestForm investForm,String fileName, String imageAbsPath, String kycStatus, String aofbasepath){
 
 		String flag = "SUCCESS";
+		PdfWriter writer = null;
 		Document document = new Document(PageSize.A4);
 		try
 		{
-			PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(aofbasepath+fileName+".pdf"));
+			writer = PdfWriter.getInstance(document, new FileOutputStream(aofbasepath+fileName+".pdf"));
 			document.open();
 			/*document.add(new Paragraph("A Hello World PDF document."));*/
 
@@ -344,7 +345,7 @@ public class BseAOFGenerator {
 			cell11 = new PdfPCell();
 
 			c1 = new Chunk("Country: ",f1);
-			c2 = new Chunk(investForm.getAddressDetails().getCountry()==""?"INDIA":investForm.getAddressDetails().getCountry(),f2);
+			c2 = new Chunk((investForm.getAddressDetails().getCountry()=="" || investForm.getAddressDetails().getCountry()==null)?"INDIA":investForm.getAddressDetails().getCountry(),f2);
 			p11 = new Phrase();
 			p11.add(c1);
 			p11.add(c2);
@@ -1040,13 +1041,13 @@ public class BseAOFGenerator {
 			document.add(table4);
 
 			// ---------------------------------------------
-
+		}catch(Exception e){
+			logger.error("Exception generated while crating AOF file",e);
+			flag="FAIL";
+		}finally {
 			document.close();
 			writer.close();
-		
-		}catch(Exception e){
-			logger.error("Exception generated while crating file",e);
-			flag="FAIL";
+			logger.info("Close AOF document after writing successful");
 		}
 		logger.info("AOF pdf generator complete for user- "+ investForm.getPan1());
 

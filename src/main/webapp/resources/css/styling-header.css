@@ -15,7 +15,7 @@
 .nav-link {display:inline;}
 .dropdown-toggle{display: initial;}
 .nav-link-styling{padding: 0;margin-right: 5px;}
-.signup-styling , .login-styling{color: coral;font-size:14px; margin-left: 10px;}
+.signup-styling , .login-styling{color: #f1de53;font-size:14px; margin-left: 10px;}
 .styling-header:link {color:#a6e8de!important; font-size:14px; }
 .styling-header:visited {color:#a6e8de!important;}
 .showdrop{background-color:#eae2d1;}

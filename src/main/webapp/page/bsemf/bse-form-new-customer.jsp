@@ -97,7 +97,7 @@
 	</div>
 	
 	<!-- BSE MF  -->
-	<section class="bse-display" style="background: #ffecc9; padding: 5px;margin-bottom: -60px;">
+	<section class="bse-display" style="background: #ffecc9; padding: 5px;margin-bottom: -60px;box-shadow: 0px -1px 10px 0px #c1b6b6;">
 	<jsp:include page="./bsestarmfpowered.jsp"></jsp:include>
 	</section>
 	<!-- END BSE MF  -->

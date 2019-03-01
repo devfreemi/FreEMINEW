@@ -56,7 +56,7 @@ public class AddressDetails implements Serializable{
 	private String state="";
 	
 	@Column(name="COUNTRY")
-	private String country="";
+	private String country="INDIA";
 	
 	@Transient
 	private String communicationCode;

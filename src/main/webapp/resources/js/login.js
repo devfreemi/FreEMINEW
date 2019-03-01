@@ -21,7 +21,21 @@ function validateForm(){
 	
 	if(digitregexp.test(mobile)){
 		flag1=true;
+		/*$("#validationCustomUsername").css({"border-bottom":"2px solid #3eb755;"});*/
+		$("#mobico").css({"color":"#3eb755;"});
+		$("#msg1").text("");
+		
+	}else{
+//		console.log("Invalid mobile");
+		/*$("#validationCustomUsername").css({"border-bottom":"2px solid #f7445e;"});*/
+//		$("#mobico").css({"color":"#f7445e;"});
+
+		document.getElementById("msg1").style.color="f7445e";
+		/*$("#msg1").text("Invalid number format!");*/
+		$("#msg1").css("color","#f7445e;");
+		
 	}
+	
 	if(pass.length >= 8){
 		flag2=true;
 //		console.log("more")

@@ -101,12 +101,12 @@ background: linear-gradient(to left, #1CB5E0, #000046); /* W3C, IE 10+/ Edge, Fi
 			<c:otherwise>
 			<li class="nav-item">
         			<a class="nav-link" href="/products/register"> <span class="signup-styling">
-									<i class="fas fa-user-plus d-block d-sm-none"></i>Sign up
+									<i class="fas fa-user-plus d-block d-sm-none"></i> <strong>Sign up </strong>
 							</span></a>
      		</li>
      		<li class="nav-item">
         			<a class="nav-link" href="/products/login"><span class="login-styling">
-									<i class="fas fa-sign-in-alt d-block d-sm-none"></i>Log In 
+									<i class="fas fa-sign-in-alt d-block d-sm-none"></i><strong>Log In </strong> 
 							</span></a>
      		</li>
 			</c:otherwise>
