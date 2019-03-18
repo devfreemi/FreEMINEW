@@ -23,8 +23,9 @@
 	href="<c:url value="${contextPath}/resources/css/pace-theme.css"/>"
 	rel="stylesheet">
 <script src="<c:url value="${contextPath}/resources/js/pace.min.js" />"></script>
+<!-- <script
+	src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script> -->
 
-<script src="<c:url value="${contextPath}/resources/js/investment.js" />"></script>
 <style>
 /* #sig-canvas {
 	border: 1px solid #969696;
@@ -37,9 +38,6 @@
 <script type="text/javascript">
 	var currentTab = 0; // Current tab is set to be the first tab (0)
 	//showTab(currentTab); // Display the current tab
-
-	
-
 </script>
 
 <body onload="nextPrev(0);">
@@ -58,7 +56,7 @@
 			</ol>
 		</nav>
 		<!-- <h1>Register:</h1> -->
-		<div class="row" style=" margin: auto;">
+		<div class="row" style="margin: auto;">
 
 			<div class="col-md-7 col-lg-7 formstyle">
 
@@ -71,10 +69,9 @@
 
 					<p>
 						Please note that given the recent Supreme Court judgement
-						regarding Adhaar, the eKYC throgh website stands withdrawn from
-						Oct 19 2018.<br />
-						<br />As an effect, the following will not be available to our
-						investors and distributors:
+						regarding ADHAAR, the eKYC through website stands withdrawn from
+						Oct 19 2018.<br /> <br />As an effect, the following will not be
+						available to our investors and distributors:
 					</p>
 					<ul>
 						<li>eKYC process</li>
@@ -86,7 +83,7 @@
 						verification.</p>
 					<p>For non-kyc customers, after the signed form is uploaded,
 						our customer representative will help complete the verification by
-						offiline process.</p>
+						off-line process.</p>
 					<p>
 						<br />For instant assistance, please call our office number.
 					</p>
@@ -95,16 +92,26 @@
 			</div>
 		</div>
 	</div>
-	
+
 	<!-- BSE MF  -->
-	<section class="bse-display" style="background: #ffecc9; padding: 5px;margin-bottom: -60px;box-shadow: 0px -1px 10px 0px #c1b6b6;">
-	<jsp:include page="./bsestarmfpowered.jsp"></jsp:include>
+	<section class="bse-display"
+		style="background: #ffecc9; padding: 5px; margin-bottom: -60px; box-shadow: 0px -1px 10px 0px #c1b6b6;">
+		<jsp:include page="./bsestarmfpowered.jsp"></jsp:include>
 	</section>
 	<!-- END BSE MF  -->
 	<jsp:include page="../include/footer.jsp"></jsp:include>
 
 </body>
-
-<script src="<c:url value="${contextPath}/resources/js/bseinvest.js" />" async="async"></script>
+<script defer="defer">
+	//Material Select Initialization
+	$(document).ready(function() {
+		$('.mdb-select').materialSelect();
+	});
+</script>
+<script src="<c:url value="${contextPath}/resources/js/bseinvest.js" />"
+	defer="defer"></script>
+<script
+	src="<c:url value="${contextPath}/resources/js/investment.js" />"
+	defer="defer"></script>
 
 </html>

@@ -154,14 +154,14 @@
 							<c:choose>
 							<c:when test="${not isEmandateComplete }">
 								<!--E-Mandate check  -->
-								<div class="custom-control custom-checkbox mb-2"
-									>
+								<div class="custom-control custom-checkbox mb-2">
 									<form:checkbox class="custom-control-input"
 										path="eMandateRegRequired" disabled="true"></form:checkbox>
 									<label class="custom-control-label" for="eMandate1"
 										style="font-size: 11px; text-align: justify;">
 										Register your bank account for E-Mandate </label>
 								</div>
+								<div><span style="font-size: 12px;color: #1fbf59;font-weight: 400;text-align: justify;"><strong> Note:</strong> Link will be sent to your registered mail to complete your E-mandate. AADHAAR is mandatory in this process and linked to bank account. OTP will be sent to mobile number linked with your AADHAAR.</span></div>
 							</c:when>
 							<c:when test="${isEmandateComplete }">
 								<!--E-Mandate check  -->

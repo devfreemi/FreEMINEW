@@ -8,6 +8,21 @@ import java.util.TreeMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 public class InvestFormConstants {
+	
+	public static Map<String,String> holdingMode = new LinkedHashMap<String,String>(){
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		{
+			put("SI", "Single");
+			put("JO", "Joint");
+			put("AS", "Anyone or Survivor");
+		}
+	};
+	
+	
 
 	public static Map<String,String> occupationList = new LinkedHashMap<String,String>(){
 		/**

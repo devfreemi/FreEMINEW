@@ -16,8 +16,6 @@
 <link
 	href="<c:url value="${contextPath}/resources/css/bseinvestmentform.css"/>"
 	rel="stylesheet">
-<link href='https://fonts.googleapis.com/css?family=Roboto'
-	rel='stylesheet'>
 <link
 	href="<c:url value="${contextPath}/resources/css/pace-theme.css"/>"
 	rel="stylesheet">
@@ -135,18 +133,29 @@
 							<h5 class="mf-name-custom">${funds.schemeName }</h5>
 							<div class="card-body" style="padding-top: 5px;">
 								<div class="card-title"></div>
-								<h6 class="card-subtitle mb-2 text-muted">
+								
+								<div class="row">
+								<div class="col-7">
+								<h6 class="mb-2 text-muted">
 									<%-- ${funds.riskometer_value } | --%>
 									${funds.schemeType }
 								</h6>
 								<div class="risk-bar">
 									<div></div>
 								</div>
+								</div>
+								<div class="col-5" style="padding-right: 0px;">
+								<div>NAV</div>
+								<span class="nav_style_top_funds">${funds.nav }</span>
+								</div>
+								</div>
+								
+								
 								<div class="row card-text card-text-custom">
 									<div class="col-5">
 										<p>
 											<%-- 	NAV (${funds.nav_Date }) <br> ${funds.nav } --%>
-											SIP Minimum <br>
+											Min. SIP<br>
 											<fmt:formatNumber type="number" maxFractionDigits="3"
 												value="${funds.sipMinInstallAmnt }" />
 
@@ -160,9 +169,9 @@
 										</span>
 									</p>
 								</div> --%>
-									<div class="col-7">
+									<div class="col-7" style="padding-right: 0px;">
 										<p>
-											Lumpsum Minimum <br> <i class="fas fa-rupee-sign"></i>
+											Min. lumpsum <br> <i class="fas fa-rupee-sign"></i>
 											<fmt:formatNumber type="number" maxFractionDigits="3"
 												value="${funds.lumpsumminPurchaseAmt }" />
 										</p>

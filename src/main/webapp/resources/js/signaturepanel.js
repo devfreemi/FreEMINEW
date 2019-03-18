@@ -239,6 +239,8 @@ function initiateAOFUpload() {
 			function(data, status) {
 				/* alert("Data: " + data + "\nStatus: " + status); */
 				console.log(data);
+				$("#signuploadstatus")
+				.text(data);
 				if (data == 'SUCCESS') {
 
 					$("#signuploadstatus")
@@ -249,7 +251,7 @@ function initiateAOFUpload() {
 					move(100);
 
 				}
-				if (data == 'INTERNAL_ERROR') {
+				else if (data == 'INTERNAL_ERROR') {
 					$('#exampleModal1').modal('hide');
 					$("#signuploadstatus")
 					.text(
@@ -257,20 +259,28 @@ function initiateAOFUpload() {
 
 				}
 
-				if (data == 'SESSION_MOB_MISMATCH') {
+				else if (data == 'SESSION_MOB_MISMATCH') {
 					$('#exampleModal1').modal('hide');
 					$("#signuploadstatus")
 					.text(
 					"Session data mismatch. Kindly contact admin");
 
 				}
-				if (data == 'REQUEST_DENIED') {
+				else if (data == 'REQUEST_DENIED') {
 					$('#exampleModal1').modal('hide');
 					$("#signuploadstatus")
 					.text(
 					"Session lost. Kindly login to complete registration");
 
-				}
+				} 
+				
+				else {
+					$('#exampleModal1').modal('hide');
+					$("#signuploadstatus")
+					.text(
+					data);
+
+				} 
 
 
 			})

@@ -128,6 +128,7 @@
 					<div class="profile-status-left">
 						<h5 style="background: #dbdee6; padding: 3px;">Profile Status</h5>
 						<c:choose>
+
 							<c:when test="${PROFILE_STATUS == 'NOT_FOUND' }">
 								<h4 style="font-family: none; color: #e6643c;">Register for
 									investment</h4>
@@ -142,7 +143,21 @@
 								</a>
 							</c:when>
 
-							<c:when test="${PROFILE_STATUS == 'Y' }">
+							<c:when test="${PROFILE_STATUS == 'REGISTRATION_INCOMPLETE' }">
+								<h4 style="font-family: none; color: #e6643c;">Profile
+									Incomplete</h4>
+								<div class="progress" style="margin-bottom: 20px;">
+									<div class="progress-bar progress-bar-striped bg-danger"
+										role="progressbar" style="width: 10%" aria-valuenow="10"
+										aria-valuemin="0" aria-valuemax="100"></div>
+								</div>
+								<a href="/products/mutual-funds/register?mf=04">
+									<button class="btn btn-sm btn-secondary">Complete
+										Registration</button>
+								</a>
+							</c:when>
+
+							<c:when test="${PROFILE_STATUS == 'PROFILE_READY' }">
 								<h4 style="color: #408ad8; font-family: serif;">Investment
 									profile ready.</h4>
 								<div class="progress"
@@ -163,13 +178,15 @@
 								</div>
 							</c:when>
 
-							<c:when test="${PROFILE_STATUS == 'N' }">
+							<c:when test="${PROFILE_STATUS == 'AOF_PENDING' }">
 								<strong style="color: #d41b1b;">Sign &amp; Upload your
 									AOF Form</strong>
 								<div class="progress" style="font-size: 10px;">
-									<div class="progress-bar bg-success" role="progressbar" id="myBar"
-										style="width: 50%" aria-valuenow="50" aria-valuemin="0"
-										aria-valuemax="100"><span id="statusp">Details Registered</span></div>
+									<div class="progress-bar bg-success" role="progressbar"
+										id="myBar" style="width: 50%" aria-valuenow="50"
+										aria-valuemin="0" aria-valuemax="100">
+										<span id="statusp">Details Registered</span>
+									</div>
 								</div>
 								<p>You need to sign and upload your investment form before
 									you can start investing.</p>
@@ -246,11 +263,12 @@
 
 								<!-- End of modal  -->
 								<div>
-								<span id="signuploadstatus" style="font-size: 11px;"></span>
+									<span id="signuploadstatus" style="font-size: 11px;"></span>
 								</div>
 								<div id="aofuploadbutton">
 									<button class="btn btn-sm btn-primary" id="aofuploadbtn"
-										hidden="hidden" onclick="initiateAOFUpload(<%=session.getAttribute("userid").toString() %>);">
+										hidden="hidden"
+										onclick="initiateAOFUpload(<%=session.getAttribute("userid").toString()%>);">
 										UPLOAD YOUR AOF <i class="fas fa-upload"></i>
 									</button>
 								</div>
@@ -260,6 +278,10 @@
 							<c:when test="${PROFILE_STATUS == 'ERROR' }">
 								<p>Failed to fetch your profile status!</p>
 							</c:when>
+
+							<c:otherwise>
+								<p>Failed to check status currently.</p>
+							</c:otherwise>
 
 						</c:choose>
 					</div>
@@ -417,7 +439,8 @@
 																	<button type="button"
 																		class="btn btn-secondary dropdown-toggle btn-sm"
 																		data-toggle="dropdown" aria-haspopup="true"
-																		aria-expanded="false" style="font-size: 11px;padding:10px;width: 5rem;">ACTION</button>
+																		aria-expanded="false"
+																		style="font-size: 11px; padding: 10px; width: 5rem;">ACTION</button>
 																	<div class="dropdown-menu dropdown-menu-right">
 																		<button class="dropdown-item" type="button"
 																			style="font-size: 12px; color: #238019; font-weight: 600;"

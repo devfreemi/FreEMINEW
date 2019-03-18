@@ -17,7 +17,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      security.httpBasic().disable()
 //     .csrf().disable()
 //     .csrf().ignoringAntMatchers("/mutual-funds/aoffile/**").disable()
-     .csrf().ignoringAntMatchers("/mutual-funds/uploadsign","/mutual-funds/uploadsignedaof","/mutual-funds/uploadsignRegisteredCustomer")
+     .csrf().ignoringAntMatchers("/mutual-funds/uploadsign","/mutual-funds/uploadsignedaof","/mutual-funds/uploadsignRegisteredCustomer","/otpverify.do")
      .and()
 //     .headers().cacheControl().disable()
      .headers()

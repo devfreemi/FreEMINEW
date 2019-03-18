@@ -7,8 +7,26 @@ public class CommonConstants {
 	public static final String BSE_ENABLED="investment.bse.enabled";
 	public static final String BSE_AOF_GENERATION_FOLDR="investment.bse.aoffolder";
 	
+	
+//	@Value("${spring.mail.host}")
+	public static final String MAIL_SERVER_HOST="spring.mail.host";
+	public static final String MAIL_SERVER_PORT="spring.mail.port";
+	public static final String MAIL_SERVER_USERNAME="spring.mail.username";
+	public static final String MAIL_SERVER_USERPASSWORD="spring.mail.password";
+	public static final String MAIL_SERVER_PROTOCOL="spring.mail.protocol";
+	
+	public static final String IS_MAIL_ENABLED = "mail.smtp.auth.required"; 
+	public static final String AUTHENTICATION_REQUIRED="mail.smtp.auth";
+	public static final String TLS_TRANSPORT_REQUIRED="mail.smtp.starttls.enable";
+	
+	/*Mail type*/
+	public static final String USER_CREATION="USER.CREATION";
+	public static final String EMAIL_SEND_ENABLED ="mail.enabled";
+	
+	
 	public static final String ENV_INVESTMENT_ENABLED="INVESTMENT_ENABLED";
 	public static final String INVESTMENT_ENABLED="Y";
+	
 	
 	
 	

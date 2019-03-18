@@ -181,7 +181,7 @@
 												</div>
 											</div>
 											
-											<div class="form-group">
+											<%-- <div class="form-group">
 												<div class="row">
 													<div class="col-md-4 col-lg-4">
 														<label>AADHAAR number (Optional)</label>
@@ -202,7 +202,7 @@
 														<!-- <span style="font-size: 12px;">*Click the icon to sync data</span> -->
 													</div>
 												</div>
-											</div> 
+											</div>  --%>
 											
 											<div class="form-group">
 												<div class="row">
@@ -578,7 +578,7 @@
 									</div>
 									<div class="col-md-6 col-lg-6" style="margin: -1px;">
 										<h4>FAQ</h4>
-										<ul>
+										<!-- <ul>
 											<li>
 												<p>
 													<b>Why address cannot be modified?</b> <br> <span
@@ -587,7 +587,7 @@
 														changes here. </span>
 												</p>
 											</li>
-										</ul>
+										</ul> -->
 									</div>
 								</div>
 

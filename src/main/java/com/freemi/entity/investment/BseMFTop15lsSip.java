@@ -1,6 +1,7 @@
 package com.freemi.entity.investment;
 
 import java.io.Serializable;
+import java.sql.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,7 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="funds_view_ls_sip")
+@Table(name="funds_top_15_with_nav")
 public class BseMFTop15lsSip implements Serializable {
 	
 	/**
@@ -49,6 +50,13 @@ public class BseMFTop15lsSip implements Serializable {
 	
 	@Column(name="SIP_MAXIMUM_INSTALLMENT_AMOUNT")
 	private String sipMaxInstallAmntl;
+	
+	@Column(name="NAV_VALUE")
+	private String nav;
+	
+	@Column(name="NAV_DATE")
+	private String lastnavDate;
+	
 
 	public String getSchemeCode() {
 		return schemeCode;
@@ -137,9 +145,25 @@ public class BseMFTop15lsSip implements Serializable {
 	public void setSipMaxInstallAmntl(String sipMaxInstallAmntl) {
 		this.sipMaxInstallAmntl = sipMaxInstallAmntl;
 	}
-
+	
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	public String getNav() {
+		return nav;
+	}
+
+	public void setNav(String nav) {
+		this.nav = nav;
+	}
+
+	public String getLastnavDate() {
+		return lastnavDate;
+	}
+
+	public void setLastnavDate(String lastnavDate) {
+		this.lastnavDate = lastnavDate;
 	}
 	
 

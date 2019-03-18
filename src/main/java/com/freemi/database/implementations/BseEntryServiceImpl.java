@@ -21,15 +21,20 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.freemi.common.util.BseRelatedActions;
 import com.freemi.common.util.CommonConstants;
 import com.freemi.controller.interfaces.InvestmentConnectorBseInterface;
+import com.freemi.controller.interfaces.MailSenderHandler;
 import com.freemi.database.interfaces.BseCustomerAddressCrudRepository;
 import com.freemi.database.interfaces.BseCustomerBankDetailsCrudRespository;
 import com.freemi.database.interfaces.BseCustomerCrudRespository;
 import com.freemi.database.interfaces.BseCustomerNomineeCrudRepository;
+import com.freemi.database.interfaces.BseFundsExplorerRepository;
+import com.freemi.database.interfaces.BseMandateCrudRepository;
 import com.freemi.database.interfaces.BseOrderEntryResponseRepository;
 import com.freemi.database.interfaces.BseTop15lsSipViewCrudReositry;
 import com.freemi.database.interfaces.BseTransCountCrudRepository;
@@ -47,10 +52,13 @@ import com.freemi.entity.general.UserProfile;
 import com.freemi.entity.investment.AddressDetails;
 import com.freemi.entity.investment.BseAllTransactionsView;
 import com.freemi.entity.investment.BseDailyTransCounter;
+import com.freemi.entity.investment.BseFundsScheme;
 import com.freemi.entity.investment.BseMFInvestForm;
 import com.freemi.entity.investment.BseMFTop15lsSip;
+import com.freemi.entity.investment.BseMandateDetails;
 import com.freemi.entity.investment.BseOrderEntryResponse;
 import com.freemi.entity.investment.BsemfTransactionHistory;
+import com.freemi.entity.investment.MFInvestForm;
 import com.freemi.entity.investment.MFNominationForm;
 import com.freemi.entity.investment.SelectMFFund;
 import com.freemi.entity.investment.TransactionStatus;
@@ -103,6 +111,15 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	
 	@Autowired
 	BseCustomerNomineeCrudRepository bseCustomerNomineeCrudRepository;
+	
+	@Autowired
+	BseMandateCrudRepository bseMandateCrudRepository;
+	
+	@Autowired
+	BseFundsExplorerRepository bseFundsExplorerRepository;
+	
+	/*@Autowired
+	MailSenderHandler mailSenderHandler;*/
 
 	private static final Logger logger = LogManager.getLogger(BseEntryServiceImpl.class);
 
@@ -225,6 +242,10 @@ public class BseEntryServiceImpl implements BseEntryManager {
 				transStatus.setSuccessFlag("S");
 				transStatus.setStatusMsg(bseResult.getBsereMarks());
 				transStatus.setBseOrderNoFromResponse(bseResult.getOrderNoOrSipRegNo());
+				
+
+				
+				
 			}else if (bseResult.getSuccessFlag().equalsIgnoreCase("000")){
 				logger.info("Transaction disabled. Reason- "+bseResult.getBsereMarks());
 				transStatus.setSuccessFlag("S");
@@ -327,8 +348,15 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		return false;
 	}
 
+	/*@Override
+	public BseMFInvestForm getCustomerDetailsByMobile(String mobile) {
+		BseMFInvestForm investorProfileData = bseCustomerCrudRespository.getByMobile(mobile);
+		
+		return investorProfileData;
+	}*/
+	
 	@Override
-	public UserProfile getCustomerDetailsByMobile(String mobile) {
+	public UserProfile getCustomerProfileDetailsByMobile(String mobile) {
 		// TODO Auto-generated method stub
 
 		UserProfile userProfile = new UserProfile();
@@ -473,8 +501,22 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		String aofUploadStatus = "";
 		try{
 			if(bseCustomerCrudRespository.existsByMobile(mobileNumber)){
-				aofUploadStatus=bseCustomerCrudRespository.getBseRegistrationAOFStatus(mobileNumber);
-				flag= aofUploadStatus;
+//				String registrationStatus = bseCustomerCrudRespository.getBseRegistrationStatus(mobileNumber);
+//				logger.info("Customer BSE registration status- "+ registrationStatus);
+//				if(registrationStatus.equalsIgnoreCase("Y")){
+					aofUploadStatus=bseCustomerCrudRespository.getBseRegistrationAOFStatus(mobileNumber);
+					logger.info("Customer BSE registration status- "+ aofUploadStatus);
+					
+					if(aofUploadStatus.split(",")[0].equals("Y") && aofUploadStatus.split(",")[1].equals("Y")){
+						flag="PROFILE_READY";
+					}else if(aofUploadStatus.split(",")[0].equals("Y") && aofUploadStatus.split(",")[1].equals("N")){
+						flag="AOF_PENDING";
+					}
+					else{
+						flag="REGISTRATION_INCOMPLETE";
+					}
+				logger.info("Customer registration aof upload status- "+ aofUploadStatus);
+//				flag= aofUploadStatus;
 			}else{
 				flag="NOT_FOUND";
 			}
@@ -482,6 +524,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 			logger.error("Failed to query database to get customer AOF upload status", e);
 			flag="ERROR";
 		}
+		logger.info("Returning customer status- "+ flag);
 		return flag;
 	}
 
@@ -581,15 +624,28 @@ public class BseEntryServiceImpl implements BseEntryManager {
 			if(apiresponse.getStatusCode().equals("100")){
 				logger.info("Emandate completed for customer successfully for cusotmner-" + mobileNumber + ": Response code: "+ apiresponse.getStatusCode() + " : "+ apiresponse.getRemarks());
 				logger.info("Update bank emandate status to database...");
-				SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd");
+//				SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd");
 				//					SimpleDateFormat bseFormat = new SimpleDateFormat("dd/MM/yyyy");
-				bseCustomerBankDetailsCrudRespository.updateEmandateStatus(clientCode, 
+				/*bseCustomerBankDetailsCrudRespository.updateEmandateStatus(clientCode, 
 						bankDetails.getAccountNumber(), true, 
 						dbFormat.parse(dbFormat.format(startDate)), 
 						dbFormat.parse(dbFormat.format(endDate)), 
 						apiresponse.getResponseCode(), 
 						dbFormat.parse(dbFormat.format(new Date()))
-						);
+						);*/
+//				bseMandateCrudRepository.updateMandateRegisterResponse(clientCode, "", mandateId, reponseMsg)
+			BseMandateDetails mandate = new BseMandateDetails();
+			mandate.setClientCode(clientCode);
+			mandate.setAccountNumber(bankDetails.getAccountNumber());
+			mandate.setSipStartDate(startDate);
+			mandate.setSipEndDate(endDate);
+			mandate.setMandateType("E-MANDATE");
+			mandate.setMandateId(apiresponse.getResponseCode());
+			mandate.setAmount(amount);
+			mandate.setCreationDate(startDate);
+			mandate.setMandateComplete(true);
+			
+			bseMandateCrudRepository.save(mandate);
 
 			}else{
 				logger.info("Failed to update e-mandate. Reason: "+ apiresponse.getStatusCode() + " : "+ apiresponse.getRemarks());
@@ -603,7 +659,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	}
 
 	@Override
-	public BseMFInvestForm getCustomerInvetFormData(String mobile) {
+	public BseMFInvestForm getCustomerInvestFormData(String mobile) {
 		logger.info("Querying to get registered investment form data for mobile- "+ mobile);
 		BseMFInvestForm investmentFormdata = null;
 		try{
@@ -627,6 +683,36 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		}
 
 		return investmentFormdata;
+	}
+
+	@Override
+	public List<BseMandateDetails> getCustomerMandateDetails(String clientId, String accountNumber) {
+		logger.info("Querying to get bank mandate details for client mobile- "+ clientId);
+		List<BseMandateDetails> mandateDetails = null;
+		try{
+			
+			mandateDetails = bseMandateCrudRepository.findAllByClientCodeAndAccountNumber(clientId, accountNumber);	
+			
+		}catch(Exception e){
+			logger.error("Failed to query database to fetch mandate details",e);
+		}
+
+		return mandateDetails;
+	}
+
+	@Override
+	public Page<BseFundsScheme> getpaginatedFundsList(Pageable p) {
+		logger.info("Querying to schemes by page wise- ");
+		Page<BseFundsScheme> fundDetails = null;
+		try{
+			
+			fundDetails = bseFundsExplorerRepository.findAll(p);
+			
+		}catch(Exception e){
+			logger.error("Failed to query database to fetch mandate details",e);
+		}
+
+		return fundDetails;
 	}
 
 	/*		public static void main(String[] args){

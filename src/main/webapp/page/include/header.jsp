@@ -42,7 +42,7 @@ background: linear-gradient(to left, #1CB5E0, #000046); /* W3C, IE 10+/ Edge, Fi
         </a>
         <div class="dropdown-menu dropdown-secondary" aria-labelledby="navbarDropdownMenuLink-555">
           <a class="dropdown-item" href="/products/mutual-funds/top-performing">Top Performing Funds</a>
-          
+          <a class="dropdown-item" href="/products/mutual-funds/funds-explorer">All Funds</a>
         </div>
       </li>
        <li class="nav-item dropdown" style="display: -webkit-inline-box;">
@@ -99,14 +99,16 @@ background: linear-gradient(to left, #1CB5E0, #000046); /* W3C, IE 10+/ Edge, Fi
       </li>
 			</c:when>
 			<c:otherwise>
-			<li class="nav-item">
-        			<a class="nav-link" href="/products/register"> <span class="signup-styling">
-									<i class="fas fa-user-plus d-block d-sm-none"></i>Sign up
+			<li class="nav-item signup-styling" style="display:-webkit-inline-box;">
+			<i class="fas fa-user-plus d-block d-sm-none" style="margin-top: 0.55rem;"></i>
+        			<a class="nav-link" href="/products/register"> <span class="">
+									Sign up
 							</span></a>
      		</li>
-     		<li class="nav-item">
-        			<a class="nav-link" href="/products/login"><span class="login-styling">
-									<i class="fas fa-sign-in-alt d-block d-sm-none"></i>Log In 
+     		<li class="nav-item login-styling" style="display:-webkit-inline-box;">
+     		<i class="fas fa-sign-in-alt d-block d-sm-none" style="margin-top: 0.55rem;"></i>
+        			<a class="nav-link" href="/products/login"><span class="">
+									Log In 
 							</span></a>
      		</li>
 			</c:otherwise>

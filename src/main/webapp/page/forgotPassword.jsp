@@ -83,13 +83,13 @@
 							data-sitekey="6LdvUoQUAAAAADk77XVS_YlkPTluN9EYCawk1xo6"></div>
 					</div>
 
-					<button type="submit" class="btn btn-block btn-sm btn-primary">
+					<button type="submit" class="btn btn-block btn-sm peach-gradient">
 						<!-- <i *ngIf="spinner" class="fa fa-spinner login_spin" aria-hidden="true"></i> -->
 						Reset Password
 					</button>
 					<a href="${pageContext.request.contextPath}/login"
 						style="text-decoration: none; margin-top: 10px;">
-						<button type="button" class="btn btn-block btn-sm btn-primary">
+						<button type="button" class="btn btn-block btn-sm purple-gradient">
 							<span> <i class="fas fa-backward"></i> Back
 							</span>
 						</button>

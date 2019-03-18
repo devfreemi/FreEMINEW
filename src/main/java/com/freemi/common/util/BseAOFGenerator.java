@@ -1,9 +1,15 @@
 package com.freemi.common.util;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.util.Date;
+import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
@@ -26,6 +32,9 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.codec.Base64.InputStream;
+import com.itextpdf.text.pdf.codec.Base64.OutputStream;
+import com.itextpdf.tool.xml.XMLWorkerHelper;
 
 public class BseAOFGenerator {
 	private static final Logger logger = LogManager.getLogger(BseAOFGenerator.class);
@@ -59,9 +68,9 @@ public class BseAOFGenerator {
 			cell71.setPaddingTop(15);
 			Image img;
 			try {
-//				img = Image.getInstance("E:\\BITBUCKET REPOSITORY\\freemi\\src\\main\\webapp\\resources\\images\\freemi.png");
+				//				img = Image.getInstance("E:\\BITBUCKET REPOSITORY\\freemi\\src\\main\\webapp\\resources\\images\\freemi.png");
 				img = Image.getInstance(imageAbsPath);
-//				img = Image.get
+				//				img = Image.get
 				img.setAlt("FREEMI AOF FORM");
 				Chunk c21 = new Chunk(img, 1, 1);
 				Paragraph p21 = new Paragraph();
@@ -122,7 +131,8 @@ public class BseAOFGenerator {
 			cell5.setHorizontalAlignment(Element.ALIGN_LEFT);
 			cell5.setVerticalAlignment(Element.ALIGN_MIDDLE);
 
-			PdfPCell cell6 = new PdfPCell(new Paragraph(CommonConstants.EUIN_CODE,f2));
+			//			PdfPCell cell6 = new PdfPCell(new Paragraph(CommonConstants.EUIN_CODE,f2));
+			PdfPCell cell6 = new PdfPCell(new Paragraph(""));
 			cell6.setBorderColor(BaseColor.BLACK);
 			// cell6.setPaddingLeft(10);
 			cell6.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -464,7 +474,7 @@ public class BseAOFGenerator {
 			cell11 = new PdfPCell();
 
 			c1 = new Chunk("Mode of Holding:",f1);
-			c2 = new Chunk(investForm.getHoldingMode(),f2);
+			c2 = new Chunk(getHoldingMode(investForm.getHoldingMode()),f2);
 			p11 = new Phrase();
 			p11.add(c1);
 			p11.add(c2);
@@ -477,7 +487,7 @@ public class BseAOFGenerator {
 			cell11 = new PdfPCell();
 
 			c1 = new Chunk("Occupation:",f1);
-			c2 = new Chunk(investForm.getOccupation(),f2);
+			c2 = new Chunk(getOccupationName(investForm.getOccupation()),f2);
 			p11 = new Phrase();
 			p11.add(c1);
 			p11.add(c2);
@@ -977,7 +987,7 @@ public class BseAOFGenerator {
 
 			table4.setWidths(columnWidths4);
 
-//			cell11 = new PdfPCell(new Paragraph("",f1));
+			//			cell11 = new PdfPCell(new Paragraph("",f1));
 			cell11 = new PdfPCell();
 			cell11.setHorizontalAlignment(Element.ALIGN_CENTER);
 			cell11.setPaddingLeft(10);
@@ -987,29 +997,29 @@ public class BseAOFGenerator {
 			cell11.setBorderColor(BaseColor.BLACK);
 			Image img1;
 			if(investForm.getCustomerSignature()!=""){
-			try {
-				Base64 decoder = new Base64();
-			    byte[] imageByte = decoder.decode(investForm.getCustomerSignature().split(",")[1]);
-				img1 = Image.getInstance(imageByte);
-//				img = Image.get
-				img1.setAlt("FREEMI AOF FORM");
-				Chunk c21 = new Chunk(img1, 1, 1);
-				Paragraph p21 = new Paragraph();
-				
-				//p21.setPaddingTop(15);
-				p21.add(c21);
-				cell11.addElement(p21);
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} 
+				try {
+					Base64 decoder = new Base64();
+					byte[] imageByte = decoder.decode(investForm.getCustomerSignature().split(",")[1]);
+					img1 = Image.getInstance(imageByte);
+					//				img = Image.get
+					img1.setAlt("FREEMI AOF FORM");
+					Chunk c21 = new Chunk(img1, 1, 1);
+					Paragraph p21 = new Paragraph();
+
+					//p21.setPaddingTop(15);
+					p21.add(c21);
+					cell11.addElement(p21);
+				} catch (MalformedURLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} 
 			}else{
 				cell11.addElement(new Paragraph("",f2));
 			}
-			
+
 
 			table4.addCell(cell11);
 			cell11 = new PdfPCell(new Paragraph("",f1));
@@ -1042,6 +1052,7 @@ public class BseAOFGenerator {
 
 			// ---------------------------------------------
 		}catch(Exception e){
+			e.printStackTrace();
 			logger.error("Exception generated while crating AOF file",e);
 			flag="FAIL";
 		}finally {
@@ -1055,39 +1066,67 @@ public class BseAOFGenerator {
 
 	}	
 
+
+	private static String getOccupationName(String occupationCode){
+		String occName="NA";
+		System.out.println(occupationCode);
+		Map<String,String> occupationList = InvestFormConstants.occupationList;
+		for (String name : occupationList.keySet())  
+            System.out.println("key: " + name); 
+		
+		occName = occupationList.get(occupationCode);
+		System.out.println(occName);
+		return occName;
+
+	}
+	
+	private static String getHoldingMode(String holdingMode){
+		String holding="NA";
+		System.out.println(holdingMode);
+		Map<String,String> holdingList = InvestFormConstants.holdingMode;
+		
+		for (String name : holdingList.keySet())  
+            System.out.println("key: " + name); 
+		
+		holding = holdingList.get(holdingMode);
+		System.out.println(holding);
+		return holding;
+
+	}
+
 /*
 	public static void main(String[] args) {
 		//String k = "<html><body> This is my Project </body></html>";
 
 
 		try {
-FileInputStream s = new FileInputStream(new File("E:\\A\\\\PDFG\\\\htm1.txt"));
-BufferedReader br = new BufferedReader( new InputStreamReader(s));
-StringBuilder sb = new StringBuilder();
-String line;
-while(( line = br.readLine()) != null ) {
-sb.append( line );
-sb.append( '\n' );
-}
-br.close();
-k = sb.toString();
-}catch(Exception e) {
+			FileInputStream s = new FileInputStream(new File("E:\\AOF\\\\htm1.txt"));
+			BufferedReader br = new BufferedReader( new InputStreamReader(s));
+			StringBuilder sb = new StringBuilder();
+			String line;
+			while(( line = br.readLine()) != null ) {
+				sb.append( line );
+				sb.append( '\n' );
+			}
+			br.close();
+			k = sb.toString();
+		}catch(Exception e) {
 
-}
-		 
+		}
+
 		try {
 
-OutputStream file = new FileOutputStream(new File("D:\\DEBA\\PDFG\\Test.pdf"));
-Document document = new Document();
-PdfWriter writer = PdfWriter.getInstance(document, file);
-document.open();
-InputStream is = new ByteArrayInputStream(k.getBytes());
-XMLWorkerHelper.getInstance().parseXHtml(writer, document, is);
-document.close();
-file.close();
-} catch (Exception e) {
-e.printStackTrace();
-}
+			FileOutputStream file = new FileOutputStream(new File("D:\\DEBA\\PDFG\\Test.pdf"));
+			Document document = new Document();
+			PdfWriter writer = PdfWriter.getInstance(document, file);
+			document.open();
+			InputStream is = new ByteArrayInputStream(k.getBytes());
+			XMLWorkerHelper.getInstance().parseXHtml(writer, document, is);
+			document.close();
+			file.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		AddressDetails a =new AddressDetails();
 		//		Nominee
 
@@ -1100,8 +1139,8 @@ e.printStackTrace();
 		b.setBankCity("kolkata");
 		b.setIfscCode("ICIC23232");
 		b.setBankName("State bank of INdia");
-		
-		
+
+
 		MFNominationForm n = new MFNominationForm();
 		n.setNomineeName("SUMANTA MAHANTY");
 		n.setNomineeRelation("adasdasd");
@@ -1111,8 +1150,9 @@ e.printStackTrace();
 		m.setEmail("asdasd@g.com");
 		m.setPan2("3sdfsdfs");
 		m.setApplicant2("madhuparna");
-		
-		
+		m.setHoldingMode("SI");
+		m.setOccupation("02");
+
 		a.setAddress1("82");
 		a.setAddress2("ss sarani");
 		a.setAddress3("haiderpara");
@@ -1124,10 +1164,10 @@ e.printStackTrace();
 		m.setBankDetails(b);
 		m.setNominee(n);
 		m.setInvName("asdas asdasd");
-		aofGenerator(m,"232323", "","VERIFIED","E:/AOF/");
+		aofGenerator(m,"232323", "E:/BITBUCKET REPOSITORY/freemi/src/main/webapp/resources/images/freemi.png","VERIFIED","E:/AOF/");
 
-	}
+	}*/
 
 
-*/
+
 }

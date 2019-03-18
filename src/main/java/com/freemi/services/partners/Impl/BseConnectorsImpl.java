@@ -136,7 +136,7 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 	}
 
 	@Override
-	public String uploadAOFForm(String mobileNumber, String aoffolderLocation, String clientCode) {
+	public BseAOFUploadResponse uploadAOFForm(String mobileNumber, String aoffolderLocation, String clientCode) {
 		logger.info("Convert AOF form details to BSE format and process");
 		String flag="SUCCESS";
 		BseAOFUploadResponse aofresp = new BseAOFUploadResponse();
@@ -148,8 +148,8 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 				BseAOFUploadRequest r = BseBeansMapper.AOFFormtoBseBeanMapper(filearray, clientCode);
 				String responseText = RestClientBse.uploadAOF(r);
 				logger.info("Response for AOF upload against customer : "+ clientCode + " : "+ responseText);
-//				BseBeansMapper.BseAOFUploadResponsetoBean(aofresp, responseText);
-				if(!responseText.equalsIgnoreCase("Uploaded")){
+				BseBeansMapper.BseAOFUploadResponsetoBean(aofresp, responseText);
+				if(!aofresp.getStatusCode().equalsIgnoreCase("100")){
 //					logger
 					flag="FAIL";
 				}
@@ -163,7 +163,7 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 			logger.info("AOF File does not exist for upload!");
 			flag="NO_FILE";
 		}
-		return flag;
+		return aofresp;
 	}
 	
 	@Override
@@ -215,6 +215,38 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 			bseresponse.setRemarks("BSE Service is disabled");
 		}
 		return bseresponse;
+	}
+
+	@Override
+	public String generateOTPForLogin(String userid) {
+		/*logger.info("Get OTP for Freemi Portal Login for user id"+ userid );
+		String response = "";
+		BseApiResponse bseresponse = new BseApiResponse();
+		if(env.getProperty(CommonConstants.BSE_ENABLED).equalsIgnoreCase("Y")){
+			try{
+//				BsePaymentStatus requestForm=  BseBeansMapper.BsePaymentStatusRequestToBse(clientId, orderNo);
+				BseEMandateRegistration registerForm = BseBeansMapper.bankDetailsToBseBeans(bankDetails, amount, clientCode,startDate,endDate);
+				logger.info("Begin BSE service invoke process for payment status");
+				response = RestClientBse.eMandateRegistration(registerForm);
+				bseresponse= BseBeansMapper.emandateRegResponseToBean(response);
+				
+			}catch(Exception e){
+				logger.error("Failed during proceesing of BSE SIP registration details to BSE platform",e);
+				//			result="BSE_CONN_FAIL";
+				response= "ERROR";
+			}
+		}else{
+			logger.info("BSE connction is currently disabled");
+			bseresponse.setStatusCode(CommonConstants.BSE_API_SERVICE_DISABLED);
+			bseresponse.setRemarks("BSE Service is disabled");
+		}*/
+		return null;
+	}
+
+	@Override
+	public String verifyOTPForLogin(String userid) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 /*

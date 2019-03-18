@@ -18,6 +18,7 @@ import com.freemi.entity.bse.BseOrderPaymentRequest;
 import com.freemi.entity.bse.BsePaymentStatus;
 import com.freemi.entity.bse.BseRegistrationMFD;
 import com.freemi.entity.bse.BseSipOrderEntry;
+import com.google.gson.JsonObject;
 
 public class RestClientBse {
 
@@ -29,6 +30,71 @@ public class RestClientBse {
 	//	private final String SERVICE_URL1 = "http://localhost:8080/freemibackend";
 	private static final String SERVICE_URL1 = "http://dev.freemi.in:8090/bsemfservice";
 
+	
+	public static String otpGeneration(String userid){
+		logger.info("Beginning process to send reuest to bse service for OTP..");
+
+		final String url = SERVICE_URL1 + "/generateotp";
+		ObjectMapper mapper = new ObjectMapper();
+		RestTemplate restTemplate = new RestTemplate();
+		String formdata = null;
+		ResponseEntity<?> response = null;
+		String returnRes="FAIL";
+		JsonObject form = new  JsonObject();
+		form.addProperty("mobile", userid);
+		form.addProperty("mail", "");
+		
+		formdata = form.toString();
+		
+		logger.info("OTP Login form- "+ formdata);
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
+		HttpEntity<String> entity = new HttpEntity<String>(formdata,headers);
+
+		if(CommonConstants.BSE_CALL_TEST_ENABLED.equalsIgnoreCase("N")){
+			response= restTemplate.postForEntity(url, entity,  String.class);
+			returnRes=response.getBody().toString();
+			logger.info("Response- "+ response.getBody().toString());
+			
+		}else{
+			returnRes = "OTP=123456";
+		}
+//		returnRes = "OTP=123456";
+		return returnRes;
+	}
+	
+	
+	public static String otpverify(String userid,String otp){
+		logger.info("Beginning process to send reuest to bse service for OTP.. "+ userid);
+
+		final String url = SERVICE_URL1 + "/validateotp";
+		ObjectMapper mapper = new ObjectMapper();
+		RestTemplate restTemplate = new RestTemplate();
+		String formdata = null;
+		ResponseEntity<?> response = null;
+		String returnRes="FAIL";
+		JsonObject form = new  JsonObject();
+		form.addProperty("mobile", userid);
+		form.addProperty("otpnum", otp);
+		
+		formdata = form.toString();
+		
+		logger.info("OTP for login verification- "+ formdata);
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
+		HttpEntity<String> entity = new HttpEntity<String>(formdata,headers);
+
+		if(CommonConstants.BSE_CALL_TEST_ENABLED.equalsIgnoreCase("N")){
+			response= restTemplate.postForEntity(url, entity,  String.class);
+			returnRes=response.getBody().toString();
+			logger.info("Response for OTP verification- "+ response.getBody().toString());
+			
+		}else{
+			returnRes = "Entered Otp is NOT valid. Please Retry!";
+		}
+//		returnRes = "OTP=123456";
+		return returnRes;
+	}
 
 	public static String registerUser(BseRegistrationMFD form){
 		logger.info("Beginning process to send reuest to bse service for registration..");
@@ -224,7 +290,11 @@ public class RestClientBse {
 			returnRes=response.getBody().toString();
 			logger.info("Response for AOF upload- "+ response.getBody().toString());
 		}else{
-			returnRes = "Uploaded";
+//			returnRes = "100|File Uploaded Successfully.";
+//			returnRes="101|Invalid FileType";
+//			returnRes="101|FAILED: PAN NO ALREADY APPROVED";
+			returnRes = "101|FAILED: IMAGE IS ALREADY AVAILABLE AND IMAGE STATUS IS PENDING";
+			
 		}
 		return returnRes;
 	}

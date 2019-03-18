@@ -6,7 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.freemi.entity.general.ClientSystemDetails;
-import com.freemi.entity.general.MFInvestForm;
+import com.freemi.entity.general.InvestmentFormGeneral;
 
 public class CommonTask {
 	private static final Logger logger = LogManager.getLogger(CommonTask.class);
@@ -51,7 +51,7 @@ public class CommonTask {
 		
 	}
 	
-	public static boolean validateInvestForm(MFInvestForm formData){
+	public static boolean validateInvestForm(InvestmentFormGeneral formData){
 		
 		/*int count=0;
 		boolean status=false;

@@ -103,7 +103,7 @@ public class ProfileManageController{
 			
 //			User profile data collection from DB
 			try{
-				UserProfile profile = bseEntryManager.getCustomerDetailsByMobile(session.getAttribute("userid").toString());
+				UserProfile profile = bseEntryManager.getCustomerProfileDetailsByMobile(session.getAttribute("userid").toString());
 				
 				model.addAttribute("profileBasic", profile);
 				model.addAttribute("profileAccount", profile);

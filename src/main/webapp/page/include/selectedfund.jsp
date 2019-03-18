@@ -1,4 +1,5 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!-- Modal -->
 <div class="modal fade" id="myModal" role="dialog"
 	style="padding-right: 0;">
@@ -7,7 +8,7 @@
 		<!-- Modal content-->
 		<div class="modal-content">
 			<div class="modal-header  mf-modal-title-custom">
-				<span class="modal-title" style="margin: auto; padding: 0px 5px;"><span
+				<span class="modal-title" style="margin: auto; padding: 0px 5px;font-weight: 400;"><span
 					id="schemeNameTitle"></span></span>
 				<button type="button" class="close" data-dismiss="modal">
 					<i class="far fa-times-circle"></i>
@@ -47,7 +48,7 @@
 							Investment amount (Minimum: <i class="fas fa-rupee-sign"></i><span
 								id="minvalreq" style="color: #dc7931;"></span>)
 						</div>
-						<div class="input-group input-group-sm mb-2">
+						<%-- <div class="input-group input-group-sm mb-2">
 							<div class="input-group-prepend">
 								<span class="input-group-text" id="inputGroup-sizing-sm"><i
 									class="fas fa-rupee-sign"></i> </span>
@@ -57,13 +58,21 @@
 								required="required" style="height: 2rem;"
 								aria-describedby="inputGroup-sizing-sm" />
 							<!-- <div id="amntmsg" style="color: red;"></div> -->
+						</div> --%>
+
+						<div class="md-form mb-3" style="margin-top: 0px;">
+							 <img class="img-fluid prefix" style="height: 2rem;" src="<c:url value="${contextcdn}/resources/images/invest/investment-funds.png"/>" ><form:input type="text" id="amount" path="investAmount"
+								class="form-control form-control-sm" value="2000" pattern="[0-9]*"
+								onkeyup="customamount();" required="required" maxlength="7"
+								placeholder="Investment amount" /> 
 						</div>
 
+
 						<div class="btn-group btn-group-sm btn-group-toggle"
-							data-toggle="buttons" id="radioamount">
-							<label class="btn btn-info active"> <input
-								type="radio" value="2000" name="options" id="option1"
-								autocomplete="off"> 2,000
+							data-toggle="buttons" id="radioamount" style="padding-left: 2.5rem;">
+							<label class="btn btn-info active"> <input type="radio"
+								value="2000" name="options" id="option1" autocomplete="off">
+								2,000
 							</label> <label class="btn btn-info"> <input type="radio"
 								name="options" value="5000" id="option2" autocomplete="off">
 								5,000
@@ -76,41 +85,56 @@
 							</label>
 						</div>
 					</div>
-					<div class="form-group">
+					<%-- <div class="form-group">
 						<label for="mobile" style="margin-bottom: 0; font-weight: 600;">Your
 							mobile number</label>
 						<form:input type="text" class="form-control form-control-sm"
 							id="mobile" path="mobile" style="height: 2rem;"
 							required="required" placeholder="10-digit mobile number"
 							maxlength="10" pattern="[0-9]*" />
-					</div>
-					<div class="form-group">
+					</div> --%>
+					
+					<div class="md-form mb-3">
+							 <img class="img-fluid prefix" style="height: 2rem;" src="<c:url value="${contextcdn}/resources/images/invest/fund_mobile.svg"/>" ><form:input type="text" class="form-control form-control-sm"
+							id="mobile" path="mobile" style="height: 2rem;"
+							required="required" placeholder="10-digit mobile number"
+							maxlength="10" pattern="[0-9]*" /> 
+						</div>
+					
+					<%-- <div class="form-group">
 						<label for="pan" style="margin-bottom: 0; font-weight: 600;">PAN
 							number</label>
 						<form:input path="pan" type="text"
 							class="form-control fomr-control-sm" id="panval"
 							style="height: 2rem;text-transform: uppercase;"
 							required="required" placeholder="PAN" maxlength="10;" />
-					</div>
+					</div> --%>
+					
+					<div class="md-form mb-3">
+							 <img class="img-fluid prefix" style="height: 1.7rem;" src="<c:url value="${contextcdn}/resources/images/invest/pan-card.png"/>" ><form:input path="pan" type="text"
+							class="form-control fomr-control-sm" id="panval"
+							style="height: 2rem;text-transform: uppercase;"
+							required="required" placeholder="PAN" maxlength="10;" />
+						</div>
 
 					<div class="form-group mb-1" id="sipbox">
 						<label for="sipDt" style="margin-bottom: 0; font-weight: 600;">SIP
 							Date</label>
 						<div class="btn-group btn-group-sm btn-group-toggle"
 							data-toggle="buttons" id="radiosip">
-							<label class="btn btn-primary"> <form:radiobutton
+							<label class="btn btn-mdb-color"> <form:radiobutton
 									value="2" path="sipDate" id="option1" autocomplete="off" /> 2
-							</label> <label class="btn btn-primary"> <form:radiobutton
+							</label> <label class="btn btn-mdb-color"> <form:radiobutton
 									value="5" path="sipDate" id="option2" autocomplete="off" /> 5
-							</label> <label class="btn btn-primary"> <form:radiobutton
+							</label> <label class="btn btn-mdb-color"> <form:radiobutton
 									value="7" path="sipDate" id="option3" autocomplete="off" /> 7
-							</label> <label class="btn btn-primary"> <form:radiobutton
+							</label> <label class="btn btn-mdb-color"> <form:radiobutton
 									value="10" path="sipDate" id="option4" autocomplete="off" />
 								10
-							</label> <label class="btn btn-primary"> <form:radiobutton
+							</label> <label class="btn btn-mdb-color"> <form:radiobutton
 									value="15" path="sipDate" id="option5" autocomplete="off" />
 								15
-							</label> <label class="btn btn-primary"> <form:radiobutton
+							</label> <label class="btn btn-mdb-color"> <form:radiobutton
 									value="25" path="sipDate" id="option6" autocomplete="off" />
 								25
 							</label>
@@ -123,7 +147,7 @@
 					</div>
 				</div>
 				<div class="modal-footer">
-					<form:button type="submit" class="btn btn-success btn-sm btn-block">BUY NOW <i
+					<form:button type="submit" class="btn peach-gradient btn-sm btn-block">BUY NOW <i
 							class="fas fa-shopping-cart"></i>
 					</form:button>
 				</div>

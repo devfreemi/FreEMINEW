@@ -62,24 +62,40 @@
 	<div class="row">
 		<div class="col-md-4 col-lg-4">
 			<div class="md-form mt-0">
-				<form:input type="text" path="pan1"
-					class="form-control form-control-sm" placeholder="Wealth Source"></form:input>
+				<form:select class="fatca-form-select form-control form-control-sm" id="holdingMode"
+							path="pan1" style="border-top: none; border-left: none; border-right: none;">
+							<form:option value="" selected="true">Income slab</form:option>
+							<form:option value="Single" >Single</form:option>
+							<form:option value="Single">Joint</form:option>
+							<%-- <form:options items="${holingNature}" /> --%>
+						</form:select>
+				
+				
 			</div>
 		</div>
 
 		<div class="col-md-4 col-lg-4">
 			<!-- Material input -->
 			<div class="md-form mt-0">
-				<form:input type="text" path="applicant1"
-					class="form-control form-control-sm" placeholder="Income slab"></form:input>
+				<form:select class="fatca-form-select form-control form-control-sm" id="holdingMode"
+							path="pan1" style="border-top: none; border-left: none; border-right: none;">
+							<form:option value="" selected="true">Income slab</form:option>
+							<form:option value="Single" >Single</form:option>
+							<form:option value="Single" >Joint</form:option>
+							<%-- <form:options items="${holingNature}" /> --%>
+						</form:select>
 			</div>
 		</div>
 
 		<div class="col-md-4 col-lg-4">
-			<!-- Material input -->
 			<div class="md-form mt-0">
-				<form:input type="text" path="applicant1"
-					class="form-control form-control-sm" placeholder="Occupation Type"></form:input>
+				<form:select class="fatca-form-select form-control form-control-sm" id="holdingMode"
+							path="pan1" style="border-top: none; border-left: none; border-right: none;">
+							<form:option value="" selected="true">Occupation type</form:option>
+							<form:option value="Single" >Single</form:option>
+							<form:option value="Single" >Joint</form:option>
+							<%-- <form:options items="${holingNature}" /> --%>
+						</form:select>
 			</div>
 		</div>
 	</div>

@@ -491,10 +491,10 @@ translate
     color: #ffffff;
     font-size: 16px;
     padding: 6px;
-    background: #FF416C;  /* fallback for old browsers */
-	background: -webkit-linear-gradient(to right, #FF4B2B, #FF416C);  /* Chrome 10-25, Safari 5.1-6 */
-	background: linear-gradient(to right, #FF4B2B, #FF416C); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-
+    background: #1f966a;  /* fallback for old browsers */
+	/* background: -webkit-linear-gradient(to right, #FF4B2B, #FF416C);  Chrome 10-25, Safari 5.1-6
+	background: linear-gradient(to right, #FF4B2B, #FF416C); W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+
+ */
 }
 
 .fund-data{
@@ -604,4 +604,23 @@ background: linear-gradient(to right, #F45C43, #EB3349); /* W3C, IE 10+/ Edge, F
   .purchase-history-table > td {
   border: 1px solid red;
 }
-  }
+
+.fatca-form-select{
+	border-top: transparent;
+    border-left: transparent;
+    border-right: transparent;
+}
+
+.fatca-form-select:focus{
+	border-top: none;
+    border-left: none;
+    border-right: none;
+	}
+
+.nav_style_top_funds	{
+	color: #ffffff;
+    font-weight: 500;
+    background: #249c5a;
+    padding: 2px;
+    border-radius: 2px;
+	}

@@ -74,6 +74,15 @@ public class BseBeansMapper {
 		clientFregirationForm.setCm_mobile(registrationForm.getMobile());
 		clientFregirationForm.setClientCountry("INDIA");
 		
+		
+//		Joint Holder
+		if(registrationForm.getHoldingMode().equals("JO") || registrationForm.getHoldingMode().equals("AS")  ){
+			clientFregirationForm.setClientPan2(registrationForm.getPan2());
+			clientFregirationForm.setClientAppname2(registrationForm.getApplicant2());
+		}
+		
+			
+			
 		return clientFregirationForm;
 	}
 	
@@ -214,9 +223,9 @@ public static BseSipOrderEntry transactionSIPOrderToBseBeans(SelectMFFund fundDe
 	public static BseAOFUploadRequest AOFFormtoBseBeanMapper(byte[] aoffile, String clientCode){
 		BseAOFUploadRequest response = new BseAOFUploadRequest();
 		StringBuffer fileName = new StringBuffer(CommonConstants.BSE_MEMBER_ID);
-		fileName.append(clientCode).append(new SimpleDateFormat("ddMMyyyy")).append(".TIFF");
+		fileName.append(clientCode).append(new SimpleDateFormat("ddMMyyyy").format(new Date())).append(".tiff");
 		response.setFlag("UCC");
-		response.setDocumentType("Image/TIFF");
+		response.setDocumentType("Image/tiff");
 		response.setMemberCode(CommonConstants.BSE_MEMBER_ID);
 		response.setClientCode(clientCode);
 		response.setFileName(fileName.toString());
@@ -245,8 +254,8 @@ public static BseSipOrderEntry transactionSIPOrderToBseBeans(SelectMFFund fundDe
 		List<String> res = Arrays.asList(responseText.split("\\|"));
 //		BseorderEntryResponse response = new BseorderEntryResponse();
 		
-		/*response.setStatusCode(res.get(0));
-		response.setPayUrl(res.get(1));*/
+		response.setStatusCode(res.get(0));
+		response.setStatusMessage(res.get(1));
 		
 		return response;
 		
