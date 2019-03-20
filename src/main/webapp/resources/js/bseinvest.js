@@ -315,15 +315,23 @@ function validateFundForm(){
 	
 //	console.log(radioValue);
 	if(radioValue == 'SIP'){
-		var sipdate = $("input[name='sipDate']:checked").val();
-		
+		/*var sipdate = $("input[name='sipDate']:checked").val();
+		console.log("SIp Date- "+ sipdate)
 		if(typeof sipdate === 'undefined'){
 			$("#selectmsg").text("Please select your SIP date");
 			return false;
 		}else{
-//			console.log(sipdate);
+			$("#selectmsg").text("");
+		}*/
+		var sipdate = $("#sipOtherDates :selected").text();
+//		console.log("SIp Date- "+ sipdate)
+		if(typeof sipdate === 'undefined'){
+			$("#selectmsg").text("Please select your SIP date");
+			return false;
+		}else{
 			$("#selectmsg").text("");
 		}
+		
 	}
 	
 //	validate amount
@@ -366,19 +374,42 @@ function validateFundForm(){
 
 
 
-function bseinvest(mfCode, mfName, lumpsumMinimum, amcCode, sipMin) {
+function bseinvest(mfCode, mfName, lumpsumMinimum, amcCode, sipMin,sipDates) {
 	console.log("Reached- " + mfCode + " " + mfName);
 	var radioValue = $("input[name='investype']:checked").val();
 //	console.log("Selected- " + radioValue);
+	console.log("SIP dates- "+ sipDates);
 	minsip=sipMin;
 	minlumpsum=lumpsumMinimum;
 	$("#myModal").modal();
 	$("#schemeNameTitle").text(mfName);
 	$("#schemeName").val(mfName);
 	
+	var dtarray = sipDates.split(",");
+	
+	
+	
+	var x = document.getElementById("sipOtherDates");
+	$("#sipOtherDates").empty();
+	/*
+	for (i = 0; i < x.length; i++) {
+		  x.remove(i);
+		}*/
+	
+	for(i=0;i<dtarray.length ; i++){
+//		console.log(dtarray[i]);
+		var option = document.createElement("option");
+		option.text = dtarray[i];
+		option.value = dtarray[i];
+		x.add(option);
+	}
+	x.selectedIndex = 1; 
 	
 	if (radioValue == 'SIP') {
 		$("#sipbox").show();
+		
+		
+		
 		$("#minvalreq").text(minsip);
 	} else if (radioValue == 'LUMPSUM') {
 		$("#sipbox").hide();

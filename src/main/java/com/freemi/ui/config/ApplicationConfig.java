@@ -32,32 +32,35 @@ public class ApplicationConfig {
     public JavaMailSender javaMailSender(){
     	logger.info("Loading mail config...");
     	
-    	JavaMailSenderImpl sender = new JavaMailSenderImpl();
-    	sender.setHost(env.getRequiredProperty(CommonConstants.MAIL_SERVER_HOST));
-    	sender.setPort(Integer.parseInt(env.getRequiredProperty(CommonConstants.MAIL_SERVER_PORT)));
-    	
-/*    	sender.setUsername(env.getProperty("spring.mail.username"));
-    	sender.setPassword(env.getProperty("spring.mail.password"));*/
-    	
     	Properties javaMailProperties = new Properties();
+    	JavaMailSenderImpl sender = new JavaMailSenderImpl();
+    	
     	
 //    	javaMailProperties.put(MailTemplaete.TLS_TRANSPORT_REQUIRED, env.getProperty(MailTemplaete.TLS_TRANSPORT_REQUIRED, "true"));
 //        javaMailProperties.put(MailTemplaete.AUTHENTICATION_REQUIRED, env.getProperty(MailTemplaete.AUTHENTICATION_REQUIRED, "true"));
         
     	javaMailProperties.put(CommonConstants.TLS_TRANSPORT_REQUIRED, env.getProperty(CommonConstants.TLS_TRANSPORT_REQUIRED));
         javaMailProperties.put(CommonConstants.AUTHENTICATION_REQUIRED, env.getProperty(CommonConstants.AUTHENTICATION_REQUIRED));
+        javaMailProperties.put("mail.transport.protocol", env.getProperty(CommonConstants.MAIL_SERVER_PROTOCOL));
+//        User during GODADDY
+//        javaMailProperties.put("mail.smtp.ssl.enable", "true");
         
-        javaMailProperties.put("mail.smtp.ssl.enable", "true");
-        javaMailProperties.put("mail.smtp.socketFactory.port", "465");
+//        User during AWS SES
+        javaMailProperties.put("mail.smtp.starttls.enable", "true");
+        
+        javaMailProperties.put("mail.smtp.socketFactory.port", env.getProperty(CommonConstants.MAIL_SERVER_PORT));
         javaMailProperties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
         
+        sender.setHost(env.getRequiredProperty(CommonConstants.MAIL_SERVER_HOST));
+    	sender.setPort(Integer.parseInt(env.getRequiredProperty(CommonConstants.MAIL_SERVER_PORT)));
         if((env.getProperty(CommonConstants.AUTHENTICATION_REQUIRED)).toLowerCase().equals("true")){
         	sender.setUsername(env.getProperty(CommonConstants.MAIL_SERVER_USERNAME));
-        	sender.setPassword(decryptPassword(env.getProperty(CommonConstants.MAIL_SERVER_USERPASSWORD)));
+//        	sender.setPassword(decryptPassword(env.getProperty(CommonConstants.MAIL_SERVER_USERPASSWORD)));
+        	sender.setPassword(env.getProperty(CommonConstants.MAIL_SERVER_USERPASSWORD));
         }
   
 //        javaMailProperties.put(MailTemplaete.MAIL_SERVER_PROTOCOL, env.getProperty(MailTemplaete.MAIL_SERVER_PROTOCOL));
-        javaMailProperties.put("mail.transport.protocol", env.getProperty(CommonConstants.MAIL_SERVER_PROTOCOL));
+        
 //        javaMailProperties.put("mail.debug", "true");
     	
         sender.setJavaMailProperties(javaMailProperties);

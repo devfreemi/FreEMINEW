@@ -117,7 +117,7 @@
 							required="required" placeholder="PAN" maxlength="10;" />
 						</div>
 
-					<div class="form-group mb-1" id="sipbox">
+					<%-- <div class="form-group mb-1" id="sipbox">
 						<label for="sipDt" style="margin-bottom: 0; font-weight: 600;">SIP
 							Date</label>
 						<div class="btn-group btn-group-sm btn-group-toggle"
@@ -139,9 +139,25 @@
 								25
 							</label>
 						</div>
-						<div></div>
+						
 
-					</div>
+					</div> --%>
+					
+					
+					<div class="form-group col-md-6 mb-1" id="sipbox">
+
+						<div class="input-group" style="margin-left: 1.7rem;">
+								<div class="input-group-prepend">
+									<span class="input-group-text" id="basic-addon3">SIP DATES</span>
+								</div>
+								<form:select class="custom-select" id="sipOtherDates"
+									path="sipDate">
+									
+								</form:select>
+							</div>
+						</div>
+					
+					
 					<div>
 						<span id="selectmsg" style="color: red; font-size: 11px;"></span>
 					</div>

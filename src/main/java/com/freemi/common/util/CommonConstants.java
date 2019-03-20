@@ -14,6 +14,7 @@ public class CommonConstants {
 	public static final String MAIL_SERVER_USERNAME="spring.mail.username";
 	public static final String MAIL_SERVER_USERPASSWORD="spring.mail.password";
 	public static final String MAIL_SERVER_PROTOCOL="spring.mail.protocol";
+	public static final String MAIL_ACCOUNT_ID="spring.mail.account";
 	
 	public static final String IS_MAIL_ENABLED = "mail.smtp.auth.required"; 
 	public static final String AUTHENTICATION_REQUIRED="mail.smtp.auth";

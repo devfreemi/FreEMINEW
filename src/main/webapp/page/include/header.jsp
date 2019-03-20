@@ -10,7 +10,7 @@ background: linear-gradient(to left, #1CB5E0, #000046); /* W3C, IE 10+/ Edge, Fi
 }
 </style>
 <nav class="mb-1 navbar navbar-expand-lg navbar-dark new-header">
-<div class="container">
+<div class="container-fluid">
   <a class="navbar-brand" href="/" style="padding: 0px;"><img
 			src="<c:url value="${contextcdn}/resources/images/freemi.png"/>" style="height: 55px;"
 			class="img-fluid" alt="FreEMI logo" > <span class="beta-styling"> <sub> <i>beta</i>

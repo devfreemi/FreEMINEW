@@ -35,7 +35,7 @@
 	href="<c:url value="${contextcdn}/resources/css/login.component.css"/>"
 	rel="stylesheet">
 
-<script src="<c:url value="${contextcdn}/resources/js/login.js" />"></script>
+<script src="<c:url value="${contextcdn}/resources/js/login.js" />" type="text/javascript" defer="defer"></script>
 <style>
 .timer_style {
 	text-align: center;
@@ -79,7 +79,7 @@
 					<%-- action="${pageContext.request.contextPath}/login.do" --%>
 
 					<div class="md-form mb-1">
-						<i class="fas fa-mobile-alt prefix" style="padding-left: 5px;"
+						<i class="fas fa-mobile-alt prefix" style="padding-left: 5px;color: #5a5a5a;"
 							id="mobico"></i>
 						<form:input type="text" style="padding-left: 5px;"
 							id="validationCustomUsername"
@@ -92,7 +92,7 @@
 
 
 					<div class="md-form" id="passbox">
-						<i class="fas fa-lock prefix" id="passico"></i>
+						<i class="fas fa-lock prefix" id="passico" style="color: #5a5a5a;"></i>
 						<form:input type="password" style="padding-left: 5px;"
 							class="form-control form-control-sm" path="userpassword"
 							id="validationPassword" maxlength="24" oninput="validateForm();"
@@ -121,7 +121,7 @@
 					<div class="form-group row" id="otpChoice">
 						<label for="otplogin"
 							class="col-2 col-md-1 col-lg-1 col-form-label"><i
-							class="fas fa-sms" style="font-size: 24px;"></i></label>
+							class="fas fa-sms" style="font-size: 24px;color: #5a5a5a;"></i></label>
 						<div
 							class="col-8 col-md-8 col-lg-8 custom-control custom-checkbox"
 							style="margin-top: 7px; font-weight: 500; color: #ea6f25;">
@@ -158,7 +158,7 @@
 					<div class="login_buttons">
 						<button type="submit" id="loginsubmit"
 							class="btn btn-sm btn-block blue-gradient">
-							<i class="fas fa-lock"></i> Login
+							<span id="loginbasic" style="display: block;"><i class="fas fa-lock"></i> Login</span><span id="loginspin" style="display: none;">Please wait <i class="fas fa-spinner fa-spin"></i></span>
 						</button>
 
 						<a href="${pageContext.request.contextPath}/register"
@@ -173,71 +173,6 @@
 				</form:form>
 				</div>
 				
-				<div id="otpSubmitForm" style="display: none;">
-				
-				<form:form method="POST" action="#" commandName="otpForm"
-					onsubmit="return submitOtp(event);">
-					<%-- action="${pageContext.request.contextPath}/login.do" --%>
-
-					<div class="md-form mb-1">
-						<i class="fas fa-mobile-alt prefix" style="padding-left: 5px;"
-							id="mobico"></i>
-						<form:input type="text" style="padding-left: 5px;"
-							id="validationCustomUsername2"
-							class="form-control form-control-sm" path="usermobile"
-							onkeyup="validateForm();" pattern="[0-9]{10}" maxlength="10"
-							autocomplete="off" placeholder="Mobile number"></form:input>
-						<!-- <label for="validationCustomUsername">Mobile number</label> -->
-					</div>
-					<span id="msg1" style="font-size: 11px;"></span>
-
-					<div class="md-form form-group mt-0 animated fadeIn " id="otpbox">
-						<img
-							src="<c:url value="${contextcdn}/resources/images/otp-service.svg"/>"
-							class="img-fluid prefix" style="height: 2rem;" alt="OTP">
-						<form:input type="password" style="padding-left: 5px;"
-							class="form-control form-control-sm mr-sm-3" path="otpVal"
-							id="validationOTP" maxlength="6" oninput="validateForm();"
-							autocomplete="off" placeholder="OTP"
-							aria-describedby="validationOTP"></form:input>
-						<!-- <small id="validationPassword" class="text-muted">Resend </small> -->
-						<!-- <label for="validationPassword">Your password</label> -->
-						<div class="timer_style">
-							<span id="timer"></span>
-						</div>
-
-					</div>
-
-					<form:hidden path="returnUrl"/>
-
-					<div class="row">
-						<div class="col-md-12 col-lg-12">
-							<a class="password_reset"
-								href="${pageContext.request.contextPath}/forgotPassword">Forgot
-								Password? </a>
-						</div>
-					</div>
-
-					<!-- <div style="margin-bottom: 20px;">
-						<div class="g-recaptcha" data-sitekey="6LdvUoQUAAAAADk77XVS_YlkPTluN9EYCawk1xo6"></div>
-					</div> -->
-					<div class="login_buttons">
-						<button type="submit" id="otpsubmit"
-							class="btn btn-sm btn-block blue-gradient">
-							<i class="fas fa-lock"></i> VERIFY OTP
-						</button>
-
-						<a href="${pageContext.request.contextPath}/register"
-							style="text-decoration: none; margin-top: 10px">
-							<button type="button"
-								class="btn btn-sm btn-block purple-gradient"
-								style="text-decoration: none;">
-								<i class="fas fa-user-plus"></i> Sign Up
-							</button>
-						</a>
-					</div>
-				</form:form>
-				</div>
 				
 				
 			</div>

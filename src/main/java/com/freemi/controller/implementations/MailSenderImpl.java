@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.mail.MessagingException;
+import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
@@ -54,7 +55,7 @@ public class MailSenderImpl implements com.freemi.controller.interfaces.MailSend
 		if(replacementContent!=null){
 			mail.setModel(replacementContent);
 		}
-		mail.setFrom(address!=null?(address).toString():(new InternetAddress("no-reply@freemi.in", "FreEMI")).toString());
+		mail.setFrom(address!=null?(address).toString():(new InternetAddress(env.getProperty(CommonConstants.MAIL_ACCOUNT_ID), "FreEMI")).toString());
 		mail.setTo(to);
 
 		if(cc!=null){
@@ -95,7 +96,6 @@ public class MailSenderImpl implements com.freemi.controller.interfaces.MailSend
 		return mailContent.toString();
 	}
 
-
 	private void sendMail(Mail mail, MimeMessage message){
 		try{
 			if(env.getProperty(CommonConstants.EMAIL_SEND_ENABLED).equalsIgnoreCase("Y")){
@@ -108,6 +108,7 @@ public class MailSenderImpl implements com.freemi.controller.interfaces.MailSend
 			logger.error("Failed to send mail to : "+ mail.getTo()+"\n",e);
 		}
 	}
+	
 
 	@Async
 	@Override
@@ -115,7 +116,7 @@ public class MailSenderImpl implements com.freemi.controller.interfaces.MailSend
 
 		try{
 			if(userDetails.getEmail()!=null){
-				InternetAddress address = new InternetAddress("no-reply@freemi.in", "FreEMI");
+				InternetAddress address = new InternetAddress(env.getProperty(CommonConstants.MAIL_ACCOUNT_ID), "FreEMI");
 
 				Map<String, Object> replacementContent= new HashMap<String,Object>();
 				String date = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
@@ -148,7 +149,7 @@ public class MailSenderImpl implements com.freemi.controller.interfaces.MailSend
 	public void loginOTPMail(String userid, String otp,String emailId, String validateTime) throws InterruptedException {
 		try{
 			if(userid!=null){
-				InternetAddress address = new InternetAddress("no-reply@freemi.in", "FreEMI");
+				InternetAddress address = new InternetAddress(env.getProperty(CommonConstants.MAIL_ACCOUNT_ID), "FreEMI");
 
 				Map<String, Object> replacementContent= new HashMap<String,Object>();
 //				String date = new SimpleDateFormat("dd/MM/yyyy").format(new Date());

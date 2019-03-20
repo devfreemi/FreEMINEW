@@ -82,7 +82,7 @@
 						<i class="fas fa-user prefix" id="userico"></i>
 						<form:input type="text" style="padding-left: 5px;" id="username"
 							class="form-control form-control-sm" path="fullName"
-							onkeyup="validateForm();" pattern="[a-zA-Z0-9 .]" maxlength="128"
+							onkeyup="validateForm();" pattern="[a-zA-Z0-9 .]*" maxlength="128"
 							autocomplete="off" placeholder="Full Name" ></form:input>
 							<!-- <label for="username">Full Name</label> -->
 					</div>

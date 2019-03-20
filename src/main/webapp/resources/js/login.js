@@ -109,15 +109,15 @@ function submitLogin(e){
 	var returnUrl = document.forms["login"]["returnUrl"].value;
 	var otploginChosen = $("#otplogin").is(":checked");
 	var token =  $('input[name="_csrf"]').attr('value'); 
-	console.log("OTP login- "+ otploginChosen);
-	console.log(token);
+//	console.log("OTP login- "+ otploginChosen);
+//	console.log(token);
 	$("#loginmsg").text("");
 	
 	
 	if(otploginChosen){
 		token.pass="OTP_LOGIN";
 	}
-
+	
 	if(!otpsubmit){
 		$.ajaxSetup({
 			headers:
@@ -126,24 +126,23 @@ function submitLogin(e){
 
 		var request;
 		var str = $("#login").serialize();
-		console.log(str);
+//		console.log(str);
 		
 		request = $.ajax({
 			url: "/products/login2.do",
 			method: "POST",
 			data:str,
-			async: false,
+			async: true,
 			datatype: "json",
 			beforeSend: function() {
-		        // setting a timeout
-				document.getElementById("loginsubmit").disabled = true;
+				disableButon();
 		    }
 		});
 
 		request.done(function(msg) {
-			console.log(msg);
+//			console.log(msg);
 			if(msg=="OTP_SENT"){
-
+				$("#loginmsg").text("OTP sent to your registered email.");
 				document.getElementById("passbox").style.display = 'none';
 				document.getElementById("otpChoice").style.display = 'none';
 				document.getElementById("otpbox").style.display = 'block';
@@ -151,15 +150,6 @@ function submitLogin(e){
 				$("#otpsubmitstat").val(true);
 				otpsubmit = true;
 				countDownTimer();
-				
-				/*document.getElementById("loginFormBox").style.display = 'none';
-				document.getElementById("otpSubmitForm").style.display = 'block';
-				countDownTimer();
-				document.getElementById("loginsubmit").disabled = true;
-				document.getElementById("otpsubmit").disabled = false; 
-				document.getElementById("validationCustomUsername2").disabled = true;
-				otpsubmit = true;*/
-			/*	window.location.href = "/products/otp";*/
 				
 			}else if(msg=="SUCCESS"){
 				console.log("Redirect to: " +returnUrl);
@@ -173,15 +163,20 @@ function submitLogin(e){
 
 		request.fail(function(jqXHR, textStatus) {
 			alert("Request failed: " + textStatus);
+			
 //			location.reload();
 		});
 		
-		request.always(function(){
-			document.getElementById("loginsubmit").disabled = false;
+		request.always(function(msg){
+//			console.log("first step request done- "+msg);
+			$("#loginspin").hide();
+			$("#loginbasic").show();
+			$("#loginsubmit").prop("disabled", false);
 		});
+		
+		
 
 	}else{
-//		Submit OTP based authentication
 		$.ajaxSetup({
 			headers:
 			{ 'X-CSRF-TOKEN': token }
@@ -189,17 +184,16 @@ function submitLogin(e){
 
 		var request;
 		var str = $("#login").serialize();
-		console.log(str);
+//		console.log(str);
 		
 		request = $.ajax({
 			url: "/products/login2.do",
 			method: "POST",
 			data:str,
-			async: false,
+			async: true,
 			datatype: "json",
 			beforeSend: function() {
-		        // setting a timeout
-				document.getElementById("loginsubmit").disabled = true;
+				disableButon();
 		    }
 		});
 
@@ -210,17 +204,6 @@ function submitLogin(e){
 				document.getElementById("passbox").style.display = 'none';
 				document.getElementById("otpChoice").style.display = 'none';
 				document.getElementById("otpbox").style.display = 'block';
-//				document.getElementById("loginsubmit").disabled = true;
-				
-				
-				/*document.getElementById("loginFormBox").style.display = 'none';
-				document.getElementById("otpSubmitForm").style.display = 'block';
-				countDownTimer();
-				document.getElementById("loginsubmit").disabled = true;
-				document.getElementById("otpsubmit").disabled = false; 
-				document.getElementById("validationCustomUsername2").disabled = true;
-				otpsubmit = true;*/
-			/*	window.location.href = "/products/otp";*/
 				
 			}else if(msg=="SUCCESS"){
 				console.log("Redirect to: " +returnUrl);
@@ -244,34 +227,23 @@ function submitLogin(e){
 //			location.reload();
 		});
 		
-		request.always(function(){
-			document.getElementById("loginsubmit").disabled = false;
+		request.always(function(msg){
+//			console.log("AJAX requests process complete- "+ msg);
+			
+			if(msg!='SUCCESS'){
+				$("#loginsubmit").prop("disabled", false);
+				$("#loginspin").hide();
+				$("#loginbasic").show();
+			}
 		});
 
 
 		
 	}
-	/*
-	 $.post("/products/login", 
-			 {
-
-			 },
-			 function(data, status){
-
-		    alert("Data: " + data + "\nStatus: " + status);
-		  })
-		  .fail(
-										function(response) {
-											alert("Error- " +response);
-										});
-		  ;*/
-
+	
 	return false;
 
 }
-
-
-
 
 function countDownTimer(){
 	//var countDownDate = new Date("Jun 13, 2018 15:37:25").getTime();
@@ -303,4 +275,11 @@ function countDownTimer(){
 		}
 	}, 1000);
 
+}
+
+function disableButon(){
+	$("#loginbasic").hide();
+	$("#loginspin").show();
+	$("#loginsubmit").prop("disabled", true);
+	
 }

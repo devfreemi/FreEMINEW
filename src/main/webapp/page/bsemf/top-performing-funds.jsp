@@ -180,7 +180,7 @@
 								</div>
 
 								<button type="button" class="btn btn-info btn-sm mf-btn-custom"
-									onclick="bseinvest('${funds.schemeCode }','${funds.schemeName }', '${funds.lumpsumminPurchaseAmt }','${funds.amcCode }','${funds.sipMinInstallAmnt }');">
+									onclick="bseinvest('${funds.schemeCode }','${funds.schemeName }', '${funds.lumpsumminPurchaseAmt }','${funds.amcCode }','${funds.sipMinInstallAmnt }','${funds.sipDates}');">
 									INVEST</button>
 							</div>
 						</div>
