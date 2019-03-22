@@ -74,11 +74,10 @@ table.dataTable thead th, table.dataTable thead td {
 			<div class="col-md-12 col-lg-12"
 				style="margin: auto; margin-top: 30px;">
 				
-				
 				<div class="table-responsive dataTables_wrapper dt-bootstrap4 animated fadeIn"
 							style="margin-top: 30px;">
 							<table class="table table-striped table-sm" id="dtBasicExample">
-								<caption>Funds Purchase History</caption>
+								<caption>Funds Explorer</caption>
 								<thead>
 									<tr>
 										<th scope="col">Fund Name</th>
@@ -86,6 +85,7 @@ table.dataTable thead th, table.dataTable thead td {
 										<th scope="col">NAV</th>
 										<th scope="col">Minimum Investment</th>
 										<th scope="col">Action</th>
+									</tr>
 								</thead>
 								<tbody
 									style="font-size: 13px; font-family: sans-serif; font-weight: 400;">
@@ -124,8 +124,8 @@ table.dataTable thead th, table.dataTable thead td {
 			"columns": [
 			    { "orderable": true },
 			    { "orderable": false },
+			    { "orderable": false },
 			  /*   null,
-			    null,
 			    null,
 			    null,
 			    null, */

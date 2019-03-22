@@ -41,8 +41,8 @@ background: linear-gradient(to left, #1CB5E0, #000046); /* W3C, IE 10+/ Edge, Fi
           aria-expanded="false">Mutual Funds
         </a>
         <div class="dropdown-menu dropdown-secondary" aria-labelledby="navbarDropdownMenuLink-555">
-          <a class="dropdown-item" href="/products/mutual-funds/top-performing">Top Performing Funds</a>
-          <a class="dropdown-item" href="/products/mutual-funds/funds-explorer">All Funds</a>
+         <!--  <a class="dropdown-item" href="/products/mutual-funds/top-performing">Top Performing Funds</a> -->
+          <a class="dropdown-item" href="/products/mutual-funds/funds-explorer">Funds Explorer</a>
         </div>
       </li>
        <li class="nav-item dropdown" style="display: -webkit-inline-box;">

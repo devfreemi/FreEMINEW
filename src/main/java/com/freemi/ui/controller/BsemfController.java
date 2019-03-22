@@ -70,6 +70,7 @@ import com.freemi.entity.general.Registerform;
 import com.freemi.entity.investment.BseAllTransactionsView;
 import com.freemi.entity.investment.BseFundsScheme;
 import com.freemi.entity.investment.BseMFInvestForm;
+import com.freemi.entity.investment.BseMFSelectedFunds;
 import com.freemi.entity.investment.BseMFTop15lsSip;
 import com.freemi.entity.investment.BseMandateDetails;
 import com.freemi.entity.investment.BsemfTransactionHistory;
@@ -510,7 +511,7 @@ public class BsemfController {
 	}
 	
 	
-	@RequestMapping(value = "/mutual-funds/funds-explorer", method = RequestMethod.GET)
+	/*@RequestMapping(value = "/mutual-funds/funds-explorer", method = RequestMethod.GET)
 	public String getAllFundsExplorer(Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 
 		logger.info("MF All Funds Inventory");
@@ -543,7 +544,81 @@ public class BsemfController {
 
 		return returnUrl;
 
+	}*/
+	
+	@RequestMapping(value = "/mutual-funds/funds-explorer", method = RequestMethod.GET)
+	public String getSelectFundsExplorer(Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+
+		logger.info("MF All Funds Inventory");
+		
+		String returnUrl = "bsemf/select-fund-explorer";
+		
+		/*PageRequest p =new PageRequest(0, 200);
+		Pageable pg = p.first();*/
+		
+		List<BseMFSelectedFunds> funds=  bseEntryManager.getAllSelectedFunds();
+		System.out.println("Total selected funds to display- "+ (funds!=null?funds.size():"NULL returned"));
+		/*System.out.println("Paginated fundss- "+ b.getSize());
+		System.out.println("Total pages- "+ b.getTotalPages());
+		
+		List<BseFundsScheme> funds = b.getContent();*/
+		
+		SelectMFFund fundChoice = new SelectMFFund();
+		if(session.getAttribute("token")!=null){
+			fundChoice.setMobile(session.getAttribute("userid").toString());
+			try{
+				String panNumber = bseEntryManager.getCustomerPanfromMobile(fundChoice.getMobile());
+				fundChoice.setPan(panNumber);
+			}catch(Exception e){
+				logger.error("Database connect issue: unable to fetch customer PAN number", e);
+			}
+		}
+		
+		map.addAttribute("fundsexplorer", funds);
+		map.addAttribute("selectFund", fundChoice);
+		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
+
+		return returnUrl;
+
 	}
+	
+	@RequestMapping(value = "/mutual-funds/getFunds", method = RequestMethod.POST)
+	public String getFunds(Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+
+		logger.info("MF All Funds Inventory");
+		
+		String returnUrl = "bsemf/select-fund-explorer";
+		
+		PageRequest p =new PageRequest(0, 200);
+		Pageable pg = p.first();
+		
+		Page<BseFundsScheme> b=  bseEntryManager.getpaginatedFundsList(pg);
+		System.out.println("Paginated fundss- "+ b.getSize());
+		System.out.println("Total pages- "+ b.getTotalPages());
+		
+		List<BseFundsScheme> funds = b.getContent();
+		
+		SelectMFFund fundChoice = new SelectMFFund();
+		if(session.getAttribute("token")!=null){
+			fundChoice.setMobile(session.getAttribute("userid").toString());
+			try{
+				String panNumber = bseEntryManager.getCustomerPanfromMobile(fundChoice.getMobile());
+				fundChoice.setPan(panNumber);
+			}catch(Exception e){
+				logger.error("Database connect issue: unable to fetch customer PAN number", e);
+			}
+		}
+		
+		map.addAttribute("fundsexplorer", funds);
+		map.addAttribute("selectFund", fundChoice);
+		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
+
+		return returnUrl;
+
+	}
+	
+	
+	
 
 /*
 	@RequestMapping(value = "/mutual-funds/view-order-history", method = RequestMethod.GET)

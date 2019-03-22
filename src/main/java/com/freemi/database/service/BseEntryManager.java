@@ -14,6 +14,7 @@ import com.freemi.entity.general.UserProfile;
 import com.freemi.entity.investment.BseAllTransactionsView;
 import com.freemi.entity.investment.BseFundsScheme;
 import com.freemi.entity.investment.BseMFInvestForm;
+import com.freemi.entity.investment.BseMFSelectedFunds;
 import com.freemi.entity.investment.BseMFTop15lsSip;
 import com.freemi.entity.investment.BseMandateDetails;
 import com.freemi.entity.investment.BsemfTransactionHistory;
@@ -61,6 +62,8 @@ public interface BseEntryManager {
 	//BSE MF related operations
 	public List<MfTopFundsInventory> getTopMfFunds();
 	public List<BseMFTop15lsSip> getTopFunds();
+	public List<BseMFSelectedFunds> getAllSelectedFunds();
+	public List<BseMFSelectedFunds> getFundsByCategory(String category);
 	
 	public long getCurrentDayNextTransCount(Date date);
 	

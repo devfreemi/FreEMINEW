@@ -45,7 +45,7 @@
 				<div class="col-md-4 col-lg-4 outer_box">
 					<div class="box-dashboard box-style1 animated fadeIn">
 						<div class="header header-back1">
-							<h5>FreEMI Credit</h5>
+							<h5>Loans</h5>
 						</div>
 						<div class="box-body">
 							<div class="row">
@@ -66,7 +66,7 @@
 				<div class="col-md-4 col-lg-4 outer_box">
 					<div class="box-dashboard box-style2 animated fadeIn" id="dashbox2">
 						<div class="header header-back2">
-							<h5>Registry</h5>
+							<h5>Mutual Funds</h5>
 						</div>
 						<div class="box-body">
 							<!-- <div class="row">
@@ -98,7 +98,7 @@
 				<div class="col-md-4 col-lg-4 outer_box">
 					<div class="box-dashboard box-style3 animated fadeIn">
 						<div class="header header-back3">
-							<h5>F-Secure</h5>
+							<h5>Insurance</h5>
 						</div>
 						<div class="box-body">
 							<div class="row">
@@ -300,13 +300,13 @@
 					<ul class="nav nav-tabs" id="myTab" role="tablist">
 						<li class="nav-item"><a class="nav-link active" id="home-tab"
 							data-toggle="tab" href="#freemi" role="tab"
-							aria-controls="freemi" aria-selected="true">FreEMI</a></li>
+							aria-controls="freemi" aria-selected="true">Loans</a></li>
 						<li class="nav-item"><a class="nav-link" id="profile-tab"
 							data-toggle="tab" href="#fsecure" role="tab"
-							aria-controls="fsecure" aria-selected="false">F-Secure</a></li>
+							aria-controls="fsecure" aria-selected="false">Insurance</a></li>
 						<li class="nav-item"><a class="nav-link" id="contact-tab"
 							data-toggle="tab" href="#registry" role="tab"
-							aria-controls="registry" aria-selected="false">Registry</a></li>
+							aria-controls="registry" aria-selected="false">Mutual Funds</a></li>
 					</ul>
 
 					<div class="tab-content" id="myTabContent">

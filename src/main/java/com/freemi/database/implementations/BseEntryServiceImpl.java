@@ -36,6 +36,7 @@ import com.freemi.database.interfaces.BseCustomerNomineeCrudRepository;
 import com.freemi.database.interfaces.BseFundsExplorerRepository;
 import com.freemi.database.interfaces.BseMandateCrudRepository;
 import com.freemi.database.interfaces.BseOrderEntryResponseRepository;
+import com.freemi.database.interfaces.BseSelectedCategoryFundsRepository;
 import com.freemi.database.interfaces.BseTop15lsSipViewCrudReositry;
 import com.freemi.database.interfaces.BseTransCountCrudRepository;
 import com.freemi.database.interfaces.BseTransCrudRepository;
@@ -54,6 +55,7 @@ import com.freemi.entity.investment.BseAllTransactionsView;
 import com.freemi.entity.investment.BseDailyTransCounter;
 import com.freemi.entity.investment.BseFundsScheme;
 import com.freemi.entity.investment.BseMFInvestForm;
+import com.freemi.entity.investment.BseMFSelectedFunds;
 import com.freemi.entity.investment.BseMFTop15lsSip;
 import com.freemi.entity.investment.BseMandateDetails;
 import com.freemi.entity.investment.BseOrderEntryResponse;
@@ -117,6 +119,9 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	
 	@Autowired
 	BseFundsExplorerRepository bseFundsExplorerRepository;
+	
+	@Autowired
+	BseSelectedCategoryFundsRepository bseSelectedCategoryFundsRepository;
 	
 	/*@Autowired
 	MailSenderHandler mailSenderHandler;*/
@@ -713,6 +718,27 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		}
 
 		return fundDetails;
+	}
+
+	@Override
+	public List<BseMFSelectedFunds> getAllSelectedFunds() {
+		logger.info("Querying to schemes by page wise- ");
+		List<BseMFSelectedFunds> fundDetails = null;
+		try{
+			
+			fundDetails = bseSelectedCategoryFundsRepository.findAll();
+			
+		}catch(Exception e){
+			logger.error("Failed to query database to fetch sellected category funds",e);
+		}
+
+		return fundDetails;
+	}
+
+	@Override
+	public List<BseMFSelectedFunds> getFundsByCategory(String category) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	/*		public static void main(String[] args){
