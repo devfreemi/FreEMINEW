@@ -127,7 +127,7 @@ table.dataTable thead th, table.dataTable thead td {
 							<!-- <table class="table table-striped table-sm" id="dtBasicExample"> -->
 							<table class="table table-striped table-sm">
 								<%-- <caption>Funds Explorer</caption> --%>
-								<thead class="purple-gradient text-white">
+								<thead class="success-color-dark #007E33 text-white">
 									<tr>
 										<th scope="col">Fund Name</th>
 										<th scope="col">SchemeType</th>
@@ -175,7 +175,7 @@ table.dataTable thead th, table.dataTable thead td {
 							<!-- <table class="table table-striped table-sm" id="dtBasicExample"> -->
 							<table class="table table-striped table-sm">
 								<%-- <caption>Funds Explorer</caption> --%>
-								<thead class="blue-gradient text-white">
+								<thead class="primary-color-dark #0d47a1 text-white">
 									<tr>
 										<th scope="col">Fund Name</th>
 										<th scope="col">SchemeType</th>

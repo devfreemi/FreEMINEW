@@ -1,7 +1,5 @@
 package com.freemi.ui.config;
 
-import java.util.ResourceBundle;
-
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
@@ -15,7 +13,6 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
-import org.springframework.web.servlet.view.ResourceBundleViewResolver;
 
 @Configuration
 @EnableWebMvc
@@ -92,4 +89,5 @@ public ViewResolver configureViewResolver1() {
 		registry.addInterceptor(new DeviceInterceptorCustom());
 		registry.addInterceptor(new RequestInceptorCustom());
 	}
+	
 }

@@ -18,6 +18,7 @@ import com.freemi.entity.investment.BseMFSelectedFunds;
 import com.freemi.entity.investment.BseMFTop15lsSip;
 import com.freemi.entity.investment.BseMandateDetails;
 import com.freemi.entity.investment.BsemfTransactionHistory;
+import com.freemi.entity.investment.MFFatcaDeclareForm;
 import com.freemi.entity.investment.SelectMFFund;
 import com.freemi.entity.investment.TransactionStatus;
 
@@ -26,6 +27,9 @@ public interface BseEntryManager {
 	
 	//Customer records related crud operation
 	public String saveCustomerDetails(BseMFInvestForm customerForm);
+	public BseApiResponse saveFatcaDetails(BseMFInvestForm fatcaForm);
+	public String updateFatcaStatus(String clientId, String status, String responseCode, String message);
+	
 	public List<SelectMFFund> getMFOrderHistory(String customerId);
 	public UserProfile getCustomerProfileDetailsByMobile(String mobile);
 	public List<BseMFInvestForm> getCustomerDetails(String customerId);
@@ -43,7 +47,7 @@ public interface BseEntryManager {
 	public BseMFInvestForm getCustomerInvestFormData(String mobile);
 	
 	public UserBankDetails getCustomerBankDetails(String clientCode);
-	public BseApiResponse updateEmdandateStatus(String clientCode, String accNumber);
+	public BseApiResponse updateEmdandateStatus(String clientCode,String mandateType, String accNumber);
 	
 	public String upddateCustomerFormSignature(String mobile, String pan, String signatureData);
 	public String uploadAOFFormStatus(String mobileNumber, String status);

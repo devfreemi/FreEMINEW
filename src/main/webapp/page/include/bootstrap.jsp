@@ -2,6 +2,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="dns-prefetch" href="https://www.freemi.in">
 <meta name="theme-color" content="#38d2ed">
+
 <link rel="icon" type="image/x-icon" href="/products/resources/images/favicon.ico">
 
 <!-- Version for upgrade with MDB -->

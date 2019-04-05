@@ -159,11 +159,11 @@
 					
 					
 					<div>
-						<span id="selectmsg" style="color: red; font-size: 11px;"></span>
+						<span id="selectmsg" style="color: red; font-size: 11px;font-weight: 400;"></span>
 					</div>
 				</div>
 				<div class="modal-footer">
-					<form:button type="submit" class="btn peach-gradient btn-sm btn-block">BUY NOW <i
+					<form:button type="submit" class="btn rgba(244, 67, 54, 0.7) rgba-red-strong btn-sm btn-block">BUY NOW <i
 							class="fas fa-shopping-cart"></i>
 					</form:button>
 				</div>

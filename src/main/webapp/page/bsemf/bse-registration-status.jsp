@@ -22,7 +22,6 @@
 	cursor: crosshair;
 	box-shadow: 0 0 6px 0px #b7b3b3;
 }
-
 </style>
 </head>
 <body>
@@ -105,7 +104,7 @@
 														</div>
 														<div class="modal-body">
 															<embed
-																src="https://s3.ap-south-1.amazonaws.com/freemi-product/files/pdf/file1.pdf"
+																src="https://resources.freemi.in/files/pdf/file1.pdf"
 																frameborder="0" width="100%" height="400px">
 														</div>
 														<!-- <div class="modal-footer">
@@ -124,11 +123,13 @@
 
 									<c:if test="${not empty investForm.pan1}">
 										<div style="margin-top: 20px; text-align: center;">
-											<input type="hidden" id="mobdata" value="${investForm.mobile}">
-											<a href="/products/download/aof/${investForm.pan1}.pdf"
+											<input type="hidden" id="mobdata"
+												value="${investForm.mobile}"> <a
+												href="/products/download/aof/${investForm.pan1}.pdf"
 												target="_blank">
 												<button type="button" class="btn btn-sm btn-info">
-													<i class="fas fa-download"></i> Download your form <i class="fas fa-download"></i>
+													<i class="fas fa-download"></i> Download your form <i
+														class="fas fa-download"></i>
 												</button>
 											</a>
 										</div>
@@ -190,8 +191,10 @@
 														</div>
 														<div class="row">
 															<div class="col-md-12">
-																<button class="btn btn-sm btn-info" id="sig-submitBtn">Submit
-																	Signature</button>
+																<button class="btn btn-sm btn-info" id="sig-submitBtn">
+																<span id="signtxt">Submit Signature</span>
+																<span id="signingtxt" style="display: none;">Submitting Signature <i class="fas fa-spinner fa-spin"></i></span>
+																</button>
 																<!-- <button class="btn" id="btndownload">Download</button> -->
 																<button class="btn btn-sm btn-secondary"
 																	id="sig-clearBtn">Clear Signature</button>
@@ -240,10 +243,15 @@
 						<span id="signuploadstatus"></span>
 						<div id="aofuploadbutton">
 							<button class="btn btn-sm btn-primary" id="aofuploadbtn"
-								hidden="hidden" onclick="initiateAOFUpload();">UPLOAD YOUR AOF <i class="fas fa-upload"></i></button>
-							<a href="/products/mutual-funds/purchase" id="purchasecon" hidden="hidden">
-							<button class="btn btn-sm btn-success"
-								>COMPLETE PURCHASE <i class="fas fa-shopping-cart"></i></button>
+								hidden="hidden" onclick="initiateAOFUpload();">
+								<span id="uploadtxt">UPLOAD YOUR AOF <i class="fas fa-upload"></i></span>
+								<span id="uploadingtxt" style="display: none;">Uploading... <i class="fas fa-spinner fa-spin"></i></span>
+							</button>
+							<a href="/products/mutual-funds/purchase" id="purchasecon"
+								hidden="hidden">
+								<button class="btn btn-sm btn-success">
+									COMPLETE PURCHASE <i class="fas fa-shopping-cart"></i>
+								</button>
 							</a>
 						</div>
 
@@ -258,15 +266,21 @@
 				<div class="col-md-8 col-lg-8"
 					style="margin: auto; text-align: center;">
 					<h3>Ready to upload?</h3>
-					<div class="input-group">
+					<!-- <div class="input-group">
 						<div class="custom-file">
 							<input type="file" class="custom-file-input"
 								id="inputGroupFile04"> <label class="custom-file-label"
 								for="inputGroupFile04">Choose file</label>
 						</div>
+					</div> -->
+					<div class="file-upload-wrapper">
+						<input type="file" id="input-file-now" class="file-upload" />
 					</div>
 					<button class="btn btn-sm btn-outline-secondary" type="button"
-						style="margin-top: 20px;" >UPLOAD YOUR SIGNED FILE</button>
+						onclick="aoffileUpload();" style="margin-top: 20px;">UPLOAD
+						YOUR SIGNED FILE</button>
+						
+					<div id="fileContents"></div>
 				</div>
 			</div>
 
@@ -461,37 +475,34 @@
 		function submitSign() {
 
 			/* console.log("signature- "+ $("#sig-dataUrl").text()); */
-			$
+			/* $
 					.post(
 							"/products/mutual-funds/uploadsign",
-							/* $.post("/products/api/saveloanquery", */
 
 							{
 								sign1 : $("#sig-dataUrl").text(),
 								sign2 : ""
 							},
 							function(data, status) {
-								/* alert("Data: " + data + "\nStatus: " + status); */
 								console.log(data);
 								$('#exampleModal1').modal('hide');
 								if (data == 'SUCCESS') {
-									
+
 									$("#signuploadstatus")
 											.text(
 													"Your AOF form is signed and ready for upload.");
 									$("#aofuploadbtn").removeAttr('hidden');
 									move(75);
-									
+
 								}
 								if (data == 'REQUEST_DENIED') {
 									$('#exampleModal1').modal('hide');
 									$("#signuploadstatus")
 											.text(
 													"Session lost. Kindly login to complete registration");
-									
+
 								}
-								
-								
+
 							})
 					.fail(
 							function(response) {
@@ -500,83 +511,254 @@
 										.text(
 												"Failed to submit your signature. Please try again.");
 							});
-		}
-		
-					function initiateAOFUpload() {
+			
+			 */
+			
+			// AJAX based
+			var mobileData = { mobile : $("#mobdata").val() }
+			
+			request = $.ajax({
+			url: "/products/mutual-funds/uploadsign",
+			method: "POST",
+			data: 
+			{
+				sign1 : $("#sig-dataUrl").text(),
+				sign2 : ""
+			},
+			async: true,
+			datatype: "json",
+			beforeSend: function() {
+				$("#signtxt").hide();
+				$("#signingtxt").show();
+				$("#sig-submitBtn").prop("disabled", true);
+				
+		    }
+		});
 
-						 console.log("signature- "+ $("#mobdata").val());
-						$
-								.get(
-										"/products/mutual-funds/uploadsignedaof",
-										/* $.post("/products/api/saveloanquery", */
+		request.done(function(data) {
+			console.log(data);
+			$('#exampleModal1').modal('hide');
+			if (data == 'SUCCESS') {
 
-										{
-											mobile : $("#mobdata").val()
-										},
-										function(data, status) {
-											/* alert("Data: " + data + "\nStatus: " + status); */
-											console.log(data);
-											if (data == 'SUCCESS') {
-												
-												$("#signuploadstatus")
-														.text(
-																"Your AOF uploaded successfully. Registration process complete.");
-												$("#aofuploadbtn").hide();
-												$("#purchasecon").removeAttr('hidden');
-												move(100);
-												
-											}
-											if (data == 'INTERNAL_ERROR') {
-												$('#exampleModal1').modal('hide');
-												$("#signuploadstatus")
-														.text(
-																"Failed to upload your AOF. Kindly contact Admin.");
-												
-											}
-											
-											if (data == 'SESSION_MOB_MISMATCH') {
-												$('#exampleModal1').modal('hide');
-												$("#signuploadstatus")
-														.text(
-																"Session data mismatch. Kindly contact admin");
-												
-											}
-											if (data == 'REQUEST_DENIED') {
-												$('#exampleModal1').modal('hide');
-												$("#signuploadstatus")
-														.text(
-																"Session lost. Kindly login to complete registration");
-												
-											}
-											
-											
-										})
-								.fail(
-										function(response) {
-											$('#exampleModal1').modal('hide');
-											$("#signuploadstatus")
-													.text(
-															"Failed to make request. Please try again.");
-										});
-			/* 	}); */
-		}
-		
-		function move(value) {
-			  var elem = document.getElementById("myBar");
-			  var val = document.getElementById("statusp");
-			  var width = 50;
-			  var id = setInterval(frame, 10);
-			  function frame() {
-			    /* if (width >= 100) { */
-			    if (width >= value) {
-			      clearInterval(id);
-			    } else {
-			      width++; 
-			      elem.style.width = width + '%'; 
-			      $("#statusp").text('Invest profile status '+ width + '%');
-			    }
-			  }
+				$("#signuploadstatus")
+						.text(
+								"Your AOF form is signed and ready for upload.");
+				$("#aofuploadbtn").removeAttr('hidden');
+				move(75);
+
 			}
+			if (data == 'REQUEST_DENIED') {
+				$('#exampleModal1').modal('hide');
+				$("#signuploadstatus")
+						.text(
+								"Session lost. Kindly login to complete registration");
+
+			}
+
+		});
+
+		request.fail(function(jqXHR, textStatus) {
+			$('#exampleModal1').modal('hide');
+			$("#signuploadstatus")
+					.text(
+							"Failed to submit your signature. Please try again.");
+		});
+		
+		request.always(function(msg){
+			$("#signingtxt").hide();
+			$("#signtxt").show();
+			$("#sig-submitBtn").prop("disabled", false);
+		});
+			
+			
+			// ----------------------------------------
+			
+		}
+
+		function initiateAOFUpload() {
+
+			console.log("signature- " + $("#mobdata").val());
+			/* $
+					.get(
+							"/products/mutual-funds/uploadsignedaof",
+
+							{
+								mobile : $("#mobdata").val()
+							},
+							function(data, status) {
+								console.log(data);
+								if (data == 'SUCCESS') {
+
+									$("#signuploadstatus")
+											.text(
+													"Your AOF uploaded successfully. Registration process complete.");
+									$("#signuploadstatus")
+											.css("color", "green");
+									$("#aofuploadbtn").hide();
+									$("#purchasecon").removeAttr('hidden');
+
+									move(100);
+
+								} else if (data == 'INTERNAL_ERROR') {
+									$('#exampleModal1').modal('hide');
+									$("#signuploadstatus")
+											.text(
+													"Failed to upload your AOF. Kindly contact Admin.");
+									$("#signuploadstatus").css("color", "red");	
+
+								}
+
+								else if (data == 'SESSION_MOB_MISMATCH') {
+									$('#exampleModal1').modal('hide');
+									$("#signuploadstatus")
+											.text(
+													"Session data mismatch. Kindly contact admin");
+									$("#signuploadstatus").css("color", "red");
+								} else if (data == 'REQUEST_DENIED') {
+									$('#exampleModal1').modal('hide');
+									$("#signuploadstatus")
+											.text(
+													"Session lost. Kindly login to complete registration");
+									$("#signuploadstatus").css("color", "red");
+								} else {
+									$('#exampleModal1').modal('hide');
+									$("#signuploadstatus").text(data);
+									$("#signuploadstatus").css("color", "red");
+								}
+
+							})
+					.fail(
+							function(response) {
+								$('#exampleModal1').modal('hide');
+								$("#signuploadstatus")
+										.text(
+												"Failed to make request. Please try again.");
+							});
+			
+			 */
+			
+			
+			// AJAX based
+			var mobileData = $("#mobdata").val();
+			
+			request = $.ajax({
+			url: "/products/mutual-funds/uploadsignedaof?mobile="+mobileData,
+			method: "GET",
+			async: true,
+			beforeSend: function() {
+				disableButon();
+		    }
+		});
+
+		request.done(function(data) {
+			if (data == 'SUCCESS') {
+
+				$("#signuploadstatus")
+						.text(
+								"Your AOF uploaded successfully. Registration process complete.");
+				$("#signuploadstatus")
+						.css("color", "green");
+				$("#aofuploadbtn").hide();
+				$("#purchasecon").removeAttr('hidden');
+
+				move(100);
+
+			} else if (data == 'INTERNAL_ERROR') {
+				$('#exampleModal1').modal('hide');
+				$("#signuploadstatus")
+						.text(
+								"Failed to upload your AOF. Kindly contact Admin.");
+				$("#signuploadstatus").css("color", "red");	
+
+			}
+
+			else if (data == 'SESSION_MOB_MISMATCH') {
+				$('#exampleModal1').modal('hide');
+				$("#signuploadstatus")
+						.text(
+								"Session data mismatch. Kindly contact admin");
+				$("#signuploadstatus").css("color", "red");
+			} else if (data == 'REQUEST_DENIED') {
+				$('#exampleModal1').modal('hide');
+				$("#signuploadstatus")
+						.text(
+								"Session lost. Kindly login to complete registration");
+				$("#signuploadstatus").css("color", "red");
+			} else {
+				$('#exampleModal1').modal('hide');
+				$("#signuploadstatus").text(data);
+				$("#signuploadstatus").css("color", "red");
+			}
+
+		});
+
+		request.fail(function(jqXHR, textStatus) {
+			$('#exampleModal1').modal('hide');
+			$("#signuploadstatus")
+					.text("Failed to make request. Please try again.");
+		});
+		
+		request.always(function(msg){
+			enableButton();
+		});
+			
+			// -------------------
+			
+			
+			
+			
+		}
+
+		function move(value) {
+			var elem = document.getElementById("myBar");
+			var val = document.getElementById("statusp");
+			var width = 50;
+			var id = setInterval(frame, 10);
+			function frame() {
+				/* if (width >= 100) { */
+				if (width >= value) {
+					clearInterval(id);
+				} else {
+					width++;
+					elem.style.width = width + '%';
+					$("#statusp").text('Invest profile status ' + width + '%');
+				}
+			}
+		}
+
+		function aoffileUpload() {
+			console.log($("inputGroupFile04").val());
+			
+			var file = document.getElementById("input-file-now").files[0];
+			if (file) {
+			    var reader = new FileReader();
+			    reader.readAsText(file, "UTF-8");
+			    reader.onload = function (evt) {
+			        document.getElementById("fileContents").innerHTML = evt.target.result;
+			    }
+			    reader.onerror = function (evt) {
+			        document.getElementById("fileContents").innerHTML = "error reading file";
+			    }
+			}
+		}
+		
+		function disableButon(){
+			$("#uploadtxt").hide();
+			$("#uploadingtxt").show();
+			$("#aofuploadbtn").prop("disabled", true);
+			
+		}
+		
+		function enableButton(){
+			$("#uploadingtxt").hide();
+			$("#uploadtxt").show();
+			$("#aofuploadbtn").prop("disabled", false);	
+		}
+				
+		
+		
+		$('.file_upload').file_upload();
 	</script>
+	
 </body>
 </html>

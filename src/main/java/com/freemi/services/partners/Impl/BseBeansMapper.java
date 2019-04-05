@@ -1,11 +1,8 @@
 package com.freemi.services.partners.Impl;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -17,8 +14,10 @@ import com.freemi.entity.bse.BseAOFUploadRequest;
 import com.freemi.entity.bse.BseAOFUploadResponse;
 import com.freemi.entity.bse.BseApiResponse;
 import com.freemi.entity.bse.BseEMandateRegistration;
+import com.freemi.entity.bse.BseFatcaForm;
 import com.freemi.entity.bse.BseOrderEntry;
 import com.freemi.entity.bse.BseOrderPaymentResponse;
+import com.freemi.entity.bse.BsePanStatusResponse;
 import com.freemi.entity.bse.BsePaymentStatus;
 import com.freemi.entity.bse.BseRegistrationMFD;
 import com.freemi.entity.bse.BseSipOrderEntry;
@@ -81,9 +80,78 @@ public class BseBeansMapper {
 			clientFregirationForm.setClientAppname2(registrationForm.getApplicant2());
 		}
 		
+//		Nominee
+		clientFregirationForm.setClientNominee(registrationForm.getNominee().getNomineeName());
+		clientFregirationForm.setClientNomineeRelation(registrationForm.getNominee().getNomineeRelation());
+		
+		
 			
 			
 		return clientFregirationForm;
+	}
+	
+	public static BseFatcaForm  InvestmentFormToBseFATCABeans(BseMFInvestForm registrationForm){
+		BseFatcaForm fatcaForm = new BseFatcaForm();
+		
+		SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy-mm-dd");
+	    SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("dd/mm/yyyy");
+		
+		fatcaForm.setPAN_RP(registrationForm.getPan1());
+		fatcaForm.setINV_NAME(registrationForm.getInvName());
+		
+//		Converting date format to BSE specific format dd/mm/yyyy
+		try {
+			Date date1 = simpleDateFormat1.parse(registrationForm.getInvDOB());
+			String bseFormatDob = simpleDateFormat2.format(date1);
+			fatcaForm.setDOB(bseFormatDob);
+		} catch (ParseException e) {
+			logger.error("InvestmentFormToBseFATCABeans(): failed to convert date: ",e);
+		}
+		
+		fatcaForm.setFR_NAME(registrationForm.getFatcaDetails().getFatherName());
+		fatcaForm.setSP_NAME(registrationForm.getFatcaDetails().getSpouseName());
+		fatcaForm.setTAX_STATUS(registrationForm.getTaxStatus());
+		fatcaForm.setDATA_SRC(registrationForm.getFatcaDetails().getDataSource());
+		fatcaForm.setADDR_TYPE(registrationForm.getFatcaDetails().getAddressType());
+		fatcaForm.setPO_BIR_INC(registrationForm.getFatcaDetails().getPlaceOfBirth());
+		fatcaForm.setCO_BIR_INC(registrationForm.getFatcaDetails().getCountryOfBirth());
+		
+//		Fixed to INDIA
+		fatcaForm.setTAX_RES1("IN");
+		fatcaForm.setTPIN1(registrationForm.getPan1());
+		fatcaForm.setID1_TYPE(registrationForm.getFatcaDetails().getIdentificationDocType());
+		fatcaForm.setSRCE_WEALT(registrationForm.getFatcaDetails().getWealthSource());
+		fatcaForm.setINC_SLAB(registrationForm.getFatcaDetails().getIncomeSlab());
+		
+		try{
+		fatcaForm.setNET_WORTH(registrationForm.getFatcaDetails().getNetWordth()!=null?Double.toString(registrationForm.getFatcaDetails().getNetWordth()):"");
+		}catch(Exception e){
+			logger.error("InvestmentFormToBseFATCABeans(): Unable to convert net worth data.");
+		}
+		try {
+			if(registrationForm.getFatcaDetails().getDateOfNetworth()!=null){
+				Date date1 = simpleDateFormat1.parse(registrationForm.getInvDOB());
+				String bseFormatDob = simpleDateFormat2.format(date1);
+				fatcaForm.setNW_DATE(bseFormatDob);
+			}
+		} catch (ParseException e) {
+			logger.error("InvestmentFormToBseFATCABeans(): failed to convert Networth date: ",e);
+		}
+		
+		fatcaForm.setPEP_FLAG(registrationForm.getFatcaDetails().getPoliticalExposedPerson());
+		fatcaForm.setOCC_CODE(registrationForm.getOccupation());
+		fatcaForm.setOCC_TYPE(registrationForm.getFatcaDetails().getOccupationType());
+		
+		fatcaForm.setEXCH_NAME(registrationForm.getFatcaDetails().getExchangeName());
+		
+		fatcaForm.setUBO_APPL(registrationForm.getFatcaDetails().getUboApplicable());
+		fatcaForm.setUBO_DF("N");
+		
+		fatcaForm.setNEW_CHANGE(registrationForm.getFatcaDetails().getNewUpdateIndicator());
+		fatcaForm.setLOG_NAME(registrationForm.getPan1());
+		
+		
+		return  fatcaForm;
 	}
 	
 	
@@ -103,7 +171,18 @@ public class BseBeansMapper {
 		
 		bseOrderForm.setTransNo(requestNumber);
 		
-		bseOrderForm.setSchemeCd(fundDetails.getSchemeCode());
+		
+//		Determinining whether the schemecode to be of L1 category
+		if(fundDetails.getInvestAmount()>199999){
+			logger.info("Since the amount is above, marking the transaction as L1 category.. Proceeding by changing fundname to - "+ fundDetails.getSchemeCode()+"-L1");
+			bseOrderForm.setSchemeCd(fundDetails.getSchemeCode()+"-L1");
+		}else{
+			bseOrderForm.setSchemeCd(fundDetails.getSchemeCode());
+		}
+		
+		
+		
+		
 		bseOrderForm.setBuySell("P");
 		bseOrderForm.setBuySellType("FRESH");
 		bseOrderForm.setDPTxn("P");
@@ -250,7 +329,7 @@ public static BseSipOrderEntry transactionSIPOrderToBseBeans(SelectMFFund fundDe
 		
 	}
 	
-	public static BseAOFUploadResponse BseAOFUploadResponsetoBean(BseAOFUploadResponse response, String responseText){
+	public static BseAOFUploadResponse bseAOFUploadResponsetoBean(BseAOFUploadResponse response, String responseText){
 		List<String> res = Arrays.asList(responseText.split("\\|"));
 //		BseorderEntryResponse response = new BseorderEntryResponse();
 		
@@ -263,6 +342,18 @@ public static BseSipOrderEntry transactionSIPOrderToBseBeans(SelectMFFund fundDe
 		
 	}
 	
+	
+	public static BseApiResponse fatcaUploadResponseToBean(BseApiResponse response, String responseText){
+		List<String> res = Arrays.asList(responseText.split("\\|"));
+//		BseorderEntryResponse response = new BseorderEntryResponse();
+		
+		response.setResponseCode(res.get(0));
+		response.setRemarks(res.get(1));
+		
+		return response;
+		
+	}
+	
 	public static BsePaymentStatus BsePaymentStatusRequestToBse(String clientId, String orderNo){
 		BsePaymentStatus requestForm = new BsePaymentStatus();
 		requestForm.setClientcode(clientId);
@@ -272,12 +363,12 @@ public static BseSipOrderEntry transactionSIPOrderToBseBeans(SelectMFFund fundDe
 		return requestForm;
 	}
 	
-	public static BseEMandateRegistration bankDetailsToBseBeans(UserBankDetails bankDetails,String amount, String clientCode,Date startDate, Date endDate){
+	public static BseEMandateRegistration bankDetailsToBseBeans(UserBankDetails bankDetails,String mandateType, String amount, String clientCode,Date startDate, Date endDate){
 		BseEMandateRegistration requestForm = new BseEMandateRegistration();
 		
 		requestForm.setClientCode(clientCode);
 		requestForm.setAmount(amount);
-		requestForm.setMandateType("X");
+		requestForm.setMandateType(mandateType!=""?mandateType:"X");
 		requestForm.setAccountNo(bankDetails.getAccountNumber());
 		requestForm.setAccType(bankDetails.getAccountType());
 		requestForm.setIFSCCODE(bankDetails.getIfscCode().toUpperCase());
@@ -285,6 +376,24 @@ public static BseSipOrderEntry transactionSIPOrderToBseBeans(SelectMFFund fundDe
 		requestForm.setENDDATE((new SimpleDateFormat("dd/MM/yyyy")).format(endDate));
 		
 		return requestForm;
+	}
+	
+	
+	public static BsePanStatusResponse panStatusResponsetoBean(BsePanStatusResponse response, String responseText){
+		List<String> res = Arrays.asList(responseText.split("\\|"));
+//		BseorderEntryResponse response = new BseorderEntryResponse();
+//		SIP Response NEW|201902202627300003|26273|DEBA593C|SUMANTA1|214516|SIP HAS BEEN REGISTERED, SIP REG NO IS : 214516|0
+		
+		response.setResponseCode(res.get(0));
+		response.setPanNumber(res.get(1));
+		response.setMfdStatus(res.get(2));
+		response.setMfiStatus(res.get(3));
+		response.setRfdStatus(res.get(4));
+		
+		response.setRfiStatus(res.get(5));
+		response.setBseRemarks(res.get(6));
+		
+		return response;
 	}
 	
 	

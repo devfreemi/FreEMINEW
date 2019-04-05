@@ -24,6 +24,10 @@
 	src="<c:url value="${contextPath}/resources/js/signaturepanel.js" />"></script>
 <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script> -->
 
+<script>
+var FILE_UPLOAD=${FILE_IPLOAD};
+
+</script>
 </head>
 
 <body class="back_set">
@@ -261,10 +265,57 @@
 									</div>
 								</div>
 
+
+
+								<hr>
+								<div style="font-size: 11px; color: #c02fc1;">
+									<strong>You can also upload signed form in .pdf format</strong>
+								</div>
+								<div class="row">
+									<div class="col-md-12 col-lg-12">
+										<form:form method="POST" enctype="multipart/form-data"
+											action="/products/uploadaoffile.do" commandName="fileform">
+											<div style="padding-left: 5px; margin-bottom: .1rem;">
+												<span style="color: red; font: 12px;">${message}</span>
+												<form:input type="file" path="file" accept=".pdf"
+													plaeholder="Upload signed AOF"
+													style="border: 1px solid #bcc2c7; border-radius: 2px;" />
+											</div>
+											<form:hidden path="fileowner" />
+											<form:button type="submit" class="btn btn-sm btn-info">Submit</form:button>
+
+										</form:form>
+
+									</div>
+								</div>
+								<hr>
+
+								<c:choose>
+									<c:when test="${FILE_UPLOAD == 'S'}">
+										<div id="aofuploadbutton">
+											<button class="btn btn-sm btn-primary" id="aofuploadbtn"
+												onclick="initiateAOFUpload(<%=session.getAttribute("userid").toString()%>);">
+												UPLOAD YOUR AOF <i class="fas fa-upload"></i>
+											</button>
+										</div>
+									</c:when>
+									<c:otherwise>
+										<div id="aofuploadbutton">
+											<button class="btn btn-sm btn-primary" id="aofuploadbtn"
+												hidden="hidden"
+												onclick="initiateAOFUpload(<%=session.getAttribute("userid").toString()%>);">
+												<span id="uploadtxt">UPLOAD YOUR AOF <i class="fas fa-upload"></i></span>
+								<span id="uploadingtxt" style="display: none;">Uploading... <i class="fas fa-spinner fa-spin"></i></span>
+											</button>
+										</div>
+									</c:otherwise>
+								</c:choose>
+
 								<!-- End of modal  -->
 								<div>
 									<span id="signuploadstatus" style="font-size: 11px;"></span>
 								</div>
+
 								<div id="aofuploadbutton">
 									<button class="btn btn-sm btn-primary" id="aofuploadbtn"
 										hidden="hidden"
@@ -721,16 +772,14 @@
 	function initiateAOFUpload(mobile) {
 
 		console.log("Upload AOF for- " + mobile);
-		$
+		/* $
 				.get(
 						"/products/mutual-funds/uploadsignedaof",
-						/* $.post("/products/api/saveloanquery", */
 
 						{
 							mobile : mobile
 						},
 						function(data, status) {
-							/* alert("Data: " + data + "\nStatus: " + status); */
 							console.log(data);
 							if (data == 'SUCCESS') {
 
@@ -742,7 +791,7 @@
 								move(100);
 
 							}
-							if (data == 'INTERNAL_ERROR') {
+							else if (data == 'INTERNAL_ERROR') {
 								$('#exampleModal1').modal('hide');
 								$("#signuploadstatus")
 										.text(
@@ -750,19 +799,24 @@
 
 							}
 
-							if (data == 'SESSION_MOB_MISMATCH') {
+							else if (data == 'SESSION_MOB_MISMATCH') {
 								$('#exampleModal1').modal('hide');
 								$("#signuploadstatus")
 										.text(
 												"Session data mismatch. Kindly contact admin");
 
 							}
-							if (data == 'REQUEST_DENIED') {
+							else if (data == 'REQUEST_DENIED') {
 								$('#exampleModal1').modal('hide');
 								$("#signuploadstatus")
 										.text(
 												"Session lost. Kindly login to complete registration");
 
+							}else{
+								
+								$('#exampleModal1').modal('hide');
+								$("#signuploadstatus")
+										.text(data);
 							}
 
 						})
@@ -772,6 +826,68 @@
 							$("#signuploadstatus")
 									.text(
 											"Failed to make request. Please try again.");
+						}); */
+						
+						
+						request = $.ajax({
+							url: "/products/mutual-funds/uploadsignedaof?mobile="+mobile,
+							method: "GET",
+							async: true,
+							beforeSend: function() {
+								disableButon();
+						    }
+						});
+
+						request.done(function(data) {
+							if (data == 'SUCCESS') {
+
+								$("#signuploadstatus")
+										.text(
+												"Your AOF uploaded successfully. Registration process complete.");
+								$("#signuploadstatus")
+										.css("color", "green");
+								$("#aofuploadbtn").hide();
+								$("#purchasecon").removeAttr('hidden');
+
+								move(100);
+
+							} else if (data == 'INTERNAL_ERROR') {
+								$('#exampleModal1').modal('hide');
+								$("#signuploadstatus")
+										.text(
+												"Failed to upload your AOF. Kindly contact Admin.");
+								$("#signuploadstatus").css("color", "red");	
+
+							}
+
+							else if (data == 'SESSION_MOB_MISMATCH') {
+								$('#exampleModal1').modal('hide');
+								$("#signuploadstatus")
+										.text(
+												"Session data mismatch. Kindly contact admin");
+								$("#signuploadstatus").css("color", "red");
+							} else if (data == 'REQUEST_DENIED') {
+								$('#exampleModal1').modal('hide');
+								$("#signuploadstatus")
+										.text(
+												"Session lost. Kindly login to complete registration");
+								$("#signuploadstatus").css("color", "red");
+							} else {
+								$('#exampleModal1').modal('hide');
+								$("#signuploadstatus").text(data);
+								$("#signuploadstatus").css("color", "red");
+							}
+
+						});
+
+						request.fail(function(jqXHR, textStatus) {
+							$('#exampleModal1').modal('hide');
+							$("#signuploadstatus")
+									.text("Failed to make request. Please try again.");
+						});
+						
+						request.always(function(msg){
+							enableButton();
 						});
 		/* 	}); */
 	}
@@ -792,5 +908,19 @@
 			}
 		}
 	}
+		
+	function disableButon(){
+		$("#uploadtxt").hide();
+		$("#uploadingtxt").show();
+		$("#aofuploadbtn").prop("disabled", true);
+		
+	}
+	
+	function enableButton(){
+		$("#uploadingtxt").hide();
+		$("#uploadtxt").show();
+		$("#aofuploadbtn").prop("disabled", false);	
+	}
+		
 </script>
 </html>

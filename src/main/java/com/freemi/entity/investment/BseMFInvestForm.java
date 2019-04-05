@@ -15,6 +15,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Proxy;
@@ -67,7 +68,7 @@ public class BseMFInvestForm implements Serializable {
 	@Column(name="AADHAAR_INVESTOR_1")
 	private String aadhaar;
 	
-	@NotNull(message="Provide your holding mode")
+	@NotBlank(message="Provide your holding mode")
 	@Column(name="HOLDING_MODE")
 	private String holdingMode="";
 	
@@ -79,10 +80,11 @@ public class BseMFInvestForm implements Serializable {
 	@Column(name="")
 	private String declaration;
 	
+	@NotBlank(message="Email ID is mandatory")
 	@Column(name="EMAIL")
 	private String email="";
 	
-	@NotNull(message="Mobile number is mandatory")
+	@NotBlank(message="Mobile number is mandatory")
 	@Column(name="MOBILE_NO")
 	private String mobile="";
 	
@@ -173,13 +175,22 @@ public class BseMFInvestForm implements Serializable {
 	private String kycType="";
 	
 	@Transient
+	private String customerRegistered="N";
+	
+	@Transient
 	private boolean profileRegRequired=false;
 	
+	@Valid
 	@OneToOne(fetch=FetchType.EAGER, mappedBy="mfForm",cascade=CascadeType.ALL)
 	private MFNominationForm nominee;
 	
+	@Valid
 	@OneToOne(fetch=FetchType.EAGER, mappedBy="mfForm",cascade=CascadeType.ALL)
 	private UserBankDetails bankDetails;
+	
+	@Valid
+	@OneToOne(fetch=FetchType.EAGER, mappedBy="mfForm",cascade=CascadeType.ALL)
+	private MFFatcaDeclareForm fatcaDetails;
 	
 	@Transient
 	private RegistryFunds selectedFund;
@@ -190,6 +201,7 @@ public class BseMFInvestForm implements Serializable {
 	@Transient
 	private MFInvestmentDates mfInvestDates;
 	
+	@Valid
 	@OneToOne(fetch=FetchType.EAGER, mappedBy="mfForm",cascade=CascadeType.ALL)
 	private AddressDetails addressDetails;
 	
@@ -594,6 +606,26 @@ public class BseMFInvestForm implements Serializable {
 
 	public void setProfileRegRequired(boolean profileRegRequired) {
 		this.profileRegRequired = profileRegRequired;
+	}
+
+
+	public MFFatcaDeclareForm getFatcaDetails() {
+		return fatcaDetails;
+	}
+
+
+	public void setFatcaDetails(MFFatcaDeclareForm fatcaDetails) {
+		this.fatcaDetails = fatcaDetails;
+	}
+
+
+	public String getCustomerRegistered() {
+		return customerRegistered;
+	}
+
+
+	public void setCustomerRegistered(String customerRegistered) {
+		this.customerRegistered = customerRegistered;
 	}
 	
 }

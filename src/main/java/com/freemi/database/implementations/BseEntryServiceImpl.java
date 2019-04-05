@@ -1,16 +1,5 @@
 package com.freemi.database.implementations;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.StringReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -28,10 +17,10 @@ import org.springframework.stereotype.Service;
 import com.freemi.common.util.BseRelatedActions;
 import com.freemi.common.util.CommonConstants;
 import com.freemi.controller.interfaces.InvestmentConnectorBseInterface;
-import com.freemi.controller.interfaces.MailSenderHandler;
 import com.freemi.database.interfaces.BseCustomerAddressCrudRepository;
 import com.freemi.database.interfaces.BseCustomerBankDetailsCrudRespository;
 import com.freemi.database.interfaces.BseCustomerCrudRespository;
+import com.freemi.database.interfaces.BseCustomerFATCACrudRepository;
 import com.freemi.database.interfaces.BseCustomerNomineeCrudRepository;
 import com.freemi.database.interfaces.BseFundsExplorerRepository;
 import com.freemi.database.interfaces.BseMandateCrudRepository;
@@ -46,7 +35,6 @@ import com.freemi.database.interfaces.PortfolioCrudRepository;
 import com.freemi.database.interfaces.TopFundsRepository;
 import com.freemi.database.service.BseEntryManager;
 import com.freemi.entity.bse.BseApiResponse;
-import com.freemi.entity.bse.BseOrderPaymentResponse;
 import com.freemi.entity.database.MfTopFundsInventory;
 import com.freemi.entity.database.UserBankDetails;
 import com.freemi.entity.general.UserProfile;
@@ -60,17 +48,10 @@ import com.freemi.entity.investment.BseMFTop15lsSip;
 import com.freemi.entity.investment.BseMandateDetails;
 import com.freemi.entity.investment.BseOrderEntryResponse;
 import com.freemi.entity.investment.BsemfTransactionHistory;
-import com.freemi.entity.investment.MFInvestForm;
+import com.freemi.entity.investment.MFFatcaDeclareForm;
 import com.freemi.entity.investment.MFNominationForm;
 import com.freemi.entity.investment.SelectMFFund;
 import com.freemi.entity.investment.TransactionStatus;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.html.simpleparser.HTMLWorker;
-import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.tool.xml.XMLWorkerHelper;
 
 @Service
 public class BseEntryServiceImpl implements BseEntryManager {
@@ -123,6 +104,9 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	@Autowired
 	BseSelectedCategoryFundsRepository bseSelectedCategoryFundsRepository;
 	
+	@Autowired
+	BseCustomerFATCACrudRepository bseCustomerFATCACrudRepository;
+	
 	/*@Autowired
 	MailSenderHandler mailSenderHandler;*/
 
@@ -134,6 +118,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		String flag = "SUCCESS";
 		String customerid ="";
 		boolean registerCustomerToBse = false;
+		
 
 		if(bseCustomerCrudRespository.existsByPan1(customerForm.getPan1())){
 			logger.info("Account already exist with given primary PAN number");
@@ -169,6 +154,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 			customerForm.getBankDetails().setClientID(customerid);
 			customerForm.getAddressDetails().setClientID(customerid);
 			customerForm.getNominee().setClientID(customerid);
+			customerForm.getFatcaDetails().setClientID(customerid);
 			customerForm.setRegistrationTime(new Date());
 			logger.info("Transaction started to save BSE customer registrastion data");
 
@@ -182,10 +168,20 @@ public class BseEntryServiceImpl implements BseEntryManager {
 
 			logger.info("Customer registered at FREEMI portal. Begin to push customer details at BSE end");
 			String bseResponse = investmentConnectorBseInterface.saveCustomerRegistration(customerForm, null);
+			
+			
 			if(bseResponse.equalsIgnoreCase("SUCCESS")){
 				//User registration successful at BSE portal
 				try{
 					bseCustomerCrudRespository.updateBseRegistrationStatus(customerid);
+/*//					Call FATCADeclaration
+					fatcaResponse = investmentConnectorBseInterface.fatcaDeclaration(customerForm, null);
+					if(fatcaResponse.getResponseCode().equalsIgnoreCase("100")){
+						bseCustomerFATCACrudRepository.updateFatcaDeclarationStatus(true, customerid);
+					}else{
+						bseCustomerFATCACrudRepository.updateFatcaDeclarationStatus(false, customerid);
+					}*/
+					
 				}catch(Exception e){
 					logger.error("Failed to update customer successful registration status to database, notify admin");
 				}
@@ -247,9 +243,6 @@ public class BseEntryServiceImpl implements BseEntryManager {
 				transStatus.setSuccessFlag("S");
 				transStatus.setStatusMsg(bseResult.getBsereMarks());
 				transStatus.setBseOrderNoFromResponse(bseResult.getOrderNoOrSipRegNo());
-				
-
-				
 				
 			}else if (bseResult.getSuccessFlag().equalsIgnoreCase("000")){
 				logger.info("Transaction disabled. Reason- "+bseResult.getBsereMarks());
@@ -610,7 +603,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	}
 
 	@Override
-	public BseApiResponse updateEmdandateStatus(String mobileNumber, String amount) {
+	public BseApiResponse updateEmdandateStatus(String mobileNumber,String mandateType, String amount) {
 		logger.info("Emandate update process begin for customer- "+ mobileNumber + " : amount- "+ amount);
 
 		BseApiResponse apiresponse =null;
@@ -625,7 +618,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 			c.add(Calendar.YEAR, 10);
 			endDate.setTime(c.getTimeInMillis());
 
-			apiresponse = investmentConnectorBseInterface.emandateRegistration(bankDetails, amount,clientCode, startDate,endDate);
+			apiresponse = investmentConnectorBseInterface.emandateRegistration(bankDetails,mandateType, amount,clientCode, startDate,endDate);
 			if(apiresponse.getStatusCode().equals("100")){
 				logger.info("Emandate completed for customer successfully for cusotmner-" + mobileNumber + ": Response code: "+ apiresponse.getStatusCode() + " : "+ apiresponse.getRemarks());
 				logger.info("Update bank emandate status to database...");
@@ -644,9 +637,10 @@ public class BseEntryServiceImpl implements BseEntryManager {
 			mandate.setAccountNumber(bankDetails.getAccountNumber());
 			mandate.setSipStartDate(startDate);
 			mandate.setSipEndDate(endDate);
-			mandate.setMandateType("E-MANDATE");
+			mandate.setMandateType(mandateType);
 			mandate.setMandateId(apiresponse.getResponseCode());
 			mandate.setAmount(amount);
+			mandate.setIfscCode(bankDetails.getIfscCode());
 			mandate.setCreationDate(startDate);
 			mandate.setMandateComplete(true);
 			
@@ -737,6 +731,38 @@ public class BseEntryServiceImpl implements BseEntryManager {
 
 	@Override
 	public List<BseMFSelectedFunds> getFundsByCategory(String category) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public BseApiResponse saveFatcaDetails(BseMFInvestForm customerForm) {
+		//					Call FATCADeclaration
+		
+		BseApiResponse fatcaResponse=null;
+		String clientId=null;
+		logger.info("Request received to process FATCA details fro customer- "+ customerForm.getPan1());
+		if(bseCustomerCrudRespository.existsByMobile(customerForm.getMobile())){
+			clientId = bseCustomerCrudRespository.getClientIdFromMobile(customerForm.getMobile());
+			fatcaResponse = investmentConnectorBseInterface.fatcaDeclaration(customerForm, null);
+			logger.info("FATCA upload status from BSE for customer- "+clientId + " : "  + fatcaResponse.getResponseCode());
+			if(fatcaResponse.getResponseCode().equalsIgnoreCase("100")){
+				logger.info("Updating FATCA status to database for customer- "+ clientId);
+				try{
+					int res= bseCustomerFATCACrudRepository.updateFatcaDeclarationStatus(true, clientId);
+					logger.info("Returned FATCA status update to database for customer- "+ clientId + " : "+res);
+				}catch(Exception e){
+					logger.error("Failed to update FATCA status to database for customer- "+clientId ,e);
+				}
+			}
+			
+		}
+		
+		return fatcaResponse;
+	}
+
+	@Override
+	public String updateFatcaStatus(String clientId, String status, String responseCode, String message) {
 		// TODO Auto-generated method stub
 		return null;
 	}

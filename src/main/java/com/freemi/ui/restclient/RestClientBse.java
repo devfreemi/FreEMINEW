@@ -1,5 +1,8 @@
 package com.freemi.ui.restclient;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpEntity;
@@ -13,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freemi.common.util.CommonConstants;
 import com.freemi.entity.bse.BseAOFUploadRequest;
 import com.freemi.entity.bse.BseEMandateRegistration;
+import com.freemi.entity.bse.BseFatcaForm;
 import com.freemi.entity.bse.BseOrderEntry;
 import com.freemi.entity.bse.BseOrderPaymentRequest;
 import com.freemi.entity.bse.BsePaymentStatus;
@@ -51,7 +55,7 @@ public class RestClientBse {
 		headers.set("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
 		HttpEntity<String> entity = new HttpEntity<String>(formdata,headers);
 
-		if(CommonConstants.BSE_CALL_TEST_ENABLED.equalsIgnoreCase("N")){
+		if(CommonConstants.BSE_OTP_ENABLED.equalsIgnoreCase("Y")){
 			response= restTemplate.postForEntity(url, entity,  String.class);
 			returnRes=response.getBody().toString();
 			logger.info("Response- "+ response.getBody().toString());
@@ -84,7 +88,7 @@ public class RestClientBse {
 		headers.set("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
 		HttpEntity<String> entity = new HttpEntity<String>(formdata,headers);
 
-		if(CommonConstants.BSE_CALL_TEST_ENABLED.equalsIgnoreCase("N")){
+		if(CommonConstants.BSE_OTP_ENABLED.equalsIgnoreCase("Y")){
 			response= restTemplate.postForEntity(url, entity,  String.class);
 			returnRes=response.getBody().toString();
 			logger.info("Response for OTP verification- "+ response.getBody().toString());
@@ -267,6 +271,65 @@ public class RestClientBse {
 
 		return returnRes;
 	}
+	
+	public static String fatcaDeclaration(BseFatcaForm form){
+
+		final String url = SERVICE_URL1 + "/fatcaupload";
+		ObjectMapper mapper = new ObjectMapper();
+		RestTemplate restTemplate = new RestTemplate();
+		String formdata = null;
+		String returnRes="FAIL";
+		try {
+			formdata = mapper.writeValueAsString(form);
+		} catch (JsonProcessingException e) {
+			logger.error("fatcaDeclaration(): Failed to write form data", e);
+		}
+		logger.info("Requesting FATCA registartion to API- "+ formdata);
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
+		HttpEntity<String> entity = new HttpEntity<String>(formdata,headers);
+
+		if(CommonConstants.BSE_CALL_TEST_ENABLED.equalsIgnoreCase("N")){
+			ResponseEntity<?> response= restTemplate.postForEntity(url, entity,  String.class);
+			returnRes=response.getBody().toString();
+			logger.info("Response for fatca registration- "+ response.getBody().toString());
+		}else{
+//			returnRes = "101|FAILED: AMOUNT SHOULD NOT BE BLANK";
+//			returnRes = "101|FAILED: INVALID CLIENT ACCOUNT NUMBER";
+			returnRes = "100|RECORD SAVED SUCCESSFULLY";
+//			returnRes = "101|FAILED: INVALID ADDRESS TYPE";
+		}
+
+		return returnRes;
+	}
+	
+	
+	public static String panStatusCheck(String panNumber){
+
+		final String url = SERVICE_URL1 + "/panstatus";
+		RestTemplate restTemplate = new RestTemplate();
+		String returnRes="FAIL";
+		
+		JsonObject parametersMap = new  JsonObject();
+		parametersMap.addProperty("PAN", panNumber);
+		
+		logger.info("Requesting FATCA registartion to API- "+ parametersMap.toString());
+		
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
+		HttpEntity<String> entity = new HttpEntity<String>(parametersMap.toString(),headers);
+
+		if(CommonConstants.BSE_CALL_TEST_ENABLED.equalsIgnoreCase("N")){
+			ResponseEntity<?> response= restTemplate.postForEntity(url, entity,  String.class);
+			returnRes=response.getBody().toString();
+			logger.info("Response for pan status check- "+ response.getBody().toString());
+		}else{
+			returnRes = "100|YUIII2345V|N|N|N|N|AOF PAN Search details|N|";
+		}
+
+		return returnRes;
+	}
+	
 
 	public static String uploadAOF(BseAOFUploadRequest form){
 

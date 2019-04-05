@@ -1,13 +1,9 @@
 package com.freemi.common.util;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
@@ -15,10 +11,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.freemi.entity.database.UserBankDetails;
-import com.freemi.entity.investment.AddressDetails;
 import com.freemi.entity.investment.BseMFInvestForm;
-import com.freemi.entity.investment.MFNominationForm;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
@@ -32,9 +25,6 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.text.pdf.codec.Base64.InputStream;
-import com.itextpdf.text.pdf.codec.Base64.OutputStream;
-import com.itextpdf.tool.xml.XMLWorkerHelper;
 
 public class BseAOFGenerator {
 	private static final Logger logger = LogManager.getLogger(BseAOFGenerator.class);
@@ -46,7 +36,7 @@ public class BseAOFGenerator {
 		Document document = new Document(PageSize.A4);
 		try
 		{
-			writer = PdfWriter.getInstance(document, new FileOutputStream(aofbasepath+fileName+".pdf"));
+			writer = PdfWriter.getInstance(document, new FileOutputStream(aofbasepath+fileName));
 			document.open();
 			/*document.add(new Paragraph("A Hello World PDF document."));*/
 
@@ -205,7 +195,11 @@ public class BseAOFGenerator {
 			cell11 = new PdfPCell(new Paragraph("KYC:"+" "+kycStatus,f1));
 			table4.addCell(cell11);
 
-			cell11 = new PdfPCell(new Paragraph("Date of birth: "+ investForm.getInvDOB(),f1));
+//			DOB format
+			SimpleDateFormat baseFormat = new SimpleDateFormat("yyyy-mm-dd");
+			SimpleDateFormat aofDateFormat = new SimpleDateFormat("dd-mm-yyyy");
+			String dobinFormat = aofDateFormat.format(baseFormat.parse(investForm.getInvDOB()));
+			cell11 = new PdfPCell(new Paragraph("Date of birth: "+ dobinFormat,f1));
 			table4.addCell(cell11);
 
 			document.add(table4);
@@ -341,7 +335,7 @@ public class BseAOFGenerator {
 			cell11 = new PdfPCell();
 
 			c1 = new Chunk("State: ",f1);
-			c2 = new Chunk(investForm.getAddressDetails().getState(),f2);
+			c2 = new Chunk(InvestFormConstants.states.get(investForm.getAddressDetails().getState()),f2);
 			p11 = new Phrase();
 			p11.add(c1);
 			p11.add(c2);
@@ -718,7 +712,7 @@ public class BseAOFGenerator {
 			cell11.setVerticalAlignment(Element.ALIGN_MIDDLE);
 
 			table4.addCell(cell11);
-			cell11 = new PdfPCell(new Paragraph("A/C Type: "+ investForm.getBankDetails().getAccountType(),f1));
+			cell11 = new PdfPCell(new Paragraph("A/C Type: "+ InvestFormConstants.accountTypes.get(investForm.getBankDetails().getAccountType()),f1));
 			table4.addCell(cell11);
 
 			cell11 = new PdfPCell(new Paragraph("IFSC Code: "+ investForm.getBankDetails().getIfscCode(),f1));
@@ -1072,13 +1066,26 @@ public class BseAOFGenerator {
 		System.out.println(occupationCode);
 		Map<String,String> occupationList = InvestFormConstants.occupationList;
 		for (String name : occupationList.keySet())  
-            System.out.println("key: " + name); 
+//            System.out.println("key: " + name); 
 		
 		occName = occupationList.get(occupationCode);
 		System.out.println(occName);
 		return occName;
 
 	}
+	
+	/*private static String getStateName(String stateCode){
+		String stateName="NA";
+		
+		Map<String,String> occupationList = InvestFormConstants.states;
+		for (String name : occupationList.keySet())  
+//            System.out.println("key: " + name); 
+		
+		stateName = occupationList.get(occupationCode);
+		System.out.println(occName);
+		return occName;
+
+	}*/
 	
 	private static String getHoldingMode(String holdingMode){
 		String holding="NA";

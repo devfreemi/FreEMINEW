@@ -102,7 +102,7 @@ function nextPrev(n) {
 	// console.log("n- " + n);
 	// console.log("Current tab- " + currentTab);
 
-	if (n == 1 && currentTab == 2) {
+	if (n == 1 && currentTab == 3) {
 		console.log("Display progress");
 		$("#display_progress").css({
 			"display" : "block"
@@ -298,6 +298,28 @@ function populateConfirmPage() {
 	$("#bankCityDisplay").text($("#bankCity").val());
 	$("#branchStateDisplay").text($("#bankState").val());
 	//	$("#").text($("#").val());
+	
+	$("#branchStateDisplay").text($("#bankState").val());
+	
+	
+//	FATCA
+	var f = $("input[name='fatcaDetails.usCitizenshipCheck']:checked").val();
+	console.log("US citizen> "+ f);
+	
+	if(f){
+		$("#uscitizenshipcheckdisplay").text("Not a citizen of US/Canada");
+	}else{
+		$("#uscitizenshipcheckdisplay").text("Citizen of US/Canada");
+	}
+	
+	$("#birthplacedisplay").text($("#birthplace").val());
+	$("#fathernamedisplay").text($("#fathername").val());
+	$("#spousenamedisplay").text($("#spousename").val());
+	$("#wealthsourcedisplay").text($("#wealthsource :selected").text());
+	$("#incomeslabdisplay").text($("#incomeslab :selected").text());
+	$("#occupationtypedisplay").text($("#occupationType :selected").text());
+	$("#politicalviewdisplay").text($("#politicalview :selected").text());
+	
 
 }
 

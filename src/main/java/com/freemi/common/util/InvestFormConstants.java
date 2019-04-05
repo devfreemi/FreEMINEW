@@ -22,7 +22,19 @@ public class InvestFormConstants {
 		}
 	};
 	
-	
+	public static Map<String,String> nomineeRelation = new LinkedHashMap<String,String>(){
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		{
+			put("Son", "Son");
+			put("Daughter", "Daughter");
+			put("Parents", "Parents");
+			put("Spouse", "Spouse");
+		}
+	};
 
 	public static Map<String,String> occupationList = new LinkedHashMap<String,String>(){
 		/**
@@ -209,7 +221,7 @@ public class InvestFormConstants {
 
 		{
 			put("AN","ANDAMAN &amp; NICOBAR");
-			put("AO","ARMY OFFICER");
+			/*put("AO","ARMY OFFICER");*/
 			put("AP","ANDHRA PRADESH");
 			put("AR","ARUNACHAL PRADESH");
 			put("AS","ASSAM");
@@ -289,6 +301,149 @@ public class InvestFormConstants {
 			put(11, "November");
 			put(12, "December");
 
+		}
+	};
+	
+	
+	public static Map<String,String> fatcaTaxStatusIndividual = new LinkedHashMap<String,String>(){
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		{
+			put("01", "Individual");
+			put("02", "On Behalf Of Minor");
+			put("21", "NRI - NRE (Repatriation)");
+			put("24", "NRI - NRO [Non Repatriation]");
+		}
+	};
+	
+	
+	public static Map<String,String> fatcaOccupationType = new LinkedHashMap<String,String>(){
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		{
+			put("B", "Business");
+			put("O", "Others");
+			put("S", "Service");
+		}
+	};
+	
+	public static Map<String,String> fatcaTaxStatusNonIndividual = new LinkedHashMap<String,String>(){
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		{
+			/*put("01", "Individual");
+			put("02", "On Behalf Of Minor");
+			put("21", "NRI - NRE (Repatriation)");
+			put("24", "NRI - NRO [Non Repatriation]");*/
+		}
+	};
+	
+	public static Map<String,String> fatcaAddressType = new LinkedHashMap<String,String>(){
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		{
+			put("1", "Residential Or Business");
+			put("2", "Residential");
+			put("3", "Business");
+			put("4", "Registered Office");
+			put("5", "Unspecified");
+		}
+	};
+	
+	public static Map<String,String> fatcaPoliticalView = new LinkedHashMap<String,String>(){
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		{
+			/*put("", "--Select--");*/
+			put("Y", "The investor is politically exposed person");
+			put("N", "The investor is not politically exposed person");
+			put("R", "The investor is a relative of the politically exposed person");
+		}
+	};
+	
+	public static Map<String,String> fatcaWealthSource = new LinkedHashMap<String,String>(){
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		{
+			put("01", "Salary");
+			put("02", "Business Income");
+			put("03", "Gift");
+			put("04", "Ancestral Property");
+			put("05", "Rental Income");
+			put("06", "Prize Money");
+			put("07", "Royalty");
+			put("08", "Others");
+		}
+	};
+	
+	
+	public static Map<String,String> fatcaIncomeSlab = new LinkedHashMap<String,String>(){
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		{
+			put("31", "Below 1 Lakh");
+			put("32", "> 1 <=5 Lacs");
+			put("33", ">5 <=10 Lacs");
+			put("34", ">10 <= 25 Lacs");
+			put("35", "> 25 Lacs < = 1 Crore");
+			put("36", "Above 1 Crore");
+
+		}
+	};
+	
+	public static Map<String,String> countryCode = new LinkedHashMap<String,String>(){
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		{
+			put("IN", "India");
+			
+		}
+	};
+	
+	public static Map<String,String> identityDocumentType = new LinkedHashMap<String,String>(){
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		{
+			put("A", "Passport");
+			put("B", "Election ID Card");
+			put("C", "PAN Card");
+			put("C1", "Company Identification Number");
+			put("D", "ID Card");
+			put("E", "Driving License");
+			put("E1", "Global Entity Identification Number");
+			put("G", "UIDIA / Aadhar letter");
+			put("G1", "US GIIN");
+			put("H", "NREGA Job Card");
+			put("T", "TIN [Tax Payer Identification Number]");
+			put("X", "Not categorized");
+			
 		}
 	};
 

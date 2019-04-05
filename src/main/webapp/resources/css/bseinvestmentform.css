@@ -79,8 +79,8 @@ input.valid {
 .step {
 	height: 15px;
 	width: 15px;
-	margin: 0 30px;
-	background-color: #bbbbbb;
+	margin: 0 25px;
+	background-color: #607D8B;
 	border: none;
 	border-radius: 50%;
 	display: inline-block;
@@ -90,6 +90,7 @@ input.valid {
 /* Mark the active step: */
 .step.active {
 	opacity: 1;
+	background: #FF5722;
 }
 
 /* Mark the steps that are finished and valid: */
@@ -102,6 +103,7 @@ input.valid {
 	border: 1px solid #c8d4d4;
 	color: #ffffff;
 	box-shadow: 2px 3px 16px 0px #c6c5c5;
+	margin-bottom: 2rem;
 }
 
 .sectionheader {
@@ -111,9 +113,25 @@ input.valid {
 	margin-top: 10px;
 	padding: 5px;
 	font-family: serif;
+	box-shadow: 2px 1px 4px 0px #948d8d;
+}
+
+.sectionheader1 {
+	background-color: #44b6bb;
+	padding: 3px;
+	margin-bottom: 10px;
+	margin-top: 10px;
+	padding: 5px;
+	font-family: serif;
+	box-shadow: 2px 1px 4px 0px #948d8d;
 }
 
 .sectionheader h5 {
+	font-size: 16px;
+	margin-bottom: 0px;
+}
+
+.sectionheader1 h5 {
 	font-size: 16px;
 	margin-bottom: 0px;
 }
@@ -287,12 +305,16 @@ keyframes lds-ellipsis1 { 0% {
 100%
 {
 transform
-:
- 
-scale
-(1);
 
-  
+
+:
+
+ 
+
+scale
+
+
+(1);
 }
 }
 @
@@ -303,12 +325,16 @@ keyframes lds-ellipsis3 { 0% {
 100%
 {
 transform
-:
- 
-scale
-(0);
 
-  
+
+:
+
+ 
+
+scale
+
+
+(0);
 }
 }
 @
@@ -319,10 +345,17 @@ keyframes lds-ellipsis2 { 0% {
 100%
 {
 transform
+
+
 :
+
  
+
 translate
-(19px
+
+
+(19
+px
 ,
 0);
 }
@@ -367,7 +400,7 @@ translate
 
 /* Mutual funds explorer */
 .mf-style1 {
-	padding: 5px;	
+	padding: 5px;
 	/* font-family: Roboto, system-ui, -apple-system, BlinkMacSystemFont,
 		Segoe UI, Oxygen, Ubuntu, Cantarell, Droid Sans, Helvetica Neue; */
 	-webkit-font-smoothing: antialiased;
@@ -384,7 +417,6 @@ translate
 	border-radius: 5px;
 	text-align: center;
 	box-shadow: 0 0 3px 0px #7f8e85;
-	
 }
 
 .mf-style2>h2 {
@@ -397,25 +429,26 @@ translate
 	border-radius: 5px;
 	box-shadow: 0 0 3px 0px #7f8e85;
 	background-size: 14rem;
-    
 }
 
-.mf-style3 h6{
+.mf-style3 h6 {
 	color: #ffed60;
 }
 
-.mf-style3 ul{
+.mf-style3 ul {
 	font-size: 12px;
 }
 
-.mf-style3-back1{
-	background: url('/products/resources/images/invest/target.svg') no-repeat; 
+.mf-style3-back1 {
+	background: url('/products/resources/images/invest/target.svg')
+		no-repeat;
 	background-size: 14rem;
 	background-position: right;
 }
 
-.mf-style3-back2{
-	background: url('/products/resources/images/invest/invest-2.svg') no-repeat; 
+.mf-style3-back2 {
+	background: url('/products/resources/images/invest/invest-2.svg')
+		no-repeat;
 	background-size: 14rem;
 	background-position: right;
 }
@@ -431,196 +464,202 @@ translate
 
 .risk-bar {
 	width: 50%;
-    border: 1px solid #d8d8d8;
-    border-radius: 20px;
-
+	border: 1px solid #d8d8d8;
+	border-radius: 20px;
 }
-.risk-bar > div{
+
+.risk-bar>div {
 	width: 60%;
 	height: 6px;
-	background: #1E9600;  /* fallback for old browsers */
-	background: -webkit-linear-gradient(to left, #f12020, #efe41e, #53cc34);  /* Chrome 10-25, Safari 5.1-6 */
-	background: linear-gradient(to left, #f12020, #efe41e, #53cc34); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+	background: #1E9600; /* fallback for old browsers */
+	background: -webkit-linear-gradient(to left, #f12020, #efe41e, #53cc34);
+	/* Chrome 10-25, Safari 5.1-6 */
+	background: linear-gradient(to left, #f12020, #efe41e, #53cc34);
+	/* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
-.mf-box{
-	width: 100%; 
+.mf-box {
+	width: 100%;
 	height: 300px;
-	
 }
-.mf-box:HOVER{
+
+.mf-box:HOVER {
 	box-shadow: 1px 2px 4px 1px #d0c8c8;
 }
 
-.mf-name-custom{
+.mf-name-custom {
 	text-align: initial;
 	min-height: 60px;
-    height: 2.25rem;
-    padding: 10px;
-    color: azure;
-    height: 5rem;
-    margin-bottom: 0;
-    background: #34e89e;  /* fallback for old browsers */
+	height: 2.25rem;
+	padding: 10px;
+	color: azure;
+	height: 5rem;
+	margin-bottom: 0;
+	background: #34e89e; /* fallback for old browsers */
 	/* background:  -webkit-linear-gradient(to top, #0f3443, #34e89e),url('/products/resources/images/mf-back1.jpg')center no-repeat;  Chrome 10-25, Safari 5.1-6
 	background:  linear-gradient(to top right, #0f3443, #34e89e),url('/products/resources/images/mf-back1.jpg')center no-repeat; W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+
      */
-    background: linear-gradient( rgba(55, 74, 226, 0.67) 100%, rgba(0, 0, 0, 0.85)100%),url(/products/resources/images/vector1.png)center no-repeat;  /* Chrome 10-25, Safari 5.1-6 */
-	background: linear-gradient( rgba(55, 74, 226, 0.67) 100%, rgba(0, 0, 0, 0.85)100%),url(/products/resources/images/vector1.png)center no-repeat; /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-    font-size: 11px;
-}
-.card-text-custom{
-	margin-top: 20px;
-    color: #787b7d;
-    font-weight: 600;
-    text-align: initial;
+	background: linear-gradient(rgba(55, 74, 226, 0.67) 100%,
+		rgba(0, 0, 0, 0.85) 100%), url(/products/resources/images/vector1.png)
+		center no-repeat; /* Chrome 10-25, Safari 5.1-6 */
+	background: linear-gradient(rgba(55, 74, 226, 0.67) 100%,
+		rgba(0, 0, 0, 0.85) 100%), url(/products/resources/images/vector1.png)
+		center no-repeat;
+	/* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+	font-size: 11px;
 }
 
-.mf-invest-link{
+.card-text-custom {
+	margin-top: 20px;
+	color: #787b7d;
+	font-weight: 600;
+	text-align: initial;
+}
+
+.mf-invest-link {
 	font-size: 16px;
 	background-color: #248411;
-    padding: 3px 10px;
-    color: #f1f1f1;
-    border-radius: 3px;
+	padding: 3px 10px;
+	color: #f1f1f1;
+	border-radius: 3px;
 }
 
 .mf-invest-link:HOVER {
 	color: yellow;
 }
 
-.mf-modal-title-custom{
-    color: #ffffff;
-    font-size: 16px;
-    padding: 6px;
-    background: #1f966a;  /* fallback for old browsers */
+.mf-modal-title-custom {
+	color: #ffffff;
+	font-size: 16px;
+	padding: 6px;
+	background: #1f966a; /* fallback for old browsers */
 	/* background: -webkit-linear-gradient(to right, #FF4B2B, #FF416C);  Chrome 10-25, Safari 5.1-6
 	background: linear-gradient(to right, #FF4B2B, #FF416C); W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+
  */
 }
 
-.fund-data{
+.fund-data {
 	font-weight: 600;
 }
 
-.fund-explorer-top{
+.fund-explorer-top {
 	/* background-color: #0c4d8e; */
-    color: white;
-    padding: 5px;
-   /*  background: #000046;  fallback for old browsers
+	color: white;
+	padding: 5px;
+	/*  background: #000046;  fallback for old browsers
 background: -webkit-linear-gradient(to right, #1CB5E0, #000046);  Chrome 10-25, Safari 5.1-6
 background: linear-gradient(to right, #1CB5E0, #000046); W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-
-background: #EB3349;  /* fallback for old browsers */
-background: -webkit-linear-gradient(to right, #F45C43, #EB3349);  /* Chrome 10-25, Safari 5.1-6 */
-background: linear-gradient(to right, #F45C43, #EB3349); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-
-    
+	background: #EB3349; /* fallback for old browsers */
+	background: -webkit-linear-gradient(to right, #F45C43, #EB3349);
+	/* Chrome 10-25, Safari 5.1-6 */
+	background: linear-gradient(to right, #F45C43, #EB3349);
+	/* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
-.mf-btn-custom{
+.mf-btn-custom {
 	font-size: 12px;
 	padding: 2px 5px;
 	background-color: #38ab64;
-    border-color: #38ab64;
+	border-color: #38ab64;
 }
 
-.top-funds-discuss{
+.top-funds-discuss {
 	margin-top: 30px;
-    font-family: sans-serif;
+	font-family: sans-serif;
 }
 
-.purchase-form{
+.purchase-form {
 	background: aliceblue;
-    padding: 15px;
-    font-size: 12px;
+	padding: 15px;
+	font-size: 12px;
 }
 
-.purchase-form h5{
+.purchase-form h5 {
 	border-bottom: 1px solid;
 	color: #ef513f;
 }
 
-.col-form-label{
+.col-form-label {
 	/* font-weight: bold; */
 	font-size: 13px;
 }
 
-.purchase-form .form-group{
+.purchase-form .form-group {
 	margin-bottom: 0;
 }
 
-.purchase_status{
+.purchase_status {
 	margin-top: 30px;
 }
 
 .transaction-redirect1 {
 	background-color: antiquewhite;
-    padding: 3px 10px;
-    border-radius: 3px;
-    box-shadow: 3px 2px 5px 1px #d0cfcf;
-}
-    
-    
- .redeem-form-section{
-     border: 1px solid #bbbcbd;
-    border-radius: 5px;
-    padding: 10px;
-    box-shadow: 3px 2px 5px 0px #afa9a9;
- }
- 
- .redeem-h2{
- 	margin: 10px auto;
- 	font-size: 19px;
-    font-family: sans-serif;
-    color: #b55027;
- }
- 
- .confirm-label{
- 	  font-size: 12px;
- }
- 
- .text-md-center{
-    background: #3b80bd;
-    color: #fbfbfb;
- }
- 
- .custom-control-label{
- color: black;
- }
- 
- .aofoption{
-     text-align: left;
-    border: 1px solid;
-    margin: 10px;
-    border-radius: 5px;
-    padding: 5px;
- }
- 
- .aofoption>h5{
-     background-color: #5c9fef;
-    padding: 3px;
-    color: #ffff70;
-  }
-  
-  .purchase-history-table > td {
-  border: 1px solid red;
+	padding: 3px 10px;
+	border-radius: 3px;
+	box-shadow: 3px 2px 5px 1px #d0cfcf;
 }
 
-.fatca-form-select{
+.redeem-form-section {
+	border: 1px solid #bbbcbd;
+	border-radius: 5px;
+	padding: 10px;
+	box-shadow: 3px 2px 5px 0px #afa9a9;
+}
+
+.redeem-h2 {
+	margin: 10px auto;
+	font-size: 19px;
+	font-family: sans-serif;
+	color: #b55027;
+}
+
+.confirm-label {
+	font-size: 12px;
+}
+
+.text-md-center {
+	background: #3b80bd;
+	color: #fbfbfb;
+}
+
+.custom-control-label {
+	color: black;
+}
+
+.aofoption {
+	text-align: left;
+	border: 1px solid;
+	margin: 10px;
+	border-radius: 5px;
+	padding: 5px;
+}
+
+.aofoption>h5 {
+	background-color: #5c9fef;
+	padding: 3px;
+	color: #ffff70;
+}
+
+.purchase-history-table>td {
+	border: 1px solid red;
+}
+
+.fatca-form-select {
 	border-top: transparent;
-    border-left: transparent;
-    border-right: transparent;
+	border-left: transparent;
+	border-right: transparent;
 }
 
-.fatca-form-select:focus{
+.fatca-form-select:focus {
 	border-top: none;
-    border-left: none;
-    border-right: none;
-	}
+	border-left: none;
+	border-right: none;
+}
 
-.nav_style_top_funds	{
+.nav_style_top_funds {
 	color: #ffffff;
-    font-weight: 500;
-    background: #249c5a;
-    padding: 2px;
-    border-radius: 2px;
-	}
+	font-weight: 500;
+	background: #249c5a;
+	padding: 2px;
+	border-radius: 2px;
+}

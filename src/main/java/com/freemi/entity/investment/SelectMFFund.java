@@ -99,6 +99,9 @@ public class SelectMFFund implements Serializable {
 	@Column(name="BSE_REF_NO")
 	private String bseRefNo;
 	
+	@Transient
+	private String mandateType="";
+	
 	public long getSerialNo() {
 		return serialNo;
 	}
@@ -250,7 +253,12 @@ public class SelectMFFund implements Serializable {
 	public void setPayFirstInstallment(boolean payFirstInstallment) {
 		this.payFirstInstallment = payFirstInstallment;
 	}
-	
+	public String getMandateType() {
+		return mandateType;
+	}
+	public void setMandateType(String mandateType) {
+		this.mandateType = mandateType;
+	}
 	
 
 }

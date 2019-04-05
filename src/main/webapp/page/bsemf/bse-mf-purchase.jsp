@@ -150,34 +150,55 @@
 										id="custName" value="${bankacc	 }">
 								</div>
 							</div>
-							
+
 							<c:choose>
-							<c:when test="${not isEmandateComplete }">
-								<!--E-Mandate check  -->
-								<div class="custom-control custom-checkbox mb-2">
-									<form:checkbox class="custom-control-input"
-										path="eMandateRegRequired" disabled="true"></form:checkbox>
-									<label class="custom-control-label" for="eMandate1"
-										style="font-size: 11px; text-align: justify;">
-										Register your bank account for E-Mandate </label>
-								</div>
-								<div><span style="font-size: 12px;color: #1fbf59;font-weight: 400;text-align: justify;"><strong> Note:</strong> Link will be sent to your registered mail to complete your E-mandate. AADHAAR is mandatory in this process and linked to bank account. OTP will be sent to mobile number linked with your AADHAAR.</span></div>
-							</c:when>
-							<c:when test="${isEmandateComplete }">
-								<!--E-Mandate check  -->
-								<div class="custom-control custom-checkbox mb-2"
-									>
-									<form:checkbox class="custom-control-input"
-										path="eMandateRegRequired" disabled="true"></form:checkbox>
-									<label class="custom-control-label" for="eMandate1"
-										style="font-size: 11px; text-align: justify;">
-										E-mandate already complete </label>
-								</div>
-							</c:when>
+								<c:when test="${not isEmandateComplete }">
+									<!--E-Mandate check  -->
+									<div class="custom-control custom-checkbox mb-2">
+										<form:checkbox class="custom-control-input"
+											path="eMandateRegRequired" disabled="true"></form:checkbox>
+										<label class="custom-control-label" for="eMandate1"
+											style="font-size: 11px; text-align: justify;">
+											Register your bank account for E-Mandate </label>
+									</div>
+									<!-- <div><span style="font-size: 12px;color: #1fbf59;font-weight: 400;text-align: justify;"><strong> Note:</strong> Link will be sent to your registered mail to complete your E-mandate. AADHAAR is mandatory in this process and linked to bank account. OTP will be sent to mobile number linked with your AADHAAR.</span></div> -->
+
+									<div class="form-row mb-3">
+										<div class="form-group col-md-6">
+											<div
+												class="custom-control custom-radio custom-control-inline">
+												<form:radiobutton path="mandateType" value="I"
+													id="customRadioInline3" name="customRadioInline3"
+													class="custom-control-input" />
+												<label class="custom-control-label" for="customRadioInline3">Add
+													a Biller</label>
+											</div>
+											<div
+												class="custom-control custom-radio custom-control-inline">
+												<form:radiobutton path="mandateType" value="X"
+													id="customRadioInline4" name="customRadioInline4"
+													class="custom-control-input" />
+												<label class="custom-control-label" for="customRadioInline4">Nach
+													Mandate</label>
+											</div>
+
+										</div>
+									</div>
+
+								</c:when>
+								<c:when test="${isEmandateComplete }">
+									<!--E-Mandate check  -->
+									<div class="custom-control custom-checkbox mb-2">
+										<form:checkbox class="custom-control-input"
+											path="eMandateRegRequired" disabled="true"></form:checkbox>
+										<label class="custom-control-label" for="eMandate1"
+											style="font-size: 11px; text-align: justify;">
+											E-mandate already complete </label>
+									</div>
+								</c:when>
 							</c:choose>
 
-							<div class="custom-control custom-checkbox mb-2"
-								>
+							<div class="custom-control custom-checkbox mb-2">
 								<form:checkbox path="payFirstInstallment"
 									class="custom-control-input" id="payFirst1" checked="checked" />
 								<label class="custom-control-label" for="payFirst1"

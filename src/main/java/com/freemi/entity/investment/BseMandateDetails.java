@@ -37,6 +37,9 @@ public class BseMandateDetails implements Serializable {
 	@Column(name="BANK_ACC_NO")
 	private String accountNumber="";
 	
+	@Column(name="IFSC_CODE")
+	private String ifscCode;
+	
 	@Column(name="SIP_START_DATE")
 	private Date sipStartDate;
 	
@@ -182,6 +185,14 @@ public class BseMandateDetails implements Serializable {
 
 	public void setMandateType(String mandateType) {
 		this.mandateType = mandateType;
+	}
+
+	public String getIfscCode() {
+		return ifscCode;
+	}
+
+	public void setIfscCode(String ifscCode) {
+		this.ifscCode = ifscCode;
 	}
 	
 

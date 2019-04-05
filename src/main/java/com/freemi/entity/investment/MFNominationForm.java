@@ -73,8 +73,7 @@ public class MFNominationForm implements Serializable {
 	@OneToOne(fetch= FetchType.LAZY, optional=false, cascade=CascadeType.PERSIST)
 	@JoinColumn(name="CLIENT_ID", nullable= false,insertable=false,updatable=false)
 	private BseMFInvestForm mfForm;
-	
-	
+
 	
 	public long getSerialNo() {
 		return serialNo;

@@ -76,7 +76,7 @@ public class HomeController {
 		logger.info("@@@@ HomeController @@@@");
 		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 		/*return "index";*/
-		return "redirect:/registry-mutual-funds";
+		return "redirect:/mutual-funds/funds-explorer";
 	}
 
 
@@ -289,7 +289,7 @@ public class HomeController {
 		}else{
 			logger.info("Referer is null");
 			
-			returnUrl = "redirect:/";
+			returnUrl = "redirect:/products/";
 		}
 
 		logger.info("Redirect url after login- "+ returnUrl);

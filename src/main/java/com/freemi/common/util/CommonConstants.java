@@ -65,7 +65,9 @@ public class CommonConstants {
 	public static final String BSE_MEMBER_ID = "26273";
 	public static final String BSE_CLIENT_CODE = "2627301";
 	
-	public static final String BSE_CALL_TEST_ENABLED = "N";
+	public static final String BSE_CALL_TEST_ENABLED = "Y";
+	
+	public static final String BSE_OTP_ENABLED = "Y";
 	
 //	BSE API related reponse code
 	public static final String BSE_API_SERVICE_DISABLED = "000";

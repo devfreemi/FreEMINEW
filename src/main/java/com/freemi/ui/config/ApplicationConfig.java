@@ -6,6 +6,8 @@ import java.util.Properties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.boot.web.support.ErrorPageFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -15,6 +17,7 @@ import org.springframework.security.crypto.encrypt.Encryptors;
 import org.springframework.security.crypto.encrypt.TextEncryptor;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import com.freemi.common.util.CommonConstants;
 
@@ -89,4 +92,22 @@ public class ApplicationConfig {
 //			System.out.println(t.decrypt(encryptedText));
 			return(t.decrypt(encryptedText));
 		}
+		
+
+		
+		/*@Bean
+		public ErrorPageFilter errorPageFilter() {
+		    return new ErrorPageFilter();
+		}
+
+		@Bean
+		public FilterRegistrationBean disableSpringBootErrorFilter(ErrorPageFilter filter) {
+		    FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
+		    filterRegistrationBean.setFilter(filter);
+		    filterRegistrationBean.setEnabled(false);
+		    return filterRegistrationBean;
+		}*/
+		
+		
+		
 }

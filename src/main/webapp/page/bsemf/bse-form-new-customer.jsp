@@ -64,7 +64,7 @@
 			</div>
 
 			<div class="col-md-5 col-lg-5">
-				<div class="notice-mf">
+				<div class="notice-mf" style="font-weight: 400;">
 					<h5 style="color: #de1313;">Important Notice</h5>
 
 					<p>

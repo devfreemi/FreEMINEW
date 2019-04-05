@@ -4,24 +4,26 @@
 <form:form id="regForm"
 	action="${pageContext.request.contextPath}/mutual-funds/mfInvestRegister.do"
 	method="POST" commandName="mfInvestForm">
-
+	
 	<!-- Circles which indicates the steps of the form: -->
 	<div style="text-align: center;">
 		<span class="step"></span> <span class="step"></span> <span
-			class="step"></span> <span class="step"></span>
-	</div>
-
-	<c:if test="${error != null }">
-		<div class="alert alert-danger" style="padding: 5px; font-size: 12px;"
-			role="alert">${error }</div>
-	</c:if>
-	<div>
-		<span id="mandateField" style="color: red;"></span>
+			class="step"></span>
+		<!-- <span class="step"></span> -->
 	</div>
 
 	<!-- One "tab" for each step in the form: -->
 	<div class="tab">
 		<div class="animated fadeIn">
+
+			<c:if test="${error != null }">
+				<div>
+					<span style="color: red; font-size: 11px;">${error }</span>
+				</div>
+			</c:if>
+			<div>
+				<span id="mandateField" style="color: red;"></span>
+			</div>
 
 			<div class="sectionheader">
 				<h5>Unit Holder Information</h5>
@@ -40,10 +42,9 @@
 				</c:if>
 
 			</div>
-
-			<form:hidden path="profileRegRequired" />
-			<form:hidden path="customerRegistered" />
-
+			
+			<form:hidden path="profileRegRequired"/>
+			
 			<div class="form-row">
 				<div class="form-group col-md-6">
 					<div class="input-group mb-1">
@@ -130,8 +131,7 @@
 							<form:input type="date" path="invDOB" required="required"
 								class="form-control form-control-custom" id="investorDOB" />
 						</div>
-						<span style="font-size: 10px; color: #d05c41;"><sup>*</sup>Age
-							limit: 18-65 years</span>
+						<span style="font-size: 10px; color: #d05c41;"><sup>*</sup>Age limit: 18-65 years</span>
 					</div>
 
 				</div>
@@ -271,8 +271,11 @@
 								</div>
 								<form:select class="custom-select" id="relation"
 									path="nominee.nomineeRelation">
-									<option value="">Choose relation</option>
-									<form:options items="${nomineeRelation}" />
+									<option value="" selected="selected">Choose relation</option>
+									<option value="SON">Son</option>
+									<option value="DAUGHTER">Daughter</option>
+									<option value="Spouse">Spouse</option>
+									<option value="Parents">Parents</option>
 								</form:select>
 							</div>
 						</div>
@@ -429,278 +432,6 @@
 			</div>
 
 			<div class="sectionheader">
-				<h5>
-					<i class="fas fa-address-card"></i> Address Details
-				</h5>
-			</div>
-
-			<div class="form-row">
-				<div class="form-group col-md-6">
-					<div class="input-group mb-1">
-						<div class="input-group-prepend">
-							<span class="input-group-text" id="basic-addon3">Address
-								Type</span>
-						</div>
-						<form:select class="custom-select" id="addressCategory"
-							path="fatcaDetails.addressType">
-							<form:option value="">Select your Address Type</form:option>
-							<form:options items="${addressType}" />
-
-						</form:select>
-
-					</div>
-					<span style="color: #e40000; font-size: 11px; font-weight: 400;"><sup>*</sup>Address
-						must be KYC verified</span>
-
-				</div>
-			</div>
-
-			<div class="form-row">
-				<div class="form-group col-md-6">
-					<div class="input-group mb-1">
-						<div class="input-group-prepend">
-							<span class="input-group-text" id="basic-addon3">Address 1<sup
-								style="color: red">*</sup></span>
-						</div>
-						<form:input type="text" class="form-control form-control-custom"
-							required="required" id="address1" path="addressDetails.address1"
-							aria-describedby="basic-addon3" />
-					</div>
-				</div>
-
-				<div class="form-group col-md-6">
-					<div class="input-group mb-1">
-						<div class="input-group-prepend">
-							<span class="input-group-text" id="basic-addon3">Address 2</span>
-						</div>
-						<form:input type="text" class="form-control form-control-custom"
-							id="address1" path="addressDetails.address2"
-							aria-describedby="basic-addon3" />
-					</div>
-				</div>
-
-				<div class="form-group col-md-6">
-					<div class="input-group mb-1">
-						<div class="input-group-prepend">
-							<span class="input-group-text" id="basic-addon3">Address 3</span>
-						</div>
-						<form:input type="text" class="form-control form-control-custom"
-							id="address3" path="addressDetails.address3"
-							aria-describedby="basic-addon3" />
-					</div>
-				</div>
-
-				<div class="form-group col-md-6">
-					<div class="input-group mb-1">
-						<div class="input-group-prepend">
-							<span class="input-group-text" id="basic-addon3">City<sup
-								style="color: red">*</sup></span>
-						</div>
-						<form:input type="text" class="form-control form-control-custom"
-							required="required" id="address city" path="addressDetails.city"
-							aria-describedby="basic-addon3" />
-					</div>
-				</div>
-
-				<div class="form-group col-md-6">
-					<div class="input-group mb-1">
-						<div class="input-group-prepend">
-							<span class="input-group-text" id="basic-addon3">Pin Code<sup
-								style="color: red">*</sup></span>
-						</div>
-						<form:input type="text" class="form-control form-control-custom"
-							id="pinCode" path="addressDetails.pinCode" maxlength="6"
-							pattern="[0-9]*" required="required"
-							aria-describedby="basic-addon3" />
-					</div>
-				</div>
-
-				<div class="form-group col-md-6">
-					<div class="input-group mb-1">
-						<div class="input-group-prepend">
-							<span class="input-group-text" id="basic-addon3">State<sup
-								style="color: red">*</sup></span>
-						</div>
-						<form:select class="custom-select" id="bankName"
-							required="required" path="addressDetails.state">
-							<form:option value="" selected="true">Select your State</form:option>
-							<form:options items="${states}" />
-
-						</form:select>
-					</div>
-				</div>
-
-			</div>
-
-			<%-- <div class="sectionheader">
-				<h5>Sign your form</h5>
-			</div>
-
-			<div class="form-row">
-			<jsp:include page="sign-panel.jsp"></jsp:include>
-			</div> --%>
-
-		</div>
-	</div>
-
-	<!-- -------------- FATCA CAPTURE ------------------------------------------------------------------------------------------------------------------  -->
-
-	<div class="tab">
-		<div class="animated fadeIn">
-			<div class="sectionheader">
-				<h5>
-					<i class="fas fa-file-signature"></i> FATCA DECLARATION FOR INDIVIDUAL
-				</h5>
-			</div>
-
-			<div style="color: #353332; font-size: 12px; font-weight: 400;">
-				<details>
-					<summary>
-						<strong style="font-weight: 400; color: #ff682c;">What is
-							FATCA Declaration?</strong>
-					</summary>
-					<p>Foreign Account Tax Compliance Act (FATCA) is a law enacted
-						by the US congress in 2010. It was introduced to deter US evasion
-						of taxes by US citizens by hiding money in foreign countries. The
-						Indian Inter-Governmental Agreement (IGA) with the USA for
-						implementation of FATCA came into effect from August 31, 2015</p>
-				</details>
-
-				<hr>
-			</div>
-
-			<div class="form-row mb-3"
-				style="padding-left: 10px; font-weight: 400;">
-				<div class="custom-control custom-checkbox">
-					<form:checkbox class="custom-control-input"
-						path="fatcaDetails.usCitizenshipCheck" id="uscitizencheck" />
-					<label class="custom-control-label" for="uscitizencheck">I
-						am not a citizen of US/Canada</label>
-				</div>
-			</div>
-
-			<div class="form-row">
-				<div class="form-group col-md-6">
-					<div class="input-group mb-1">
-						<div class="input-group-prepend">
-							<span class="input-group-text">Place of Birth<sup
-								style="color: red">*</sup></span>
-						</div>
-						<form:input type="text" class="form-control form-control-custom"
-							maxlength="32" pattern="[a-zA-Z ]*" id="birthplace"
-							path="fatcaDetails.placeOfBirth" aria-describedby="basic-addon3" />
-					</div>
-
-				</div>
-
-				<div class="form-group col-md-6">
-					<div class="input-group mb-1">
-						<div class="input-group-prepend">
-							<span class="input-group-text" id="basic-addon3"><sup
-								style="color: red">*</sup>Wealth Source</span>
-						</div>
-						<form:select class="custom-select" id="wealthsource"
-							required="required" path="fatcaDetails.wealthSource">
-							<form:option value="">--Select--</form:option>
-							<form:options items="${wealthSource}" />
-						</form:select>
-					</div>
-				</div>
-
-
-
-			</div>
-
-			<div class="form-row">
-				<div class="form-group col-md-6">
-					<div class="input-group mb-1">
-						<div class="input-group-prepend">
-							<span class="input-group-text">Father's Name</span>
-						</div>
-						<form:input type="text" class="form-control form-control-custom"
-							id="fathername" path="fatcaDetails.fatherName"
-							aria-describedby="basic-addon3" maxlength="64" />
-					</div>
-				</div>
-				<div class="form-group col-md-6">
-					<div class="input-group mb-1">
-						<div class="input-group-prepend">
-							<span class="input-group-text">Spouse Name</span>
-						</div>
-						<form:input type="text" class="form-control form-control-custom"
-							id="spousename" path="fatcaDetails.spouseName"
-							aria-describedby="basic-addon3" maxlength="64" />
-					</div>
-
-
-				</div>
-			</div>
-
-
-
-			<div class="form-row">
-				<div class="form-group col-md-6">
-					<div class="input-group mb-1">
-						<div class="input-group-prepend">
-							<span class="input-group-text" id="basic-addon3"><sup
-								style="color: red">*</sup>Income Slab</span>
-						</div>
-						<form:select class="custom-select" id="incomeslab"
-							required="required" path="fatcaDetails.incomeSlab">
-							<form:option value="">--Select--</form:option>
-							<form:options items="${incomeSlab}" />
-						</form:select>
-					</div>
-				</div>
-				<div class="form-group col-md-6">
-					<div class="input-group mb-1">
-						<div class="input-group-prepend">
-							<span class="input-group-text" id="basic-addon3"><sup
-								style="color: red">*</sup>Occupation Type</span>
-						</div>
-						<form:select class="custom-select" id="occupationType"
-							required="required" path="fatcaDetails.occupationType">
-							<form:option value="">--Select--</form:option>
-							<form:options items="${occupationType}" />
-						</form:select>
-					</div>
-				</div>
-			</div>
-
-
-
-
-
-			<div class="form-row">
-				<div class="form-group col-md-6">
-					<div class="input-group mb-1">
-						<div class="input-group-prepend">
-							<span class="input-group-text" id="basic-addon3"><sup
-								style="color: red">*</sup>Political View Type<sup
-								style="color: red">*</sup> </span>
-						</div>
-						<form:select class="custom-select" id="politicalview"
-							required="required" path="fatcaDetails.politicalExposedPerson">
-							<form:option value="">--Select--</form:option>
-							<form:options items="${politicalView}" />
-						</form:select>
-					</div>
-				</div>
-
-				<%-- <div class="form-group col-md-6">
-					<div class="input-group mb-1">
-						<div class="input-group-prepend">
-							<span class="input-group-text">State</span>
-						</div>
-						<form:input type="text" class="form-control form-control-custom"
-							id="bankState" path="bankDetails.branchState"
-							aria-describedby="basic-addon3" readonly="true" />
-					</div>
-				</div> --%>
-			</div>
-
-			<%-- 
-			<div class="sectionheader">
 				<h5>Address Details</h5>
 			</div>
 
@@ -779,8 +510,8 @@
 				</div>
 
 			</div>
- --%>
-			<%-- <div class="sectionheader">
+
+		<%-- <div class="sectionheader">
 				<h5>Sign your form</h5>
 			</div>
 
@@ -790,14 +521,11 @@
 
 		</div>
 	</div>
-	<!-- ------------ END OF FATCA CAPTURE ---------------------------------------------------------------------------------------------  -->
-
-
 
 	<!-- ------------ SUMARY TAB ---------------------------------------------------------------------------------------------  -->
 	<div class="tab">
 		<div class="animated fadeIn">
-			<div class="sectionheader1">
+			<div class="sectionheader">
 				<h5>
 					<i class="fas fa-user"></i> Investor Details
 				</h5>
@@ -887,7 +615,7 @@
 
 
 			<!-- ---------------------------------------------------------------------------------------------------------  -->
-			<div class="sectionheader1">
+			<div class="sectionheader">
 				<h5>
 					<i class="fas fa-users"></i> Nominee Details
 				</h5>
@@ -938,8 +666,8 @@
 
 			<!-- End of nominee selecttion -->
 
-			<!-- Bank info summary  -->
-			<div class="sectionheader1">
+
+			<div class="sectionheader">
 				<h5>
 					<i class="fas fa-university"></i> Bank Details
 				</h5>
@@ -1010,73 +738,8 @@
 						id="branchStateDisplay"></span></label>
 				</div>
 			</div>
-			
-			<!-- End of Bank info summary  -->
-			<div class="sectionheader1">
-				<h5>
-					<i class="fas fa-file-signature"></i> FATCA Declaration
-				</h5>
-			</div>
 
-			<div class="row gap_custom">
-				<div class="col-md-6">
-					<label class="col-5 col-md-5 col-form-label label_design">US/Canada Citizen
-						</label> <label class="col-6 col-md-6 col-form-label label_design1"><span
-						id="uscitizenshipcheckdisplay"></span></label>
-				</div>
-				<div class="col-md-6">
-					<label class="col-5 col-md-5 col-form-label label_design">Place
-						of Birth</label> <label
-						class="col-6 col-md-6 col-form-label label_design1"><span
-						id="birthplacedisplay"></span> </label>
-				</div>
-			</div>
-
-			<div class="row gap_custom">
-				<div class="col-md-6">
-					<label class="col-5 col-md-5 col-form-label label_design">Father's Name
-						Type</label> <label class="col-6 col-md-6 col-form-label label_design1"><span
-						id="fathernamedisplay"></span></label>
-				</div>
-				<div class="col-md-6">
-					<label class="col-5 col-md-5 col-form-label label_design">Spouse Name
-						</label> <label class="col-6 col-md-6 col-form-label label_design1"><span
-						id="spousenamedisplay"></span></label>
-				</div>
-			</div>
-
-			<div class="row gap_custom">
-				<div class="col-md-6">
-					<label class="col-5 col-md-5 col-form-label label_design">Wealth Source
-						</label> <label class="col-6 col-md-6 col-form-label label_design1"><span
-						id="wealthsourcedisplay"></span></label>
-				</div>
-				<div class="col-md-6">
-					<label class="col-5 col-md-5 col-form-label label_design">Income Slab</label>
-					<label class="col-6 col-md-6 col-form-label label_design1"><span
-						id="incomeslabdisplay"></span></label>
-				</div>
-			</div>
-
-			<div class="row gap_custom">
-				<div class="col-md-6">
-					<label class="col-5 col-md-5 col-form-label label_design">Occupation Type
-						Address</label> <label class="col-6 col-md-6 col-form-label label_design1"><span
-						id="occupationtypedisplay"></span></label>
-				</div>
-				<div class="col-md-6">
-					<label class="col-5 col-md-5 col-form-label label_design">Political View
-						</label> <label class="col-6 col-md-6 col-form-label label_design1"><span
-						id="politicalviewdisplay"></span></label>
-				</div>
-			</div>
-
-			<!-- FATCA Declaration  -->
-			
-			
-			<!-- End of FATCA declaration  -->
-
-			<div class="sectionheader1">
+			<div class="sectionheader">
 				<h5>
 					<img
 						src="<c:url value="${contextPath}/resources/images/invest/declaration.svg"/>"

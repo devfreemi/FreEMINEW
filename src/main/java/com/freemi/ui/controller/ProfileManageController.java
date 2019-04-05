@@ -32,6 +32,7 @@ import com.freemi.common.util.CommonConstants;
 import com.freemi.common.util.CommonTask;
 import com.freemi.common.util.InvestFormConstants;
 import com.freemi.database.service.BseEntryManager;
+import com.freemi.entity.bse.BseFileUpload;
 //import com.freemi.database.service.BseEntryManager;
 import com.freemi.entity.general.ProfilePasswordChangeForm;
 import com.freemi.entity.general.ResetPassword;
@@ -302,7 +303,7 @@ public class ProfileManageController{
 	}
 	
 	@RequestMapping(value = "/my-dashboard", method = RequestMethod.GET)
-	public String getMyDashboard(Model map,HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+	public String getMyDashboard(@ModelAttribute("fileform") BseFileUpload fileform,Model map,HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 		//logger.info("@@@@ Inside Login..");
 		String returnurl = "";
 		double totalAsset= 0;
@@ -327,6 +328,9 @@ public class ProfileManageController{
 				map.addAttribute("ORDERHISTORY", "ERROR");
 				logger.error("Failed to fetch cutomer Registry details \n", ex);
 			}
+			fileform.setFilecategory("AOF");
+			fileform.setFileowner(session.getAttribute("userid").toString());
+			
 			
 //			Get Profile AOF Status
 			String aofstatus=bseEntryManager.investmentProfileStatus(session.getAttribute("userid").toString());

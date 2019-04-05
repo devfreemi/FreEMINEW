@@ -6,8 +6,15 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+
+import com.freemi.common.util.CommonConstants;
 
 public class RequestInceptorCustom  extends HandlerInterceptorAdapter {
 	
@@ -59,6 +66,7 @@ public class RequestInceptorCustom  extends HandlerInterceptorAdapter {
 	  Object handler, 
 	  ModelAndView modelAndView) throws Exception {
 	    try{
+	    	
 		String logged = request.getAttribute("LOGGED").toString(); 
 		if(logged== "FALSE"){
 			modelAndView.setViewName("redirect:/login");
@@ -71,8 +79,6 @@ public class RequestInceptorCustom  extends HandlerInterceptorAdapter {
 	    }catch(NullPointerException e){
 	    	logger.error("attribute null");
 	    }
-		
-	   
 	    
 	}
 

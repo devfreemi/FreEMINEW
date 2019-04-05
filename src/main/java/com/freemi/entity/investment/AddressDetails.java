@@ -13,9 +13,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Proxy;
+import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
 @Table(name="bsemf_customers_address")
@@ -49,9 +51,11 @@ public class AddressDetails implements Serializable{
 	private String city="";
 	
 	@Column(name="PINCODE")
+	@Pattern(regexp="[0-9]{6}",message="Enter valid ZIP code")
 	@Size(max=6, message="PIN code must be 6 digit")
 	private String pinCode="";
 	
+	@NotEmpty(message="Mention your state")
 	@Column(name="STATE")
 	private String state="";
 	

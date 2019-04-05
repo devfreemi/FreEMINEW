@@ -71,7 +71,7 @@ border: 1px solid #8b8e90;
 							<h5>Your order placed successfully</h5>
 							<div class="row">
 								<div class="col-md-12 col-lg-12" style="margin-bottom: 2rem;">
-									<table style="box-shadow: 1px 3px 4px 0px #b1b1b1;">
+									<table style="box-shadow: 1px 3px 4px 0px #b1b1b1;margin: auto;">
 										<tr>
 											<td><label>Fund Name</label></td>
 											<td>${TRANSACTION_REPORT.fundName }</td>
@@ -105,7 +105,7 @@ border: 1px solid #8b8e90;
 								<c:choose>
 									<c:when test="${EMANDATE == 'S' }">
 										<div>
-											<span>E-mandate registered successfully</span>
+											<span style="font-weight: 500;">E-mandate registered successfully</span>
 										</div>
 									</c:when>
 									<c:when test="${EMANDATE == 'F' }">
@@ -133,7 +133,7 @@ border: 1px solid #8b8e90;
 										style="margin: auto; text-align: center;">
 										<a class="transaction-redirect1"
 											style="text-decoration: none;"
-											href="${pageContext.request.contextPath}/mutual-funds/top-performing">Place
+											href="${pageContext.request.contextPath}/mutual-funds/funds-explorer">Place
 											Another Order</a>
 									</div>
 								</div>

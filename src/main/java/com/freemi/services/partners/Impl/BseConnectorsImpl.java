@@ -1,15 +1,11 @@
 package com.freemi.services.partners.Impl;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,9 +19,11 @@ import com.freemi.entity.bse.BseAOFUploadRequest;
 import com.freemi.entity.bse.BseAOFUploadResponse;
 import com.freemi.entity.bse.BseApiResponse;
 import com.freemi.entity.bse.BseEMandateRegistration;
+import com.freemi.entity.bse.BseFatcaForm;
 import com.freemi.entity.bse.BseOrderEntry;
 import com.freemi.entity.bse.BseOrderPaymentRequest;
 import com.freemi.entity.bse.BseOrderPaymentResponse;
+import com.freemi.entity.bse.BsePanStatusResponse;
 import com.freemi.entity.bse.BsePaymentStatus;
 import com.freemi.entity.bse.BseRegistrationMFD;
 import com.freemi.entity.bse.BseSipOrderEntry;
@@ -136,32 +134,31 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 	}
 
 	@Override
-	public BseAOFUploadResponse uploadAOFForm(String mobileNumber, String aoffolderLocation, String clientCode) {
-		logger.info("Convert AOF form details to BSE format and process");
-		String flag="SUCCESS";
+	public BseAOFUploadResponse uploadAOFForm(String fileName, String aoffolderLocation, String clientCode) {
+		logger.info("Convert AOF form details to BSE format and process for file of PAN- "+ fileName);
 		BseAOFUploadResponse aofresp = new BseAOFUploadResponse();
 		byte[] filearray = null;
-		Path filepath = Paths.get(aoffolderLocation, mobileNumber+".pdf");
+		Path filepath = Paths.get(aoffolderLocation, fileName+".pdf");
+		logger.info("Looking for AOF file- "+ filepath);
 		if(Files.exists(filepath)){
 			try {
 				filearray = Files.readAllBytes(new File(filepath.toString()).toPath());
 				BseAOFUploadRequest r = BseBeansMapper.AOFFormtoBseBeanMapper(filearray, clientCode);
 				String responseText = RestClientBse.uploadAOF(r);
 				logger.info("Response for AOF upload against customer : "+ clientCode + " : "+ responseText);
-				BseBeansMapper.BseAOFUploadResponsetoBean(aofresp, responseText);
+				BseBeansMapper.bseAOFUploadResponsetoBean(aofresp, responseText);
 				if(!aofresp.getStatusCode().equalsIgnoreCase("100")){
-//					logger
-					flag="FAIL";
+					logger.info("AOF upload status not successul.Reason- "+ aofresp.getStatusMessage());
 				}
 			} catch (IOException e) {
 				logger.error("Failed to query BSE to upload AOF form", e);
 				aofresp.setStatusCode("999");
-				aofresp.setStatusCode("FAILED_CONN");
-				flag="ERROR";
+				aofresp.setStatusMessage("FAILED_CONN");
 			}
 		}else{
 			logger.info("AOF File does not exist for upload!");
-			flag="NO_FILE";
+			aofresp.setStatusCode("998");
+			aofresp.setStatusMessage("File not found!");
 		}
 		return aofresp;
 	}
@@ -192,14 +189,14 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 	}
 
 	@Override
-	public BseApiResponse emandateRegistration(UserBankDetails bankDetails,String amount, String clientCode, Date startDate, Date endDate) {
+	public BseApiResponse emandateRegistration(UserBankDetails bankDetails,String mandateType, String amount, String clientCode, Date startDate, Date endDate) {
 		logger.info("Get bank account e-mandate registered for client id- "+ clientCode + " : bank no- " + bankDetails.getAccountNumber().substring(bankDetails.getAccountNumber().length()-4));
 		String response = "";
 		BseApiResponse bseresponse = new BseApiResponse();
 		if(env.getProperty(CommonConstants.BSE_ENABLED).equalsIgnoreCase("Y")){
 			try{
 //				BsePaymentStatus requestForm=  BseBeansMapper.BsePaymentStatusRequestToBse(clientId, orderNo);
-				BseEMandateRegistration registerForm = BseBeansMapper.bankDetailsToBseBeans(bankDetails, amount, clientCode,startDate,endDate);
+				BseEMandateRegistration registerForm = BseBeansMapper.bankDetailsToBseBeans(bankDetails,mandateType, amount, clientCode,startDate,endDate);
 				logger.info("Begin BSE service invoke process for payment status");
 				response = RestClientBse.eMandateRegistration(registerForm);
 				bseresponse= BseBeansMapper.emandateRegResponseToBean(response);
@@ -247,6 +244,67 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 	public String verifyOTPForLogin(String userid) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public String checkForExitingPAN(String pan) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public BseApiResponse fatcaDeclaration(BseMFInvestForm registrationForm, String field1) {
+		logger.info("FATCA declaration process received for customer- "+ registrationForm.getPan1());
+		String response = "";
+		BseApiResponse fatcaResponse = new BseApiResponse();
+		if(env.getProperty(CommonConstants.BSE_ENABLED).equalsIgnoreCase("Y")){
+			try{
+//				BsePaymentStatus requestForm=  BseBeansMapper.BsePaymentStatusRequestToBse(clientId, orderNo);
+				BseFatcaForm fatcaForm = BseBeansMapper.InvestmentFormToBseFATCABeans(registrationForm);
+				logger.info("Begin BSE service invoke process for FATCA declaration for customer-" + registrationForm.getPan1());
+				
+				response = RestClientBse.fatcaDeclaration(fatcaForm);
+				logger.info("Response from BSE declaration- " + response);
+				BseBeansMapper.fatcaUploadResponseToBean(fatcaResponse, response);
+				
+			}catch(Exception e){
+				logger.error("Failed during proceesing of BSE FATCA registration details to BSE platform",e);
+				fatcaResponse.setResponseCode("999");
+				fatcaResponse.setRemarks("ERROR");
+			}
+		}else{
+			logger.info("BSE connction is currently disabled");
+			fatcaResponse.setResponseCode(CommonConstants.BSE_API_SERVICE_DISABLED);
+			fatcaResponse.setRemarks("BSE Service is disabled");
+		}
+		return fatcaResponse;
+	}
+
+	@Override
+	public BsePanStatusResponse panStatusCheck(String panNumber) {
+		logger.info("Checking PAN status in BSE portal "+ panNumber);
+		String response = "";
+		BsePanStatusResponse statusResponse = new BsePanStatusResponse();
+		if(env.getProperty(CommonConstants.BSE_ENABLED).equalsIgnoreCase("Y")){
+			try{
+//				BsePaymentStatus requestForm=  BseBeansMapper.BsePaymentStatusRequestToBse(clientId, orderNo);
+				logger.info("Begin BSE service invoke process for FATCA declaration for customer-" + panNumber);
+				
+				response = RestClientBse.panStatusCheck(panNumber);
+				logger.info("Response from BSE declaration- " + response);
+				BseBeansMapper.panStatusResponsetoBean(statusResponse, response);
+				
+			}catch(Exception e){
+				logger.error("Failed during proceesing of BSE FATCA registration details to BSE platform",e);
+				statusResponse.setResponseCode("999");
+				statusResponse.setBseRemarks("ERROR");
+			}
+		}else{
+			logger.info("BSE connction is currently disabled");
+			statusResponse.setResponseCode(CommonConstants.BSE_API_SERVICE_DISABLED);
+			statusResponse.setBseRemarks("BSE Service is disabled");
+		}
+		return statusResponse;
 	}
 
 /*
