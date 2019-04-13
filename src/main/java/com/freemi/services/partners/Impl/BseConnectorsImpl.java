@@ -1,14 +1,22 @@
 package com.freemi.services.partners.Impl;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.Date;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.rendering.ImageType;
+import org.apache.pdfbox.rendering.PDFRenderer;
+import org.apache.pdfbox.tools.imageio.ImageIOUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -27,6 +35,7 @@ import com.freemi.entity.bse.BsePanStatusResponse;
 import com.freemi.entity.bse.BsePaymentStatus;
 import com.freemi.entity.bse.BseRegistrationMFD;
 import com.freemi.entity.bse.BseSipOrderEntry;
+import com.freemi.entity.bse.BseXipISipOrderEntry;
 import com.freemi.entity.database.UserBankDetails;
 import com.freemi.entity.investment.BseMFInvestForm;
 import com.freemi.entity.investment.BseOrderEntryResponse;
@@ -64,7 +73,7 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 	}
 
 	@Override
-	public BseOrderEntryResponse processCustomerPurchaseRequest(SelectMFFund selectedFund, String transactionNumber) {
+	public BseOrderEntryResponse processCustomerPurchaseRequest(SelectMFFund selectedFund, String transactionNumber,String mandateId) {
 		String result = "";
 		BseOrderEntryResponse bseOrderResp= new BseOrderEntryResponse();
 
@@ -88,12 +97,12 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 			else if(selectedFund.getInvestype().equals("SIP")){
 				logger.info("Convert form data to BSE SIP Request format data");
 				try{
-					BseSipOrderEntry bseMfSipOrderForm=  BseBeansMapper.transactionSIPOrderToBseBeans(selectedFund, transactionNumber);
+					BseXipISipOrderEntry bseMfSipOrderForm=  BseBeansMapper.transactionXSIPISIPOrderToBseBeans(selectedFund, transactionNumber,mandateId);
 					logger.info("Begin BSE service invoke process");
-					result = RestClientBse.purchaseSIPRequestProcess(bseMfSipOrderForm);
+					result = RestClientBse.purchaseXSIPISIPRequestProcess(bseMfSipOrderForm);
 					BseBeansMapper.siptransactionOrderReponseToBeans(bseOrderResp, result, selectedFund.getBseRefNo());
 				}catch(Exception e){
-					logger.error("Failed during proceesing of BSE SIP registration details to BSE platform",e);
+					logger.error("Failed during proceesing of BSE X-SIP I-SIP registration details to BSE platform",e);
 					//			result="BSE_CONN_FAIL";
 					bseOrderResp.setSuccessFlag("BSE_CONN_FAIL");
 				}
@@ -139,11 +148,30 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 		BseAOFUploadResponse aofresp = new BseAOFUploadResponse();
 		byte[] filearray = null;
 		Path filepath = Paths.get(aoffolderLocation, fileName+".pdf");
+		Path tifffilepath = Paths.get(aoffolderLocation, fileName+".tiff");
+		PDDocument document = null;
 		logger.info("Looking for AOF file- "+ filepath);
 		if(Files.exists(filepath)){
 			try {
-				filearray = Files.readAllBytes(new File(filepath.toString()).toPath());
-				BseAOFUploadRequest r = BseBeansMapper.AOFFormtoBseBeanMapper(filearray, clientCode);
+//				filearray = Files.readAllBytes(new File(filepath.toString()).toPath());
+
+				String extension = "tiff";
+				document = PDDocument.load(new File(filepath.toString()));
+				PDFRenderer pdfRenderer = new PDFRenderer(document);
+				
+				BufferedImage bim = pdfRenderer.renderImageWithDPI(0, 300, ImageType.RGB);
+
+				ImageIOUtil.writeImage(bim, String.format(tifffilepath.toString(), extension), 300);
+				
+				
+				document.close();
+				
+				logger.info("Converted PDF file to tiff for customer- "+ clientCode);
+				logger.info("Uploading file to bse- "+ tifffilepath.toString());
+				filearray = Files.readAllBytes(new File(tifffilepath.toString()).toPath());
+				String encodedString = Base64.getEncoder().encodeToString(filearray);
+				
+				BseAOFUploadRequest r = BseBeansMapper.AOFFormtoBseBeanMapper(filearray,encodedString, clientCode);
 				String responseText = RestClientBse.uploadAOF(r);
 				logger.info("Response for AOF upload against customer : "+ clientCode + " : "+ responseText);
 				BseBeansMapper.bseAOFUploadResponsetoBean(aofresp, responseText);
@@ -154,6 +182,15 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 				logger.error("Failed to query BSE to upload AOF form", e);
 				aofresp.setStatusCode("999");
 				aofresp.setStatusMessage("FAILED_CONN");
+				try{
+					document.close();
+				}catch(Exception ex){
+					logger.error("Failed to close AOF file", ex);
+				}
+			}catch(Exception ex1){
+				logger.info("AOF image conversion error- ", ex1);
+				aofresp.setStatusCode("999");
+				aofresp.setStatusMessage("INTERNAL_ERROR_AOF");
 			}
 		}else{
 			logger.info("AOF File does not exist for upload!");
@@ -162,7 +199,7 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 		}
 		return aofresp;
 	}
-	
+
 	@Override
 	public String BseOrderPaymentStatus(String clientId, String orderNo) {
 		logger.info("Get payment status fro payment order- "+ orderNo);
@@ -173,9 +210,9 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 				BsePaymentStatus requestForm=  BseBeansMapper.BsePaymentStatusRequestToBse(clientId, orderNo);
 				logger.info("Begin BSE service invoke process for payment status");
 				response = RestClientBse.orderPaymentStatus(requestForm);
-//				BseBeansMapper.bseOrderPayemtResultMapper(orderResponse, response);
-				
-				
+				//				BseBeansMapper.bseOrderPayemtResultMapper(orderResponse, response);
+
+
 			}catch(Exception e){
 				logger.error("Failed during proceesing of BSE SIP registration details to BSE platform",e);
 				//			result="BSE_CONN_FAIL";
@@ -195,12 +232,12 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 		BseApiResponse bseresponse = new BseApiResponse();
 		if(env.getProperty(CommonConstants.BSE_ENABLED).equalsIgnoreCase("Y")){
 			try{
-//				BsePaymentStatus requestForm=  BseBeansMapper.BsePaymentStatusRequestToBse(clientId, orderNo);
-				BseEMandateRegistration registerForm = BseBeansMapper.bankDetailsToBseBeans(bankDetails,mandateType, amount, clientCode,startDate,endDate);
+				//				BsePaymentStatus requestForm=  BseBeansMapper.BsePaymentStatusRequestToBse(clientId, orderNo);
+				BseEMandateRegistration registerForm = BseBeansMapper.bankDetailsToBseMandateBeans(bankDetails,mandateType, amount, clientCode,startDate,endDate);
 				logger.info("Begin BSE service invoke process for payment status");
 				response = RestClientBse.eMandateRegistration(registerForm);
 				bseresponse= BseBeansMapper.emandateRegResponseToBean(response);
-				
+
 			}catch(Exception e){
 				logger.error("Failed during proceesing of BSE SIP registration details to BSE platform",e);
 				//			result="BSE_CONN_FAIL";
@@ -226,7 +263,7 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 				logger.info("Begin BSE service invoke process for payment status");
 				response = RestClientBse.eMandateRegistration(registerForm);
 				bseresponse= BseBeansMapper.emandateRegResponseToBean(response);
-				
+
 			}catch(Exception e){
 				logger.error("Failed during proceesing of BSE SIP registration details to BSE platform",e);
 				//			result="BSE_CONN_FAIL";
@@ -259,14 +296,14 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 		BseApiResponse fatcaResponse = new BseApiResponse();
 		if(env.getProperty(CommonConstants.BSE_ENABLED).equalsIgnoreCase("Y")){
 			try{
-//				BsePaymentStatus requestForm=  BseBeansMapper.BsePaymentStatusRequestToBse(clientId, orderNo);
+				//				BsePaymentStatus requestForm=  BseBeansMapper.BsePaymentStatusRequestToBse(clientId, orderNo);
 				BseFatcaForm fatcaForm = BseBeansMapper.InvestmentFormToBseFATCABeans(registrationForm);
 				logger.info("Begin BSE service invoke process for FATCA declaration for customer-" + registrationForm.getPan1());
-				
+
 				response = RestClientBse.fatcaDeclaration(fatcaForm);
 				logger.info("Response from BSE declaration- " + response);
 				BseBeansMapper.fatcaUploadResponseToBean(fatcaResponse, response);
-				
+
 			}catch(Exception e){
 				logger.error("Failed during proceesing of BSE FATCA registration details to BSE platform",e);
 				fatcaResponse.setResponseCode("999");
@@ -287,13 +324,13 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 		BsePanStatusResponse statusResponse = new BsePanStatusResponse();
 		if(env.getProperty(CommonConstants.BSE_ENABLED).equalsIgnoreCase("Y")){
 			try{
-//				BsePaymentStatus requestForm=  BseBeansMapper.BsePaymentStatusRequestToBse(clientId, orderNo);
+				//				BsePaymentStatus requestForm=  BseBeansMapper.BsePaymentStatusRequestToBse(clientId, orderNo);
 				logger.info("Begin BSE service invoke process for FATCA declaration for customer-" + panNumber);
-				
+
 				response = RestClientBse.panStatusCheck(panNumber);
 				logger.info("Response from BSE declaration- " + response);
 				BseBeansMapper.panStatusResponsetoBean(statusResponse, response);
-				
+
 			}catch(Exception e){
 				logger.error("Failed during proceesing of BSE FATCA registration details to BSE platform",e);
 				statusResponse.setResponseCode("999");
@@ -307,7 +344,7 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 		return statusResponse;
 	}
 
-/*
+	/*
 	public static void main(String[] args){
 		Path filepath = Paths.get("E:/AOF/", "8777777777"+".pdf");
 		if(Files.exists(filepath)){
@@ -336,6 +373,6 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 		}
 	}*/
 
-	
+
 
 }

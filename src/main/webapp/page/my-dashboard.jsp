@@ -304,8 +304,10 @@ var FILE_UPLOAD=${FILE_IPLOAD};
 											<button class="btn btn-sm btn-primary" id="aofuploadbtn"
 												hidden="hidden"
 												onclick="initiateAOFUpload(<%=session.getAttribute("userid").toString()%>);">
-												<span id="uploadtxt">UPLOAD YOUR AOF <i class="fas fa-upload"></i></span>
-								<span id="uploadingtxt" style="display: none;">Uploading... <i class="fas fa-spinner fa-spin"></i></span>
+												<span id="uploadtxt">UPLOAD YOUR AOF <i
+													class="fas fa-upload"></i></span> <span id="uploadingtxt"
+													style="display: none;">Uploading... <i
+													class="fas fa-spinner fa-spin"></i></span>
 											</button>
 										</div>
 									</c:otherwise>
@@ -349,18 +351,21 @@ var FILE_UPLOAD=${FILE_IPLOAD};
 
 
 					<ul class="nav nav-tabs" id="myTab" role="tablist">
+
 						<li class="nav-item"><a class="nav-link active" id="home-tab"
 							data-toggle="tab" href="#freemi" role="tab"
 							aria-controls="freemi" aria-selected="true">Loans</a></li>
 						<li class="nav-item"><a class="nav-link" id="profile-tab"
 							data-toggle="tab" href="#fsecure" role="tab"
 							aria-controls="fsecure" aria-selected="false">Insurance</a></li>
+
 						<li class="nav-item"><a class="nav-link" id="contact-tab"
 							data-toggle="tab" href="#registry" role="tab"
 							aria-controls="registry" aria-selected="false">Mutual Funds</a></li>
 					</ul>
 
 					<div class="tab-content" id="myTabContent">
+
 						<div class="tab-pane fade show active custom-tab" id="freemi"
 							role="tabpanel" aria-labelledby="home-tab">
 
@@ -457,7 +462,7 @@ var FILE_UPLOAD=${FILE_IPLOAD};
 									<c:choose>
 										<c:when test="${ORDERHISTORY == 'SUCCESS' }">
 											<table class="table table-sm table-bordered registry-table">
-												<caption>Registry Purchase History</caption>
+												<caption>Mutual Funds Purchase History</caption>
 												<thead class="registry-records">
 													<tr>
 														<th scope="col">PORTFOLIO</th>
@@ -477,13 +482,13 @@ var FILE_UPLOAD=${FILE_IPLOAD};
 
 													<c:forEach var="listVar" items="${mforderhistory}">
 														<tr>
-															<td>${listVar.portfoilio }</td>
-															<td>${listVar.investType }</td>
-															<td>${listVar.schemeName }</td>
+															<td>${listVar.folioNumber }</td>
+															<td>${listVar.trasanctionType }</td>
+															<td>${listVar.fundName }</td>
 															<td></td>
 															<td></td>
 															<td style="font-weight: 600;"><fmt:formatNumber
-																	value="${listVar.schemeInvestment }" type="number"
+																	value="${listVar.invAmount }" type="number"
 																	maxFractionDigits="3" /></td>
 															<td style="text-align: center;">
 																<div class="btn-group">
@@ -495,14 +500,14 @@ var FILE_UPLOAD=${FILE_IPLOAD};
 																	<div class="dropdown-menu dropdown-menu-right">
 																		<button class="dropdown-item" type="button"
 																			style="font-size: 12px; color: #238019; font-weight: 600;"
-																			onclick="AdditionalPurchase('${listVar.portfoilio}','${listVar.schemeCode }','${listVar.investType }')">
+																			onclick="AdditionalPurchase('${listVar.folioNumber}','${listVar.rtaCode }','${listVar.trasanctionType }')">
 																			Invest More <i class="fas fa-arrow-left"></i>
 																		</button>
 
-																		<c:if test="${listVar.schemeInvestment > 0 }">
+																		<c:if test="${listVar.invAmount > 0 }">
 																			<button class="dropdown-item" type="button"
 																				style="font-size: 12px; color: #da2323; font-weight: 600;"
-																				onclick="MFRedeem('${listVar.portfoilio}','${listVar.schemeCode }','${listVar.investType }')">
+																				onclick="MFRedeem('${listVar.folioNumber}','${listVar.rtaCode }','${listVar.trasanctionType }')">
 																				Redeem <i class="fas fa-arrow-right"></i>
 																			</button>
 																		</c:if>
@@ -530,6 +535,7 @@ var FILE_UPLOAD=${FILE_IPLOAD};
 							</div>
 
 						</div>
+
 					</div>
 				</div>
 			</div>

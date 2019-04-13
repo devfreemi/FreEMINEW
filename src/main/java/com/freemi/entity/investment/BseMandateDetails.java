@@ -69,6 +69,9 @@ public class BseMandateDetails implements Serializable {
 	
 	@Column(name="UPDATE_TIME")
 	private String updateTime;
+	
+	@Column(name="MANDATE_ACTIVE")
+	private String mandateActive="Y";
 
 	public int getSerial() {
 		return serial;
@@ -194,6 +197,15 @@ public class BseMandateDetails implements Serializable {
 	public void setIfscCode(String ifscCode) {
 		this.ifscCode = ifscCode;
 	}
+
+	public String getMandateActive() {
+		return mandateActive;
+	}
+
+	public void setMandateActive(String mandateActive) {
+		this.mandateActive = mandateActive;
+	}
+	
 	
 
 }

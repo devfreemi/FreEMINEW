@@ -14,7 +14,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import com.freemi.entity.investment.BseMFInvestForm;
 
@@ -40,14 +44,14 @@ public class UserBankDetails implements Serializable  {
 	@Column(name="")
 	private String accountHolder;
 	
-	@NotNull(message="Valid IFSC code mandatory")
+	@NotEmpty(message="Valid IFSC code mandatory")
 	@Column(name="IFSC_CODE_1")
 	private String ifscCode="";
 	
 	@Column(name="BANK_NAME_1")
 	private String bankName="";
 	
-	@NotNull(message="Valid bank number is mandatory")
+	@NotEmpty(message="Valid bank number is mandatory")
 	@Column(name="ACCOUNT_NO_1")
 	private String accountNumber="";
 	

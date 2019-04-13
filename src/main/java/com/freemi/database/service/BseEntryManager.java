@@ -18,6 +18,7 @@ import com.freemi.entity.investment.BseMFSelectedFunds;
 import com.freemi.entity.investment.BseMFTop15lsSip;
 import com.freemi.entity.investment.BseMandateDetails;
 import com.freemi.entity.investment.BsemfTransactionHistory;
+import com.freemi.entity.investment.MFCamsFolio;
 import com.freemi.entity.investment.MFFatcaDeclareForm;
 import com.freemi.entity.investment.SelectMFFund;
 import com.freemi.entity.investment.TransactionStatus;
@@ -47,6 +48,7 @@ public interface BseEntryManager {
 	public BseMFInvestForm getCustomerInvestFormData(String mobile);
 	
 	public UserBankDetails getCustomerBankDetails(String clientCode);
+	public String getEmdandateDetails(String mobile, String clientCode,String mandateType, String accNumber);
 	public BseApiResponse updateEmdandateStatus(String clientCode,String mandateType, String accNumber);
 	
 	public String upddateCustomerFormSignature(String mobile, String pan, String signatureData);
@@ -54,7 +56,7 @@ public interface BseEntryManager {
 	
 	// Customer MF transactions
 	public boolean checkIfTransIdExist(String generatedTransId);
-	public TransactionStatus savetransactionDetails(SelectMFFund selectedMFFund);
+	public TransactionStatus savetransactionDetails(SelectMFFund selectedMFFund, String mandateId);
 	public List<BsemfTransactionHistory> getAllPurchaseHistory(String clientId);
 	
 	
@@ -73,6 +75,10 @@ public interface BseEntryManager {
 	
 	//PORTFOLIO Crud respository
 	public List<String> getSelectedAmcPortfolio(String amcCode, String clientId);
+	public List<MFCamsFolio> getCamsPortfolio(String mobile, String pan);
+	
+	public MFCamsFolio getCamsFundsDetailsForRedeem(String code, String mobile, String folioNumber);
+	
 	
 	public Page<BseFundsScheme> getpaginatedFundsList(Pageable p);
 }

@@ -5,8 +5,6 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -39,7 +37,10 @@ public class RestClient {
 //	private final String SERVICE_URL1 = "http://localhost:8090/freemibackend";
 
 	/*production*/
-	//	private final String SERVICE_URL1 = "http://localhost:8080/freemibackend";
+//		private final String SERVICE_URL1 = "http://localhost:8080/freemibackend";
+//		NEW PROD BOX
+//		private final String SERVICE_URL1 = "http://13.233.204.227:8080/freemibackend";
+		
 
 	/*DEV*/
 	//	private final String SERVICE_URL1 = "http://dev.freemi.in:8080/freemibackend";

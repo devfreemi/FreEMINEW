@@ -33,6 +33,10 @@
 		<section style="margin-bottom: 3rem;">
 			<div class="row" style="margin: auto;">
 				<div class="col-md-8 col-lg-8 purchase-form" style="margin: auto;">
+					<c:if test="${errormsg != null}">
+						<div class="alert alert-danger" role="alert">${errormsg}</div>
+					</c:if>
+
 					<form:form
 						action="${pageContext.request.contextPath}/mutual-funds/mfPurchaseConfirm.do"
 						method="POST" commandName="selectedFund">
@@ -50,13 +54,19 @@
 									<input type="text" readonly class="form-control-plaintext"
 										id="custName" value="${customerData.invName }">
 								</div>
+								<form:hidden path="clientID" />
+								<form:hidden path="transactionID" />
+								<form:hidden path="schemeCode" />
+
 							</div>
 							<div class="form-group row">
 								<label for="custName" class="col-sm-3 col-form-label">Mobile
 								</label>
 								<div class="col-sm-9">
-									<input type="text" readonly class="form-control-plaintext"
-										id="custName" value="${customerData.mobile	 }">
+									<%-- <input type="text" readonly class="form-control-plaintext"
+										id="custName" value="${customerData.mobile	 }"> --%>
+									<form:input path="mobile" class="form-control-plaintext"
+										readonly="readonly" />
 								</div>
 							</div>
 						</c:if>
@@ -84,24 +94,30 @@
 							<label for="schemeName" class="col-sm-3 col-form-label">Scheme
 								Name</label>
 							<div class="col-sm-9">
-								<input type="text" readonly class="form-control-plaintext"
-									id="schemeName" value="${selectedFund.schemeName }">
+								<%-- <input type="text" readonly class="form-control-plaintext"
+									id="schemeName" value="${selectedFund.schemeName }"> --%>
+								<form:input path="schemeName" readonly="readonly"
+									class="form-control-plaintext" id="schemeName" />
 							</div>
 						</div>
 						<div class="form-group row">
 							<label for="schemeName" class="col-sm-3 col-form-label">Investment
 								Amount</label>
 							<div class="col-sm-9">
-								<input type="text" readonly class="form-control-plaintext"
-									id="schemeName" value="${selectedFund.investAmount }">
+								<%-- <input type="text" readonly class="form-control-plaintext"
+									id="schemeName" value="${selectedFund.investAmount }"> --%>
+								<form:input path="investAmount" readonly="readonly"
+									class="form-control-plaintext" id="invAmount" />
 							</div>
 						</div>
 						<div class="form-group row">
 							<label for="schemeName" class="col-sm-3 col-form-label">Investment
 								Type</label>
 							<div class="col-sm-9">
-								<input type="text" readonly class="form-control-plaintext"
-									id="schemeName" value="${selectedFund.investype }">
+								<%-- <input type="text" readonly class="form-control-plaintext"
+									id="schemeName" value="${selectedFund.investype }"> --%>
+								<form:input path="investype" readonly="readonly"
+									class="form-control-plaintext" id="invtype" />
 							</div>
 						</div>
 						<c:if test="${selectedFund.investype == 'SIP' }">
@@ -109,9 +125,12 @@
 								<label for="schemeName" class="col-sm-3 col-form-label">Monthly
 									SIP Date</label>
 								<div class="col-sm-9">
-									<input type="text" readonly class="form-control-plaintext"
-										id="schemeDate" value="${selectedFund.sipDate }">
+									<%-- <input type="text" readonly class="form-control-plaintext"
+										id="schemeDate" value="${selectedFund.sipDate }"> --%>
+									<form:input path="sipDate" readonly="readonly"
+										class="form-control-plaintext" id="schemeDate" />
 								</div>
+								<%-- <form:hidden path="sipDate"/> --%>
 							</div>
 
 							<div class="form-group row">
@@ -151,52 +170,63 @@
 								</div>
 							</div>
 
-							<c:choose>
-								<c:when test="${not isEmandateComplete }">
-									<!--E-Mandate check  -->
-									<div class="custom-control custom-checkbox mb-2">
-										<form:checkbox class="custom-control-input"
-											path="eMandateRegRequired" disabled="true"></form:checkbox>
-										<label class="custom-control-label" for="eMandate1"
-											style="font-size: 11px; text-align: justify;">
-											Register your bank account for E-Mandate </label>
+							<form:hidden path="eMandateRegRequired" />
+							<c:if test="${selectedFund.eMandateRegRequired}">
+								<div class="custom-control custom-checkbox mb-2">
+									<form:checkbox class="custom-control-input"
+										path="eMandateRegRequired" disabled="true"></form:checkbox>
+									<label class="custom-control-label" for="eMandate1"
+										style="font-size: 11px; text-align: justify;">
+										Register your bank account for E-Mandate </label>
+								</div>
+								<!-- <div><span style="font-size: 12px;color: #1fbf59;font-weight: 400;text-align: justify;"><strong> Note:</strong> Link will be sent to your registered mail to complete your E-mandate. AADHAAR is mandatory in this process and linked to bank account. OTP will be sent to mobile number linked with your AADHAAR.</span></div> -->
+
+								<div class="form-row mb-3">
+									<div class="form-group col-md-6">
+										<div class="custom-control custom-radio custom-control-inline">
+											<form:radiobutton path="mandateType" value="I"
+												id="customRadioInline3" name="customRadioInline3"
+												onclick="mandateTypeChosen();" class="custom-control-input" />
+											<label class="custom-control-label" for="customRadioInline3">Add
+												a Biller</label>
+										</div>
+										<div class="custom-control custom-radio custom-control-inline">
+											<form:radiobutton path="mandateType" value="X"
+												id="customRadioInline4" name="customRadioInline4"
+												onclick="mandateTypeChosen();" class="custom-control-input" />
+											<label class="custom-control-label" for="customRadioInline4">Physical
+												Nach Mandate</label>
+										</div>
+
 									</div>
-									<!-- <div><span style="font-size: 12px;color: #1fbf59;font-weight: 400;text-align: justify;"><strong> Note:</strong> Link will be sent to your registered mail to complete your E-mandate. AADHAAR is mandatory in this process and linked to bank account. OTP will be sent to mobile number linked with your AADHAAR.</span></div> -->
-
-									<div class="form-row mb-3">
-										<div class="form-group col-md-6">
-											<div
-												class="custom-control custom-radio custom-control-inline">
-												<form:radiobutton path="mandateType" value="I"
-													id="customRadioInline3" name="customRadioInline3"
-													class="custom-control-input" />
-												<label class="custom-control-label" for="customRadioInline3">Add
-													a Biller</label>
+									<div class="row">
+										<div class="col-md-12 col-lg-12" style="padding-left: 2.7rem;">
+											<div id="isip" style="display: none;">
+												<i class="fas fa-info-circle"></i> <span class="animated fadeIn" style="color: #ea4036;"> No paperwork. You have to add BSE through your
+													Internet banking portal. Your internet banking must support
+													biller. </span>
 											</div>
-											<div
-												class="custom-control custom-radio custom-control-inline">
-												<form:radiobutton path="mandateType" value="X"
-													id="customRadioInline4" name="customRadioInline4"
-													class="custom-control-input" />
-												<label class="custom-control-label" for="customRadioInline4">Nach
-													Mandate</label>
+											<div id="xsip" style="display: none;">
+												<i class="fas fa-info-circle"></i> <span  class="animated fadeIn" style="color: #ea4036;"> You need to sign the generated nach mandate
+													form and physically submit or upload the scanned form. </span>
 											</div>
-
 										</div>
 									</div>
 
-								</c:when>
-								<c:when test="${isEmandateComplete }">
-									<!--E-Mandate check  -->
-									<div class="custom-control custom-checkbox mb-2">
-										<form:checkbox class="custom-control-input"
-											path="eMandateRegRequired" disabled="true"></form:checkbox>
-										<label class="custom-control-label" for="eMandate1"
-											style="font-size: 11px; text-align: justify;">
-											E-mandate already complete </label>
-									</div>
-								</c:when>
-							</c:choose>
+								</div>
+
+							</c:if>
+							<c:if test="${not selectedFund.eMandateRegRequired}">
+								<!--E-Mandate check  -->
+								<div class="custom-control custom-checkbox mb-2">
+									<form:checkbox class="custom-control-input"
+										path="eMandateRegRequired" disabled="true"></form:checkbox>
+									<label class="custom-control-label" for="eMandate1"
+										style="font-size: 11px; text-align: justify;">
+										E-mandate already complete </label>
+								</div>
+								<form:hidden path="mandateType" />
+							</c:if>
 
 							<div class="custom-control custom-checkbox mb-2">
 								<form:checkbox path="payFirstInstallment"
@@ -288,5 +318,6 @@
 	</section>
 	<!-- END BSE MF  -->
 	<jsp:include page="../include/footer.jsp"></jsp:include>
+	<script src="<c:url value="${contextcdn}/resources/js/bseinvest.js" />"></script>
 </body>
 </html>

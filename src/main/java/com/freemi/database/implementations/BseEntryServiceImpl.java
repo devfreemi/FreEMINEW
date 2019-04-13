@@ -31,6 +31,7 @@ import com.freemi.database.interfaces.BseTransCountCrudRepository;
 import com.freemi.database.interfaces.BseTransCrudRepository;
 import com.freemi.database.interfaces.BseTransHistoryViewCrudRepository;
 import com.freemi.database.interfaces.BseTransactionsView;
+import com.freemi.database.interfaces.MfCamsFolioCrudRepository;
 import com.freemi.database.interfaces.PortfolioCrudRepository;
 import com.freemi.database.interfaces.TopFundsRepository;
 import com.freemi.database.service.BseEntryManager;
@@ -48,6 +49,7 @@ import com.freemi.entity.investment.BseMFTop15lsSip;
 import com.freemi.entity.investment.BseMandateDetails;
 import com.freemi.entity.investment.BseOrderEntryResponse;
 import com.freemi.entity.investment.BsemfTransactionHistory;
+import com.freemi.entity.investment.MFCamsFolio;
 import com.freemi.entity.investment.MFFatcaDeclareForm;
 import com.freemi.entity.investment.MFNominationForm;
 import com.freemi.entity.investment.SelectMFFund;
@@ -91,22 +93,25 @@ public class BseEntryServiceImpl implements BseEntryManager {
 
 	@Autowired
 	BseTop15lsSipViewCrudReositry bseTop15lsSipViewCrudReositry;
-	
+
 	@Autowired
 	BseCustomerNomineeCrudRepository bseCustomerNomineeCrudRepository;
-	
+
 	@Autowired
 	BseMandateCrudRepository bseMandateCrudRepository;
-	
+
 	@Autowired
 	BseFundsExplorerRepository bseFundsExplorerRepository;
-	
+
 	@Autowired
 	BseSelectedCategoryFundsRepository bseSelectedCategoryFundsRepository;
-	
+
 	@Autowired
 	BseCustomerFATCACrudRepository bseCustomerFATCACrudRepository;
 	
+	@Autowired
+	MfCamsFolioCrudRepository mfCamsFolioCrudRepository;
+
 	/*@Autowired
 	MailSenderHandler mailSenderHandler;*/
 
@@ -118,7 +123,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		String flag = "SUCCESS";
 		String customerid ="";
 		boolean registerCustomerToBse = false;
-		
+
 
 		if(bseCustomerCrudRespository.existsByPan1(customerForm.getPan1())){
 			logger.info("Account already exist with given primary PAN number");
@@ -168,20 +173,20 @@ public class BseEntryServiceImpl implements BseEntryManager {
 
 			logger.info("Customer registered at FREEMI portal. Begin to push customer details at BSE end");
 			String bseResponse = investmentConnectorBseInterface.saveCustomerRegistration(customerForm, null);
-			
-			
+
+
 			if(bseResponse.equalsIgnoreCase("SUCCESS")){
 				//User registration successful at BSE portal
 				try{
 					bseCustomerCrudRespository.updateBseRegistrationStatus(customerid);
-/*//					Call FATCADeclaration
+					/*//					Call FATCADeclaration
 					fatcaResponse = investmentConnectorBseInterface.fatcaDeclaration(customerForm, null);
 					if(fatcaResponse.getResponseCode().equalsIgnoreCase("100")){
 						bseCustomerFATCACrudRepository.updateFatcaDeclarationStatus(true, customerid);
 					}else{
 						bseCustomerFATCACrudRepository.updateFatcaDeclarationStatus(false, customerid);
 					}*/
-					
+
 				}catch(Exception e){
 					logger.error("Failed to update customer successful registration status to database, notify admin");
 				}
@@ -197,7 +202,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	}
 
 	@Override
-	public TransactionStatus savetransactionDetails(SelectMFFund selectedMFFund) {
+	public TransactionStatus savetransactionDetails(SelectMFFund selectedMFFund, String mandateId) {
 		// TODO Auto-generated method stub
 		boolean flag = true;
 
@@ -228,7 +233,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 
 			//Call BSE
 
-			bseResult = investmentConnectorBseInterface.processCustomerPurchaseRequest(selectedMFFund, transNumber.toString());
+			bseResult = investmentConnectorBseInterface.processCustomerPurchaseRequest(selectedMFFund, transNumber.toString(),mandateId);
 
 			logger.info("Status of requested transaction - "+ bseResult.getSuccessFlag());
 
@@ -243,7 +248,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 				transStatus.setSuccessFlag("S");
 				transStatus.setStatusMsg(bseResult.getBsereMarks());
 				transStatus.setBseOrderNoFromResponse(bseResult.getOrderNoOrSipRegNo());
-				
+
 			}else if (bseResult.getSuccessFlag().equalsIgnoreCase("000")){
 				logger.info("Transaction disabled. Reason- "+bseResult.getBsereMarks());
 				transStatus.setSuccessFlag("S");
@@ -349,10 +354,10 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	/*@Override
 	public BseMFInvestForm getCustomerDetailsByMobile(String mobile) {
 		BseMFInvestForm investorProfileData = bseCustomerCrudRespository.getByMobile(mobile);
-		
+
 		return investorProfileData;
 	}*/
-	
+
 	@Override
 	public UserProfile getCustomerProfileDetailsByMobile(String mobile) {
 		// TODO Auto-generated method stub
@@ -454,10 +459,43 @@ public class BseEntryServiceImpl implements BseEntryManager {
 			String mobileNumber) {
 		String clientId= bseCustomerCrudRespository.getClientIdFromMobile(mobileNumber);
 
-		BseAllTransactionsView selectedFolioTransDetails = bseTransactionsView.findOneByPortfoilioAndSchemeCodeAndClientIDAndInvestType(portfolio, schemeCode, clientId,investType);
+		BseAllTransactionsView selectedFolioTransDetails =null;
+		selectedFolioTransDetails = bseTransactionsView.findOneByPortfoilioAndSchemeCodeAndClientIDAndInvestType(portfolio, schemeCode, clientId,investType);
 
 		return selectedFolioTransDetails;
 	}
+	
+
+	@Override
+	public MFCamsFolio getCamsFundsDetailsForRedeem(String code, String mobile, String folioNumber) {
+		
+//		CAMS funds details redemption
+//		MFCamsFolio folio = 
+		
+//		for CAMS, need to map rta code to scheme code
+		String schemeCode="";
+		MFCamsFolio folio = null;
+		List<BseFundsScheme> schemCodes = bseFundsExplorerRepository.findAllByRtaCode(code);
+		logger.info("Total schemecode found for RTA code- "+ schemCodes.size());
+		for(int i =0;i<schemCodes.size();i++){
+			if(!schemCodes.get(i).getSettlementType().equalsIgnoreCase("L1")){
+				schemeCode = schemCodes.get(i).getSchemeCode();
+				break;
+			}
+		}
+		logger.info("Scheme code for redemption of the fund - "+schemeCode);
+		
+		folio = mfCamsFolioCrudRepository.findOneByFolioNumber(folioNumber);
+		if(folio!=null){
+			folio.setSchemeCode(schemeCode);
+		}else{
+			logger.info("getCamsFundsDetailsForRedeem(): found no records agaisnt folio in database. for folio: ."+ folioNumber);
+		}
+		return folio;
+		
+	}
+	
+	
 
 	@Override
 	public long getCurrentDayNextTransCount(Date date) {
@@ -499,22 +537,22 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		String aofUploadStatus = "";
 		try{
 			if(bseCustomerCrudRespository.existsByMobile(mobileNumber)){
-//				String registrationStatus = bseCustomerCrudRespository.getBseRegistrationStatus(mobileNumber);
-//				logger.info("Customer BSE registration status- "+ registrationStatus);
-//				if(registrationStatus.equalsIgnoreCase("Y")){
-					aofUploadStatus=bseCustomerCrudRespository.getBseRegistrationAOFStatus(mobileNumber);
-					logger.info("Customer BSE registration status- "+ aofUploadStatus);
-					
-					if(aofUploadStatus.split(",")[0].equals("Y") && aofUploadStatus.split(",")[1].equals("Y")){
-						flag="PROFILE_READY";
-					}else if(aofUploadStatus.split(",")[0].equals("Y") && aofUploadStatus.split(",")[1].equals("N")){
-						flag="AOF_PENDING";
-					}
-					else{
-						flag="REGISTRATION_INCOMPLETE";
-					}
+				//				String registrationStatus = bseCustomerCrudRespository.getBseRegistrationStatus(mobileNumber);
+				//				logger.info("Customer BSE registration status- "+ registrationStatus);
+				//				if(registrationStatus.equalsIgnoreCase("Y")){
+				aofUploadStatus=bseCustomerCrudRespository.getBseRegistrationAOFStatus(mobileNumber);
+				logger.info("Customer BSE registration status- "+ aofUploadStatus);
+
+				if(aofUploadStatus.split(",")[0].equals("Y") && aofUploadStatus.split(",")[1].equals("Y")){
+					flag="PROFILE_READY";
+				}else if(aofUploadStatus.split(",")[0].equals("Y") && aofUploadStatus.split(",")[1].equals("N")){
+					flag="AOF_PENDING";
+				}
+				else{
+					flag="REGISTRATION_INCOMPLETE";
+				}
 				logger.info("Customer registration aof upload status- "+ aofUploadStatus);
-//				flag= aofUploadStatus;
+				//				flag= aofUploadStatus;
 			}else{
 				flag="NOT_FOUND";
 			}
@@ -622,7 +660,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 			if(apiresponse.getStatusCode().equals("100")){
 				logger.info("Emandate completed for customer successfully for cusotmner-" + mobileNumber + ": Response code: "+ apiresponse.getStatusCode() + " : "+ apiresponse.getRemarks());
 				logger.info("Update bank emandate status to database...");
-//				SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd");
+				//				SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd");
 				//					SimpleDateFormat bseFormat = new SimpleDateFormat("dd/MM/yyyy");
 				/*bseCustomerBankDetailsCrudRespository.updateEmandateStatus(clientCode, 
 						bankDetails.getAccountNumber(), true, 
@@ -631,20 +669,20 @@ public class BseEntryServiceImpl implements BseEntryManager {
 						apiresponse.getResponseCode(), 
 						dbFormat.parse(dbFormat.format(new Date()))
 						);*/
-//				bseMandateCrudRepository.updateMandateRegisterResponse(clientCode, "", mandateId, reponseMsg)
-			BseMandateDetails mandate = new BseMandateDetails();
-			mandate.setClientCode(clientCode);
-			mandate.setAccountNumber(bankDetails.getAccountNumber());
-			mandate.setSipStartDate(startDate);
-			mandate.setSipEndDate(endDate);
-			mandate.setMandateType(mandateType);
-			mandate.setMandateId(apiresponse.getResponseCode());
-			mandate.setAmount(amount);
-			mandate.setIfscCode(bankDetails.getIfscCode());
-			mandate.setCreationDate(startDate);
-			mandate.setMandateComplete(true);
-			
-			bseMandateCrudRepository.save(mandate);
+				//				bseMandateCrudRepository.updateMandateRegisterResponse(clientCode, "", mandateId, reponseMsg)
+				BseMandateDetails mandate = new BseMandateDetails();
+				mandate.setClientCode(clientCode);
+				mandate.setAccountNumber(bankDetails.getAccountNumber());
+				mandate.setSipStartDate(startDate);
+				mandate.setSipEndDate(endDate);
+				mandate.setMandateType(mandateType);
+				mandate.setMandateId(apiresponse.getResponseCode());
+				mandate.setAmount(amount);
+				mandate.setIfscCode(bankDetails.getIfscCode());
+				mandate.setCreationDate(startDate);
+				mandate.setMandateComplete(true);
+
+				bseMandateCrudRepository.save(mandate);
 
 			}else{
 				logger.info("Failed to update e-mandate. Reason: "+ apiresponse.getStatusCode() + " : "+ apiresponse.getRemarks());
@@ -669,11 +707,11 @@ public class BseEntryServiceImpl implements BseEntryManager {
 				UserBankDetails bank = bseCustomerBankDetailsCrudRespository.getOne(clientId);
 				MFNominationForm nominee = bseCustomerNomineeCrudRepository.findOneByClientID(clientId);
 				System.out.println("Address- "+ address + " : Bank: "+ bank);
-				
+
 				investmentFormdata.setAddressDetails(address!=null?address:new AddressDetails());
 				investmentFormdata.setBankDetails(bank!=null?bank:new UserBankDetails());
 				investmentFormdata.setNominee(nominee!=null?nominee:new MFNominationForm());
-				
+
 			}else{
 				logger.info("Cusotmer invest form data not found!");
 			}
@@ -689,9 +727,9 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		logger.info("Querying to get bank mandate details for client mobile- "+ clientId);
 		List<BseMandateDetails> mandateDetails = null;
 		try{
-			
+
 			mandateDetails = bseMandateCrudRepository.findAllByClientCodeAndAccountNumber(clientId, accountNumber);	
-			
+
 		}catch(Exception e){
 			logger.error("Failed to query database to fetch mandate details",e);
 		}
@@ -704,9 +742,9 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		logger.info("Querying to schemes by page wise- ");
 		Page<BseFundsScheme> fundDetails = null;
 		try{
-			
+
 			fundDetails = bseFundsExplorerRepository.findAll(p);
-			
+
 		}catch(Exception e){
 			logger.error("Failed to query database to fetch mandate details",e);
 		}
@@ -719,9 +757,9 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		logger.info("Querying to schemes by page wise- ");
 		List<BseMFSelectedFunds> fundDetails = null;
 		try{
-			
+
 			fundDetails = bseSelectedCategoryFundsRepository.findAll();
-			
+
 		}catch(Exception e){
 			logger.error("Failed to query database to fetch sellected category funds",e);
 		}
@@ -738,7 +776,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	@Override
 	public BseApiResponse saveFatcaDetails(BseMFInvestForm customerForm) {
 		//					Call FATCADeclaration
-		
+
 		BseApiResponse fatcaResponse=null;
 		String clientId=null;
 		logger.info("Request received to process FATCA details fro customer- "+ customerForm.getPan1());
@@ -755,9 +793,9 @@ public class BseEntryServiceImpl implements BseEntryManager {
 					logger.error("Failed to update FATCA status to database for customer- "+clientId ,e);
 				}
 			}
-			
+
 		}
-		
+
 		return fatcaResponse;
 	}
 
@@ -766,6 +804,51 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public String getEmdandateDetails(String mobile, String clientCode, String mandateType, String accNumber) {
+		//		Call FATCADeclaration
+
+		BseMandateDetails mandateId=null;
+		String clientId=null;
+		logger.info("Request received to fetch customer emandate registration details for client ID- "+ clientCode + " : mandate type: "+ mandateType);
+		try{
+		if(bseCustomerCrudRespository.existsByMobile(mobile)){
+			UserBankDetails userbankDetails = getCustomerBankDetails(clientCode);
+			
+			logger.info("Look for mandate corresponding to registered bank- ");
+
+			mandateId= bseMandateCrudRepository.findOneByClientCodeAndAccountNumberAndMandateActive(clientCode, userbankDetails.getAccountNumber(),"Y");
+			logger.info("Mandate ID receieved for "+clientId + " : mandate type:  " +mandateType +" : "+ mandateId);
+		}
+		}catch(Exception e){
+			logger.error("Failed to query database to fetch exisint mandates. ",e);
+		}
+
+		return mandateId.getMandateId();
+	}
+
+	@Override
+	public List<MFCamsFolio> getCamsPortfolio(String mobile, String pan) {
+
+		List<MFCamsFolio> folios=null;
+		logger.info("Request received to fetch customer cams folio details for client ID- "+ mobile + " : mandate type: "+ pan);
+		try{
+		if(bseCustomerCrudRespository.existsByMobile(mobile)){
+			pan = bseCustomerCrudRespository.getCustomerPanNumberFromMobile(mobile);
+			
+			folios = mfCamsFolioCrudRepository.findAllByPan(pan);
+			
+			logger.info("Folio details look up complete");
+
+		}
+		}catch(Exception e){
+			logger.error("Failed to query database to fetch exisint mandates. ",e);
+		}
+
+		return folios;
+	}
+
 
 	/*		public static void main(String[] args){
 		//		System.out.println(new Random());

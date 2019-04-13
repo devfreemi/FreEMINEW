@@ -22,6 +22,7 @@ import com.freemi.entity.bse.BseOrderPaymentRequest;
 import com.freemi.entity.bse.BsePaymentStatus;
 import com.freemi.entity.bse.BseRegistrationMFD;
 import com.freemi.entity.bse.BseSipOrderEntry;
+import com.freemi.entity.bse.BseXipISipOrderEntry;
 import com.google.gson.JsonObject;
 
 public class RestClientBse {
@@ -188,6 +189,34 @@ public class RestClientBse {
 
 		return returnRes;
 	}
+	
+	public static String purchaseXSIPISIPRequestProcess(BseXipISipOrderEntry form){
+
+		final String url = SERVICE_URL1 + "/orderxsip";
+		ObjectMapper mapper = new ObjectMapper();
+		RestTemplate restTemplate = new RestTemplate();
+		String formdata = null;
+		String returnRes="FAIL";
+		try {
+			formdata = mapper.writeValueAsString(form);
+		} catch (JsonProcessingException e) {
+			logger.error("purchaseXSIPISIPRequestProcess(): Failed to write form data", e);
+		}
+		logger.info("Requesting  X-SIP/I-SIP purchase with details- "+ formdata);
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
+		HttpEntity<String> entity = new HttpEntity<String>(formdata,headers);
+		if(CommonConstants.BSE_CALL_TEST_ENABLED.equalsIgnoreCase("N")){
+			ResponseEntity<?> response= restTemplate.postForEntity(url, entity,  String.class);
+			returnRes=response.getBody().toString();
+			logger.info("Response for X-SIP I-SIP purchase- "+ response.getBody().toString());
+		}else{
+			returnRes = "NEW|201902202627300003|26273|DEBA593C|SUMANTA1|214516|SIP HAS BEEN REGISTERED, SIP REG NO IS : 214516|0";	
+		}
+
+
+		return returnRes;
+	}
 
 	public static String purchasePaymentLink(BseOrderPaymentRequest form){
 
@@ -266,7 +295,8 @@ public class RestClientBse {
 		}else{
 //			returnRes = "101|FAILED: AMOUNT SHOULD NOT BE BLANK";
 //			returnRes = "101|FAILED: INVALID CLIENT ACCOUNT NUMBER";
-			returnRes = "100|MANDATE REGISTRATION DONE SUCCESSFULLY|556918";
+//			returnRes = "100|MANDATE REGISTRATION DONE SUCCESSFULLY|556918";
+			returnRes ="101|FAILED: AMOUNT SHOULD NOT BE 0";
 		}
 
 		return returnRes;

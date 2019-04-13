@@ -448,3 +448,19 @@ function bseinvest(mfCode, mfName, lumpsumMinimum, amcCode, sipMin,sipDates) {
 
 
 
+//Purchase
+function mandateTypeChosen(){
+//	console.log("Selected type-" + $("#mandateType :selected").val());
+	console.log($("input[name='mandateType']:checked").val());
+	var mandateType = $("input[name='mandateType']:checked").val();
+	if(mandateType == 'I'){
+		$("#xsip").hide();
+		$("#isip").show();
+	}
+	if(mandateType == 'X'){
+		$("#isip").hide();
+		$("#xsip").show();
+	}
+//	$("#occupationtypedisplay").text($("#mandateType :selected").text());
+}
+

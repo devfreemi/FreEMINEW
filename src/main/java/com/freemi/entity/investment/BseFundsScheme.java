@@ -32,6 +32,12 @@ public class BseFundsScheme implements Serializable {
 	@Column(name="Scheme_Code")
 	private String schemeCode;
 	
+	@Column(name="ISIN")
+	private String isin;
+	
+	@Column(name="RTA_Scheme_Code")
+	private String rtaCode;
+	
 	@Column(name="AMC_Code")
 	private String amcCode;
 	
@@ -43,6 +49,9 @@ public class BseFundsScheme implements Serializable {
 	
 	@Column(name="NAV_VALUE")
 	private String nav;
+	
+	@Column(name="SETTLEMENT_TYPE")
+	private String settlementType;
 
 	public int getSerial() {
 		return serial;
@@ -104,6 +113,30 @@ public class BseFundsScheme implements Serializable {
 
 	public void setNav(String nav) {
 		this.nav = nav;
+	}
+
+	public String getIsin() {
+		return isin;
+	}
+
+	public void setIsin(String isin) {
+		this.isin = isin;
+	}
+
+	public String getRtaCode() {
+		return rtaCode;
+	}
+
+	public void setRtaCode(String rtaCode) {
+		this.rtaCode = rtaCode;
+	}
+
+	public String getSettlementType() {
+		return settlementType;
+	}
+
+	public void setSettlementType(String settlementType) {
+		this.settlementType = settlementType;
 	}
 	
 	

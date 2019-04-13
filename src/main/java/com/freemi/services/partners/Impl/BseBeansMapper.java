@@ -21,6 +21,7 @@ import com.freemi.entity.bse.BsePanStatusResponse;
 import com.freemi.entity.bse.BsePaymentStatus;
 import com.freemi.entity.bse.BseRegistrationMFD;
 import com.freemi.entity.bse.BseSipOrderEntry;
+import com.freemi.entity.bse.BseXipISipOrderEntry;
 import com.freemi.entity.database.UserBankDetails;
 import com.freemi.entity.investment.BseMFInvestForm;
 import com.freemi.entity.investment.BseOrderEntryResponse;
@@ -214,7 +215,7 @@ public static BseSipOrderEntry transactionSIPOrderToBseBeans(SelectMFFund fundDe
 		bseOrderForm.setUserID(CommonConstants.BSE_USER_ID);
 		bseOrderForm.setMemberCode(CommonConstants.BSE_MEMBER_ID);
 		bseOrderForm.setClientCode(fundDetails.getClientID());		// Customer's client ID
-		bseOrderForm.setTransMode("P");
+		bseOrderForm.setTransMode(CommonConstants.BSE_TRANS_MODE_PHYSICAL);
 		bseOrderForm.setStartDate((new SimpleDateFormat("dd/MM/yyyy")).format(fundDetails.getSipStartDate()));
 		bseOrderForm.setFrequencyType("MONTHLY");
 		bseOrderForm.setFrequencyAllowed("1");
@@ -251,6 +252,65 @@ public static BseSipOrderEntry transactionSIPOrderToBseBeans(SelectMFFund fundDe
 		bseOrderForm.setParam3("");
 		
 		return bseOrderForm;
+	}
+
+	public static BseXipISipOrderEntry transactionXSIPISIPOrderToBseBeans(SelectMFFund fundDetails,String uniqueReferenceNo, String mandateId){
+		BseXipISipOrderEntry bseOrderForm = new BseXipISipOrderEntry();
+		
+		if(fundDetails.getTransactionType().equals("PURCHASE")){	//ADD For MODIFITATION late
+			bseOrderForm.setTransactionCode("NEW");
+		}else{
+			bseOrderForm.setTransactionCode("CXL");
+		}
+		
+		bseOrderForm.setUniqueRefNo(uniqueReferenceNo);
+		bseOrderForm.setUserID(CommonConstants.BSE_USER_ID);
+		bseOrderForm.setMemberCode(CommonConstants.BSE_MEMBER_ID);
+		bseOrderForm.setClientCode(fundDetails.getClientID());		// Customer's client ID
+		bseOrderForm.setTransMode(CommonConstants.BSE_TRANS_MODE_PHYSICAL);
+		bseOrderForm.setStartDate((new SimpleDateFormat("dd/MM/yyyy")).format(fundDetails.getSipStartDate()));
+		bseOrderForm.setFrequencyType("MONTHLY");
+		bseOrderForm.setFrequencyAllowed("1");
+		bseOrderForm.setInstallmentAmount(Double.toString(fundDetails.getInvestAmount()));
+		bseOrderForm.setNoOfInstallment(Integer.toString(fundDetails.getNoOfInstallments()));		//to do 5 years by default selected for now 
+		
+		if(fundDetails.isPayFirstInstallment()){
+			bseOrderForm.setFirstOrderFlag("Y");		//to do for first payment
+			bseOrderForm.setOrderVal(Double.toString(fundDetails.getInvestAmount()));	//to do for all redeem 
+		}else{
+			bseOrderForm.setFirstOrderFlag(fundDetails.isPayFirstInstallment()?"Y":"N");		//to do for first payment
+			bseOrderForm.setOrderVal("");	//to do for all redeem
+		}
+		bseOrderForm.setSchemeCode(fundDetails.getSchemeCode());
+		bseOrderForm.setBuySell("P");
+		bseOrderForm.setBuySellType("FRESH");
+		bseOrderForm.setDpTxnMode("P");
+		
+		bseOrderForm.setQty("1");
+		bseOrderForm.setAllRedeem("N");		// to do
+		bseOrderForm.setFolioNo(fundDetails.getPortfolio().equalsIgnoreCase("NEW")?"":fundDetails.getPortfolio());
+		bseOrderForm.setRemarks("Purchase Request");
+		bseOrderForm.setKYCStatus("Y");
+		bseOrderForm.setRefNo(fundDetails.getBseRefNo());
+		bseOrderForm.setSubBrCode("");
+		bseOrderForm.setEuin("");
+		bseOrderForm.setEuinVal("N");
+		bseOrderForm.setMinRedeem("Y");
+		bseOrderForm.setDPC("N");
+		bseOrderForm.setIPAdd("");
+		bseOrderForm.setPassword("");
+		bseOrderForm.setParma1("");
+//		bseOrderForm.setParam2("");
+		bseOrderForm.setParam3("");
+		
+		if(fundDetails.getMandateType().equals(CommonConstants.BSE_XIP))
+			bseOrderForm.setXSIPMANDATEID(mandateId);
+		else{
+			bseOrderForm.setParam2(mandateId);
+		}
+		
+		return bseOrderForm;
+	
 	}
 	
 	
@@ -299,7 +359,7 @@ public static BseSipOrderEntry transactionSIPOrderToBseBeans(SelectMFFund fundDe
 		
 	}
 	
-	public static BseAOFUploadRequest AOFFormtoBseBeanMapper(byte[] aoffile, String clientCode){
+	public static BseAOFUploadRequest AOFFormtoBseBeanMapper(byte[] aoffile, String base64Image, String clientCode){
 		BseAOFUploadRequest response = new BseAOFUploadRequest();
 		StringBuffer fileName = new StringBuffer(CommonConstants.BSE_MEMBER_ID);
 		fileName.append(clientCode).append(new SimpleDateFormat("ddMMyyyy").format(new Date())).append(".tiff");
@@ -308,7 +368,8 @@ public static BseSipOrderEntry transactionSIPOrderToBseBeans(SelectMFFund fundDe
 		response.setMemberCode(CommonConstants.BSE_MEMBER_ID);
 		response.setClientCode(clientCode);
 		response.setFileName(fileName.toString());
-		response.setpFileBytes(aoffile);
+//		response.setpFileBytes(aoffile);
+		response.setpFileBytes(base64Image);
 		response.setFiller1("NULL");
 		response.setFiller2("NULL");
 		return response;
@@ -363,12 +424,13 @@ public static BseSipOrderEntry transactionSIPOrderToBseBeans(SelectMFFund fundDe
 		return requestForm;
 	}
 	
-	public static BseEMandateRegistration bankDetailsToBseBeans(UserBankDetails bankDetails,String mandateType, String amount, String clientCode,Date startDate, Date endDate){
+	public static BseEMandateRegistration bankDetailsToBseMandateBeans(UserBankDetails bankDetails,String mandateType, String amount, String clientCode,Date startDate, Date endDate){
 		BseEMandateRegistration requestForm = new BseEMandateRegistration();
 		
 		requestForm.setClientCode(clientCode);
-		requestForm.setAmount(amount);
-		requestForm.setMandateType(mandateType!=""?mandateType:"X");
+//		requestForm.setAmount(amount);
+		requestForm.setAmount("50000");
+		requestForm.setMandateType(mandateType!="X"?mandateType:"X");
 		requestForm.setAccountNo(bankDetails.getAccountNumber());
 		requestForm.setAccType(bankDetails.getAccountType());
 		requestForm.setIFSCCODE(bankDetails.getIfscCode().toUpperCase());

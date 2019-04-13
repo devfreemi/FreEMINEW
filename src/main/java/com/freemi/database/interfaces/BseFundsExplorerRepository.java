@@ -14,5 +14,7 @@ public interface BseFundsExplorerRepository extends PagingAndSortingRepository<B
 	public Page<BseFundsScheme> findAll(Pageable page);
 	
 	public List<BseFundsScheme> findAllBySchemeCode(String schemeCode, Pageable page);
+	
+	public List<BseFundsScheme> findAllByRtaCode(String rtaCode);
 
 }

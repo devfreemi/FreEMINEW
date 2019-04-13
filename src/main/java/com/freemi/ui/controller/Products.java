@@ -1,5 +1,6 @@
 package com.freemi.ui.controller;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -72,12 +73,18 @@ public class Products {
 	private Environment env;
 
 	@RequestMapping(value = "/register", method = RequestMethod.GET)
-	public String loginDisplay(Model map) {
+	public String registerUser(Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 		//logger.info("@@@@ Inside Login..");
+		
+		if(session.getAttribute("token") == null){
 		map.addAttribute("registerForm", new Registerform());
 		logger.info("@@@@ RegisterController @@@@");
 		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 		return "register";
+		}else{
+			logger.info("User session is already detected. Preventing another attempt of register.");
+			return "redirect:"+URI.create(request.getRequestURL().toString()).resolve(request.getContextPath()).toString();
+		}
 	}
 
 	@RequestMapping(value = "/register.do", method = RequestMethod.GET)

@@ -25,6 +25,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -51,6 +52,7 @@ import com.freemi.entity.general.ForgotPassword;
 import com.freemi.entity.general.Login;
 import com.freemi.ui.restclient.GoogleSecurity;
 import com.freemi.ui.restclient.RestClient;
+import com.freemi.ui.restclient.RestClientApps;
 import com.freemi.ui.restclient.RestClientBse;
 
 
@@ -95,11 +97,12 @@ public class HomeController {
 		System.out.println("url from referrer- "+ request.getHeader("Referer"));
 		try {
 			//			login.setReturnUrl(referrerUrl!=null?URLDecoder.decode(referrerUrl, StandardCharsets.UTF_8.toString()):request.getHeader("Referer"));
-			
-			/*if(referrerUrl==null){
+
+			/*if(referrerUrl==null || referrerUrl.contains("/register") || referrerUrl.contains("/forgotPassword")){
 				referrerUrl= URI.create(request.getRequestURL().toString()).resolve(request.getContextPath()).toString();
+				logger.info("Modified refereele url to- "+ referrerUrl);
 			}*/
-			String returnUrl = redirectUrlAfterLogin(referrerUrl!=null?URLDecoder.decode(referrerUrl, StandardCharsets.UTF_8.toString()):request.getHeader("Referer")!=null?request.getHeader("Referer"):URI.create(request.getRequestURL().toString()).resolve(request.getContextPath()).toString());
+			String returnUrl = redirectUrlAfterLogin(referrerUrl!=null?URLDecoder.decode(referrerUrl, StandardCharsets.UTF_8.toString()):request.getHeader("Referer")!=null?request.getHeader("Referer"):URI.create(request.getRequestURL().toString()).resolve(request.getContextPath()).toString(),request);
 			login.setReturnUrl(returnUrl);
 			otpForm.setReturnUrl(returnUrl);
 			session.setAttribute("returnSite", referrerUrl!=null?URLDecoder.decode(referrerUrl, StandardCharsets.UTF_8.toString()):request.getHeader("Referer"));
@@ -108,19 +111,26 @@ public class HomeController {
 			logger.error("Failed to decode string",e);
 		}
 
-		if(mfStatus!=null){
-			if(mfStatus.equals("00")){
-				map.addAttribute("info", "Kindly login to complete your purchase.");
-			}
-			else if(mfStatus.equals("01"))
-			{
-				map.addAttribute("info", "Kindly login to complete your registration process.");
-			}else{
-				map.addAttribute("info", "");
-			}
-		}
+		if(session.getAttribute("token") ==null){
 
-		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
+			if(mfStatus!=null){
+				if(mfStatus.equals("00")){
+					map.addAttribute("info", "Kindly login to complete your purchase.");
+				}
+				else if(mfStatus.equals("01"))
+				{
+					map.addAttribute("info", "Kindly login to complete your registration process.");
+				}else{
+					map.addAttribute("info", "");
+				}
+			}
+
+			map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
+
+		}else{
+			logger.info("User session is already detected. Preventing another attempt of login.");
+			return "redirect:"+URI.create(request.getRequestURL().toString()).resolve(request.getContextPath()).toString();
+		}
 		return "login";
 	}
 
@@ -199,7 +209,7 @@ public class HomeController {
 		String returnUrl="";
 		String referer = (String) session.getAttribute("returnSite");
 		logger.info(referer);
-		returnUrl = redirectUrlAfterLogin(referer);
+		returnUrl = redirectUrlAfterLogin(referer,request);
 
 		RestClient client = new RestClient();
 		ResponseEntity<String> response = null;
@@ -236,7 +246,7 @@ public class HomeController {
 	}
 
 
-	private String redirectUrlAfterLogin(String referer) {
+	private String redirectUrlAfterLogin(String referer, HttpServletRequest request) {
 		String returnUrl;
 		logger.info("Url for processing after login- "+ referer);
 		/*if(referer!= null && !referer.isEmpty()){
@@ -271,7 +281,9 @@ public class HomeController {
 				uri = url.toURI();
 				if(uri.getRawPath().contains("/register") || uri.getRawPath().contains("/forgotPassword") || uri.getRawPath().contains("/resetPassword")){
 					//					returnUrl=uri.getRawPath().split("/products/")[1].replace(".do", "");
-					returnUrl = referer.replace(".do", "");
+					//					returnUrl = referer.replace(".do", "");
+//					returnUrl = "redirect:/products/";
+					returnUrl = /*"redirect:"+*/ URI.create(request.getRequestURL().toString()).resolve(request.getContextPath()).toString();
 				}else
 					//					returnUrl = uri.getRawPath().split("/products/")[1].replace(".do", "");
 					returnUrl = referer.replace(".do", "");
@@ -287,9 +299,10 @@ public class HomeController {
 				returnUrl =  uri.getRawPath().split("/products/")[1];
 			}
 		}else{
-			logger.info("Referer is null");
-			
-			returnUrl = "redirect:/products/";
+			logger.debug("Referer is null");
+
+//			returnUrl = "redirect:/products/";
+			returnUrl = /*"redirect:" +*/URI.create(request.getRequestURL().toString()).resolve(request.getContextPath()).toString();
 		}
 
 		logger.info("Redirect url after login- "+ returnUrl);
@@ -394,7 +407,7 @@ public class HomeController {
 				}
 
 			}else{
-//				Direct login process with userid-password
+				//				Direct login process with userid-password
 				try{
 
 					response= client.login(login.getUsermobile(), login.getUserpassword(), ip);
@@ -406,6 +419,9 @@ public class HomeController {
 					session.setAttribute("userid", response.getHeaders().get("userid").get(0));
 					session.setAttribute("email",response.getHeaders().get("email").get(0));
 
+//					Set session for other applciations
+					RestClientApps.setAllAppSession( response.getHeaders().get("userid").get(0), response.getHeaders().get("email").get(0), response.getHeaders().get("fname").get(0).split(" ")[0], response.getHeaders().get("Authorization").get(0));
+					
 					logger.info(response.getHeaders().get("Authorization").get(0));
 					returnUrl="SUCCESS";
 				}
@@ -427,10 +443,10 @@ public class HomeController {
 			}
 
 		}else{
-//			OTP process verification
-			
+			//			OTP process verification
+
 			logger.info("Process OTP submit verfication for mobile number- "+ login.getUsermobile());
-			
+
 			String resultotp2="OTP_INVALID";
 			resultotp2= RestClientBse.otpverify(login.getUsermobile(), login.getOtpVal());
 			/*String otpFromSession = (String) session.getAttribute("OTP");
@@ -439,11 +455,11 @@ public class HomeController {
 					resultotp2="Entered Otp is valid";
 					session.removeAttribute("OTP");
 				}
-				
+
 			}else{
 				resultotp2="OTP_INVALIDATED";
 			}*/
-			
+
 			logger.info("OTP validation respond- "+ resultotp2);
 			if(resultotp2.equalsIgnoreCase("Entered Otp is valid")){
 				//				Generate login session
@@ -524,7 +540,7 @@ public class HomeController {
 		String returnUrl="";
 		String referer = (String) session.getAttribute("returnSite");
 		logger.info(referer);
-		returnUrl = redirectUrlAfterLogin(referer);
+		returnUrl = redirectUrlAfterLogin(referer,request);
 
 		RestClient client = new RestClient();
 		ResponseEntity<String> response = null;
@@ -574,6 +590,9 @@ public class HomeController {
 		session.removeAttribute("token");
 		session.removeAttribute("userid");
 		session.removeAttribute("email");
+		session.invalidate();
+		
+		RestClientApps.logoutAllApplication("", "", "", "");
 		return "redirect:/";
 	}
 

@@ -245,11 +245,11 @@ public class BseRegistrationMFD implements Serializable{
 	private String Cm_mobile="";
 	
 	public BseRegistrationMFD() {
-		System.out.println("@@@ Calling Default Constractor @@@@");
+		System.out.println("@@@ BseRegistrationMFD: Calling Default Construcctor @@@@");
 	}
 	
 	public BseRegistrationMFD(String ClientCode) {
-		System.out.println("@@@ Calling Client Code Constractor @@@@");
+		System.out.println("@@@ BseRegistrationMFD: Calling Client Code Constractor @@@@");
 		this.ClientCode=ClientCode;
 	}
 	
@@ -257,7 +257,7 @@ public class BseRegistrationMFD implements Serializable{
 			 String ClientDob, String ClientGender,String ClientPan, String ClientType,String ClientAcctype1,String ClientAccno1,String ClientMicrno1, String ClientNeftIfsccode1,
 			 String DefaultBankFlag,String ClientAdd1,String ClientCity,String ClientState,String ClientPincode,String ClientCountry,String ClientEmail,
 			 String ClientCommmode,String ClientDivpaymode,String Cm_mobile) {
-		System.out.println("@@@ Calling mandatory Param Constractor @@@@");
+		System.out.println("@@@ BseRegistrationMFD: Calling mandatory Param Constractor @@@@");
 		this.ClientCode=ClientCode;
 		this.ClientHolding=ClientHolding;
 		this.ClientTaxstatu = ClientTaxstatu;		

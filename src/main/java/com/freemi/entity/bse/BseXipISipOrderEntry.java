@@ -1,13 +1,6 @@
 package com.freemi.entity.bse;
 
-import java.io.Serializable;
-
-public class BseSipOrderEntry implements Serializable {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+public class BseXipISipOrderEntry {
 
 	private String TransactionCode="";
 	private String UniqueRefNo="";
@@ -43,8 +36,9 @@ public class BseSipOrderEntry implements Serializable {
 	private String Parma1="";
 	private String Param2="";
 	private String Param3="";
-	
-	
+	private String BROKERAGE="";
+	private String XSIPMANDATEID="";
+	private String SubberCode="";
 	public String getTransactionCode() {
 		return TransactionCode;
 	}
@@ -249,8 +243,23 @@ public class BseSipOrderEntry implements Serializable {
 	public void setParam3(String param3) {
 		Param3 = param3;
 	}
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+	public String getBROKERAGE() {
+		return BROKERAGE;
+	}
+	public void setBROKERAGE(String bROKERAGE) {
+		BROKERAGE = bROKERAGE;
+	}
+	public String getXSIPMANDATEID() {
+		return XSIPMANDATEID;
+	}
+	public void setXSIPMANDATEID(String xSIPMANDATEID) {
+		XSIPMANDATEID = xSIPMANDATEID;
+	}
+	public String getSubberCode() {
+		return SubberCode;
+	}
+	public void setSubberCode(String subberCode) {
+		SubberCode = subberCode;
 	}
 	
 	

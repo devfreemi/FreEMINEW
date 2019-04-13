@@ -32,6 +32,6 @@
 <style>
 body {
     font-family: 'Roboto';
-    font-weight: 300;
+    font-weight: 400;
 }
 </style>

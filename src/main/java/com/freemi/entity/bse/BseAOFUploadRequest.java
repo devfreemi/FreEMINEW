@@ -11,10 +11,10 @@ public class BseAOFUploadRequest {
 	private String FileName="";
 	
 	private String DocumentType;
-	private byte[] pFileBytes;
+//	private byte[] pFileBytes;
+	private String pFileBytes;
 	private String Filler1="";
 	private String Filler2="";
-	
 	public String getFlag() {
 		return Flag;
 	}
@@ -57,10 +57,10 @@ public class BseAOFUploadRequest {
 	public void setDocumentType(String documentType) {
 		DocumentType = documentType;
 	}
-	public byte[] getpFileBytes() {
+	public String getpFileBytes() {
 		return pFileBytes;
 	}
-	public void setpFileBytes(byte[] pFileBytes) {
+	public void setpFileBytes(String pFileBytes) {
 		this.pFileBytes = pFileBytes;
 	}
 	public String getFiller1() {
@@ -77,7 +77,4 @@ public class BseAOFUploadRequest {
 	}
 	
 	
-	
-	
-
 }

@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Proxy;
+import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
 @Table(name="bsemf_transactions")
@@ -28,9 +29,11 @@ public class SelectMFFund implements Serializable {
 	@Column(name="SL_NO")
 	private long serialNo;
 	
+	@NotEmpty(message="Client ID not found.")
 	@Column(name="CLIENT_ID")
 	private String clientID;
 	
+	@NotEmpty(message="Scheme code is missing.")
 	@Column(name="SCHEME_CODE")
 	private String schemeCode;
 	
@@ -38,6 +41,7 @@ public class SelectMFFund implements Serializable {
 	@Column(name="")
 	private String schemeName;
 	
+	@NotEmpty(message="Transaction ID missing. Retry transaction.")
 	@Column(name="TRANSACTION_ID")
 	private String transactionID;
 	

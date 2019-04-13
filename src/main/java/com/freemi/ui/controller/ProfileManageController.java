@@ -1,5 +1,8 @@
 package com.freemi.ui.controller;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,7 +30,6 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freemi.common.util.CommonConstants;
 import com.freemi.common.util.CommonTask;
 import com.freemi.common.util.InvestFormConstants;
@@ -37,7 +39,7 @@ import com.freemi.entity.bse.BseFileUpload;
 import com.freemi.entity.general.ProfilePasswordChangeForm;
 import com.freemi.entity.general.ResetPassword;
 import com.freemi.entity.general.UserProfile;
-import com.freemi.entity.investment.BseAllTransactionsView;
+import com.freemi.entity.investment.MFCamsFolio;
 //import com.freemi.entity.investment.BseAllTransactionsView;
 import com.freemi.ui.restclient.GoogleSecurity;
 import com.freemi.ui.restclient.RestClient;
@@ -65,7 +67,12 @@ public class ProfileManageController{
 		RestClient client = new RestClient();
 		ResponseEntity<String> response = null;
 		if(session.getAttribute("token") == null){
-			returnurl="redirect:/login";
+			try {
+				returnurl="redirect:/login?ref="+ URLEncoder.encode(request.getRequestURL().toString(), StandardCharsets.UTF_8.toString());
+			} catch (UnsupportedEncodingException e) {
+				logger.error("profile(): failed to encode url- ",e);
+				returnurl="redirect:/login";
+			}
 		}else{
 			returnurl="profile";
 			
@@ -308,16 +315,24 @@ public class ProfileManageController{
 		String returnurl = "";
 		double totalAsset= 0;
 		if(session.getAttribute("token") == null){
-			returnurl="redirect:/login";
+			try {
+				returnurl="redirect:/login?ref="+ URLEncoder.encode(request.getRequestURL().toString(), StandardCharsets.UTF_8.toString());
+			} catch (UnsupportedEncodingException e) {
+				logger.error("my-dashboard(): failed to encode referrel url",e);
+				returnurl="redirect:/login";
+			}
 		}else{
 			returnurl = "my-dashboard";
 			// Get user's MF order history
 			//This code is for new design. COmment out until deployed in prod
 			try{
-			List<BseAllTransactionsView> fundsOrder= bseEntryManager.getCustomerAllTransactionRecords(null,session.getAttribute("userid").toString(),null);
-			if(fundsOrder.size()>=1){
+//			List<BseAllTransactionsView> fundsOrder= bseEntryManager.getCustomerAllTransactionRecords(null,session.getAttribute("userid").toString(),null);
+				
+			List<MFCamsFolio> fundsOrder = bseEntryManager.getCamsPortfolio(session.getAttribute("userid").toString(), "");
+			if(fundsOrder!= null && fundsOrder.size()>=1){
 			for(int i=0;i<fundsOrder.size();i++){
-				totalAsset+=fundsOrder.get(i).getSchemeInvestment();
+//				totalAsset+=fundsOrder.get(i).getSchemeInvestment();
+				totalAsset+=fundsOrder.get(i).getInvAmount();
 			}
 			map.addAttribute("mforderhistory", fundsOrder);
 			map.addAttribute("ORDERHISTORY", "SUCCESS");

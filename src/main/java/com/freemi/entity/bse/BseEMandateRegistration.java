@@ -10,7 +10,7 @@ public class BseEMandateRegistration implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private String ClientCode="";
 	private String Amount="";
-	private String MandateType="";
+	private String MandateType="I";
 	private String AccountNo="";
 	private String AccType="";
 	private String IFSCCODE="";

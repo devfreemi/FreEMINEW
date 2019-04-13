@@ -194,8 +194,7 @@
     <dependency>
     	<groupId>org.springframework.boot</groupId>
     	<artifactId>spring-boot-devtools</artifactId>
-    	<version>1.5.8.RELEASE</version>
-    </dependency>
+    	</dependency>
     <dependency>
     	<groupId>com.itextpdf</groupId>
     	<artifactId>itextpdf</artifactId>
@@ -204,8 +203,7 @@
     <dependency>
     	<groupId>org.springframework.mobile</groupId>
     	<artifactId>spring-mobile-device</artifactId>
-    	<version>1.1.5.RELEASE</version>
-    </dependency>
+    	</dependency>
     <dependency>
     	<groupId>com.itextpdf.tool</groupId>
     	<artifactId>xmlworker</artifactId>
@@ -220,6 +218,22 @@
     	<groupId>commons-fileupload</groupId>
     	<artifactId>commons-fileupload</artifactId>
     	<version>1.4</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.apache.pdfbox</groupId>
+    	<artifactId>pdfbox</artifactId>
+    	<version>2.0.14</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.apache.pdfbox</groupId>
+    	<artifactId>pdfbox-tools</artifactId>
+    	<version>2.0.0-RC1</version>
+    </dependency>
+
+    <dependency>
+    	<groupId>com.github.jai-imageio</groupId>
+    	<artifactId>jai-imageio-core</artifactId>
+    	<version>1.4.0</version>
     </dependency>
 	</dependencies>
 

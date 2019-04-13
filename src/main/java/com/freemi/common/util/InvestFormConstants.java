@@ -5,9 +5,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.springframework.web.bind.annotation.ModelAttribute;
-
 public class InvestFormConstants {
+	
+	
+	
 	
 	public static Map<String,String> holdingMode = new LinkedHashMap<String,String>(){
 		/**
