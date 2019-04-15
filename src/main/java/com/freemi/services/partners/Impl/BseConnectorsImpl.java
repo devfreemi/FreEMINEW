@@ -73,43 +73,61 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 	}
 
 	@Override
-	public BseOrderEntryResponse processCustomerPurchaseRequest(SelectMFFund selectedFund, String transactionNumber,String mandateId) {
+	public BseOrderEntryResponse processCustomerTransactionbsaRequest(SelectMFFund selectedFund, String transactionNumber,String mandateId) {
 		String result = "";
 		BseOrderEntryResponse bseOrderResp= new BseOrderEntryResponse();
 
-		logger.info("Purchase details processing to BSE platform begins");
+		logger.info("Trnsaction details processing to BSE platform begins of category- "+ selectedFund.getTransactionType() + " for customer: "+ selectedFund.getClientID());
 		if(env.getProperty(CommonConstants.BSE_ENABLED).equalsIgnoreCase("Y")){
-			//		Order Entry processing for lumpsum - fresh
-			if(selectedFund.getInvestype().equals("LUMPSUM")){
+
+			if(selectedFund.getTransactionType().equals("REDEEM")){
+				
 				try{
-					logger.info("Convert form data to BSE lumpsum format data");
-					BseOrderEntry bseMfOrderForm=  BseBeansMapper.transactionOrderToBseBeans(selectedFund, transactionNumber);
-					logger.info("Begin BSE service invoke process");
+					logger.info("Convert form data to Folio to redeem form");
+					BseOrderEntry bseMfOrderForm=  BseBeansMapper.redeeemOrderToBseBeans(selectedFund, transactionNumber);
+					logger.info("Begin BSE service invoke process for redeem transaction: "+ selectedFund.getTransactionID());
 					result = RestClientBse.purchaseRequestProcess(bseMfOrderForm);
-					BseBeansMapper.transactionOrderReponseToBeans(bseOrderResp, result, selectedFund.getBseRefNo());
+					BseBeansMapper.redeeemResponseToBean(bseOrderResp, result, selectedFund.getBseRefNo());
 				}catch(Exception e){
-					logger.error("Failed during proceesing of BSE customer details to BSE platform",e);
+					logger.error("Failed during proceesing of BSE REDEEM details to BSE platform",e);
 					//			result="BSE_CONN_FAIL";
 					bseOrderResp.setSuccessFlag("BSE_CONN_FAIL");
 				}
-			}
-			//		Order process request for SIP
-			else if(selectedFund.getInvestype().equals("SIP")){
-				logger.info("Convert form data to BSE SIP Request format data");
-				try{
-					BseXipISipOrderEntry bseMfSipOrderForm=  BseBeansMapper.transactionXSIPISIPOrderToBseBeans(selectedFund, transactionNumber,mandateId);
-					logger.info("Begin BSE service invoke process");
-					result = RestClientBse.purchaseXSIPISIPRequestProcess(bseMfSipOrderForm);
-					BseBeansMapper.siptransactionOrderReponseToBeans(bseOrderResp, result, selectedFund.getBseRefNo());
-				}catch(Exception e){
-					logger.error("Failed during proceesing of BSE X-SIP I-SIP registration details to BSE platform",e);
-					//			result="BSE_CONN_FAIL";
-					bseOrderResp.setSuccessFlag("BSE_CONN_FAIL");
-				}
+				
 			}else{
-				logger.warn("Unsupported transaction type selected- "+ selectedFund.getInvestype());
-				bseOrderResp.setSuccessFlag("UNSUPPORTED_INV_TYPE");
-				bseOrderResp.setBsereMarks("Invest type not supported.");
+
+				//		Order Entry processing for lumpsum - fresh
+				if(selectedFund.getInvestype().equals("LUMPSUM")){
+					try{
+						logger.info("Convert form data to BSE lumpsum format data");
+						BseOrderEntry bseMfOrderForm=  BseBeansMapper.transactionOrderToBseBeans(selectedFund, transactionNumber);
+						logger.info("Begin BSE service invoke process");
+						result = RestClientBse.purchaseRequestProcess(bseMfOrderForm);
+						BseBeansMapper.transactionOrderReponseToBeans(bseOrderResp, result, selectedFund.getBseRefNo());
+					}catch(Exception e){
+						logger.error("Failed during proceesing of BSE customer details to BSE platform",e);
+						//			result="BSE_CONN_FAIL";
+						bseOrderResp.setSuccessFlag("BSE_CONN_FAIL");
+					}
+				}
+				//		Order process request for SIP
+				else if(selectedFund.getInvestype().equals("SIP")){
+					logger.info("Convert form data to BSE SIP Request format data");
+					try{
+						BseXipISipOrderEntry bseMfSipOrderForm=  BseBeansMapper.transactionXSIPISIPOrderToBseBeans(selectedFund, transactionNumber,mandateId);
+						logger.info("Begin BSE service invoke process");
+						result = RestClientBse.purchaseXSIPISIPRequestProcess(bseMfSipOrderForm);
+						BseBeansMapper.siptransactionOrderReponseToBeans(bseOrderResp, result, selectedFund.getBseRefNo());
+					}catch(Exception e){
+						logger.error("Failed during proceesing of BSE X-SIP I-SIP registration details to BSE platform",e);
+						//			result="BSE_CONN_FAIL";
+						bseOrderResp.setSuccessFlag("BSE_CONN_FAIL");
+					}
+				}else{
+					logger.warn("Unsupported transaction type selected- "+ selectedFund.getInvestype());
+					bseOrderResp.setSuccessFlag("UNSUPPORTED_INV_TYPE");
+					bseOrderResp.setBsereMarks("Invest type not supported.");
+				}
 			}
 		}else{
 			logger.info("BSE Investment is currently disabled");
@@ -153,24 +171,25 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 		logger.info("Looking for AOF file- "+ filepath);
 		if(Files.exists(filepath)){
 			try {
-//				filearray = Files.readAllBytes(new File(filepath.toString()).toPath());
+				//				filearray = Files.readAllBytes(new File(filepath.toString()).toPath());
 
 				String extension = "tiff";
 				document = PDDocument.load(new File(filepath.toString()));
 				PDFRenderer pdfRenderer = new PDFRenderer(document);
-				
+
 				BufferedImage bim = pdfRenderer.renderImageWithDPI(0, 300, ImageType.RGB);
 
 				ImageIOUtil.writeImage(bim, String.format(tifffilepath.toString(), extension), 300);
-				
-				
+
+
 				document.close();
-				
+
 				logger.info("Converted PDF file to tiff for customer- "+ clientCode);
-				logger.info("Uploading file to bse- "+ tifffilepath.toString());
+				
 				filearray = Files.readAllBytes(new File(tifffilepath.toString()).toPath());
 				String encodedString = Base64.getEncoder().encodeToString(filearray);
-				
+				logger.debug("Uploading file to bse- "+ tifffilepath.toString());
+				logger.info("AOF image converted to bse base64 format for client- "+ clientCode);
 				BseAOFUploadRequest r = BseBeansMapper.AOFFormtoBseBeanMapper(filearray,encodedString, clientCode);
 				String responseText = RestClientBse.uploadAOF(r);
 				logger.info("Response for AOF upload against customer : "+ clientCode + " : "+ responseText);

@@ -216,6 +216,10 @@
 
 												</div>
 											</div>
+											<div>
+											<form:hidden path="redeemTransId"/>
+											<form:hidden path="schemeCode"/> 
+											</div>
 
 											<%-- <div class="form-group row">
 													<div class="col-sm-3" style="margin: auto;">

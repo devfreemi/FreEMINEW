@@ -110,13 +110,14 @@ table.dataTable thead th, table.dataTable thead td {
 									<tr>
 										<th scope="col">TRANSACTION REFERENCE</th>
 										<th scope="col">SCHEME CODE</th>
+										<th scope="col">CATEGORY</th>
 										<th scope="col">INVESTMENT TYPE</th>
 										<th scope="col">SIP START DATE</th>
 										<th scope="col">SIP END DATE</th>
 										<th scope="col">INVEST AMOUNT</th>
 										<th scope="col">INVEST DATE</th>
 										<th scope="col">ORDER NO</th>
-										<th scope="col">STATUS</th>
+										<th scope="col">ACTION</th>
 								</thead>
 								<tbody
 									style="font-size: 13px; font-family: sans-serif; font-weight: 400;">
@@ -125,6 +126,7 @@ table.dataTable thead th, table.dataTable thead td {
 										<tr>
 											<td>${listVar.transactionId }</td>
 											<td>${listVar.schemeCode }</td>
+											<td>${listVar.transctionType }</td>
 											<td>${listVar.investType }</td>
 											<td>${listVar.sipStartDate }</td>
 											<td>${listVar.sipEndDate }</td>
@@ -134,7 +136,7 @@ table.dataTable thead th, table.dataTable thead td {
 											<td style="text-align: center;">
 												<button class="btn btn-sm btn-secondary" style="padding: .1rem .5rem;"
 													onclick="getbseOrderPaymentStatus('${listVar.clienId}','${listVar.orderNo }' )">
-													Order Status</button>
+													Payment Status</button>
 												<%-- <span style="color: blue;cursor: pointer;" onclick="getbseOrderPaymentStatus('${listVar.clienId}','${listVar.orderNo }' )">Order Status</span>
 												<span style="color: red;cursor: pointer;">Cancel Order</span> --%>
 
@@ -164,6 +166,7 @@ table.dataTable thead th, table.dataTable thead td {
 			"columns": [
 			    { "orderable": false },
 			    { "orderable": false },
+			    null,
 			    null,
 			    null,
 			    null,

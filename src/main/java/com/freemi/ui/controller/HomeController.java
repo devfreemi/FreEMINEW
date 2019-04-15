@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -420,7 +421,17 @@ public class HomeController {
 					session.setAttribute("email",response.getHeaders().get("email").get(0));
 
 //					Set session for other applciations
-					RestClientApps.setAllAppSession( response.getHeaders().get("userid").get(0), response.getHeaders().get("email").get(0), response.getHeaders().get("fname").get(0).split(" ")[0], response.getHeaders().get("Authorization").get(0));
+//					RestClientApps.setAllAppSession( response.getHeaders().get("userid").get(0), response.getHeaders().get("email").get(0), response.getHeaders().get("fname").get(0).split(" ")[0], response.getHeaders().get("Authorization").get(0));
+					
+					try{
+					ServletContext servletContext =request.getSession().getServletContext().getContext("/{applicationContextRoot}");
+					servletContext.setAttribute("loggedSession", response.getHeaders().get("fname").get(0).split(" ")[0]);
+					servletContext.setAttribute("token", response.getHeaders().get("Authorization").get(0));
+					servletContext.setAttribute("userid", response.getHeaders().get("userid").get(0));
+					servletContext.setAttribute("email",response.getHeaders().get("email").get(0));
+					}catch(Exception e){
+						System.out.println("Error sessting servlet context");
+					}
 					
 					logger.info(response.getHeaders().get("Authorization").get(0));
 					returnUrl="SUCCESS";
@@ -582,7 +593,7 @@ public class HomeController {
 
 
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
-	public String logout(ModelMap model, HttpSession session) {
+	public String logout(ModelMap model, HttpServletRequest request,HttpServletResponse response, HttpSession session) {
 		//logger.info("@@@@ Inside Login..");
 		logger.info("@@@@ LogoutController @@@@");
 
@@ -590,6 +601,20 @@ public class HomeController {
 		session.removeAttribute("token");
 		session.removeAttribute("userid");
 		session.removeAttribute("email");
+		
+		try{
+			logger.info("Clear loggin data from servlet context...");
+			ServletContext servletContext =request.getSession().getServletContext().getContext("/{applicationContextRoot}");
+			servletContext.removeAttribute("loggedSession");
+			servletContext.removeAttribute("token");
+			servletContext.removeAttribute("userid");
+			servletContext.removeAttribute("email");
+			
+			
+			}catch(Exception e){
+				System.out.println("Error removing session data from servlet context during logout..");
+		
+			}
 		session.invalidate();
 		
 		RestClientApps.logoutAllApplication("", "", "", "");

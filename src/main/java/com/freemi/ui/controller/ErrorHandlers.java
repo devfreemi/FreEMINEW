@@ -77,72 +77,7 @@ public class ErrorHandlers implements ErrorController{
 		// TODO Auto-generated method stub
 		return "/error";
 	}
-	
-	public static void main(String[] args){
-		 String base64File = "";
-		 String filePath="E:\\AOF\\AOF_26273_TES876T836.pdf";
-		 String tiffFile = "E:\\AOF\\AOF_26273_TES876T836.tiff";
-	        File file = new File(filePath);
-	        /*try (FileInputStream imageInFile = new FileInputStream(file)) {
-	            // Reading a file from file system
-	            byte fileData[] = new byte[(int) file.length()];
-	            imageInFile.read(fileData);
-	            base64File = Base64.getEncoder().encodeToString(fileData);
-	            System.out.println("File- \n"+ base64File);
-	            
-//	            byte[] decoded = org.apache.commons.codec.binary.Base64.decodeBase64(base64File.getBytes());
-	            
-	            byte[] decoded= Files.readAllBytes(new File(filePath.toString()).toPath());
-	            
-	            System.out.println("byte array- \n"+ decoded.toString());
-	            
-	        } catch (FileNotFoundException e) {
-	            System.out.println("File not found" + e);
-	        } catch (IOException ioe) {
-	            System.out.println("Exception while reading the file " + ioe);
-	        }
-	        
-	        System.out.println("Complete");*/
-//	        return base64File;
-	        
-	        try {
-	        String extension = "tiff";
-	        PDDocument document = PDDocument.load(new File(filePath));
-	        PDFRenderer pdfRenderer = new PDFRenderer(document);
-	        /*for (int page = 0; page < document.getNumberOfPages(); ++page) {
-	            BufferedImage bim = pdfRenderer.renderImageWithDPI(
-	              page, 300, ImageType.RGB);
-	           
-					ImageIOUtil.writeImage(
-					  bim, String.format(tiffFile, extension), 300);
-				
-	        }*/
-	        
-	        BufferedImage bim = pdfRenderer.renderImageWithDPI(0, 300, ImageType.RGB);
-	           
-	        ImageIOUtil.writeImage(bim, String.format(tiffFile, extension), 300);
-	        
-	        document.close();
-	        
-//	        System.out.println(Arrays.toString(Files.readAllBytes(new File(tiffFile.toString()+".tiff").toPath())));
-	        
-	       /* String str = new String(Files.readAllBytes(new File(tiffFile.toString()+".tiff").toPath()), StandardCharsets.UTF_8);
-	        System.out.println(str);*/
-	        
-	        byte[] fileContent = FileUtils.readFileToByteArray(new File(tiffFile));
-	        String encodedString = Base64.getEncoder().encodeToString(fileContent);
-	        
-	        System.out.println(encodedString);
-	        System.out.println("Complete conversion");
-	        } catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	        
-	        
-	        
-	}
-	
+
 	
 
 }

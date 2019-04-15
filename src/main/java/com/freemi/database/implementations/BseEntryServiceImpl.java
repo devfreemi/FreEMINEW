@@ -214,10 +214,18 @@ public class BseEntryServiceImpl implements BseEntryManager {
 
 			//Generate BSE related ref no
 			StringBuffer ref = new StringBuffer();
-			ref.append("P").append(selectedMFFund.getClientID().substring(6)).append(Calendar.getInstance().getTimeInMillis());
+			if(selectedMFFund.getTransactionType().equals("CXL")){
+				ref.append("C").append(selectedMFFund.getClientID().substring(6)).append(Calendar.getInstance().getTimeInMillis());
+			}else if(selectedMFFund.getTransactionType().equals("REDEEM")){
+				ref.append("R").append(selectedMFFund.getClientID().substring(6)).append(Calendar.getInstance().getTimeInMillis());
+			}else if(selectedMFFund.getTransactionType().equals("MOD")){
+				ref.append("M").append(selectedMFFund.getClientID().substring(6)).append(Calendar.getInstance().getTimeInMillis());
+			}else{
+				ref.append("P").append(selectedMFFund.getClientID().substring(6)).append(Calendar.getInstance().getTimeInMillis());
+			}
 			selectedMFFund.setBseRefNo(ref.toString());
 
-			logger.info("MF purchae request saved to database for transaction id- "+ selectedMFFund.getTransactionID());
+			logger.info("New transaction request received of category:  "+selectedMFFund.getTransactionType()+" .Generated Transaction reference ID: "+ selectedMFFund.getTransactionID());
 
 			//		Generate BSE transaction Reference no
 			Date date = new Date();
@@ -229,11 +237,11 @@ public class BseEntryServiceImpl implements BseEntryManager {
 			}
 			transNumber.append(Long.toString(counter));
 
-			logger.info("Requesting BSE to register transaction for client id- : "+ selectedMFFund.getClientID() + " : TransactionCode: "+ transNumber.toString()+ ": Scheme code: "+ selectedMFFund.getSchemeCode() + " : Amount: "+ selectedMFFund.getInvestAmount());
+			logger.info("Requesting BSE to register transaction for client id- : "+ selectedMFFund.getClientID() + " : Transaction code: "+ transNumber.toString()+ ": Scheme code: "+ selectedMFFund.getSchemeCode() + " : Amount: "+ selectedMFFund.getInvestAmount());
 
 			//Call BSE
 
-			bseResult = investmentConnectorBseInterface.processCustomerPurchaseRequest(selectedMFFund, transNumber.toString(),mandateId);
+			bseResult = investmentConnectorBseInterface.processCustomerTransactionbsaRequest(selectedMFFund, transNumber.toString(),mandateId);
 
 			logger.info("Status of requested transaction - "+ bseResult.getSuccessFlag());
 

@@ -18,6 +18,8 @@ public class MFRedeemForm implements Serializable{
 	private Date redemptionTime;
 	private String fundName;
 	private String investType;
+	
+	private double availableAmount;
 	private String redeemByUnits;
 	private String redeemByAmounts;
 	private double redeemUnits;
@@ -136,6 +138,12 @@ public class MFRedeemForm implements Serializable{
 	}
 	public void setInvestType(String investType) {
 		this.investType = investType;
+	}
+	public double getAvailableAmount() {
+		return availableAmount;
+	}
+	public void setAvailableAmount(double availableAmount) {
+		this.availableAmount = availableAmount;
 	}
 	
 	

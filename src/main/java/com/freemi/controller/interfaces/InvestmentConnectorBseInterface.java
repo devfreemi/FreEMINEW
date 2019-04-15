@@ -31,7 +31,7 @@ public interface InvestmentConnectorBseInterface {
 	
 	public BseAOFUploadResponse uploadAOFForm(String mobileNumber, String aoffolderLocation, String clientCode);
 	
-	public BseOrderEntryResponse processCustomerPurchaseRequest(SelectMFFund selectedFund, String transactionNumber, String mandateId);
+	public BseOrderEntryResponse processCustomerTransactionbsaRequest(SelectMFFund selectedFund, String transactionNumber, String mandateId);
 	
 	public BseOrderPaymentResponse getPaymentUrl(BseOrderPaymentRequest request);
 	

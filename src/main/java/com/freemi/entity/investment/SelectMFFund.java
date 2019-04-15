@@ -64,6 +64,9 @@ public class SelectMFFund implements Serializable {
 	@Column(name="INVEST_AMOUNT")
 	private double investAmount;
 	
+	@Transient
+	private double redeemAmount;
+	
 	@Column(name="PAYMENT_METHOD")
 	private String paymentMethod;
 	
@@ -262,6 +265,12 @@ public class SelectMFFund implements Serializable {
 	}
 	public void setMandateType(String mandateType) {
 		this.mandateType = mandateType;
+	}
+	public double getRedeemAmount() {
+		return redeemAmount;
+	}
+	public void setRedeemAmount(double redeemAmount) {
+		this.redeemAmount = redeemAmount;
 	}
 	
 

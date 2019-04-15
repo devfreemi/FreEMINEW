@@ -15,16 +15,16 @@ public class BseOrderEntry implements Serializable {
 //	YYYYMMDD<usercode>000001
 	private String TransNo;
 	private String OrderId="";
-	private String UserID;
-	private String MemberId;
-	private String ClientCode;
-	private String SchemeCd;
+	private String UserID="";
+	private String MemberId="";
+	private String ClientCode="";
+	private String SchemeCd="";
 	
 //	P/R
-	private String BuySell;
+	private String BuySell="";
 	
 //	FRESH/ADDITIONAL
-	private String BuySellType;
+	private String BuySellType="";
 	
 //	C/N/P	Always P for us
 	private String DPTxn="P";
