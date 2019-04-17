@@ -11,25 +11,24 @@ public class MFRedeemForm implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private String redeemTransId;
-	private String schemeCode;
-	private String portfolio;
-	private String unitHolderName;
+	private String redeemTransId="";
+	private String schemeCode="";
+	private String portfolio="";
+	private String unitHolderName="";
 	private Date redemptionTime;
-	private String fundName;
-	private String investType;
-	
-	private double availableAmount;
-	private String redeemByUnits;
-	private String redeemByAmounts;
-	private double redeemUnits;
-	private double redeemAmounts;
-	private double totalUnits;
-	private double totalValue;
-	private String registeredBank;
+	private String fundName="";
+	private String investType="";
+	private double availableAmount=0.0;
+	private String redeemByUnits="";
+	private String redeemByAmounts="";
+	private double redeemUnits=0.0;
+	private double redeemAmounts=0.0;
+	private double totalUnits=0.0;
+	private double totalValue=0.0;
+	private String registeredBank="";
 	private boolean agreePolicy;
-	private String requestorSystemIp;
-	private String requestorSystem;
+	private String requestorSystemIp="";
+	private String requestorSystem="";
 	
 	
 	public String getRedeemTransId() {

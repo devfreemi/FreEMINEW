@@ -25,6 +25,16 @@
 <script src="<c:url value="${contextPath}/resources/js/pace.min.js" />"></script>
 <!-- <script
 	src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script> -->
+	<!-- <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"> -->
+	
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.min.js"></script>
+	 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.min.css"> 
+	 <script>
+  $( function() {
+    $( "#investorDOB" ).datepicker({ format: 'dd/mm/yyyy' });
+  } );
+  </script>
 
 <style>
 /* #sig-canvas {

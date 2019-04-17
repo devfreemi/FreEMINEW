@@ -123,6 +123,9 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		String flag = "SUCCESS";
 		String customerid ="";
 		boolean registerCustomerToBse = false;
+		
+		SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy-mm-dd");
+		SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("dd/mm/yyyy");
 
 
 		if(bseCustomerCrudRespository.existsByPan1(customerForm.getPan1())){
@@ -162,8 +165,18 @@ public class BseEntryServiceImpl implements BseEntryManager {
 			customerForm.getFatcaDetails().setClientID(customerid);
 			customerForm.setRegistrationTime(new Date());
 			logger.info("Transaction started to save BSE customer registrastion data");
-
-			bseCustomerCrudRespository.save(customerForm);
+			
+			BseMFInvestForm customerCopy = customerForm;
+//			Convert date to db format
+			try {
+				Date date1 = simpleDateFormat2.parse(customerCopy.getInvDOB());
+				String bseFormatDob = simpleDateFormat1.format(date1);
+				customerCopy.setInvDOB(bseFormatDob);
+			} catch (ParseException e) {
+				logger.error("saveCustomerDetails(): failed to convert date: ",e);
+			}
+			
+			bseCustomerCrudRespository.save(customerCopy);
 			bseCustomerCrudRespository.flush();
 			registerCustomerToBse = true;
 			logger.info("Customer record saved successfully to database");
@@ -205,6 +218,8 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	public TransactionStatus savetransactionDetails(SelectMFFund selectedMFFund, String mandateId) {
 		// TODO Auto-generated method stub
 		boolean flag = true;
+		
+		
 
 		//Save details to database, process to BSE, update database with response
 		TransactionStatus transStatus = new TransactionStatus();
@@ -614,7 +629,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 
 	@Override
 	public List<BsemfTransactionHistory> getAllPurchaseHistory(String clientId) {
-		logger.info("Begining process to upload AOF Form.");
+		logger.info("Get purchase history from DB");
 		List<BsemfTransactionHistory> getAllOrders = null;
 
 		try{
@@ -855,6 +870,25 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		}
 
 		return folios;
+	}
+
+	@Override
+	public BsemfTransactionHistory getOrderDetailsForCancel(String orderNo, String schemeCode, String investType,
+			String mobileNumber,String category) {
+		logger.info("Get order details for cancel from DB");
+		BsemfTransactionHistory getOrderDetails = null;
+
+		try{
+			//				if(bseCustomerCrudRespository.existsByMobile(mobileNumber)){
+			//				getAllOrders=bseOrderEntryResponseRepository.findAllByClientCode(clientId);
+			String clientId = bseCustomerCrudRespository.getClientIdFromMobile(mobileNumber);
+			getOrderDetails = bseTransHistoryViewCrudRepository.findOneByClienIdAndOrderNoAndTransctionType(clientId, orderNo,category);
+			logger.info("Total purchase history found for custmer- "+ clientId + " : "+ orderNo);
+
+		}catch(Exception e){
+			logger.error("Failed to query database to get customer AOF upload status and upload", e);
+		}
+		return getOrderDetails;
 	}
 
 

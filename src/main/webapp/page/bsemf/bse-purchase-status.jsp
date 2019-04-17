@@ -60,7 +60,7 @@ border: 1px solid #8b8e90;
 										style="margin: auto; text-align: center;">
 										<a class="transaction-redirect1"
 											style="text-decoration: none;"
-											href="${pageContext.request.contextPath}/mutual-funds/top-performing">Place
+											href="${pageContext.request.contextPath}/mutual-funds/funds-explorer">Place
 											Another Order</a>
 									</div>
 								</div>
@@ -85,6 +85,10 @@ border: 1px solid #8b8e90;
 											<td>${TRANSACTION_REPORT.bseOrderNoFromResponse }</td>
 										</tr>
 									</table>
+									
+									<div>
+									<span>${TRANSACTION_REPORT.statusMsg }</span>
+									</div>
 								</div>
 								<%-- <div class="col-md-6 col-lg-6">Fund Name</div>
 							<div class="col-md-6 col-lg-6">${TRANSACTION_REPORT.fundName }</div> --%>

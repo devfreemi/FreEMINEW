@@ -32,6 +32,52 @@ function MFRedeem(folio,code,type){
 //	window.location.assign(window.location.href+"/funds-redeem?r="+btoa(folio+"|"+code+"|"+type));
 }
 
+
+function cancelOrder(schemeCode,orderno,type,category){
+	console.log("Cancel order request...")
+	if(type== 'SIP'){
+		alert("SIP order cancel process will be available soon. ");
+	}else if(type == 'LUMPSUM'){
+		window.location.assign("/products/my-dashboard/cancel-order?ref="+btoa(schemeCode+"|"+orderno+"|"+type+"|"+category));
+		
+	}else{
+		alert("Invalid type of investment");
+	}
+	
+}
+
+
+function getbseOrderPaymentStatus(clientId, orderNo) {
+	console.log("Order staus for id- " + clientId + " : " + orderNo);
+	$.get("/products/mutual-funds/orderpaymentStatus", {
+		client : clientId,
+		order : orderNo
+	}, function(data, status) {
+
+		console.log(data);
+		$('#exampleModal1').modal('hide');
+		if (data == 'NO_SESSIION') {
+
+			alert("Invalid request");
+
+		} else if (data == 'REQUEST_DENIED') {
+			alert("Session not found!")
+		} else {
+			alert("Status of order no: "+orderNo+"\n"+ data);
+		}
+
+	}).fail(function(response) {
+		/* $('#exampleModal1').modal('hide');
+		$("#signuploadstatus")
+				.text(
+						"Failed to submit your signature. Please try again."); */
+		/* alert(response); */
+		alert("Failed to get status for order- "+ orderNo);
+	});
+
+}
+
+
 /*$(document).ready(function(){
 	$(".box-style2").hover(
 			function(){

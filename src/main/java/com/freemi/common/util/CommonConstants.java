@@ -71,7 +71,7 @@ public class CommonConstants {
 	public static final String BSE_XIP="X";
 	public static final String BSE_ISP="I";
 	
-	public static final String BSE_CALL_TEST_ENABLED = "N";
+	public static final String BSE_CALL_TEST_ENABLED = "Y";
 	
 	public static final String BSE_OTP_ENABLED = "Y";
 	

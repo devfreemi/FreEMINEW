@@ -109,6 +109,10 @@ public class SelectMFFund implements Serializable {
 	@Transient
 	private String mandateType="";
 	
+	@Transient
+	private String orderNo="";
+	
+	
 	public long getSerialNo() {
 		return serialNo;
 	}
@@ -271,6 +275,12 @@ public class SelectMFFund implements Serializable {
 	}
 	public void setRedeemAmount(double redeemAmount) {
 		this.redeemAmount = redeemAmount;
+	}
+	public String getOrderNo() {
+		return orderNo;
+	}
+	public void setOrderNo(String orderNo) {
+		this.orderNo = orderNo;
 	}
 	
 

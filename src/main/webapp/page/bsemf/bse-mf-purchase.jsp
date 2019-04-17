@@ -86,6 +86,7 @@
 							<div class="col-sm-9">
 								<form:select path="portfolio"
 									class="form-control form-control-sm">
+									<form:option value="NEW" selected="selected">NEW</form:option>
 									<form:options items="${amcPortFolio }" />
 								</form:select>
 							</div>

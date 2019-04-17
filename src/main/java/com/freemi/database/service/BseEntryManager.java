@@ -64,6 +64,7 @@ public interface BseEntryManager {
 	public List<BseAllTransactionsView> getCustomerAllTransactionRecords(String clientID, String mobileNumber, String panNumber);
 	public BseAllTransactionsView getFundDetailsForAdditionalPurchase(String portfolio, String schemeCode,String investType, String mobileNumber);
 	public BseAllTransactionsView getFundDetailsForRedemption(String portfolio, String schemeCode,String investType, String mobileNumber);
+	public BsemfTransactionHistory getOrderDetailsForCancel(String portfolio, String schemeCode,String investType, String mobileNumber,String category);
 	
 	//BSE MF related operations
 	public List<MfTopFundsInventory> getTopMfFunds();

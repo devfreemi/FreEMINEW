@@ -617,7 +617,7 @@ public class HomeController {
 			}
 		session.invalidate();
 		
-		RestClientApps.logoutAllApplication("", "", "", "");
+//		RestClientApps.logoutAllApplication("", "", "", "");
 		return "redirect:/";
 	}
 
@@ -801,8 +801,33 @@ public class HomeController {
 
 		return "SUCCESS";
 	}
-
-
+	
+	
+	@RequestMapping(value = "/closewindow", method = RequestMethod.GET)
+	public void windowClose(HttpServletRequest request,HttpServletResponse response, HttpSession session) {
+		logger.info("Window closed... clear all session...");
+		session.removeAttribute("loggedSession");
+		session.removeAttribute("token");
+		session.removeAttribute("userid");
+		session.removeAttribute("email");
+		
+		try{
+			logger.info("Clear loggin data from servlet context...");
+			ServletContext servletContext =request.getSession().getServletContext().getContext("/{applicationContextRoot}");
+			servletContext.removeAttribute("loggedSession");
+			servletContext.removeAttribute("token");
+			servletContext.removeAttribute("userid");
+			servletContext.removeAttribute("email");
+			
+			
+			}catch(Exception e){
+				System.out.println("Error removing session data from servlet context during logout..");
+		
+			}
+		session.invalidate();
+		
+		
+	}
 
 	@ModelAttribute("blogList")
 	public Map<String, String> getBlogList() {
@@ -843,6 +868,9 @@ public class HomeController {
 		// return a view which will be resolved by an excel view resolver
 		return new ModelAndView("pdfView", "folioList", folioList);
 	}
+	
+	
+	
 
 
 	/*	private Map<String, String> blogLinks(){

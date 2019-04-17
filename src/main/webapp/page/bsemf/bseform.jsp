@@ -127,7 +127,7 @@
 									Birth<sup style="color: red">*</sup>
 								</span>
 							</div>
-							<form:input type="date" path="invDOB" required="required"
+							<form:input type="text" path="invDOB" required="required" maxlength="10"
 								class="form-control form-control-custom" id="investorDOB" />
 						</div>
 						<span style="font-size: 10px; color: #d05c41;"><sup>*</sup>Age
@@ -143,7 +143,7 @@
 								<span class="input-group-text" id="basic-addon3">Email ID<sup
 									style="color: red">*</sup></span>
 							</div>
-							<form:input type="text" class="form-control form-control-custom"
+							<form:input type="email" class="form-control form-control-custom"
 								maxlength="128" id="email" path="email" required="required"
 								aria-describedby="basic-addon3" />
 						</div>

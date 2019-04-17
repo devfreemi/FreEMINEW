@@ -38,35 +38,39 @@
 	href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
 <style type="text/css">
 table td {
-    font-size: 12px;
-    font-weight: 300;
-}
-table.dataTable tbody th, table.dataTable tbody td {
-    padding: 2px 2px;
+	font-size: 12px;
+	font-weight: 300;
 }
 
-.dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
-    color: white !important;
-    border: 1px solid #979797;
-    background-color: white;
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fff), color-stop(100%, #dcdcdc));
-    background: -webkit-linear-gradient(top, #007bff 0%, #007bff 100%);
-    background: -moz-linear-gradient(top, #007bff 0%, #007bff 100%);
-    background: -ms-linear-gradient(top, #007bff 0%, #007bff 100%);
-    background: -o-linear-gradient(top, #007bff 0%, #007bff 100%);
-   background: linear-gradient(to bottom, #007bff 0%, #007bff 100%);
+table.dataTable tbody th, table.dataTable tbody td {
+	padding: 2px 2px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+	.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover
+	{
+	color: white !important;
+	border: 1px solid #979797;
+	background-color: white;
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fff),
+		color-stop(100%, #dcdcdc));
+	background: -webkit-linear-gradient(top, #007bff 0%, #007bff 100%);
+	background: -moz-linear-gradient(top, #007bff 0%, #007bff 100%);
+	background: -ms-linear-gradient(top, #007bff 0%, #007bff 100%);
+	background: -o-linear-gradient(top, #007bff 0%, #007bff 100%);
+	background: linear-gradient(to bottom, #007bff 0%, #007bff 100%);
 }
 
 table.dataTable thead th, table.dataTable thead td {
-    padding: 2px 18px;
-    border-bottom: 1px solid #6f6d6d;
+	padding: 2px 18px;
+	border-bottom: 1px solid #6f6d6d;
 }
 </style>
 </head>
 <body>
 	<jsp:include page="../include/header.jsp"></jsp:include>
 	<div class="container" style="min-height: 100vh;">
-		<div class="row" style="margin: auto;overflow: auto;">
+		<div class="row" style="margin: auto; overflow: auto;">
 			<div class="col-md-12 col-lg-12"
 				style="margin: auto; margin-top: 30px;">
 				<h1 style="font-size: 2rem; color: #f16d2d; font-weight: 400;">TRACK
@@ -102,8 +106,7 @@ table.dataTable thead th, table.dataTable thead td {
 						<div class="dataTables_wrapper dt-bootstrap4 animated fadeIn"
 							style="margin-top: 30px;">
 							<table class="table table-striped table-bordered"
-								style="box-shadow: 1px 3px 5px 1px #d4cfcf;" id="dtBasicExample"
-								>
+								style="box-shadow: 1px 3px 5px 1px #d4cfcf;" id="dtBasicExample">
 								<caption>Funds Purchase History</caption>
 								<thead class="purchase-records"
 									style="background: #3db4d0; color: #fff29e; font-size: 10px;">
@@ -134,11 +137,37 @@ table.dataTable thead th, table.dataTable thead td {
 											<td>${listVar.orderTime }</td>
 											<td>${listVar.orderNo }</td>
 											<td style="text-align: center;">
-												<button class="btn btn-sm btn-secondary" style="padding: .1rem .5rem;"
+												<%-- <button class="btn btn-sm btn-secondary" style="padding: .1rem .5rem;"
 													onclick="getbseOrderPaymentStatus('${listVar.clienId}','${listVar.orderNo }' )">
-													Payment Status</button>
-												<%-- <span style="color: blue;cursor: pointer;" onclick="getbseOrderPaymentStatus('${listVar.clienId}','${listVar.orderNo }' )">Order Status</span>
+													Payment Status</button> --%> <%-- <span style="color: blue;cursor: pointer;" onclick="getbseOrderPaymentStatus('${listVar.clienId}','${listVar.orderNo }' )">Order Status</span>
 												<span style="color: red;cursor: pointer;">Cancel Order</span> --%>
+
+
+
+												<div class="btn-group">
+													<button type="button"
+														class="btn btn-secondary dropdown-toggle btn-sm"
+														data-toggle="dropdown" aria-haspopup="true"
+														aria-expanded="false"
+														style="font-size: 11px; padding: 10px; width: 5rem;">ACTION</button>
+													<div class="dropdown-menu dropdown-menu-right">
+														<button class="dropdown-item" type="button"
+															style="font-size: 12px; color: #238019; font-weight: 600;"
+															onclick="getbseOrderPaymentStatus('${listVar.clienId}','${listVar.orderNo }' )">
+															Payment Status</button>
+														
+														<c:if test="${listVar.transctionType =='PURCHASE' }">
+														<button class="dropdown-item" type="button"
+															style="font-size: 12px; color: #d82f2f; font-weight: 600;"
+															onclick="cancelOrder('${listVar.clienId}','${listVar.orderNo}','${listVar.investType }','${listVar.transctionType }' )">
+															<%-- onclick="cancelOrder('${listVar.schemeCode}','${listVar.orderNo },'${listVar.investType }')"> --%>
+															Cancel Order</button>
+														</c:if>
+
+													</div>
+												</div>
+
+
 
 											</td>
 										</tr>
@@ -180,34 +209,9 @@ table.dataTable thead th, table.dataTable thead td {
 		
 	});
 
-	function getbseOrderPaymentStatus(clientId, orderNo) {
-		console.log("Order staus for id- " + clientId + " : " + orderNo);
-		$.get("/products/mutual-funds/orderpaymentStatus", {
-			client : clientId,
-			order : orderNo
-		}, function(data, status) {
-
-			console.log(data);
-			$('#exampleModal1').modal('hide');
-			if (data == 'NO_SESSIION') {
-
-				alert("Invalid request");
-
-			} else if (data == 'REQUEST_DENIED') {
-				alert("Session not found!")
-			} else {
-				alert("Status of order no: "+orderNo+"\n"+ data);
-			}
-
-		}).fail(function(response) {
-			/* $('#exampleModal1').modal('hide');
-			$("#signuploadstatus")
-					.text(
-							"Failed to submit your signature. Please try again."); */
-			/* alert(response); */
-			alert("Failed to get status for order- "+ orderNo);
-		});
-
-	}
+	
 </script>
+
+<script
+	src="<c:url value="${contextPath}/resources/js/investment.js" />"></script>
 </html>

@@ -39,6 +39,8 @@ public class BseXipISipOrderEntry {
 	private String BROKERAGE="";
 	private String XSIPMANDATEID="";
 	private String SubberCode="";
+	private String XSIP_RegId="";
+	
 	public String getTransactionCode() {
 		return TransactionCode;
 	}
@@ -260,6 +262,12 @@ public class BseXipISipOrderEntry {
 	}
 	public void setSubberCode(String subberCode) {
 		SubberCode = subberCode;
+	}
+	public String getXSIP_RegId() {
+		return XSIP_RegId;
+	}
+	public void setXSIP_RegId(String xSIP_RegId) {
+		XSIP_RegId = xSIP_RegId;
 	}
 	
 	

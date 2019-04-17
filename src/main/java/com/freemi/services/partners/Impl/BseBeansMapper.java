@@ -47,13 +47,18 @@ public class BseBeansMapper {
 		clientFregirationForm.setClientAppname1(registrationForm.getInvName());
 
 		//		Converting date format to BSE specific format dd/mm/yyyy
-		try {
+		/*try {
+			
 			Date date1 = simpleDateFormat1.parse(registrationForm.getInvDOB());
 			String bseFormatDob = simpleDateFormat2.format(date1);
 			clientFregirationForm.setClientDob(bseFormatDob);
 		} catch (ParseException e) {
 			logger.error("InvestmentFormToBseBeans(): failed to convert date: ",e);
-		}	
+		}	*/
+		
+		System.out.println("DOB- "+ registrationForm.getInvDOB());
+		clientFregirationForm.setClientDob(registrationForm.getInvDOB());
+		
 		clientFregirationForm.setClientGender(registrationForm.getGender());
 		clientFregirationForm.setClientPan(registrationForm.getPan1());
 		clientFregirationForm.setClientType("P");			//P- Physical , D - Demat								// todo
@@ -101,13 +106,15 @@ public class BseBeansMapper {
 		fatcaForm.setINV_NAME(registrationForm.getInvName());
 
 		//		Converting date format to BSE specific format dd/mm/yyyy
-		try {
+		/*try {
 			Date date1 = simpleDateFormat1.parse(registrationForm.getInvDOB());
 			String bseFormatDob = simpleDateFormat2.format(date1);
 			fatcaForm.setDOB(bseFormatDob);
 		} catch (ParseException e) {
 			logger.error("InvestmentFormToBseFATCABeans(): failed to convert date: ",e);
-		}
+		}*/
+		System.out.println("DOB for fatca- "+registrationForm.getInvDOB() );
+		fatcaForm.setDOB(registrationForm.getInvDOB());
 
 		fatcaForm.setFR_NAME(registrationForm.getFatcaDetails().getFatherName());
 		fatcaForm.setSP_NAME(registrationForm.getFatcaDetails().getSpouseName());
@@ -157,7 +164,7 @@ public class BseBeansMapper {
 
 
 	public static BseOrderEntry transactionOrderToBseBeans(SelectMFFund fundDetails, String requestNumber){
-
+		logger.info("transactionOrderToBseBeans()- Begin mapping");
 		BseOrderEntry bseOrderForm = new BseOrderEntry();
 
 		bseOrderForm.setUserID(CommonConstants.BSE_USER_ID);
@@ -170,12 +177,13 @@ public class BseBeansMapper {
 			if(fundDetails.getInvestAmount()>199999){
 				logger.info("Since the amount is above, marking the transaction as L1 category.. Proceeding by changing fundname to - "+ fundDetails.getSchemeCode()+"-L1");
 				bseOrderForm.setSchemeCd(fundDetails.getSchemeCode()+"-L1");
-				bseOrderForm.setBuySell("P");
-				bseOrderForm.setRemarks("Purchase Request");
+				
 			}else{
 				bseOrderForm.setSchemeCd(fundDetails.getSchemeCode());
 			}
 
+			bseOrderForm.setBuySell("P");
+			bseOrderForm.setRemarks("Purchase Request");
 			bseOrderForm.setBuySellType("FRESH");
 
 		}else if(fundDetails.getTransactionType().equals("REDEEM")){
@@ -200,7 +208,7 @@ public class BseBeansMapper {
 			bseOrderForm.setBuySell("P");
 			bseOrderForm.setSchemeCd(fundDetails.getSchemeCode());
 			bseOrderForm.setRemarks("Order cancel Request");
-
+			bseOrderForm.setOrderId(fundDetails.getOrderNo());
 			bseOrderForm.setBuySellType("FRESH");
 		}
 
@@ -219,12 +227,13 @@ public class BseBeansMapper {
 		bseOrderForm.setMinRedeem("Y");	//todo
 		bseOrderForm.setDPC("Y");		//todo
 
+		logger.info("transactionOrderToBseBeans()- mapping complete..");
 		return bseOrderForm;
 	}
 
 
 	public static BseOrderEntry redeeemOrderToBseBeans(SelectMFFund fundDetails, String requestNumber){
-
+		logger.info("redeeemOrderToBseBeans()- Redeem mapping begin");
 		BseOrderEntry bseOrderForm = new BseOrderEntry();
 
 		bseOrderForm.setUserID(CommonConstants.BSE_USER_ID);
@@ -254,7 +263,7 @@ public class BseBeansMapper {
 		bseOrderForm.setEUINVal("N");
 		bseOrderForm.setMinRedeem("Y");	//todo
 		bseOrderForm.setDPC("Y");		//todo
-
+		logger.info("redeeemOrderToBseBeans()- Redeem mapping complete");
 		return bseOrderForm;
 	}
 	
