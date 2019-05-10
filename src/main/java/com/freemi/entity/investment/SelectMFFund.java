@@ -38,6 +38,10 @@ public class SelectMFFund implements Serializable {
 	private String schemeCode;
 	
 	@Transient
+//	@NotEmpty(message="Re-inv Scheme code is missing.")
+	private String reinvSchemeCode;
+	
+	@Transient
 	@Column(name="")
 	private String schemeName;
 	
@@ -106,11 +110,26 @@ public class SelectMFFund implements Serializable {
 	@Column(name="BSE_REF_NO")
 	private String bseRefNo;
 	
-	@Transient
+	@Column(name="SIP_MANDATE_CATEGORY")
 	private String mandateType="";
+	
+	@Column(name="MANDATE_ID")
+	private String mandateId;
 	
 	@Transient
 	private String orderNo="";
+	
+	@Column(name="IS_ACTIVE")
+	private String isActive="Y";
+	
+	@Transient
+	private String invCategory="Z";
+	
+	@Transient
+	private String buySellType="FRESH";
+	
+	@Transient
+	private String rtaAgent="";
 	
 	
 	public long getSerialNo() {
@@ -282,6 +301,41 @@ public class SelectMFFund implements Serializable {
 	public void setOrderNo(String orderNo) {
 		this.orderNo = orderNo;
 	}
-	
-
+	public String getMandateId() {
+		return mandateId;
+	}
+	public void setMandateId(String mandateId) {
+		this.mandateId = mandateId;
+	}
+	public String getIsActive() {
+		return isActive;
+	}
+	public void setIsActive(String isActive) {
+		this.isActive = isActive;
+	}
+	public String getInvCategory() {
+		return invCategory;
+	}
+	public void setInvCategory(String invCategory) {
+		this.invCategory = invCategory;
+	}
+	public String getReinvSchemeCode() {
+		return reinvSchemeCode;
+	}
+	public void setReinvSchemeCode(String reinvSchemeCode) {
+		this.reinvSchemeCode = reinvSchemeCode;
+	}
+	public String getBuySellType() {
+		return buySellType;
+	}
+	public void setBuySellType(String buySellType) {
+		this.buySellType = buySellType;
+	}
+	public String getRtaAgent() {
+		return rtaAgent;
+	}
+	public void setRtaAgent(String rtaAgent) {
+		this.rtaAgent = rtaAgent;
+	}
+    
 }

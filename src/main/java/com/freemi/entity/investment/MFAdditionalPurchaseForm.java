@@ -11,31 +11,62 @@ public class MFAdditionalPurchaseForm implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private String schemeCode;
-	private String portfolio;
-	private String unitHolderName;
+	private String growthSchemeCode="";
+	private String reinvSchemeCode="";
+	private String growthSchemeISIN="";
+	private String reinvSchemeISIN="";
+	private String rtaCode="";
+	
+	private String portfolio="";
+	private String unitHolderName="";
 	private Date purchaseTime;
-	private String investType;
-	private String fundName;
-	private String redeemByUnits;
-	private String redeemByAmounts;
+	private String investType="";
+	private String fundName="";
+	private String redeemByUnits="";
+	private String redeemByAmounts="";
 	private double purchaseUnits;
 	private double purchaseAmounts;
 	private double totalAvailableUnits;
 	private double totalAvailableAmount;
 	private double currentNAV;
-	private String purchaseTransid;
-	private String paymentMode;
-	private String registeredBank;
+	private String purchaseTransid="";
+	private String paymentMode="";
+	private String registeredBank="";
 	private boolean agreePolicy;
-	private String requestorSystemIp;
-	private String requestorSystem;
+	private String requestorSystemIp="";
+	private String requestorSystem="";
+	private String fundCategory="Z";
 	
-	public String getSchemeCode() {
-		return schemeCode;
+	
+	public String getGrowthSchemeCode() {
+		return growthSchemeCode;
 	}
-	public void setSchemeCode(String schemeCode) {
-		this.schemeCode = schemeCode;
+	public void setGrowthSchemeCode(String growthSchemeCode) {
+		this.growthSchemeCode = growthSchemeCode;
+	}
+	public String getReinvSchemeCode() {
+		return reinvSchemeCode;
+	}
+	public void setReinvSchemeCode(String reinvSchemeCode) {
+		this.reinvSchemeCode = reinvSchemeCode;
+	}
+	public String getGrowthSchemeISIN() {
+		return growthSchemeISIN;
+	}
+	public void setGrowthSchemeISIN(String growthSchemeISIN) {
+		this.growthSchemeISIN = growthSchemeISIN;
+	}
+	public String getReinvSchemeISIN() {
+		return reinvSchemeISIN;
+	}
+	public void setReinvSchemeISIN(String reinvSchemeISIN) {
+		this.reinvSchemeISIN = reinvSchemeISIN;
+	}
+	public String getRtaCode() {
+		return rtaCode;
+	}
+	public void setRtaCode(String rtaCode) {
+		this.rtaCode = rtaCode;
 	}
 	public String getPortfolio() {
 		return portfolio;
@@ -154,6 +185,12 @@ public class MFAdditionalPurchaseForm implements Serializable{
 	}
 	public void setPurchaseTransid(String purchaseTransid) {
 		this.purchaseTransid = purchaseTransid;
+	}
+	public String getFundCategory() {
+		return fundCategory;
+	}
+	public void setFundCategory(String fundCategory) {
+		this.fundCategory = fundCategory;
 	}
 	
 	

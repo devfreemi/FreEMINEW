@@ -56,7 +56,6 @@
 								</div>
 								<form:hidden path="clientID" />
 								<form:hidden path="transactionID" />
-								<form:hidden path="schemeCode" />
 
 							</div>
 							<div class="form-group row">
@@ -102,6 +101,43 @@
 							</div>
 						</div>
 						<div class="form-group row">
+							<label for="schemeName" class="col-sm-3 col-form-label">Scheme
+								Code</label>
+							<div class="col-sm-9">
+								<%-- <input type="text" readonly class="form-control-plaintext"
+									id="schemeName" value="${selectedFund.schemeName }"> --%>
+								<span id="growthcode"> <form:input path="schemeCode"
+										readonly="readonly" class="form-control-plaintext" />
+								</span> <span id="reinvcode" style="display: none;"> <form:input
+										path="reinvSchemeCode" readonly="readonly"
+										class="form-control-plaintext" />
+								</span>
+							</div>
+						</div>
+
+						<div class="form-group row">
+							<label for="invCategory" class="col-sm-3 col-form-label">Category
+							</label>
+							<div class="col-sm-9">
+								<div class="custom-control custom-radio custom-control-inline">
+									<form:radiobutton path="invCategory" value="Z"
+										id="growthCategory" name="catval" class="custom-control-input" />
+									<label class="custom-control-label" for="growthCategory">Growth</label>
+								</div>
+
+								<c:if test="${not empty selectedFund.reinvSchemeCode}">
+									<div class="custom-control custom-radio custom-control-inline">
+										<form:radiobutton path="invCategory" value="Y"
+											id="reinvestcategory" name="catval"
+											class="custom-control-input" />
+										<label class="custom-control-label" for="reinvestcategory">
+											Dividend Re-investment</label>
+									</div>
+								</c:if>
+							</div>
+						</div>
+
+						<div class="form-group row">
 							<label for="schemeName" class="col-sm-3 col-form-label">Investment
 								Amount</label>
 							<div class="col-sm-9">
@@ -134,7 +170,7 @@
 								<%-- <form:hidden path="sipDate"/> --%>
 							</div>
 
-							<div class="form-group row">
+							<div class="form-group row mb-3">
 								<label for="schemeName" class="col-sm-3 col-form-label">Start
 									From</label>
 								<div class="col-6 col-md-5"
@@ -155,6 +191,15 @@
 								</div>
 							</div>
 							<div class="form-group row">
+								<label for="custName" class="col-sm-3 col-form-label">No
+									of monthly Installments</label>
+								<div class="col-sm-3">
+									<form:input path="noOfInstallments" mandatory="true"
+										class="form-control form-control-sm" id="noOfInstallments" />
+
+								</div>
+							</div>
+							<div class="form-group row">
 								<label for="custName" class="col-sm-3 col-form-label">Bank
 									Name </label>
 								<div class="col-sm-9">
@@ -167,7 +212,7 @@
 									No. </label>
 								<div class="col-sm-9">
 									<input type="text" readonly class="form-control-plaintext"
-										id="custName" value="${bankacc	 }">
+										id="custName" value="${bankacc}">
 								</div>
 							</div>
 
@@ -203,13 +248,17 @@
 									<div class="row">
 										<div class="col-md-12 col-lg-12" style="padding-left: 2.7rem;">
 											<div id="isip" style="display: none;">
-												<i class="fas fa-info-circle"></i> <span class="animated fadeIn" style="color: #ea4036;"> No paperwork. You have to add BSE through your
-													Internet banking portal. Your internet banking must support
-													biller. </span>
+												<i class="fas fa-info-circle"></i> <span
+													class="animated fadeIn" style="color: #ea4036;"> No
+													paperwork. You have to add BSE through your Internet
+													banking portal. Your Internet banking must support biller.
+												</span>
 											</div>
 											<div id="xsip" style="display: none;">
-												<i class="fas fa-info-circle"></i> <span  class="animated fadeIn" style="color: #ea4036;"> You need to sign the generated nach mandate
-													form and physically submit or upload the scanned form. </span>
+												<i class="fas fa-info-circle"></i> <span
+													class="animated fadeIn" style="color: #ea4036;"> You
+													need to sign the generated nach mandate form and physically
+													submit or upload the scanned form. </span>
 											</div>
 										</div>
 									</div>
@@ -219,14 +268,26 @@
 							</c:if>
 							<c:if test="${not selectedFund.eMandateRegRequired}">
 								<!--E-Mandate check  -->
-								<div class="custom-control custom-checkbox mb-2">
-									<form:checkbox class="custom-control-input"
-										path="eMandateRegRequired" disabled="true"></form:checkbox>
-									<label class="custom-control-label" for="eMandate1"
-										style="font-size: 11px; text-align: justify;">
-										E-mandate already complete </label>
+								<div class="form-group row">
+									<%-- <div class="col-md-6 col-lg-6">
+											<div class="custom-control custom-checkbox mb-2">
+												<form:checkbox class="custom-control-input"
+													path="eMandateRegRequired" disabled="true"></form:checkbox>
+												<label class="custom-control-label" for="eMandate1"
+													style="font-size: 11px; text-align: justify;">
+													E-mandate already complete </label>
+											</div>
+										</div> --%>
+									<label for="schemeName" class="col-sm-3 col-form-label">Mandate
+										ID </label>
+									<div class="col-sm-9">
+										<form:input path="mandateId" readonly="readonly"
+											class="form-control-plaintext" id="mandateId" />
+									</div>
 								</div>
+
 								<form:hidden path="mandateType" />
+
 							</c:if>
 
 							<div class="custom-control custom-checkbox mb-2">
@@ -265,41 +326,24 @@
 							</div>
 						</div>
 					</div> --%>
-						<div class="custom-control custom-checkbox"
-							style="height: 150px; overflow-y: auto;">
-							<input type="checkbox" class="custom-control-input"
+						<div class="custom-control custom-checkbox">
+							<hr>
+							<span data-toggle="modal" data-target="#basicExampleModal"
+								style="text-decoration: underline; cursor: pointer; color: blue;">Disclaimer
+							</span> <input type="checkbox" class="custom-control-input"
 								id="agreecheck1" checked="checked"> <label
 								class="custom-control-label" for="agreecheck1"
-								style="font-size: 11px; text-align: justify;"> I/We have
-								read and understood the contents of the Scheme Information
-								Document(s), Key Information Memorandum and Addenda issued for
-								the respective scheme(s). I/We hereby apply to the Trustee of
-								Mutual Fund and agree to abide by terms and conditions, rules
-								and regulation of the relevant scheme(s) / Mutual Fund. I/We
-								have neither received nor been induced by any rebate or gifts,
-								directly or indirectly in making this investment. The ARN holder
-								has disclosed to me/us all the commissions (in the form of trail
-								commission or any other mode), payable to him for the different
-								competing Schemes of various Mutual Funds from amongst which the
-								Scheme is being recommended to me/us. I/We hereby confirm that
-								I/we have not been offered / communicated any indicative
-								portfolio and/or any indicative yield by the respective Mutual
-								Fund / its distributor for this investment. I/We am/are
-								authorized to undertake this transaction. <br> <br>
-								Any other advisory charges shall be paid directly by the
-								investor to the ARN Holder (AMFI registered Distributor) based
-								on the investors' assessment of various factors including the
-								service rendered by the ARN Holder. In case of existing investor
-								where investment amount is Rs.10,000/- or more and your
-								Distributor has opted to receive Transaction Charges, Rs.100/-
-								will be deducted from the purchase amount and paid to the
-								Distributor. Units will be issued against the balance amount
-								invested. I/We confirm that payment for this transaction has
-								been done through my/own bank account number which is registered
-								in the folio and no third party account is used for such
-								payments. In case of any non-compliance, I/We authorize you to
-								refund the said amount to the account where it is debited and
-								will liable for any consequences arising thereof.
+								style="font-size: 11px; text-align: justify;"> <span>
+									1. Performance history may or may not be in sync with the
+									future performance and should not be considered as a base for
+									investments. <br> 2. The size of the Assets Under
+									Management (AuM) are based on the last published Monthly AUM by
+									the corresponding fund house. <br> 3. If the investors are
+									confused about whether the product is suitable for them or not,
+									then he should consult their financial advisers for a better
+									guidance. <br>
+
+							</span>
 							</label>
 						</div>
 						<div style="text-align: center; margin-top: 20px;">
@@ -313,12 +357,40 @@
 	</div>
 
 	<!-- BSE MF  -->
-	<section class="bse-display"
-		style="background: #ffecc9; padding: 5px; margin-bottom: -60px;">
-		<jsp:include page="./bsestarmfpowered.jsp"></jsp:include>
-	</section>
+	<jsp:include page="./bsestarmfpowered.jsp"></jsp:include>
+
+	<!-- Modal -->
+	<div class="modal fade" id="basicExampleModal" tabindex="-1"
+		role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header" style="background: #25b378; color: white;">
+					<h5 class="modal-title" id="exampleModalLabel" style="font-weight: 400;">Disclaimer</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+				<div style="font-size: 12px;text-align: justify;">
+					<p>** - GST as applicable</p>
+					<p>* - It is noteworthy that the above mentioned NAV or Net Assets Value and the date, are the last reported NAV as per available with RTA/BSEStARMF for the specified date which is not relevant to the order that you will be going to place. The NAV which is applicable to your order will be dependent on the fund type and the time you are going to place the order. As an example- If you have placed a purchase order in a Non-liquid fund on a business day before the cutoff time 1415 hrs on RTA/BSEStARMF then the order will be processed at the NAV which prevails at the closing of the business day. However the orders that are placed on that business day after the cutoff time of 1415 hrs or is placed on a Non-Business day, the applicable NAV will be of the next business day.</p>
+					<p># - According to SEBI guidelines and norms, the cutoff time for accepting the orders in Liquid funds is 1300 hrs and Non-liquid funds is 14 hrs 15 mins. But considering the account internal transaction processing time, RTA/BSEStARMF has set the redemption and switch out from Liquid funds( to get historic Net Asset Value "NAV") as 1400 hrs and for accepting purchasing, redemption and switch out from all orders in Non-liquid funds as 14 hrs 15 mins. The applicable NAV is applied for all orders that are placed within the RTA/BSEStARMF cut-off time. However any orders that are placed before the SEBI mandated cut-off time but post the RTA/BSEStARMF cut-off time, shall be processed on the best efforts basis for the applicable NAV.</p>
+					<p>## - This particular scheme is not covered under our research. When the research coverage is initiated, the parameters which are covered are- Size of the Assets Under Management of the mutual fund scheme,Vintage of the Fund and the Fund's performance over the last few years. For a list of the Top schemes that we cover in our research, you may refer to the Monthly Mutual Fund Report.</p>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary btn-sm"
+						data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
 	<!-- END BSE MF  -->
 	<jsp:include page="../include/footer.jsp"></jsp:include>
-	<script src="<c:url value="${contextcdn}/resources/js/bseinvest.js" />"></script>
+	<script src="<c:url value="${contextcdn}/resources/js/bseinvest.js" />"
+		async="async"></script>
 </body>
 </html>

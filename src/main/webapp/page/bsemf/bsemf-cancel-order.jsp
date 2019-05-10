@@ -154,6 +154,7 @@
 
 						</div>
 						<form:hidden path="redeemTransId"/>
+						<form:hidden path="cancelOrderTransId"/>
 
 						<div style="text-align: center;">
 							<form:button type="submit" class="btn btn-sm btn-info"

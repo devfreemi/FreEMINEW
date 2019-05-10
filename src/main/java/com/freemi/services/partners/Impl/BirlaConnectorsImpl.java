@@ -82,9 +82,9 @@ public final class BirlaConnectorsImpl implements InvestmentConnectorInterfaces 
 	OauthAccessToken token = null;
 	private static final Logger logger = LogManager.getLogger(BirlaConnectorsImpl.class);
 
-	private static final String CONSUMER_KEY="ElkD44Ckq2WpTOFTnh9PNbDUwBwa";
-	private static final String CONSUMER_SECRET="mNV_iwpK_sAo82Jrmtm5gl1UXuYa";
-	private static final String BASE_URL ="https://mfapiuat.birlasunlife.com";
+	private static final String CONSUMER_KEY="0bJ0sNsdVfJd9bx_wsHQx3ZjviUa";
+	private static final String CONSUMER_SECRET="fV8N1vCyMjgUvVdq7kMfbhO8RQwa";
+	private static final String BASE_URL ="https://mfapistoreuat.adityabirlacapital.com";
 	private static final String SALT = "RN1DF139-8B0B-018A-B27C-B141EC7BC396";
 	private static final String IV = "e141f413e018f396";
 	private static final String PASSWD = "Pass@w3rd96";

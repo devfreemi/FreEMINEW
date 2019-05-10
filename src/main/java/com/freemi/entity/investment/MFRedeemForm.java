@@ -29,7 +29,7 @@ public class MFRedeemForm implements Serializable{
 	private boolean agreePolicy;
 	private String requestorSystemIp="";
 	private String requestorSystem="";
-	
+	private String cancelOrderTransId="";
 	
 	public String getRedeemTransId() {
 		return redeemTransId;
@@ -143,6 +143,12 @@ public class MFRedeemForm implements Serializable{
 	}
 	public void setAvailableAmount(double availableAmount) {
 		this.availableAmount = availableAmount;
+	}
+	public String getCancelOrderTransId() {
+		return cancelOrderTransId;
+	}
+	public void setCancelOrderTransId(String cancelOrderTransId) {
+		this.cancelOrderTransId = cancelOrderTransId;
 	}
 	
 	

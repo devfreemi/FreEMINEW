@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import com.freemi.common.util.BseRelatedActions;
 import com.freemi.common.util.CommonConstants;
 import com.freemi.controller.interfaces.InvestmentConnectorBseInterface;
+import com.freemi.database.interfaces.BseCamsByCategoryRepository;
 import com.freemi.database.interfaces.BseCustomerAddressCrudRepository;
 import com.freemi.database.interfaces.BseCustomerBankDetailsCrudRespository;
 import com.freemi.database.interfaces.BseCustomerCrudRespository;
@@ -50,7 +51,7 @@ import com.freemi.entity.investment.BseMandateDetails;
 import com.freemi.entity.investment.BseOrderEntryResponse;
 import com.freemi.entity.investment.BsemfTransactionHistory;
 import com.freemi.entity.investment.MFCamsFolio;
-import com.freemi.entity.investment.MFFatcaDeclareForm;
+import com.freemi.entity.investment.MFCamsValueByCategroy;
 import com.freemi.entity.investment.MFNominationForm;
 import com.freemi.entity.investment.SelectMFFund;
 import com.freemi.entity.investment.TransactionStatus;
@@ -111,6 +112,9 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	
 	@Autowired
 	MfCamsFolioCrudRepository mfCamsFolioCrudRepository;
+	
+	@Autowired
+	BseCamsByCategoryRepository bseCamsByCategoryRepository;
 
 	/*@Autowired
 	MailSenderHandler mailSenderHandler;*/
@@ -219,8 +223,6 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		// TODO Auto-generated method stub
 		boolean flag = true;
 		
-		
-
 		//Save details to database, process to BSE, update database with response
 		TransactionStatus transStatus = new TransactionStatus();
 		BseOrderEntryResponse bseResult =null;
@@ -230,6 +232,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 			//Generate BSE related ref no
 			StringBuffer ref = new StringBuffer();
 			if(selectedMFFund.getTransactionType().equals("CXL")){
+				logger.info("Order cancellation request received for previous transaction ID- "+ selectedMFFund.getTransactionID());
 				ref.append("C").append(selectedMFFund.getClientID().substring(6)).append(Calendar.getInstance().getTimeInMillis());
 			}else if(selectedMFFund.getTransactionType().equals("REDEEM")){
 				ref.append("R").append(selectedMFFund.getClientID().substring(6)).append(Calendar.getInstance().getTimeInMillis());
@@ -261,11 +264,15 @@ public class BseEntryServiceImpl implements BseEntryManager {
 			logger.info("Status of requested transaction - "+ bseResult.getSuccessFlag());
 
 			if(bseResult.getSuccessFlag().equalsIgnoreCase("0")){
-				logger.info("Transaction is successful. Saving request to Database");
 
-				if(CommonConstants.BSE_CALL_TEST_ENABLED.equalsIgnoreCase("N")){
+				if(CommonConstants.BSE_SAVE_TRANSACTION.equalsIgnoreCase("Y")){
+					logger.info("Transaction is successful. Saving transaction request to Database");
 					selectedMFFund = bseTransCrudRepository.saveAndFlush(selectedMFFund);
+					logger.info("Save transaction response from BSE to database");
 					bseOrderEntryResponseRepository.saveAndFlush(bseResult);
+					
+				}else{
+					logger.info("BSE_SAVE_TRANSACTION is disabled. Trsansaction not saved  to databse..");
 				}
 
 				transStatus.setSuccessFlag("S");
@@ -294,6 +301,29 @@ public class BseEntryServiceImpl implements BseEntryManager {
 
 		return transStatus;
 	}
+	
+	
+
+	@Override
+	public boolean updateCancelledTransactionStatus(String mobile, String clientId, String orderNo,
+			String transactionNo) {
+		logger.info("Request received to update transaction status to mark the transaction as cancelled for order ID-" + orderNo + " : transactionID: "+ transactionNo +" : client ID: "+ clientId);
+		boolean flag=false;
+		
+		try{
+			int i = bseTransCrudRepository.disablePurchaseTransaction(clientId, transactionNo);
+			logger.info("Is the status of transaction updated: "+ i);
+			if(i==1){
+				flag=true;
+			}
+		}catch(Exception e){
+			logger.info("Failed to update cancelled order status for forder ID: "+ orderNo);
+		}
+		
+		return flag;
+	}
+
+	
 
 	@Override
 	public List<SelectMFFund> getMFOrderHistory(String value) {
@@ -351,9 +381,17 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	}
 
 	@Override
-	public List<String> getSelectedAmcPortfolio(String amcCode, String clientId) {
+	public List<String> getSelectedAmcPortfolio(String amcCode, String clientId,String rtaAgent) {
 		// TODO Auto-generated method stub
-		return portfolioCrudRepository.getSelectedPortFolio(amcCode, clientId);
+		
+		List<String> portfolios = null;
+		if(rtaAgent.equalsIgnoreCase("CAMS")){
+			logger.info("Querying CAMS feedback DB for list of potfolio for customer: "+ clientId);
+		portfolios= bseCamsByCategoryRepository.getSelectedPortFolio(amcCode, clientId);
+		}else{
+			logger.info("Querying KARVY feedback for portfolio list...");
+		}
+		return portfolios;
 	}
 
 	@Override
@@ -464,8 +502,9 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	public BseAllTransactionsView getFundDetailsForAdditionalPurchase(String portfolio, String schemeCode,String investType,
 			String mobileNumber) {
 		String clientId= bseCustomerCrudRespository.getClientIdFromMobile(mobileNumber);
-
-		BseAllTransactionsView selectedFolioTransDetails = bseTransactionsView.findOneByPortfoilioAndSchemeCodeAndClientIDAndInvestType(portfolio, schemeCode, clientId,investType);
+		
+		BseAllTransactionsView selectedFolioTransDetails = null;
+		selectedFolioTransDetails = bseTransactionsView.findOneByPortfoilioAndSchemeCodeAndClientIDAndInvestType(portfolio, schemeCode, clientId,investType);
 
 
 		return selectedFolioTransDetails;
@@ -508,7 +547,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		}
 		logger.info("Scheme code for redemption of the fund - "+schemeCode);
 		
-		folio = mfCamsFolioCrudRepository.findOneByFolioNumber(folioNumber);
+		folio = mfCamsFolioCrudRepository.findOneByFolioNumberAndRtaCode(folioNumber,code);
 		if(folio!=null){
 			folio.setSchemeCode(schemeCode);
 		}else{
@@ -795,6 +834,22 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+
+	@Override
+	public BseMFSelectedFunds getFundsByCode(String rtacode) {
+		logger.info("Querying to Fund details by RTA code from view- ");
+		BseMFSelectedFunds fundDetails = null;
+		try{
+
+			fundDetails = bseSelectedCategoryFundsRepository.findOneByRtaCode(rtacode);
+
+		}catch(Exception e){
+			logger.error("Failed to query database to fetch selected fund details by RTA code",e);
+		}
+
+		return fundDetails;
+	}
 
 	@Override
 	public BseApiResponse saveFatcaDetails(BseMFInvestForm customerForm) {
@@ -874,22 +929,57 @@ public class BseEntryServiceImpl implements BseEntryManager {
 
 	@Override
 	public BsemfTransactionHistory getOrderDetailsForCancel(String orderNo, String schemeCode, String investType,
-			String mobileNumber,String category) {
-		logger.info("Get order details for cancel from DB");
+			String mobileNumber,String category,String transactionId) {
+		logger.info("Get order details for cancel from DB for transaction ID: " + transactionId);
 		BsemfTransactionHistory getOrderDetails = null;
 
 		try{
 			//				if(bseCustomerCrudRespository.existsByMobile(mobileNumber)){
 			//				getAllOrders=bseOrderEntryResponseRepository.findAllByClientCode(clientId);
 			String clientId = bseCustomerCrudRespository.getClientIdFromMobile(mobileNumber);
-			getOrderDetails = bseTransHistoryViewCrudRepository.findOneByClienIdAndOrderNoAndTransctionType(clientId, orderNo,category);
+			getOrderDetails = bseTransHistoryViewCrudRepository.findOneByClienIdAndTransctionTypeAndTransactionId(clientId,category, transactionId);
 			logger.info("Total purchase history found for custmer- "+ clientId + " : "+ orderNo);
 
 		}catch(Exception e){
-			logger.error("Failed to query database to get customer AOF upload status and upload", e);
+			logger.error("Failed to query database to get customer transaction details for the order number", e);
 		}
 		return getOrderDetails;
 	}
+
+	@Override
+	public SelectMFFund getTransactionDetails(String transactionId, String clientId) {
+		logger.info("Fetching transaction details for ID from DB: "+ transactionId);
+		
+		SelectMFFund fund = null;
+		try{
+			fund = bseTransCrudRepository.findOneByTransactionIDAndClientID(transactionId, clientId);
+		}catch(Exception e){
+			logger.error("Failed to fetch particular fund details: ",e);
+		}
+		return fund;
+	}
+
+	@Override
+	public List<MFCamsValueByCategroy> getCustomersInvByCategory(String mobile, String pan) {
+
+		List<MFCamsValueByCategroy> folios=null;
+		logger.info("Request received to fetch customer cams folio details by category for client ID- "+ mobile + " :PAN NO: "+ pan);
+		try{
+		if(bseCustomerCrudRespository.existsByMobile(mobile)){
+			pan = bseCustomerCrudRespository.getCustomerPanNumberFromMobile(mobile);
+			
+			folios = bseCamsByCategoryRepository.findAllByPan(pan);
+			
+			logger.info("Folio details by category look up complete");
+
+		}
+		}catch(Exception e){
+			logger.error("Failed to query database to fetch exising customer. ",e);
+		}
+
+		return folios;
+	}
+
 
 
 	/*		public static void main(String[] args){

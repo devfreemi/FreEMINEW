@@ -3,6 +3,7 @@ package com.freemi.ui.controller;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +34,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.freemi.common.util.CommonConstants;
 import com.freemi.common.util.CommonTask;
 import com.freemi.common.util.InvestFormConstants;
+import com.freemi.controller.interfaces.ProfileRestClientService;
 import com.freemi.database.service.BseEntryManager;
 import com.freemi.entity.bse.BseFileUpload;
 //import com.freemi.database.service.BseEntryManager;
@@ -40,9 +42,9 @@ import com.freemi.entity.general.ProfilePasswordChangeForm;
 import com.freemi.entity.general.ResetPassword;
 import com.freemi.entity.general.UserProfile;
 import com.freemi.entity.investment.MFCamsFolio;
+import com.freemi.entity.investment.MFCamsValueByCategroy;
 //import com.freemi.entity.investment.BseAllTransactionsView;
 import com.freemi.ui.restclient.GoogleSecurity;
-import com.freemi.ui.restclient.RestClient;
 
 @Controller
 @Scope("session")
@@ -56,6 +58,9 @@ public class ProfileManageController{
 	@Autowired
 	BseEntryManager bseEntryManager;
 	
+	@Autowired
+	ProfileRestClientService profileRestClientService;
+	
 	private static final Logger logger = LogManager.getLogger(ProfileManageController.class);
 
 	
@@ -64,8 +69,8 @@ public class ProfileManageController{
 		logger.info("@@@@ Get profile details..");
 		String returnurl = "";
 		int error = 0;
-		RestClient client = new RestClient();
-		ResponseEntity<String> response = null;
+//		RestClient client = new RestClient();
+//		ResponseEntity<String> response = null;
 		if(session.getAttribute("token") == null){
 			try {
 				returnurl="redirect:/login?ref="+ URLEncoder.encode(request.getRequestURL().toString(), StandardCharsets.UTF_8.toString());
@@ -146,7 +151,7 @@ public class ProfileManageController{
 		
 		logger.info("@@@@ ProfileBasicDoController @@@@");
 		String returnurl="";
-		RestClient client = new RestClient();
+//		RestClient client = new RestClient();
 		ResponseEntity<String> response = null;
 		if(session.getAttribute("token") == null){
 			returnurl="redirect:/login";
@@ -155,7 +160,7 @@ public class ProfileManageController{
 			
 //			Profile data change to ldap server
 			try {
-				response = client.updateProfileData(profile,session.getAttribute("userid").toString(), session.getAttribute("token").toString(),CommonTask.getClientSystemDetails(request).getClientIpv4Address());
+				response = profileRestClientService.updateProfileData(profile,session.getAttribute("userid").toString(), session.getAttribute("token").toString(),CommonTask.getClientSystemDetails(request).getClientIpv4Address());
 				System.err.println(response.getBody());
 //				logger.info(profile.getMobile());
 				model.addAttribute("success", "User profile updated successfully");
@@ -186,7 +191,7 @@ public class ProfileManageController{
 
 		logger.info("@@@@ ProfileAccountDoController @@@@");
 		String returnurl="";
-		RestClient client = new RestClient();
+//		RestClient client = new RestClient();
 		ResponseEntity<String> response = null;
 		if(session.getAttribute("token") == null){
 			returnurl="redirect:/login";
@@ -195,7 +200,7 @@ public class ProfileManageController{
 			
 //			Updating profile details into LDAP database
 			try {
-				response = client.updateProfileData(profileAccount,session.getAttribute("userid").toString(), session.getAttribute("token").toString(),CommonTask.getClientSystemDetails(request).getClientIpv4Address());
+				response = profileRestClientService.updateProfileData(profileAccount,session.getAttribute("userid").toString(), session.getAttribute("token").toString(),CommonTask.getClientSystemDetails(request).getClientIpv4Address());
 				if(response.getBody().equals("SUCCESS")){
 					model.addAttribute("success", "Bank Account Details updated successfully");
 				}
@@ -271,14 +276,14 @@ public class ProfileManageController{
 
 		logger.info("@@@@ ProfilePasswordChange @@@@");
 		String returnurl="";
-		RestClient client = new RestClient();
+//		RestClient client = new RestClient();
 		ResponseEntity<String> response = null;
 		if(session.getAttribute("token") == null){
 			returnurl="redirect:/login";
 		}else{
 			returnurl="profile";
 			try {
-				response = client.updateProfilePassword(passChangeForm,session.getAttribute("userid").toString(), session.getAttribute("token").toString(),CommonTask.getClientSystemDetails(request).getClientIpv4Address());
+				response = profileRestClientService.updateProfilePassword(passChangeForm,session.getAttribute("userid").toString(), session.getAttribute("token").toString(),CommonTask.getClientSystemDetails(request).getClientIpv4Address());
 //				System.err.println(response.getBody());
 				logger.info(response.getBody());
 				if(response.getBody().equals("SUCCESS")){
@@ -310,7 +315,7 @@ public class ProfileManageController{
 	}
 	
 	@RequestMapping(value = "/my-dashboard", method = RequestMethod.GET)
-	public String getMyDashboard(@ModelAttribute("fileform") BseFileUpload fileform,Model map,HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+	public String myDashboardGet(@ModelAttribute("fileform") BseFileUpload fileform,Model map,HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 		//logger.info("@@@@ Inside Login..");
 		String returnurl = "";
 		double totalAsset= 0;
@@ -327,14 +332,26 @@ public class ProfileManageController{
 			//This code is for new design. COmment out until deployed in prod
 			try{
 //			List<BseAllTransactionsView> fundsOrder= bseEntryManager.getCustomerAllTransactionRecords(null,session.getAttribute("userid").toString(),null);
-				
-			List<MFCamsFolio> fundsOrder = bseEntryManager.getCamsPortfolio(session.getAttribute("userid").toString(), "");
-			if(fundsOrder!= null && fundsOrder.size()>=1){
-			for(int i=0;i<fundsOrder.size();i++){
+			
+			List<MFCamsValueByCategroy> allcategoryFunds = bseEntryManager.getCustomersInvByCategory(session.getAttribute("userid").toString(), null);
+			
+			List<MFCamsFolio> fundsOrder = null;
+			if(allcategoryFunds!= null && allcategoryFunds.size()>=1){
+//			fundsOrder = bseEntryManager.getCamsPortfolio(session.getAttribute("userid").toString(), "");
+			fundsOrder = bseEntryManager.getCamsPortfolio(session.getAttribute("userid").toString(), "");
+			
+			for(int i=0;i<allcategoryFunds.size();i++){
+				List<MFCamsFolio> fundsOrderCategory = new ArrayList<MFCamsFolio>();
 //				totalAsset+=fundsOrder.get(i).getSchemeInvestment();
-				totalAsset+=fundsOrder.get(i).getInvAmount();
+				totalAsset+=allcategoryFunds.get(i).getCollaboratedAmount();
+				for(int j=0;j<fundsOrder.size();j++){
+					if(allcategoryFunds.get(i).getFundName().equalsIgnoreCase(fundsOrder.get(j).getFundName())){
+						fundsOrderCategory.add(fundsOrder.get(j));
+					}
+				}
+				allcategoryFunds.get(i).setCamsFolioLists(fundsOrderCategory);
 			}
-			map.addAttribute("mforderhistory", fundsOrder);
+			map.addAttribute("mforderhistory", allcategoryFunds);
 			map.addAttribute("ORDERHISTORY", "SUCCESS");
 			}else{
 				map.addAttribute("ORDERHISTORY", "EMPTY");
@@ -376,11 +393,11 @@ public class ProfileManageController{
 			returnurl="redirect:/login";
 		}else{
 			//validate token
-			RestClient client = new RestClient();
+//			RestClient client = new RestClient();
 			ResponseEntity<String> responseEntity = null;
 			
 			try {
-				responseEntity = client.validateResetPasswordToken(user, token, CommonTask.getClientSystemIp(request));
+				responseEntity = profileRestClientService.validateResetPasswordToken(user, token, CommonTask.getClientSystemIp(request));
 				logger.info("Token validations status received");
 				logger.info("Validataion status for token of user - "+user +" --> "+responseEntity.getBody());
 //				logger.info(profile.getMobile());
@@ -444,7 +461,7 @@ public class ProfileManageController{
 		logger.info("@@@@ ForgotPasswordresetController @@@@");
 		System.out.println(request.getQueryString());
 		String returnurl="";
-		RestClient client = new RestClient();
+//		RestClient client = new RestClient();
 		
 		ResponseEntity<String> responseEntity = null;
 		
@@ -480,7 +497,7 @@ public class ProfileManageController{
 		}else{
 			returnurl="reset-password";
 			try {
-				responseEntity = client.forgotPasswordUpdate(resetPassForm,session.getAttribute("user").toString(), session.getAttribute("token").toString(),CommonTask.getClientSystemDetails(request).getClientIpv4Address());
+				responseEntity = profileRestClientService.forgotPasswordUpdate(resetPassForm,session.getAttribute("user").toString(), session.getAttribute("token").toString(),CommonTask.getClientSystemDetails(request).getClientIpv4Address());
 //				System.err.println(response.getBody());
 				logger.info(responseEntity.getBody());
 				if(responseEntity.getBody().equals("SUCCESS")){

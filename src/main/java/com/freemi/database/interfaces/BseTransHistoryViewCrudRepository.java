@@ -10,6 +10,6 @@ public interface BseTransHistoryViewCrudRepository extends JpaRepository<BsemfTr
 	
 	public List<BsemfTransactionHistory> findAllByClienId(String clientID);
 	
-	public BsemfTransactionHistory findOneByClienIdAndOrderNoAndTransctionType(String clientId, String orderNo, String category);
+	public BsemfTransactionHistory findOneByClienIdAndTransctionTypeAndTransactionId(String clientId,String category, String tran);
 	
 }

@@ -70,6 +70,26 @@ $(document).on("click", "#transactionType2", function() {
 	$("#minvalreq").text(minlumpsum);
 });
 
+$(document).on("click", "#growthCategory", function() {
+//	$("#sipbox").show();
+//	$("#minvalreq").text(minsip);
+	console.log("Growth selected");
+//	$("#minvalreq").val($(""));
+	$("#reinvcode").hide();
+	$("#growthcode").show();
+	
+	
+});
+
+$(document).on("click", "#reinvestcategory", function() {
+//	$("#sipbox").hide();
+//	$("#minvalreq").text(minlumpsum);
+	console.log("Re-invest selected");
+	$("#growthcode").hide();
+	$("#reinvcode").show();
+	
+});
+
 
 
 /*------------------------------------------------------------------------------------------------------------------------*/
@@ -396,17 +416,17 @@ function validateFundForm(){
 
 
 
-function bseinvest(mfCode, mfName, lumpsumMinimum, amcCode, sipMin,sipDates) {
-	console.log("Reached- " + mfCode + " " + mfName);
+function bseinvest(mfCode,reinvCode, mfName, lumpsumMinimum, amcCode, sipMin,sipDates,rtaAgent) {
+//	console.log("Reached- " + mfCode + " " + mfName);
 	var radioValue = $("input[name='investype']:checked").val();
 //	console.log("Selected- " + radioValue);
-	console.log("SIP dates- "+ sipDates);
+//	console.log("SIP dates- "+ sipDates);
 	minsip=sipMin;
 	minlumpsum=lumpsumMinimum;
 	$("#myModal").modal();
 	$("#schemeNameTitle").text(mfName);
 	$("#schemeName").val(mfName);
-	
+	$("#rtaAgent").val(rtaAgent);
 	var dtarray = sipDates.split(",");
 	
 	
@@ -442,6 +462,8 @@ function bseinvest(mfCode, mfName, lumpsumMinimum, amcCode, sipMin,sipDates) {
 	}
 	$("#minValls").hide();
 	$("#schemecode").val(mfCode);
+	console.log("Reonv code- "+ reinvCode);
+	$("#reinvSchemeCode").val(reinvCode);
 	$("#amcCode").val(amcCode);
 	return true;
 }

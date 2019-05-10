@@ -1,7 +1,12 @@
 package com.freemi.ui.config;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.Properties;
+
+import javax.servlet.http.HttpSessionEvent;
+import javax.servlet.http.HttpSessionListener;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -108,6 +113,20 @@ public class ApplicationConfig {
 		    return filterRegistrationBean;
 		}*/
 		
-		
+		 @Bean                           // bean for http session listener
+		    public HttpSessionListener httpSessionListener() {
+		        return new HttpSessionListener() {
+		            @Override
+		            public void sessionCreated(HttpSessionEvent se) {               // This method will be called when session created
+		                System.out.println(new Date()+ "Session Created with session id- " + se.getSession().getId());
+		                logger.info(new Date()+ " : Session Created with session id- " + se.getSession().getId());
+		            }
+		            @Override
+		            public void sessionDestroyed(HttpSessionEvent se) {         // This method will be automatically called when session destroyed
+		                System.out.println(new Date()+ "Session Destroyed, Session id:" + se.getSession().getId());
+		                logger.info(new Date() + " :Session Destroyed, Session id:" + se.getSession().getId());
+		            }
+		        };
+		    }
 		
 }

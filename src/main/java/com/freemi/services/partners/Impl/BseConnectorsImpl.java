@@ -3,11 +3,9 @@ package com.freemi.services.partners.Impl;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
 
@@ -22,6 +20,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import com.freemi.common.util.CommonConstants;
+import com.freemi.controller.interfaces.BseRestClientService;
 import com.freemi.controller.interfaces.InvestmentConnectorBseInterface;
 import com.freemi.entity.bse.BseAOFUploadRequest;
 import com.freemi.entity.bse.BseAOFUploadResponse;
@@ -34,13 +33,11 @@ import com.freemi.entity.bse.BseOrderPaymentResponse;
 import com.freemi.entity.bse.BsePanStatusResponse;
 import com.freemi.entity.bse.BsePaymentStatus;
 import com.freemi.entity.bse.BseRegistrationMFD;
-import com.freemi.entity.bse.BseSipOrderEntry;
 import com.freemi.entity.bse.BseXipISipOrderEntry;
 import com.freemi.entity.database.UserBankDetails;
 import com.freemi.entity.investment.BseMFInvestForm;
 import com.freemi.entity.investment.BseOrderEntryResponse;
 import com.freemi.entity.investment.SelectMFFund;
-import com.freemi.ui.restclient.RestClientBse;
 
 @Service
 public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
@@ -49,6 +46,9 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 
 	@Autowired
 	Environment env;
+	
+	@Autowired
+	BseRestClientService bseRestClientService; 
 
 	@Override
 	public String saveCustomerRegistration(BseMFInvestForm registrationForm, String field1) {
@@ -59,7 +59,7 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 				logger.info("Convert form data to BSE format data");
 				BseRegistrationMFD bseregistrationForm=  BseBeansMapper.InvestmentFormToBseBeans(registrationForm);
 				logger.info("Begin BSE service invoke process");
-				result= RestClientBse.registerUser(bseregistrationForm);
+				result= bseRestClientService.registerUser(bseregistrationForm);
 			}catch(Exception e){
 				logger.error("Failed during proceesing of BSE customer details to BSE platform",e);
 				result="BSE_CONN_FAIL";
@@ -86,7 +86,7 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 					logger.info("Convert form data to Folio to redeem form");
 					BseOrderEntry bseMfOrderForm=  BseBeansMapper.redeeemOrderToBseBeans(selectedFund, transactionNumber);
 					logger.info("Begin BSE service invoke process for redeem transaction: "+ selectedFund.getTransactionID());
-					result = RestClientBse.purchaseRequestProcess(bseMfOrderForm);
+					result = bseRestClientService.purchaseRequestProcess(bseMfOrderForm);
 					BseBeansMapper.redeeemResponseToBean(bseOrderResp, result, selectedFund.getBseRefNo());
 				}catch(Exception e){
 					logger.error("Failed during proceesing of BSE REDEEM details to BSE platform",e);
@@ -102,7 +102,7 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 						logger.info("Convert form data to BSE lumpsum format data");
 						BseOrderEntry bseMfOrderForm=  BseBeansMapper.transactionOrderToBseBeans(selectedFund, transactionNumber);
 						logger.info("Begin BSE service invoke process");
-						result = RestClientBse.purchaseRequestProcess(bseMfOrderForm);
+						result = bseRestClientService.purchaseRequestProcess(bseMfOrderForm);
 						BseBeansMapper.transactionOrderReponseToBeans(bseOrderResp, result, selectedFund.getBseRefNo());
 					}catch(Exception e){
 						logger.error("Failed during proceesing of BSE customer details to BSE platform",e);
@@ -116,7 +116,7 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 					try{
 						BseXipISipOrderEntry bseMfSipOrderForm=  BseBeansMapper.transactionXSIPISIPOrderToBseBeans(selectedFund, transactionNumber,mandateId);
 						logger.info("Begin BSE service invoke process");
-						result = RestClientBse.purchaseXSIPISIPRequestProcess(bseMfSipOrderForm);
+						result = bseRestClientService.purchaseXSIPISIPRequestProcess(bseMfSipOrderForm);
 						BseBeansMapper.siptransactionOrderReponseToBeans(bseOrderResp, result, selectedFund.getBseRefNo());
 					}catch(Exception e){
 						logger.error("Failed during proceesing of BSE X-SIP I-SIP registration details to BSE platform",e);
@@ -146,7 +146,7 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 			try{
 				//		BseSipOrderEntry bseMfSipOrderForm=  BseBeansMapper.transactionSIPOrderToBseBeans(selectedFund, transactionNumber);
 				logger.info("Begin BSE service invoke process");
-				response = RestClientBse.purchasePaymentLink(request);
+				response = bseRestClientService.purchasePaymentLink(request);
 				BseBeansMapper.bseOrderPayemtResultMapper(orderResponse, response);
 			}catch(Exception e){
 				logger.error("Failed during proceesing of BSE SIP registration details to BSE platform",e);
@@ -191,7 +191,7 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 				logger.debug("Uploading file to bse- "+ tifffilepath.toString());
 				logger.info("AOF image converted to bse base64 format for client- "+ clientCode);
 				BseAOFUploadRequest r = BseBeansMapper.AOFFormtoBseBeanMapper(filearray,encodedString, clientCode);
-				String responseText = RestClientBse.uploadAOF(r);
+				String responseText = bseRestClientService.uploadAOF(r);
 				logger.info("Response for AOF upload against customer : "+ clientCode + " : "+ responseText);
 				BseBeansMapper.bseAOFUploadResponsetoBean(aofresp, responseText);
 				if(!aofresp.getStatusCode().equalsIgnoreCase("100")){
@@ -228,7 +228,7 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 			try{
 				BsePaymentStatus requestForm=  BseBeansMapper.BsePaymentStatusRequestToBse(clientId, orderNo);
 				logger.info("Begin BSE service invoke process for payment status");
-				response = RestClientBse.orderPaymentStatus(requestForm);
+				response = bseRestClientService.orderPaymentStatus(requestForm);
 				//				BseBeansMapper.bseOrderPayemtResultMapper(orderResponse, response);
 
 
@@ -254,7 +254,7 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 				//				BsePaymentStatus requestForm=  BseBeansMapper.BsePaymentStatusRequestToBse(clientId, orderNo);
 				BseEMandateRegistration registerForm = BseBeansMapper.bankDetailsToBseMandateBeans(bankDetails,mandateType, amount, clientCode,startDate,endDate);
 				logger.info("Begin BSE service invoke process for payment status");
-				response = RestClientBse.eMandateRegistration(registerForm);
+				response = bseRestClientService.eMandateRegistration(registerForm);
 				bseresponse= BseBeansMapper.emandateRegResponseToBean(response);
 
 			}catch(Exception e){
@@ -280,7 +280,7 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 //				BsePaymentStatus requestForm=  BseBeansMapper.BsePaymentStatusRequestToBse(clientId, orderNo);
 				BseEMandateRegistration registerForm = BseBeansMapper.bankDetailsToBseBeans(bankDetails, amount, clientCode,startDate,endDate);
 				logger.info("Begin BSE service invoke process for payment status");
-				response = RestClientBse.eMandateRegistration(registerForm);
+				response = bseRestClientService.eMandateRegistration(registerForm);
 				bseresponse= BseBeansMapper.emandateRegResponseToBean(response);
 
 			}catch(Exception e){
@@ -319,7 +319,7 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 				BseFatcaForm fatcaForm = BseBeansMapper.InvestmentFormToBseFATCABeans(registrationForm);
 				logger.info("Begin BSE service invoke process for FATCA declaration for customer-" + registrationForm.getPan1());
 
-				response = RestClientBse.fatcaDeclaration(fatcaForm);
+				response = bseRestClientService.fatcaDeclaration(fatcaForm);
 				logger.info("Response from BSE declaration- " + response);
 				BseBeansMapper.fatcaUploadResponseToBean(fatcaResponse, response);
 
@@ -346,7 +346,7 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 				//				BsePaymentStatus requestForm=  BseBeansMapper.BsePaymentStatusRequestToBse(clientId, orderNo);
 				logger.info("Begin BSE service invoke process for FATCA declaration for customer-" + panNumber);
 
-				response = RestClientBse.panStatusCheck(panNumber);
+				response = bseRestClientService.panStatusCheck(panNumber);
 				logger.info("Response from BSE declaration- " + response);
 				BseBeansMapper.panStatusResponsetoBean(statusResponse, response);
 
@@ -374,7 +374,7 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 				System.out.println();
 
 				BseAOFUploadRequest r = BseBeansMapper.AOFFormtoBseBeanMapper(array, "DEBA593C");
-				String s= RestClientBse.uploadAOF(r);
+				String s= bseRestClientService.uploadAOF(r);
 				System.out.println(s);
 
 				OutputStream 

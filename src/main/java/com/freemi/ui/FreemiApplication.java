@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.crypto.encrypt.Encryptors;
 import org.springframework.security.crypto.encrypt.TextEncryptor;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -21,6 +22,7 @@ import com.freemi.common.util.CommonConstants;
 @EnableTransactionManagement
 @ComponentScan("com.freemi")
 //@EnableJpaRepositories
+@EnableAsync
 @EnableJpaRepositories(basePackages = "com.freemi")
 @EntityScan(basePackages = {"com.freemi.entity.database","com.freemi.entity.investment"})
 public class FreemiApplication {

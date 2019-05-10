@@ -18,18 +18,21 @@ public class BseMFSelectedFunds implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@Column(name="SCHEME_NAME")
+	@Column(name="FUND_NAME")
 	private String schemeName;
+	
+	@Column(name="RTA_Scheme_Code")
+	private String rtaCode;
 	
 	@Column(name="CATEGORY_NAME")
 	private String fundCatergory;
 	
 	@Id
-	@Column(name="LUMPSUM_SCHEME_CODE")
-	private String schemeCode;
+	@Column(name="GROWTH_SCHEME_CODE")
+	private String growthSchemeCode;
 	
-	@Column(name="SIP_SCHEME_CODE")
-	private String sipSchemeCode;
+	@Column(name="REINV_SCHEME_CODE")
+	private String reinvSchemeCode;
 	
 	@Column(name="AMC_Code")
 	private String amcCode;
@@ -47,7 +50,8 @@ public class BseMFSelectedFunds implements Serializable {
 	@Column(name="SETTLEMENT_TYPE")
 	private String settlementType;
 	
-	@Column(name="SIP_FREQUENCY")
+//	@Column(name="SIP_FREQUENCY")
+	@Transient
 	private String sipFrequency;
 	
 	@Column(name="SIP_DATES")
@@ -62,20 +66,49 @@ public class BseMFSelectedFunds implements Serializable {
 	@Column(name="SIP_MINIMUM_INSTALLMENT_NUMBERS")
 	private String minSipInstallments;
 	
-	@Column(name="NAV_VALUE")
+	@Column(name="NAV_VALUE_G")
 	private String nav;
+	
+	@Column(name="NAV_VALUE_DR")
+	private String reinvNav;
+	
+	@Column(name="")
+	private String rtaAgent="";
 	
 	@Transient
 //	@Column(name="NAV_DATE")
 	private String lastnavDate;
-	
 
-	public String getSchemeCode() {
-		return schemeCode;
+	public String getSchemeName() {
+		return schemeName;
 	}
 
-	public void setSchemeCode(String schemeCode) {
-		this.schemeCode = schemeCode;
+	public void setSchemeName(String schemeName) {
+		this.schemeName = schemeName;
+	}
+
+	public String getFundCatergory() {
+		return fundCatergory;
+	}
+
+	public void setFundCatergory(String fundCatergory) {
+		this.fundCatergory = fundCatergory;
+	}
+
+	public String getGrowthSchemeCode() {
+		return growthSchemeCode;
+	}
+
+	public void setGrowthSchemeCode(String growthSchemeCode) {
+		this.growthSchemeCode = growthSchemeCode;
+	}
+
+	public String getReinvSchemeCode() {
+		return reinvSchemeCode;
+	}
+
+	public void setReinvSchemeCode(String reinvSchemeCode) {
+		this.reinvSchemeCode = reinvSchemeCode;
 	}
 
 	public String getAmcCode() {
@@ -84,14 +117,6 @@ public class BseMFSelectedFunds implements Serializable {
 
 	public void setAmcCode(String amcCode) {
 		this.amcCode = amcCode;
-	}
-
-	public String getSchemeName() {
-		return schemeName;
-	}
-
-	public void setSchemeName(String schemeName) {
-		this.schemeName = schemeName;
 	}
 
 	public String getSchemeType() {
@@ -157,9 +182,13 @@ public class BseMFSelectedFunds implements Serializable {
 	public void setSipMaxInstallAmntl(String sipMaxInstallAmntl) {
 		this.sipMaxInstallAmntl = sipMaxInstallAmntl;
 	}
-	
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+
+	public String getMinSipInstallments() {
+		return minSipInstallments;
+	}
+
+	public void setMinSipInstallments(String minSipInstallments) {
+		this.minSipInstallments = minSipInstallments;
 	}
 
 	public String getNav() {
@@ -178,28 +207,32 @@ public class BseMFSelectedFunds implements Serializable {
 		this.lastnavDate = lastnavDate;
 	}
 
-	public String getFundCatergory() {
-		return fundCatergory;
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 
-	public void setFundCatergory(String fundCatergory) {
-		this.fundCatergory = fundCatergory;
+	public String getRtaCode() {
+		return rtaCode;
 	}
 
-	public String getSipSchemeCode() {
-		return sipSchemeCode;
+	public void setRtaCode(String rtaCode) {
+		this.rtaCode = rtaCode;
 	}
 
-	public void setSipSchemeCode(String sipSchemeCode) {
-		this.sipSchemeCode = sipSchemeCode;
+	public String getReinvNav() {
+		return reinvNav;
 	}
 
-	public String getMinSipInstallments() {
-		return minSipInstallments;
+	public void setReinvNav(String reinvNav) {
+		this.reinvNav = reinvNav;
 	}
 
-	public void setMinSipInstallments(String minSipInstallments) {
-		this.minSipInstallments = minSipInstallments;
+	public String getRtaAgent() {
+		return rtaAgent;
+	}
+
+	public void setRtaAgent(String rtaAgent) {
+		this.rtaAgent = rtaAgent;
 	}
 	
 	

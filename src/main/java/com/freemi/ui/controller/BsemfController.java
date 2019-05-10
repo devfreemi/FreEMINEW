@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
@@ -61,6 +61,7 @@ import com.freemi.common.util.CommonTask;
 import com.freemi.common.util.InvestFormConstants;
 import com.freemi.controller.interfaces.InvestmentConnectorBseInterface;
 import com.freemi.controller.interfaces.MailSenderHandler;
+import com.freemi.controller.interfaces.ProfileRestClientService;
 import com.freemi.database.interfaces.ProductSchemeDetailService;
 import com.freemi.database.service.BseEntryManager;
 import com.freemi.entity.bse.BseAOFUploadResponse;
@@ -72,7 +73,6 @@ import com.freemi.entity.bse.BseOrderPaymentResponse;
 import com.freemi.entity.database.UserBankDetails;
 import com.freemi.entity.general.ClientSystemDetails;
 import com.freemi.entity.general.Registerform;
-import com.freemi.entity.investment.BseAllTransactionsView;
 import com.freemi.entity.investment.BseFundsScheme;
 import com.freemi.entity.investment.BseMFInvestForm;
 import com.freemi.entity.investment.BseMFSelectedFunds;
@@ -100,6 +100,9 @@ public class BsemfController {
 	@Autowired
 	private DatabaseEntryManager databaseEntryManager ;//= (DatabaseEntryManager) BeanUtil.getBean(DatabaseEntryService.class);
 	 */
+	
+	@Autowired
+	ProfileRestClientService profileRestClientService;
 
 	@Autowired
 	private BseEntryManager bseEntryManager;
@@ -144,7 +147,6 @@ public class BsemfController {
 			investForm.setDividendPayMode("02");
 			investForm.setOccupation("01");
 		}
-
 
 		map.addAttribute("mfInvestForm", investForm);
 
@@ -221,6 +223,7 @@ public class BsemfController {
 		}
 		
 		try{
+			logger.info("Investor DOB: "+ investForm.getInvDOB());
 			Date dob = simpleDateFormat2.parse(investForm.getInvDOB());
 			logger.info("Investor DOB is in desired format. Proceed");
 		}catch(ParseException e){
@@ -257,10 +260,10 @@ public class BsemfController {
 				registerForm.setPassword(CommonConstants.GENERATE_PASSWORD_BY_FREEMI);	//Reserved token for generating token at profile side
 				registerForm.setRegistrationref("MF_REG_NEW");
 
-				RestClient client = new RestClient();
+//				RestClient client = new RestClient();
 				ResponseEntity<String> responsePortal = null;
 				try {
-					responsePortal = client.registerUser(registerForm);
+					responsePortal = profileRestClientService.registerUser(registerForm);
 					String status = responsePortal.getHeaders().get("STATUS").get(0);
 
 					if(status.equals("SUCCESS")){
@@ -574,7 +577,19 @@ public class BsemfController {
 					logger.info("Call API");
 					BseAOFUploadResponse aofresp1= investmentConnectorBseInterface.uploadAOFForm(panForAOfFile, env.getProperty(CommonConstants.BSE_AOF_GENERATION_FOLDR), clientCode);
 					logger.info("AOF upload status as received- "+ aofresp1.getStatusMessage());
-					if(aofresp1.getStatusCode().equalsIgnoreCase("100") || (aofresp1.getStatusCode().equalsIgnoreCase("101") && aofresp1.getStatusMessage().contains("Exception caught at Service Application"))){
+					if(aofresp1.getStatusCode().equalsIgnoreCase("100") 
+							|| 
+							(
+									aofresp1.getStatusCode().equalsIgnoreCase("101") 
+									&& (
+											aofresp1.getStatusMessage().contains("Exception caught at Service Application")
+											||
+											aofresp1.getStatusMessage().contains("PAN NO ALREADY APPROVED")
+											||
+											aofresp1.getStatusMessage().contains("IMAGE IS ALREADY AVAILABLE AND IMAGE STATUS IS PENDING")
+											)
+									)
+							){
 						String updateStatus= bseEntryManager.uploadAOFFormStatus(investForm.getMobile(), "Y");
 						logger.info("AOF upload status to database- "+ updateStatus);
 					}else{
@@ -703,7 +718,7 @@ public class BsemfController {
 		logger.info("MF All Funds Inventory");
 
 		String returnUrl = "bsemf/select-fund-explorer";
-
+		System.out.println("Funds explorer- session: "+ session.getId());
 		/*PageRequest p =new PageRequest(0, 200);
 		Pageable pg = p.first();*/
 
@@ -843,10 +858,10 @@ public class BsemfController {
 			}else{
 				//					Check if he is registered customer form LDAP. If already registered customer, then only need to register for MF, else create profile password as well
 
-				RestClient client = new RestClient();
+//				RestClient client = new RestClient();
 				ResponseEntity<String> responseProfile = null;
 				try {
-					responseProfile = client.isUserExisitng(selectedFund.getMobile());
+					responseProfile = profileRestClientService.isUserExisitng(selectedFund.getMobile());
 					logger.info("Response for user existing check- "+ responseProfile.getBody());
 
 				}catch(HttpStatusCodeException  e){
@@ -899,8 +914,8 @@ public class BsemfController {
 
 		logger.info("BSE MF STAR Purchse.do post controller");
 		String returnUrl = "redirect:/mutual-funds/funds-explorer";
-
-
+		System.out.println("Re-invest code- "+ selectedFund.getReinvSchemeCode());
+		
 		if(bindResult.hasErrors()){
 			map.addAttribute("error", bindResult.getFieldError().getDefaultMessage());
 			return "bsemf/bse-form-new-customer";
@@ -938,10 +953,10 @@ public class BsemfController {
 			}else{
 				//					Check if he is registered customer form LDAP. If already registered customer, then only need to register for MF, else create profile password as well
 
-				RestClient client = new RestClient();
+//				RestClient client = new RestClient();
 				ResponseEntity<String> responseProfile = null;
 				try {
-					responseProfile = client.isUserExisitng(selectedFund.getMobile());
+					responseProfile = profileRestClientService.isUserExisitng(selectedFund.getMobile());
 					logger.info("Response for user existing check- "+ responseProfile.getBody());
 
 				}catch(HttpStatusCodeException  e){
@@ -1033,19 +1048,20 @@ public class BsemfController {
 					customerData =  bseEntryManager.getCustomerByPan(selectedFund.getPan());
 					//				logger.info("Data size returned- "+ customerData.size());
 					//Find customer's portfolio
-					logger.info("Search for customer portfolio for details: "+ selectedFund.getAmcCode() + " :PAN : "+ customerData.get(0).getClientID());
-					customerPortfolios = bseEntryManager.getSelectedAmcPortfolio(selectedFund.getAmcCode(), customerData.get(0).getClientID());
-
-					logger.info("Portfolio size- "+ customerPortfolios.size());
+					logger.info("Search for customer portfolio for details: "+ selectedFund.getAmcCode() + " :PAN : "+ customerData.get(0).getClientID() + " : RTA Agent: "+ selectedFund.getRtaAgent());
+					customerPortfolios = bseEntryManager.getSelectedAmcPortfolio(selectedFund.getAmcCode(), selectedFund.getPan(),selectedFund.getRtaAgent());
+					
+					if(customerPortfolios!=null){
+					logger.info("Portfolio size- "+ customerPortfolios!=null? customerPortfolios.size() : "No portfolio data found..");
 					/*if(customerPortfolios.size()== 0){
 						customerPortfolios.add("NEW");
 					}else{
 						selectedFund.setPortfolio(customerPortfolios.get(0));
 					}*/
-					if(customerPortfolios.size()> 0){
-						selectedFund.setPortfolio(customerPortfolios.get(0));
+						if(customerPortfolios.size()> 0){
+							selectedFund.setPortfolio(customerPortfolios.get(0));
+						}
 					}
-					
 					/*map.addAttribute("amcPortFolio", customerPortfolios);
 
 						map.addAttribute("customerData", customerData.get(0));
@@ -1085,7 +1101,7 @@ public class BsemfController {
 			}else{
 				logger.info("MF purchase request required customer to be either logged in or be a fresh customer to access the url. Returning");
 				//				returnUrl="redirect:/mutual-funds/top-performing";
-				return "redirect:/mutual-funds/top-performing";
+				return "redirect:/mutual-funds/funds-explorer";
 			}
 
 			//Set SIP start date from 
@@ -1099,6 +1115,8 @@ public class BsemfController {
 					selectedFund.setSipStartMonth(initialMonth+1);
 				}
 				selectedFund.setSipStartYear(initialYear);
+				
+				selectedFund.setNoOfInstallments(60);		//Default SIP installments to 5 years -- todo dynamic
 			}
 
 			if(customerData.size()!=0){
@@ -1117,6 +1135,7 @@ public class BsemfController {
 						logger.info("Emandate found for current customer.");
 						selectedFund.setMandateType(mandate.get(0).getMandateType());
 						selectedFund.seteMandateRegRequired(false);
+						selectedFund.setMandateId(mandate.get(0).getMandateId());
 					}else{
 						logger.info("No emnadate found for customer..");
 						selectedFund.seteMandateRegRequired(true);
@@ -1177,6 +1196,12 @@ public class BsemfController {
 
 		logger.info("@@ BSE MF STAR purchase confirm controller @@");
 		String returnUrl = "redirect:/mutual-funds/bse-transaction-status";
+		
+		if(session.getAttribute("token")==null){
+			logger.info("purchaseConfirmPost(): No user session found.. Sending back to login..");
+			return "redirect:/login";
+		}
+		
 		logger.info("Client ID - "+ selectedFund.getClientID());
 		logger.info("Pay first install? "+ selectedFund.isPayFirstInstallment());
 		TransactionStatus transationResult = new TransactionStatus();
@@ -1192,7 +1217,8 @@ public class BsemfController {
 			return "bsemf/bse-mf-purchase";
 		}
 
-
+		logger.info("Selected scheme code for purchase- "+ selectedFund.getSchemeCode());
+		
 		//		set sip date if chosen
 		//			boolean f = Integer.valueOf(selectedFund.getSipStartMonth())<10;
 		if(selectedFund.getInvestype().equalsIgnoreCase("SIP")){
@@ -1211,7 +1237,7 @@ public class BsemfController {
 				map.addAttribute("sipyear", InvestFormConstants.bseInvestStartYear);
 				return "bsemf/bse-mf-purchase";
 			}
-			selectedFund.setNoOfInstallments(60);		//Default SIP installments to 5 years -- todo dynamic
+//			selectedFund.setNoOfInstallments(60);		//Default SIP installments to 5 years -- todo dynamic
 			logger.info("Is emandate registration required?- "+ selectedFund.iseMandateRegRequired());
 			//			Get MANDATE ID
 			if(selectedFund.iseMandateRegRequired()){
@@ -1354,19 +1380,29 @@ public class BsemfController {
 		logger.info(decodedString);
 
 		MFAdditionalPurchaseForm purchaseForm = new MFAdditionalPurchaseForm();
-		if(session.getAttribute("userid").toString()!=null || session.getAttribute("token").toString()!=null){
+		if(session.getAttribute("userid")!=null || session.getAttribute("token")!=null){
 			if(purchasedata!=null){
 
 				try{
 					String portfolio =decodedString.get(0)!=null?decodedString.get(0):"NA";
 					String schemeCode = decodedString.get(1)!=null?decodedString.get(1):"NA";
 					String investType = decodedString.get(2)!=null?decodedString.get(2):"SIP";
-					BseAllTransactionsView bseSeletedFundDetails= bseEntryManager.getFundDetailsForAdditionalPurchase(portfolio, schemeCode,investType, session.getAttribute("userid").toString());
-					purchaseForm.setPortfolio(bseSeletedFundDetails.getPortfoilio());
-					purchaseForm.setFundName(bseSeletedFundDetails.getSchemeName());
-					purchaseForm.setSchemeCode(bseSeletedFundDetails.getSchemeCode());
-					purchaseForm.setInvestType(bseSeletedFundDetails.getInvestType()!=null?bseSeletedFundDetails.getInvestType():"LUMPSUM");
-					purchaseForm.setTotalAvailableAmount(bseSeletedFundDetails.getSchemeInvestment());
+//					BseAllTransactionsView bseSeletedFundDetails= bseEntryManager.getFundDetailsForAdditionalPurchase(portfolio, schemeCode,investType, session.getAttribute("userid").toString());
+					MFCamsFolio folioDetails =  bseEntryManager.getCamsFundsDetailsForRedeem(schemeCode, session.getAttribute("userid").toString(), portfolio);
+					BseMFSelectedFunds selectedCodeFundDetails = bseEntryManager.getFundsByCode(schemeCode);
+					if(selectedCodeFundDetails==null){
+						logger.info("Failed to find related scheme details with scheme code / RTA code- "+ schemeCode);
+					}
+					
+					purchaseForm.setPortfolio(folioDetails.getFolioNumber());
+					purchaseForm.setFundName(folioDetails.getFundName());
+//					purchaseForm.setSchemeCode(bseSeletedFundDetails.getSchemeCode());
+					purchaseForm.setGrowthSchemeCode(selectedCodeFundDetails.getGrowthSchemeCode());
+					purchaseForm.setReinvSchemeCode(selectedCodeFundDetails.getReinvSchemeCode());
+//					purchaseForm.setInvestType(folioDetails.getTrasanctionType()!=null?folioDetails.getTrasanctionType():"LUMPSUM");
+					purchaseForm.setInvestType("LUMPSUM");
+					purchaseForm.setTotalAvailableAmount(folioDetails.getInvAmount());
+					purchaseForm.setUnitHolderName(folioDetails.getInvestorName());
 					String transactionId = generateTransId();
 					logger.info("Generated transaction ID of initiated transaction for additional purhcase-  "+ transactionId);
 					purchaseForm.setPurchaseTransid(transactionId);
@@ -1381,7 +1417,7 @@ public class BsemfController {
 			}
 		}else{
 			logger.warn("User session not found to carry out additional purcahse. Redirecting to login.");
-			returnUrl="redirect:/login";
+			returnUrl="redirect:/login?p="+purchasedata;
 		}
 
 		/*MFAdditionalPurchaseForm purchaseForm = new MFAdditionalPurchaseForm();
@@ -1422,26 +1458,59 @@ public class BsemfController {
 			return "bsemf/bsemf-additional-purchase";
 		}
 
-		if(session.getAttribute("purchaseForm")!=null){
+//		if(session.getAttribute("purchaseForm")!=null){
 
 			SelectMFFund fundTransaction = new SelectMFFund();
 			try{
 				clientId= bseEntryManager.getClientIdfromMobile(session.getAttribute("userid").toString());
-				logger.info("Client id - "+ clientId);
+				logger.info("Client id - "+ clientId +" : transaction type for additional fund- "+ purchaseForm.getInvestType());
 				fundTransaction.setClientID(clientId);
 				fundTransaction.setPortfolio(purchaseForm.getPortfolio());
-				fundTransaction.setSchemeCode(purchaseForm.getSchemeCode());
+				fundTransaction.setSchemeCode(purchaseForm.getGrowthSchemeCode());
+				fundTransaction.setReinvSchemeCode(purchaseForm.getReinvSchemeCode());
+				fundTransaction.setInvCategory(purchaseForm.getFundCategory());
+				
 				fundTransaction.setTransactionID(purchaseForm.getPurchaseTransid());
-				fundTransaction.setInvestype(fundTransaction.getInvestype());
+				fundTransaction.setInvestype(purchaseForm.getInvestType());
 				fundTransaction.setTransactionType("PURCHASE");
+				
+				if(purchaseForm.getInvestType().equalsIgnoreCase("LUMPSUM")){
+					fundTransaction.setBuySellType("ADDITIONAL");
+				}
+				
 				fundTransaction.setInvestAmount(purchaseForm.getPurchaseAmounts());
 				fundTransaction.setPaymentMethod(purchaseForm.getPaymentMode());
 
 				TransactionStatus flag = bseEntryManager.savetransactionDetails(fundTransaction,"");
-				logger.info("Customer purchase transaction status- "+ flag.getSuccessFlag());		//todo
-				redirectAttrs.addAttribute("TRANS_STATUS", "Y");
+				logger.info("Customer additional purchase transaction status- "+ flag.getSuccessFlag());		//todo
+				/*redirectAttrs.addAttribute("TRANS_STATUS", "Y");
 				redirectAttrs.addAttribute("TRANS_TYPE", "ADDITIONAL");
+				redirectAttrs.addFlashAttribute("TRANS_ID", purchaseForm.getPurchaseTransid());*/
+				
+				if(flag.getSuccessFlag().equalsIgnoreCase("S")){
+
+					logger.info("Additional purchase order ID- "+ flag.getBseOrderNoFromResponse());
+					redirectAttrs.addFlashAttribute("CLIENT_CODE", fundTransaction.getClientID());	
+					redirectAttrs.addFlashAttribute("TRANS_STATUS", "Y");
+					redirectAttrs.addFlashAttribute("TRANS_TYPE", "PURCHASE");	
+
+					redirectAttrs.addFlashAttribute("FIRST_PAY", "Y");
+					flag.setFundName(purchaseForm.getFundName());
+
+					redirectAttrs.addFlashAttribute("TRANSACTION_REPORT_BEAN", flag);
+
+				}else if(flag.getSuccessFlag().equalsIgnoreCase("SF")){
+					returnUrl="bsemf/bsemf-additional-purchase";
+					map.addAttribute("error", "Transaction successful, but failed to interanlly capture your request.");
+					map.addAttribute("FUNDAVAILABLE", "Y");
+				}else{
+					returnUrl="bsemf/bsemf-additional-purchase";
+					map.addAttribute("error", flag.getStatusMsg());
+					map.addAttribute("FUNDAVAILABLE", "Y");
+				}
+
 				redirectAttrs.addFlashAttribute("TRANS_ID", purchaseForm.getPurchaseTransid());
+				
 			}catch(Exception e){
 
 				logger.error("Unable to save customer transaction request for additional purchase",e);
@@ -1449,10 +1518,10 @@ public class BsemfController {
 				map.addAttribute("error", "Failed to save your request for additional purchase. Please try again.");
 				returnUrl="bsemf/bsemf-additional-purchase";
 			}
-		}else{
+		/*}else{
 			logger.warn("Fund session not found for execution. Redirecting out");
 			returnUrl ="redirect:/products/";
-		}
+		}*/
 		redirectAttrs.addFlashAttribute("CLIENT_CODE", clientId);	
 
 		return returnUrl;
@@ -1493,6 +1562,7 @@ public class BsemfController {
 				redeemForm.setPortfolio(folioDetails.getFolioNumber());
 				redeemForm.setFundName(folioDetails.getFundName());
 				redeemForm.setSchemeCode(folioDetails.getSchemeCode());
+//				redeemForm.setSchemeCode(schemeCode);
 				redeemForm.setInvestType(folioDetails.getTrasanctionType()!=null?folioDetails.getTrasanctionType():"NA");
 				redeemForm.setTotalValue(folioDetails.getInvAmount());
 				redeemForm.setRedeemAmounts(folioDetails.getInvAmount());
@@ -1606,12 +1676,13 @@ public class BsemfController {
 			String orderNo = decodedString.get(1)!=null?decodedString.get(1):"NA";
 			String investType = decodedString.get(2)!=null?decodedString.get(2):"NA";
 			String category = decodedString.get(3)!=null?decodedString.get(3):"NA";
-
-			BsemfTransactionHistory bseSeletedFundDetails= bseEntryManager.getOrderDetailsForCancel(orderNo, schemeCode,investType, session.getAttribute("userid").toString(),category);
+			String transactionNo = decodedString.get(4)!=null?decodedString.get(4):"NA";
+			
+			BsemfTransactionHistory bseSeletedFundDetails= bseEntryManager.getOrderDetailsForCancel(orderNo, schemeCode,investType, session.getAttribute("userid").toString(),category,transactionNo);
 
 			if(bseSeletedFundDetails == null){
 				map.addAttribute("FUNDAVAILABLE", "N");
-				map.addAttribute("error", "No fund value to redeem. Please select appropriate fund for redemption.");
+				map.addAttribute("error", "No fund value to cancel. Please select appropriate fund for cancellation.");
 			}else{
 				map.addAttribute("FUNDAVAILABLE", "Y");
 				orderCancelForm.setPortfolio(bseSeletedFundDetails.getOrderNo());
@@ -1620,6 +1691,7 @@ public class BsemfController {
 				orderCancelForm.setInvestType(bseSeletedFundDetails.getInvestType()!=null?bseSeletedFundDetails.getInvestType():"NA");
 				orderCancelForm.setTotalValue(Double.valueOf(bseSeletedFundDetails.getInvestAmount()));
 				//				orderCancelForm.setRedeemAmounts(bseSeletedFundDetails.getSchemeInvestment());
+				orderCancelForm.setCancelOrderTransId(bseSeletedFundDetails.getTransactionId());
 				String transactionId = generateTransId();
 				logger.info("Generated transaction ID of initiated transaction for cancel order-  "+ transactionId);
 				orderCancelForm.setRedeemTransId(transactionId);
@@ -1651,7 +1723,7 @@ public class BsemfController {
 
 
 		if(bindResult.hasErrors()){
-			logger.error("Error processing redeem request",bindResult.getFieldError());
+			logger.error("Error processing cancel request",bindResult.getFieldError());
 			map.addAttribute("FUNDAVAILABLE", "Y");
 			map.addAttribute("error", bindResult.getFieldError().getDefaultMessage());
 			return "bsemf/bsemf-cancel-order";
@@ -1668,6 +1740,15 @@ public class BsemfController {
 		try{
 			String clientId= bseEntryManager.getClientIdfromMobile(session.getAttribute("userid").toString());
 			logger.info("Client id - "+ clientId);
+			
+			logger.info("Get transaction details of selected transaciton ID: "+ cancelOrderForm.getCancelOrderTransId());
+			
+			if(cancelOrderForm.getInvestType().equalsIgnoreCase("SIP")){
+				logger.info("Get all transaction details of the fund. for cancel for SIP.");
+				fundTransaction  = bseEntryManager.getTransactionDetails(cancelOrderForm.getCancelOrderTransId(), clientId);
+			
+			}
+			
 			fundTransaction.setClientID(clientId);
 			fundTransaction.setSchemeCode(cancelOrderForm.getSchemeCode());
 			fundTransaction.setTransactionID(cancelOrderForm.getRedeemTransId());
@@ -1675,6 +1756,7 @@ public class BsemfController {
 			fundTransaction.setTransactionType("CXL");
 			fundTransaction.setInvestAmount(cancelOrderForm.getTotalValue());
 			fundTransaction.setOrderNo(cancelOrderForm.getPortfolio());
+			
 			TransactionStatus flag = bseEntryManager.savetransactionDetails(fundTransaction,"");
 
 			/*if(flag.getSuccessFlag().equalsIgnoreCase("S")){
@@ -1685,8 +1767,10 @@ public class BsemfController {
 			redirectAttrs.addFlashAttribute("TRANS_ID", cancelOrderForm.getRedeemTransId());
 
 			if(flag.getSuccessFlag().equalsIgnoreCase("S")){
-
 				logger.info("Cancel order ID- "+ flag.getBseOrderNoFromResponse());
+				logger.info("Order cancelled successfully. Process to update the status to NO for existing transaction number: "+cancelOrderForm.getCancelOrderTransId());
+				boolean updateStatus= bseEntryManager.updateCancelledTransactionStatus(null, clientId, cancelOrderForm.getPortfolio(), cancelOrderForm.getCancelOrderTransId());
+				
 				redirectAttrs.addFlashAttribute("CLIENT_CODE", fundTransaction.getClientID());	
 				redirectAttrs.addFlashAttribute("TRANS_STATUS", "Y");
 				redirectAttrs.addFlashAttribute("TRANS_TYPE", "CXL");	
@@ -1704,9 +1788,9 @@ public class BsemfController {
 			
 		}catch(Exception e){
 
-			logger.error("Unable to save customer transaction request for additional purchase",e);
+			logger.error("Unable to save customer transaction request for cancellation",e);
 			map.addAttribute("FUNDAVAILABLE", "Y");
-			map.addAttribute("error", "Failed to save your request for additional purchase. Please try again.");
+			map.addAttribute("error", "Failed to process your cancel request. Please try again.");
 			returnUrl="bsemf/bsemf-cancel-order";
 		}
 
@@ -1717,7 +1801,7 @@ public class BsemfController {
 
 
 	@RequestMapping(value = "/mutual-funds/bse-transaction-complete", method = RequestMethod.GET)
-	public String bseMFTransactionCallback(@RequestParam("orderid")String orderid,Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+	public String bseMFTransactionCallback(@RequestParam("orderid")String orderid,@RequestParam("client") String clientCode, Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 
 		logger.info("@@ BSE MF STAR purchase confirm controller after callback @@");
 		String returnUrl = "bsemf/bse-purchase-status";
@@ -1728,10 +1812,14 @@ public class BsemfController {
 		}else{*/
 		if(orderid.equalsIgnoreCase("")){
 			logger.info("Parameters data not found");
-			returnUrl="redirect:/login";
+			returnUrl="redirect:/products";
 		}else{
-			String getClientId = bseEntryManager.getClientIdfromMobile(session.getAttribute("userid").toString());
-			String resp= investmentConnectorBseInterface.BseOrderPaymentStatus(getClientId, orderid);
+//			String getClientId = bseEntryManager.getClientIdfromMobile(session.getAttribute("userid")!=null?session.getAttribute("userid").toString():"NA");
+			logger.info("Transaction complete callback received for order id: "+ orderid + " : client: "+ clientCode);
+			Base64 base64 = new Base64();
+			String decodedClientCode = new String(base64.decode(clientCode.getBytes()));
+			
+			String resp= investmentConnectorBseInterface.BseOrderPaymentStatus(decodedClientCode, orderid);
 
 			List<String> res = Arrays.asList(resp.split("\\|"));
 			/*if(res.get(0).equals("100")){
@@ -1774,9 +1862,14 @@ public class BsemfController {
 				orderUrl.setClientCode(clienCode);
 				orderUrl.setMemberCode(CommonConstants.BSE_MEMBER_ID);
 				//					orderUrl.setLogOutURL("http://localhost:8080/products/mutual-funds/bse-transaction-complete");
-				String callbackUrl=URI.create(request.getRequestURL().toString()).resolve(request.getContextPath()).toString() + "/mutual-funds/bse-transaction-complete?orderid="+(!transReport.getBseOrderNoFromResponse().isEmpty()?transReport.getBseOrderNoFromResponse():"NA");
+				
+				Base64 base64 = new Base64();
+				String encodedClientCode = new String(base64.encode(clienCode.getBytes()));
+				
+				String callbackUrl=URI.create(request.getRequestURL().toString()).resolve(request.getContextPath()).toString() + "/mutual-funds/bse-transaction-complete?orderid="+(!transReport.getBseOrderNoFromResponse().isEmpty()?transReport.getBseOrderNoFromResponse()+"&client="+encodedClientCode:"NA");
 				logger.info("Callback url for payment- "+callbackUrl);
 				orderUrl.setLogOutURL(callbackUrl);
+//				orderUrl.setLogOutURL(Base64.encodeBase64String(callbackUrl.getBytes()));
 				BseOrderPaymentResponse orderUrlReponse= investmentConnectorBseInterface.getPaymentUrl(orderUrl);
 				map.addAttribute("orderUrl", orderUrlReponse);
 			}
@@ -1805,8 +1898,11 @@ public class BsemfController {
 			orderUrl.setClientCode(clientId);
 			orderUrl.setMemberCode(CommonConstants.BSE_MEMBER_ID);
 			//				orderUrl.setLogOutURL("http://localhost:8080/products/mutual-funds/my-dashboard");
-			orderUrl.setLogOutURL(URI.create(request.getRequestURL().toString()).resolve(request.getContextPath()).toString() + "/mutual-funds/my-dashboard");
-
+			String orderCallUrl = URI.create(request.getRequestURL().toString()).resolve(request.getContextPath()).toString() + "/mutual-funds/my-dashboard";
+			logger.info("Pending order callback url- " + orderCallUrl);
+			logger.info("Pending order callback base64- " + Base64.encodeBase64String(orderCallUrl.getBytes()));
+//			orderUrl.setLogOutURL(Base64.encodeBase64String(orderCallUrl.getBytes()));
+			orderUrl.setLogOutURL(orderCallUrl);
 			BseOrderPaymentResponse orderUrlReponse= investmentConnectorBseInterface.getPaymentUrl(orderUrl);
 			map.addAttribute("orderUrl", orderUrlReponse);
 			returnUrl="redirect:"+orderUrlReponse.getPayUrl();

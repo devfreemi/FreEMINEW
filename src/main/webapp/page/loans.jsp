@@ -21,19 +21,17 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link href="https://www.freemi.in/products/loans/" rel="canonical">
 <title>FreEMI Loans</title>
-<link href="<c:url value="${contextcdn}/resources/css/freeEmi2.min.css"/>"
-	rel="stylesheet">
-<link href="<c:url value="${contextcdn}/resources/css/styles.min.css"/>"
-	rel="stylesheet">
-<link href="<c:url value="${contextcdn}/resources/css/animate.css"/>"
-	type="text/css" rel="stylesheet">
-<link href="<c:url value="${contextcdn}/resources/css/pace-theme.css"/>" rel="stylesheet">
-<script src="<c:url value="${contextcdn}/resources/js/pace.min.js" />"></script>
-<script src="<c:url value="${contextcdn}/resources/js/freemi.js" />"></script>
+<jsp:include page="include/bootstrap.jsp"></jsp:include>
+<link href="<c:url value="${contextcdn}/resources/css/freeEmi2.min.css"/>" rel="stylesheet">
+<link href="<c:url value="${contextcdn}/resources/css/styles.min.css"/>" rel="stylesheet">
+<link href="<c:url value="${contextcdn}/resources/css/animate.css"/>" type="text/css" rel="stylesheet">
+<%-- <link href="<c:url value="${contextcdn}/resources/css/pace-theme.css"/>" rel="stylesheet">
+<script src="<c:url value="${contextcdn}/resources/js/pace.min.js" />" async="async"></script> --%>
+<script src="<c:url value="${contextcdn}/resources/js/freemi.js" />" defer="defer"></script>
 
 <!-- EMI Calculator Widget START --><script async src="https://emicalculator.net/widget/2.0/js/emicalc-loader.min.js"></script><!-- EMI Calculator Widget END -->
 
-<jsp:include page="include/bootstrap.jsp"></jsp:include>
+
 <style>
 .custom_box {
 	box-shadow: unset;
@@ -243,12 +241,12 @@
 						</div>
 					</div>
 				</div>
-				<div class="row" style="padding: 0px 30px;">
+				<!-- <div class="row" style="padding: 0px 30px;">
 					<div class="col-md-6 col-lg-6 loan_share" style="margin: auto;">
 						<div><strong>Share our page.</strong></div>
 						<div class="fb-share-button" data-href="https://www.freemi.in/products/loans/" data-layout="button_count" data-size="large" data-mobile-iframe="true"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.freemi.in%2Fproducts%2Floans%2F&amp;src=sdkpreparse" class="fb-xfbml-parse-ignore">Share</a></div>
 					</div>
-				</div>
+				</div> -->
 				
 			</div>
 
@@ -286,6 +284,33 @@
 						</div>
 					</div>
 				</div>
+				
+				<div class="row" style="margin-top: 2rem;">
+				<div class="col-6 col-sm-3 col-lg-3">
+				<img src="<c:url value="${contextcdn}/resources/images/partnerlogo/loans/bajaj-finserv.jpg"/>"class="img-fluid" alt="Bajaj Finserv" style="margin-bottom: 2rem;">
+				</div>
+				<div class="col-6 col-sm-3 col-lg-3">
+				<img src="<c:url value="${contextcdn}/resources/images/partnerlogo/loans/fullerton.jpg"/>"class="img-fluid" alt="Fullerton India" style="margin-bottom: 2rem;">
+				</div>
+				<div class="col-6 col-sm-3 col-lg-3">
+				<img src="<c:url value="${contextcdn}/resources/images/partnerlogo/loans/hdfc.jpg"/>"class="img-fluid" alt="HDFC bnk" style="margin-bottom: 2rem;">
+				</div>
+				<div class="col-6 col-sm-3 col-lg-3">
+				<img src="<c:url value="${contextcdn}/resources/images/partnerlogo/loans/icici.jpg"/>"class="img-fluid" alt="ICICI bank" style="margin-bottom: 2rem;">
+				</div>
+				<div class="col-6 col-sm-3 col-lg-3">
+				<img src="<c:url value="${contextcdn}/resources/images/partnerlogo/loans/idfc.jpg"/>"class="img-fluid" alt="IDFC bank" style="margin-bottom: 2rem;">
+				</div>
+				<div class="col-6 col-sm-3 col-lg-3">
+				<img src="<c:url value="${contextcdn}/resources/images/partnerlogo/loans/indiabulls.jpg"/>"class="img-fluid" alt="Indiabulls" style="margin-bottom: 2rem;">
+				</div>
+				<div class="col-6 col-sm-3 col-lg-3">
+				<img src="<c:url value="${contextcdn}/resources/images/partnerlogo/loans/indusind.jpg"/>"class="img-fluid" alt="IndusInd" style="margin-bottom: 2rem;">
+				</div>
+				<div class="col-6 col-sm-3 col-lg-3">
+				<img src="<c:url value="${contextcdn}/resources/images/partnerlogo/loans/kotak.jpg"/>"class="img-fluid" alt="Kotak Mahindra Bank" style="margin-bottom: 2rem;">
+				</div>
+				</div>
 			</div>
 		</div>
 		
@@ -309,7 +334,7 @@
 
 						<div id="collapseOne" class="collapse show"
 							aria-labelledby="headingOne" data-parent="#accordion">
-							<div class="card-body" style="max-height: 400px; overflow: scroll; color: #727374;">
+							<div class="card-body" style="max-height: 400px; overflow: scroll; color: #727374;font-size: 13px;">
 
 								<p>Personal Loan bridges the gap between what we have and
 									what we need.</p>

@@ -64,7 +64,9 @@ public class ErrorHandlers implements ErrorController{
 	        }
 	        else if(statusCode == HttpStatus.INTERNAL_SERVER_ERROR.value()) {
 	            return "errors/error-500";
-	        }
+	        }/*else if(statusCode == HttpStatus.FORBIDDEN.value()){
+	        	return "redirect:/login";
+	        }*/
 	    }
 		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 		

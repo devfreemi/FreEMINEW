@@ -260,19 +260,12 @@
 			</div>
 			<div></div>
 		</section>
-
+<!-- 
 		<section style="background-color: aliceblue; padding: 30px 0px;">
 			<div class="row" style="margin: auto; margin-top: 4rem;">
 				<div class="col-md-8 col-lg-8"
 					style="margin: auto; text-align: center;">
 					<h3>Ready to upload?</h3>
-					<!-- <div class="input-group">
-						<div class="custom-file">
-							<input type="file" class="custom-file-input"
-								id="inputGroupFile04"> <label class="custom-file-label"
-								for="inputGroupFile04">Choose file</label>
-						</div>
-					</div> -->
 					<div class="file-upload-wrapper">
 						<input type="file" id="input-file-now" class="file-upload" />
 					</div>
@@ -285,6 +278,8 @@
 			</div>
 
 		</section>
+		 -->
+		
 	</div>
 	<jsp:include page="../include/footer.jsp"></jsp:include>
 

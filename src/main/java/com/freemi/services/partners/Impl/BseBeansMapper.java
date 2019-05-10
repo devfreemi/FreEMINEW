@@ -47,17 +47,18 @@ public class BseBeansMapper {
 		clientFregirationForm.setClientAppname1(registrationForm.getInvName());
 
 		//		Converting date format to BSE specific format dd/mm/yyyy
-		/*try {
+		logger.info("InvestmentFormToBseBeans(): Received DOB format: "+ registrationForm.getInvDOB());
+		try {
 			
 			Date date1 = simpleDateFormat1.parse(registrationForm.getInvDOB());
 			String bseFormatDob = simpleDateFormat2.format(date1);
 			clientFregirationForm.setClientDob(bseFormatDob);
 		} catch (ParseException e) {
 			logger.error("InvestmentFormToBseBeans(): failed to convert date: ",e);
-		}	*/
+		}
 		
-		System.out.println("DOB- "+ registrationForm.getInvDOB());
-		clientFregirationForm.setClientDob(registrationForm.getInvDOB());
+		System.out.println("After format DOB- "+ clientFregirationForm.getClientDob());
+//		clientFregirationForm.setClientDob(registrationForm.getInvDOB());
 		
 		clientFregirationForm.setClientGender(registrationForm.getGender());
 		clientFregirationForm.setClientPan(registrationForm.getPan1());
@@ -106,15 +107,16 @@ public class BseBeansMapper {
 		fatcaForm.setINV_NAME(registrationForm.getInvName());
 
 		//		Converting date format to BSE specific format dd/mm/yyyy
-		/*try {
+		logger.info("InvestmentFormToBseFATCABeans(): Received DOB format- "+ registrationForm.getInvDOB());
+		try {
 			Date date1 = simpleDateFormat1.parse(registrationForm.getInvDOB());
 			String bseFormatDob = simpleDateFormat2.format(date1);
 			fatcaForm.setDOB(bseFormatDob);
 		} catch (ParseException e) {
 			logger.error("InvestmentFormToBseFATCABeans(): failed to convert date: ",e);
-		}*/
-		System.out.println("DOB for fatca- "+registrationForm.getInvDOB() );
-		fatcaForm.setDOB(registrationForm.getInvDOB());
+		}
+		System.out.println("DOB for fatca- "+ fatcaForm.getDOB());
+//		fatcaForm.setDOB(registrationForm.getInvDOB());
 
 		fatcaForm.setFR_NAME(registrationForm.getFatcaDetails().getFatherName());
 		fatcaForm.setSP_NAME(registrationForm.getFatcaDetails().getSpouseName());
@@ -176,15 +178,16 @@ public class BseBeansMapper {
 			//			Determinining whether the schemecode to be of L1 category
 			if(fundDetails.getInvestAmount()>199999){
 				logger.info("Since the amount is above, marking the transaction as L1 category.. Proceeding by changing fundname to - "+ fundDetails.getSchemeCode()+"-L1");
-				bseOrderForm.setSchemeCd(fundDetails.getSchemeCode()+"-L1");
+				bseOrderForm.setSchemeCd(fundDetails.getInvCategory().equalsIgnoreCase("Z")? fundDetails.getSchemeCode():fundDetails.getReinvSchemeCode()+"-L1");
 				
 			}else{
-				bseOrderForm.setSchemeCd(fundDetails.getSchemeCode());
+				bseOrderForm.setSchemeCd(fundDetails.getInvCategory().equalsIgnoreCase("Z")? fundDetails.getSchemeCode():fundDetails.getReinvSchemeCode());
 			}
 
 			bseOrderForm.setBuySell("P");
 			bseOrderForm.setRemarks("Purchase Request");
-			bseOrderForm.setBuySellType("FRESH");
+//			bseOrderForm.setBuySellType("FRESH");
+			bseOrderForm.setBuySellType(fundDetails.getBuySellType());
 
 		}else if(fundDetails.getTransactionType().equals("REDEEM")){
 			bseOrderForm.setTransCode(bseOrderForm.getFolioNo());
@@ -333,7 +336,7 @@ public class BseBeansMapper {
 		bseOrderForm.setEuin("");
 		bseOrderForm.setEuinVal("N");
 		bseOrderForm.setMinRedeem("Y");
-		bseOrderForm.setDPC("N");
+		bseOrderForm.setDPC("Y");
 		bseOrderForm.setIPAdd("");
 		bseOrderForm.setPassword("");
 		bseOrderForm.setParma1("");
@@ -348,8 +351,11 @@ public class BseBeansMapper {
 
 		if(fundDetails.getTransactionType().equals("PURCHASE")){	//ADD For MODIFITATION late
 			bseOrderForm.setTransactionCode("NEW");
+			bseOrderForm.setRemarks("SIP Purchase Request");
 		}else{
 			bseOrderForm.setTransactionCode("CXL");
+			bseOrderForm.setXSIP_RegId(fundDetails.getOrderNo());
+			bseOrderForm.setRemarks("SIP cancel Request");
 		}
 
 		bseOrderForm.setUniqueRefNo(uniqueReferenceNo);
@@ -370,7 +376,17 @@ public class BseBeansMapper {
 			bseOrderForm.setFirstOrderFlag(fundDetails.isPayFirstInstallment()?"Y":"N");		//to do for first payment
 			bseOrderForm.setOrderVal("");	//to do for all redeem
 		}
-		bseOrderForm.setSchemeCode(fundDetails.getSchemeCode());
+		
+//		bseOrderForm.setSchemeCode(fundDetails.getInvCategory().equalsIgnoreCase("Z")? fundDetails.getSchemeCode():fundDetails.getReinvSchemeCode());
+		if(fundDetails.getInvestAmount()>199999){
+			logger.info("Since the amount is above, marking the transaction as L1 category.. Proceeding by changing fundname to - "+ fundDetails.getSchemeCode()+"-L1");
+			bseOrderForm.setSchemeCode(fundDetails.getInvCategory().equalsIgnoreCase("Z")? fundDetails.getSchemeCode():fundDetails.getReinvSchemeCode()+"-L1");
+			
+		}else{
+			bseOrderForm.setSchemeCode(fundDetails.getInvCategory().equalsIgnoreCase("Z")? fundDetails.getSchemeCode():fundDetails.getReinvSchemeCode());
+		}
+		
+		
 		bseOrderForm.setBuySell("P");
 		bseOrderForm.setBuySellType("FRESH");
 		bseOrderForm.setDpTxnMode("P");
@@ -378,14 +394,14 @@ public class BseBeansMapper {
 		bseOrderForm.setQty("1");
 		bseOrderForm.setAllRedeem("N");		// to do
 		bseOrderForm.setFolioNo(fundDetails.getPortfolio().equalsIgnoreCase("NEW")?"":fundDetails.getPortfolio());
-		bseOrderForm.setRemarks("Purchase Request");
+		
 		bseOrderForm.setKYCStatus("Y");
 		bseOrderForm.setRefNo(fundDetails.getBseRefNo());
 		bseOrderForm.setSubBrCode("");
 		bseOrderForm.setEuin("");
 		bseOrderForm.setEuinVal("N");
 		bseOrderForm.setMinRedeem("Y");
-		bseOrderForm.setDPC("N");
+		bseOrderForm.setDPC("Y");
 		bseOrderForm.setIPAdd("");
 		bseOrderForm.setPassword("");
 		bseOrderForm.setParma1("");

@@ -12,6 +12,6 @@ public interface MfCamsFolioCrudRepository extends JpaRepository<MFCamsFolio,Lon
 	
 	public List<MFCamsFolio> findAllByPan(String pan);
 	
-	public MFCamsFolio findOneByFolioNumber(String folio);
+	public MFCamsFolio findOneByFolioNumberAndRtaCode(String folio, String rtaCode);
 
 }

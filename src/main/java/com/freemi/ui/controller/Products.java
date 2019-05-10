@@ -36,6 +36,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.freemi.common.util.CommonConstants;
 import com.freemi.common.util.CommonTask;
+import com.freemi.controller.interfaces.ProfileRestClientService;
 import com.freemi.database.interfaces.ProductSchemeDetailService;
 import com.freemi.database.service.FreemiServiceInterface;
 import com.freemi.entity.database.FreemiLoanQuery;
@@ -68,6 +69,9 @@ public class Products {
 
 	@Autowired
 	FreemiServiceInterface freemiServiceInterface; 
+	
+	@Autowired
+	ProfileRestClientService profileRestClientService;
 
 	@Autowired
 	private Environment env;
@@ -100,10 +104,10 @@ public class Products {
 			logger.info("Error in register form");
 			return "register";
 		}
-		RestClient client = new RestClient();
+//		RestClient client = new RestClient();
 		ResponseEntity<String> response = null;
 		try {
-			response = client.registerUser(registerForm);
+			response = profileRestClientService.registerUser(registerForm);
 			String status = response.getHeaders().get("STATUS").get(0);
 			if(status.equals("SUCCESS")){
 				model.addAttribute("success", "Registration successful. Login to your account");
@@ -374,10 +378,10 @@ public class Products {
 		//		logger.info(fsecureForm.getDob());
 
 		fsecureForm.setProductCode("2001");
-		RestClient client = new RestClient();
+//		RestClient client = new RestClient();
 		ResponseEntity<String> response = null;
 		try {
-			response = client.fsecureRequest(fsecureForm,CommonTask.getClientSystemDetails(request).getClientIpv4Address());
+			response = profileRestClientService.fsecureRequest(fsecureForm,CommonTask.getClientSystemDetails(request).getClientIpv4Address());
 			//			logger.info(response.getBody());
 			//			logger.info(response.getHeaders());
 			//			model.addAttribute("success", response.getBody());

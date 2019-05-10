@@ -19,9 +19,11 @@ import com.freemi.entity.investment.BseMFTop15lsSip;
 import com.freemi.entity.investment.BseMandateDetails;
 import com.freemi.entity.investment.BsemfTransactionHistory;
 import com.freemi.entity.investment.MFCamsFolio;
+import com.freemi.entity.investment.MFCamsValueByCategroy;
 import com.freemi.entity.investment.MFFatcaDeclareForm;
 import com.freemi.entity.investment.SelectMFFund;
 import com.freemi.entity.investment.TransactionStatus;
+
 
 @Service
 public interface BseEntryManager {
@@ -58,27 +60,30 @@ public interface BseEntryManager {
 	public boolean checkIfTransIdExist(String generatedTransId);
 	public TransactionStatus savetransactionDetails(SelectMFFund selectedMFFund, String mandateId);
 	public List<BsemfTransactionHistory> getAllPurchaseHistory(String clientId);
-	
-	
+	public boolean updateCancelledTransactionStatus(String mobile,String clientId, String orderNo, String transactionNo);
+	public SelectMFFund getTransactionDetails(String transactionId, String clientId);
 	
 	public List<BseAllTransactionsView> getCustomerAllTransactionRecords(String clientID, String mobileNumber, String panNumber);
 	public BseAllTransactionsView getFundDetailsForAdditionalPurchase(String portfolio, String schemeCode,String investType, String mobileNumber);
 	public BseAllTransactionsView getFundDetailsForRedemption(String portfolio, String schemeCode,String investType, String mobileNumber);
-	public BsemfTransactionHistory getOrderDetailsForCancel(String portfolio, String schemeCode,String investType, String mobileNumber,String category);
+	public BsemfTransactionHistory getOrderDetailsForCancel(String portfolio, String schemeCode,String investType, String mobileNumber,String category, String transactionId);
 	
 	//BSE MF related operations
 	public List<MfTopFundsInventory> getTopMfFunds();
 	public List<BseMFTop15lsSip> getTopFunds();
 	public List<BseMFSelectedFunds> getAllSelectedFunds();
 	public List<BseMFSelectedFunds> getFundsByCategory(String category);
+	public BseMFSelectedFunds getFundsByCode(String rtacode);
 	
 	public long getCurrentDayNextTransCount(Date date);
 	
 	//PORTFOLIO Crud respository
-	public List<String> getSelectedAmcPortfolio(String amcCode, String clientId);
+	public List<String> getSelectedAmcPortfolio(String amcCode, String clientId, String rtaAgent);
 	public List<MFCamsFolio> getCamsPortfolio(String mobile, String pan);
+	public List<MFCamsValueByCategroy> getCustomersInvByCategory(String mobile, String pan);
 	
 	public MFCamsFolio getCamsFundsDetailsForRedeem(String code, String mobile, String folioNumber);
+	
 	
 	
 	public Page<BseFundsScheme> getpaginatedFundsList(Pageable p);

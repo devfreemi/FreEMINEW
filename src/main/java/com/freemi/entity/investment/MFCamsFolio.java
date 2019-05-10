@@ -13,7 +13,7 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Proxy;
 
 @Entity
-@Table(name="mailback_data_cams")
+@Table(name="mailback_data_cams_view")
 @Proxy(lazy=false)
 public class MFCamsFolio implements Serializable {
 
@@ -36,6 +36,9 @@ public class MFCamsFolio implements Serializable {
 	@Column(name="SCHEME_CODE")
 	private String rtaCode;
 	
+	@Column(name="SCHEME_NAME")
+	private String schemeName;
+	
 	@Column(name="REGISTRATIONDATE")
 	private String registrationDate;
 	
@@ -56,7 +59,6 @@ public class MFCamsFolio implements Serializable {
 	
 	@Column(name="INVESTOR_NAME")
 	private String investorName;
-	
 	
 	public Long getSerial() {
 		return serial;
@@ -130,5 +132,12 @@ public class MFCamsFolio implements Serializable {
 	public void setInvestorName(String investorName) {
 		this.investorName = investorName;
 	}
+	public String getSchemeName() {
+		return schemeName;
+	}
+	public void setSchemeName(String schemeName) {
+		this.schemeName = schemeName;
+	}
+	
 	
 }

@@ -24,10 +24,39 @@
 	src="<c:url value="${contextPath}/resources/js/signaturepanel.js" />"></script>
 <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script> -->
 
+<link
+	href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css"
+	rel="stylesheet">
+<script type="text/javascript"
+	src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript"
+	src="https://cdn.datatables.net/buttons/1.5.4/js/buttons.html5.min.js"></script>
+
 <script>
 var FILE_UPLOAD=${FILE_IPLOAD};
 
 </script>
+
+<style>
+table td {
+	font-size: 11px;
+	font-weight: 500;
+}
+
+table th {
+	font-size: 12px;
+	font-weight: 500;
+}
+
+.mftransdetailhead>th {
+	font-size: 11px;
+	padding: 2px;
+}
+
+.table thead th {
+	vertical-align: middle;
+}
+</style>
 </head>
 
 <body class="back_set">
@@ -418,7 +447,7 @@ var FILE_UPLOAD=${FILE_IPLOAD};
 								<div class="fsecure-outer">
 									<div style="overflow-x: auto;">
 										<table class="table table-sm table-bordered">
-											<caption>FSecure Purchse History</caption>
+											<caption>FSecure Purchase History</caption>
 											<thead class="fsecure-records">
 												<tr>
 													<th scope="col">Insurance Type</th>
@@ -461,66 +490,118 @@ var FILE_UPLOAD=${FILE_IPLOAD};
 								<div class="registry-outer">
 									<c:choose>
 										<c:when test="${ORDERHISTORY == 'SUCCESS' }">
-											<table class="table table-sm table-bordered registry-table">
-												<caption>Mutual Funds Purchase History</caption>
-												<thead class="registry-records">
-													<tr>
-														<th scope="col">PORTFOLIO</th>
-														<th scope="col">INVEST TYPE</th>
-														<th scope="col">SCHEME NAME</th>
-														<th scope="col">NAV DATE</th>
-														<th scope="col">NAV VALUE (Rs.)</th>
-														<th scope="col">INVESTMENT (Rs.)</th>
-														<th scope="col">ACTION</th>
-														<!-- <th scope="col">XIRR</th>
+											<div id="accordion">
+												<table class="table table-sm">
+													<caption>Mutual Funds Purchase History</caption>
+													<thead class="blue-gradient white-text">
+														<tr>
+															<th scope="col" valign="middle">Mutual Fund</th>
+															<th scope="col" valign="middle">Appreciation Value</th>
+															<th scope="col" valign="middle">XIRR</th>
+															<th scope="col" valign="middle">Weighted</th>
+															<th scope="col" valign="middle">NAV VALUE (Rs.)</th>
+															<th scope="col" valign="middle">INVESTMENT (Rs.)</th>
+															<th scope="col" valign="middle">VIEW</th>
+															<!-- <th scope="col">XIRR</th>
 													<th scope="col">Accumulated Amount</th>
 													<th scope="col">Topup SIP</th>
 													<th scope="col">Action</th> -->
-													</tr>
-												</thead>
-												<tbody>
-
-													<c:forEach var="listVar" items="${mforderhistory}">
-														<tr>
-															<td>${listVar.folioNumber }</td>
-															<td>${listVar.trasanctionType }</td>
-															<td>${listVar.fundName }</td>
-															<td></td>
-															<td></td>
-															<td style="font-weight: 600;"><fmt:formatNumber
-																	value="${listVar.invAmount }" type="number"
-																	maxFractionDigits="3" /></td>
-															<td style="text-align: center;">
-																<div class="btn-group">
-																	<button type="button"
-																		class="btn btn-secondary dropdown-toggle btn-sm"
-																		data-toggle="dropdown" aria-haspopup="true"
-																		aria-expanded="false"
-																		style="font-size: 11px; padding: 10px; width: 5rem;">ACTION</button>
-																	<div class="dropdown-menu dropdown-menu-right">
-																		<button class="dropdown-item" type="button"
-																			style="font-size: 12px; color: #238019; font-weight: 600;"
-																			onclick="AdditionalPurchase('${listVar.folioNumber}','${listVar.rtaCode }','${listVar.trasanctionType }')">
-																			Invest More <i class="fas fa-arrow-left"></i>
-																		</button>
-
-																		<c:if test="${listVar.invAmount > 0 }">
-																			<button class="dropdown-item" type="button"
-																				style="font-size: 12px; color: #da2323; font-weight: 600;"
-																				onclick="MFRedeem('${listVar.folioNumber}','${listVar.rtaCode }','${listVar.trasanctionType }')">
-																				Redeem <i class="fas fa-arrow-right"></i>
-																			</button>
-																		</c:if>
-																	</div>
-																</div>
-
-															</td>
 														</tr>
-													</c:forEach>
+													</thead>
 
-												</tbody>
+													<tbody>
 
-											</table>
+														<c:forEach var="listVar" items="${mforderhistory}"
+															varStatus="loop">
+															<tr>
+																<td style="width: 14rem;" valign="middle"><img
+																	src="<c:url value="${contextcdn}/resources/images/partnerlogo/mf/${listVar.amcicon }"/>"
+																	class="img-fluid" style="width: 3rem;">
+																	${listVar.fundName }</td>
+																<td valign="middle">${listVar.collaboratedAmount }</td>
+																<td valign="middle">${loop.index}</td>
+																<td valign="middle"></td>
+																<td valign="middle"></td>
+																<td style="font-weight: 600;" valign="middle">
+																	<%-- <fmt:formatNumber
+																	value="${listVar.invAmount }" type="number"
+																	maxFractionDigits="3" /> --%>
+																</td>
+																<td style="text-align: center;"><a class=""
+																	data-toggle="collapse" href="#collapse${loop.index}"
+																	role="button" aria-expanded="false"
+																	aria-controls="collapse${loop.index}"> <span
+																		class="fas fa-chevron-right" id="rotate"></span>
+																</a></td>
+
+															</tr>
+															<tr>
+
+																<td colspan="7" style="padding: 0px;">
+																	<div class="collapse" id="collapse${loop.index}"
+																		style="margin: .2rem;">
+																		<div class="card card-body" style="padding: 0;">
+																			<table class="table table-sm">
+																				<thead class="#00796b teal darken-2 white-text">
+																					<tr class="mftransdetailhead">
+																						<th scope="col" style="width: 20rem;"
+																							valign="middle">Folio <br> Scheme
+																							Code/Name
+																						</th>
+																						<th scope="col" valign="middle">Market Value</th>
+																						<th scope="col" valign="middle">Units</th>
+																						<th scope="col" valign="middle">Appreciation</th>
+																					</tr>
+																				</thead>
+																				<tbody>
+																					<c:forEach var="folioList"
+																						items="${listVar.camsFolioLists}"
+																						varStatus="innerloop">
+																						<tr>
+																							<td valign="middle">${folioList.folioNumber }<br>${folioList.schemeName }
+																								/ ${folioList.rtaCode }
+																							</td>
+																							<td valign="middle">${folioList.invAmount }</td>
+																							<td valign="middle">${folioList.units }</td>
+																							<td valign="middle">
+																								<div class="btn-group">
+																									<button type="button"
+																										class="btn btn-secondary dropdown-toggle btn-sm"
+																										data-toggle="dropdown" aria-haspopup="true"
+																										aria-expanded="false"
+																										style="font-size: 11px; padding: 5px; width: 7rem;">TRANSACT</button>
+																									<div class="dropdown-menu dropdown-menu-right">
+																										<button class="dropdown-item" type="button"
+																											style="font-size: 12px; color: #238019; font-weight: 600;"
+																											onclick="AdditionalPurchase('${folioList.folioNumber}','${folioList.rtaCode }','${folioList.trasanctionType }')">
+																											Invest More <i class="fas fa-arrow-left"></i>
+																										</button>
+
+																										<c:if test="${folioList.invAmount > 0 }">
+																											<button class="dropdown-item" type="button"
+																												style="font-size: 12px; color: #da2323; font-weight: 600;"
+																												onclick="MFRedeem('${folioList.folioNumber}','${folioList.rtaCode }','${folioList.trasanctionType }')">
+																												Redeem <i class="fas fa-arrow-right"></i>
+																											</button>
+																										</c:if>
+																									</div>
+																								</div>
+																							</td>
+																						</tr>
+																					</c:forEach>
+																				</tbody>
+																			</table>
+																		</div>
+																	</div>
+
+																</td>
+
+															</tr>
+														</c:forEach>
+													</tbody>
+
+												</table>
+											</div>
 										</c:when>
 										<c:when test="${ORDERHISTORY == 'ERROR' }">
 											<span>Failed to fetch your data. Please try after
@@ -543,10 +624,9 @@ var FILE_UPLOAD=${FILE_IPLOAD};
 
 	</div>
 
-
-
+	<jsp:include page="include/footer.jsp"></jsp:include>
 </body>
-<script>
+<script type="text/javascript">
 	(function() {
 		window.requestAnimFrame = (function(callback) {
 			return window.requestAnimationFrame
@@ -927,6 +1007,5 @@ var FILE_UPLOAD=${FILE_IPLOAD};
 		$("#uploadtxt").show();
 		$("#aofuploadbtn").prop("disabled", false);	
 	}
-		
 </script>
 </html>

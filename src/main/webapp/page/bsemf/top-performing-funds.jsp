@@ -224,10 +224,7 @@
 	
 <!-- 	</div> -->
 	<!-- BSE MF  -->
-	<section class="bse-display"
-		style="background: #ffecc9; padding: 5px; margin-bottom: -60px;">
-		<jsp:include page="./bsestarmfpowered.jsp"></jsp:include>
-	</section>
+	<jsp:include page="./bsestarmfpowered.jsp"></jsp:include>
 	<!-- END BSE MF  -->
 	
 

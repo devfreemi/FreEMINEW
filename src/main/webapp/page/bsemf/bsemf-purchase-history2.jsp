@@ -159,7 +159,7 @@ table.dataTable thead th, table.dataTable thead td {
 														<c:if test="${listVar.transctionType =='PURCHASE' }">
 														<button class="dropdown-item" type="button"
 															style="font-size: 12px; color: #d82f2f; font-weight: 600;"
-															onclick="cancelOrder('${listVar.clienId}','${listVar.orderNo}','${listVar.investType }','${listVar.transctionType }' )">
+															onclick="cancelOrder('${listVar.clienId}','${listVar.orderNo}','${listVar.investType }','${listVar.transctionType }','${listVar.transactionId }' )">
 															<%-- onclick="cancelOrder('${listVar.schemeCode}','${listVar.orderNo },'${listVar.investType }')"> --%>
 															Cancel Order</button>
 														</c:if>

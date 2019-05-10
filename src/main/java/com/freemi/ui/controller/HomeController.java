@@ -1,12 +1,9 @@
 package com.freemi.ui.controller;
 
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -26,7 +23,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpRequest;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -39,13 +36,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.freemi.common.util.CommonConstants;
 import com.freemi.common.util.CommonTask;
+import com.freemi.controller.interfaces.BseRestClientService;
 import com.freemi.controller.interfaces.MailSenderHandler;
+import com.freemi.controller.interfaces.ProfileRestClientService;
 import com.freemi.database.service.DatabaseEntryManager;
 import com.freemi.entity.database.CampaignSignupForm;
+import com.freemi.entity.database.EmailUnsubscribeForm;
 import com.freemi.entity.general.ClientSystemDetails;
 import com.freemi.entity.general.ContactUsForm;
 import com.freemi.entity.general.Folios;
@@ -53,7 +54,6 @@ import com.freemi.entity.general.ForgotPassword;
 import com.freemi.entity.general.Login;
 import com.freemi.ui.restclient.GoogleSecurity;
 import com.freemi.ui.restclient.RestClient;
-import com.freemi.ui.restclient.RestClientApps;
 import com.freemi.ui.restclient.RestClientBse;
 
 
@@ -69,6 +69,12 @@ public class HomeController {
 
 	@Autowired
 	MailSenderHandler mailSenderHandler;
+	
+	@Autowired
+	BseRestClientService bseRestClientService;
+	
+	@Autowired
+	ProfileRestClientService profileRestClientService;
 
 	@Autowired
 	private Environment env;
@@ -212,12 +218,12 @@ public class HomeController {
 		logger.info(referer);
 		returnUrl = redirectUrlAfterLogin(referer,request);
 
-		RestClient client = new RestClient();
+//		RestClient client = new RestClient();
 		ResponseEntity<String> response = null;
 
 
 		try{
-			response= client.login(login.getUsermobile(), login.getUserpassword(), ip);
+			response= profileRestClientService.login(login.getUsermobile(), login.getUserpassword(), ip);
 			//			model.addAttribute("token",response.getHeaders().get("Authorization").get(0));
 			//			model.addAttribute("loggedInUser",response.getHeaders().get("fname").get(0).split(" ")[0]);
 
@@ -283,7 +289,7 @@ public class HomeController {
 				if(uri.getRawPath().contains("/register") || uri.getRawPath().contains("/forgotPassword") || uri.getRawPath().contains("/resetPassword")){
 					//					returnUrl=uri.getRawPath().split("/products/")[1].replace(".do", "");
 					//					returnUrl = referer.replace(".do", "");
-//					returnUrl = "redirect:/products/";
+					//					returnUrl = "redirect:/products/";
 					returnUrl = /*"redirect:"+*/ URI.create(request.getRequestURL().toString()).resolve(request.getContextPath()).toString();
 				}else
 					//					returnUrl = uri.getRawPath().split("/products/")[1].replace(".do", "");
@@ -302,7 +308,7 @@ public class HomeController {
 		}else{
 			logger.debug("Referer is null");
 
-//			returnUrl = "redirect:/products/";
+			//			returnUrl = "redirect:/products/";
 			returnUrl = /*"redirect:" +*/URI.create(request.getRequestURL().toString()).resolve(request.getContextPath()).toString();
 		}
 
@@ -314,10 +320,11 @@ public class HomeController {
 
 	@RequestMapping(value = "/login2.do", method = RequestMethod.POST)
 	@ResponseBody
-	public String loginwithJqueryAttemptPost(@ModelAttribute("login") @Valid Login login,ModelMap model, BindingResult bindingResult,HttpServletRequest request, HttpSession session) {
+	public String loginwithJqueryAttemptPost(@ModelAttribute("login") @Valid Login login,ModelMap model, BindingResult bindingResult,HttpServletRequest request,HttpServletResponse response, HttpSession session) {
 		logger.info("@@@@ Inside Login do..");	
 		//		logger.info("Referer- "+ request.getHeader("Referer"));
 		//		String referer = request.getHeader("Referer");
+		logger.info("Sessuion id during login- "+ session.getId());
 		System.out.println("Recpcha form resuest- "+ request.getParameter("g-recaptcha-response"));
 
 		System.out.println("Fetching after login url- "+ login.getReturnUrl() + " OTPMIT - "+ login.isOtpSubmit());
@@ -350,8 +357,8 @@ public class HomeController {
 		System.out.println("login2.do referer- "+ referer);
 		//		returnUrl = redirectUrlAfterLogin(referer);
 
-		RestClient client = new RestClient();
-		ResponseEntity<String> response = null;
+//		RestClient client = new RestClient();
+		ResponseEntity<String> responseEntity = null;
 
 
 		if(!login.isOtpSubmit()){
@@ -362,13 +369,13 @@ public class HomeController {
 
 					//			Check if user exists and fetch email id
 
-					response = client.validateuserIdAndGetMail(login.getUsermobile());
-					String[] userStatus = response.getBody().toString().split(",");
+					responseEntity = profileRestClientService.validateuserIdAndGetMail(login.getUsermobile());
+					String[] userStatus = responseEntity.getBody().toString().split(",");
 
 					System.out.println(Arrays.asList(userStatus));
 					if(userStatus[0].equalsIgnoreCase("VALID")){
 						if(!userStatus[1].equals("NO_EMAIL")){
-							String resultotp= RestClientBse.otpGeneration(login.getUsermobile());
+							String resultotp= bseRestClientService.otpGeneration(login.getUsermobile());
 							System.out.println("RECEIVED OTP RESPONSE: "+ resultotp);
 							if(resultotp.contains("OTP")){
 								//				Trigger mail 
@@ -411,29 +418,40 @@ public class HomeController {
 				//				Direct login process with userid-password
 				try{
 
-					response= client.login(login.getUsermobile(), login.getUserpassword(), ip);
+					responseEntity= profileRestClientService.login(login.getUsermobile(), login.getUserpassword(), ip);
 					//			model.addAttribute("token",response.getHeaders().get("Authorization").get(0));
 					//			model.addAttribute("loggedInUser",response.getHeaders().get("fname").get(0).split(" ")[0]);
+					logger.info("Sessuion id during login- "+ session.getId());
+					session.setAttribute("loggedSession", responseEntity.getHeaders().get("fname").get(0).split(" ")[0]);
+					session.setAttribute("token", responseEntity.getHeaders().get("Authorization").get(0));
+					session.setAttribute("userid", responseEntity.getHeaders().get("userid").get(0));
+					session.setAttribute("email",responseEntity.getHeaders().get("email").get(0));
 
-					session.setAttribute("loggedSession", response.getHeaders().get("fname").get(0).split(" ")[0]);
-					session.setAttribute("token", response.getHeaders().get("Authorization").get(0));
-					session.setAttribute("userid", response.getHeaders().get("userid").get(0));
-					session.setAttribute("email",response.getHeaders().get("email").get(0));
+					//					Set session for other applciations
+					//					RestClientApps.setAllAppSession( response.getHeaders().get("userid").get(0), response.getHeaders().get("email").get(0), response.getHeaders().get("fname").get(0).split(" ")[0], response.getHeaders().get("Authorization").get(0));
 
-//					Set session for other applciations
-//					RestClientApps.setAllAppSession( response.getHeaders().get("userid").get(0), response.getHeaders().get("email").get(0), response.getHeaders().get("fname").get(0).split(" ")[0], response.getHeaders().get("Authorization").get(0));
-					
 					try{
-					ServletContext servletContext =request.getSession().getServletContext().getContext("/{applicationContextRoot}");
+						/*ServletContext servletContext =request.getSession().getServletContext().getContext("/{applicationContextRoot}");
 					servletContext.setAttribute("loggedSession", response.getHeaders().get("fname").get(0).split(" ")[0]);
 					servletContext.setAttribute("token", response.getHeaders().get("Authorization").get(0));
 					servletContext.setAttribute("userid", response.getHeaders().get("userid").get(0));
-					servletContext.setAttribute("email",response.getHeaders().get("email").get(0));
+					servletContext.setAttribute("email",response.getHeaders().get("email").get(0));*/
+
+						logger.info("Setting session in cookie for customer- "+ responseEntity.getHeaders().get("userid").get(0));	
+						
+						
+						response.addCookie(setSessionCookie("loggedSession", responseEntity.getHeaders().get("fname").get(0).split(" ")[0]));
+//						response.addCookie(setSessionCookie("token", URLEncoder.encode(responseEntity.getHeaders().get("Authorization").get(0), "UTF-8")));
+						response.addCookie(setSessionCookie("userid", responseEntity.getHeaders().get("userid").get(0)));
+						response.addCookie(setSessionCookie("email",responseEntity.getHeaders().get("email").get(0)));
+
+						logger.info("Setting session in cookie for customer is complete.");
 					}catch(Exception e){
-						System.out.println("Error sessting servlet context");
+//						System.out.println("Error setting cookie in session..");
+						logger.error("Error setting cookie in session..",e);
 					}
-					
-					logger.info(response.getHeaders().get("Authorization").get(0));
+
+					logger.info(responseEntity.getHeaders().get("Authorization").get(0));
 					returnUrl="SUCCESS";
 				}
 				catch(HttpStatusCodeException  e){
@@ -459,7 +477,7 @@ public class HomeController {
 			logger.info("Process OTP submit verfication for mobile number- "+ login.getUsermobile());
 
 			String resultotp2="OTP_INVALID";
-			resultotp2= RestClientBse.otpverify(login.getUsermobile(), login.getOtpVal());
+			resultotp2= bseRestClientService.otpverify(login.getUsermobile(), login.getOtpVal());
 			/*String otpFromSession = (String) session.getAttribute("OTP");
 			if(otpFromSession!=null){
 				if(session.getAttribute("OTP").toString().equalsIgnoreCase(login.getOtpVal())){
@@ -476,14 +494,37 @@ public class HomeController {
 				//				Generate login session
 
 				try {
-					response= client.otpLogin(login);
-					if(response.getBody().toString().equalsIgnoreCase("SUCCESS")){
-						session.setAttribute("loggedSession", response.getHeaders().get("fname").get(0).split(" ")[0]);
-						session.setAttribute("token", response.getHeaders().get("Authorization").get(0));
-						session.setAttribute("userid", response.getHeaders().get("userid").get(0));
-						session.setAttribute("email",response.getHeaders().get("email").get(0));
+					responseEntity= profileRestClientService.otpLogin(login);
+					if(responseEntity.getBody().toString().equalsIgnoreCase("SUCCESS")){
+						session.setAttribute("loggedSession", responseEntity.getHeaders().get("fname").get(0).split(" ")[0]);
+//						response.addCookie(setSessionCookie("token", URLEncoder.encode(responseEntity.getHeaders().get("Authorization").get(0), "UTF-8")));
+						session.setAttribute("token", responseEntity.getHeaders().get("Authorization").get(0));
+						session.setAttribute("userid", responseEntity.getHeaders().get("userid").get(0));
+						session.setAttribute("email",responseEntity.getHeaders().get("email").get(0));
 
-						logger.info(response.getHeaders().get("Authorization").get(0));
+						logger.info(responseEntity.getHeaders().get("Authorization").get(0));
+
+
+						try{
+							/*ServletContext servletContext =request.getSession().getServletContext().getContext("/{applicationContextRoot}");
+							servletContext.setAttribute("loggedSession", response.getHeaders().get("fname").get(0).split(" ")[0]);
+							servletContext.setAttribute("token", response.getHeaders().get("Authorization").get(0));
+							servletContext.setAttribute("userid", response.getHeaders().get("userid").get(0));
+							servletContext.setAttribute("email",response.getHeaders().get("email").get(0));*/
+
+							logger.info("Setting session in cookie for customer after OTP validation- "+ responseEntity.getHeaders().get("userid").get(0));	
+							Cookie ssokCookie = new Cookie("loggedSession", responseEntity.getHeaders().get("fname").get(0).split(" ")[0]);
+							ssokCookie.setPath("/");
+							// adding the cookie to the HttpResponse
+							response.addCookie(setSessionCookie("loggedSession", responseEntity.getHeaders().get("fname").get(0).split(" ")[0]));
+//							response.addCookie(setSessionCookie("token", responseEntity.getHeaders().get("Authorization").get(0)));
+							response.addCookie(setSessionCookie("userid", responseEntity.getHeaders().get("userid").get(0)));
+							response.addCookie(setSessionCookie("email",responseEntity.getHeaders().get("email").get(0)));
+							
+							logger.info("Setting session in cookie for customer is complete after OTP validaation.");
+						}catch(Exception e){
+							System.out.println("Error setting cookie in session..");
+						}
 
 						returnUrl="SUCCESS";
 					}else{
@@ -553,12 +594,12 @@ public class HomeController {
 		logger.info(referer);
 		returnUrl = redirectUrlAfterLogin(referer,request);
 
-		RestClient client = new RestClient();
+//		RestClient client = new RestClient();
 		ResponseEntity<String> response = null;
 
 
 		try{
-			response= client.otpLogin(login);
+			response= profileRestClientService.otpLogin(login);
 			//			model.addAttribute("token",response.getHeaders().get("Authorization").get(0));
 			//			model.addAttribute("loggedInUser",response.getHeaders().get("fname").get(0).split(" ")[0]);
 			if(response.getBody().equalsIgnoreCase("SUCCESS")){
@@ -601,23 +642,35 @@ public class HomeController {
 		session.removeAttribute("token");
 		session.removeAttribute("userid");
 		session.removeAttribute("email");
-		
-		try{
-			logger.info("Clear loggin data from servlet context...");
-			ServletContext servletContext =request.getSession().getServletContext().getContext("/{applicationContextRoot}");
-			servletContext.removeAttribute("loggedSession");
-			servletContext.removeAttribute("token");
-			servletContext.removeAttribute("userid");
-			servletContext.removeAttribute("email");
-			
-			
-			}catch(Exception e){
-				System.out.println("Error removing session data from servlet context during logout..");
-		
-			}
 		session.invalidate();
-		
-//		RestClientApps.logoutAllApplication("", "", "", "");
+		try{
+			logger.info("Clear logging data from cookie...");
+			Cookie ssokCookie = new Cookie("loggedSession", "");
+			ssokCookie.setMaxAge(0);
+			ssokCookie.setPath("/");
+			response.addCookie(ssokCookie);
+			
+			ssokCookie = new Cookie("email", "");
+			ssokCookie.setMaxAge(0);
+			ssokCookie.setPath("/");
+			response.addCookie(ssokCookie);
+			
+			ssokCookie = new Cookie("userid", "");
+			ssokCookie.setMaxAge(0);
+			ssokCookie.setPath("/");
+
+			response.addCookie(ssokCookie);
+
+			logger.info("Cookie unset complete for user");
+
+
+		}catch(Exception e){
+			System.out.println("Error removing session data from cookie during logout..");
+
+		}
+
+
+		//		RestClientApps.logoutAllApplication("", "", "", "");
 		return "redirect:/";
 	}
 
@@ -665,10 +718,10 @@ public class HomeController {
 			}
 		}
 
-		RestClient client = new RestClient();
+//		RestClient client = new RestClient();
 		ResponseEntity<String> response = null;
 		try {
-			response = client.forgotPassword(forgotPasswordForm);
+			response = profileRestClientService.forgotPassword(forgotPasswordForm);
 			logger.info(response.getBody());
 			//			logger.info(response.getHeaders());
 			model.addAttribute("success", "Password reset mail sent on registered email id.");
@@ -710,10 +763,10 @@ public class HomeController {
 	public String contactRequestSubmit(@ModelAttribute("contactForm") ContactUsForm contactForm,Model model) {
 		//logger.info("@@@@ Inside Login..");
 		logger.info("@@@@ ContactDoController @@@@");
-		RestClient client = new RestClient();
+//		RestClient client = new RestClient();
 		ResponseEntity<String> response = null;
 		try {
-			response = client.contactUs(contactForm);
+			response = profileRestClientService.contactUs(contactForm);
 			logger.info(response.getBody());
 			//			logger.info(response.getHeaders());
 			model.addAttribute("success", response.getBody());
@@ -783,10 +836,10 @@ public class HomeController {
 
 
 				// CAll to send mail from rest api
-				RestClient client = new RestClient();
+//				RestClient client = new RestClient();
 				ResponseEntity<String> response = null;
 				try {
-					response = client.campaignSingUp(campaign);
+					response = profileRestClientService.campaignSingUp(campaign);
 					logger.debug("Campaign mail send response- "+ response.getBody());
 
 				}catch(HttpStatusCodeException  e){
@@ -801,8 +854,8 @@ public class HomeController {
 
 		return "SUCCESS";
 	}
-	
-	
+
+
 	@RequestMapping(value = "/closewindow", method = RequestMethod.GET)
 	public void windowClose(HttpServletRequest request,HttpServletResponse response, HttpSession session) {
 		logger.info("Window closed... clear all session...");
@@ -810,23 +863,42 @@ public class HomeController {
 		session.removeAttribute("token");
 		session.removeAttribute("userid");
 		session.removeAttribute("email");
-		
+
 		try{
-			logger.info("Clear loggin data from servlet context...");
+			/*logger.info("Clear loggin data from servlet context...");
 			ServletContext servletContext =request.getSession().getServletContext().getContext("/{applicationContextRoot}");
 			servletContext.removeAttribute("loggedSession");
 			servletContext.removeAttribute("token");
 			servletContext.removeAttribute("userid");
-			servletContext.removeAttribute("email");
+			servletContext.removeAttribute("email");*/
+			
+			Cookie ssokCookie = new Cookie("loggedSession", "");
+			ssokCookie.setMaxAge(0);
+			ssokCookie.setPath("/");
+			response.addCookie(ssokCookie);
+			
+			ssokCookie = new Cookie("email", "");
+			ssokCookie.setMaxAge(0);
+			ssokCookie.setPath("/");
+			response.addCookie(ssokCookie);
+			
+			ssokCookie = new Cookie("userid", "");
+			ssokCookie.setMaxAge(0);
+			ssokCookie.setPath("/");
 			
 			
-			}catch(Exception e){
-				System.out.println("Error removing session data from servlet context during logout..");
-		
-			}
+
+			response.addCookie(ssokCookie);
+			
+
+
+		}catch(Exception e){
+			System.out.println("Error removing session data from cookie during window close..");
+
+		}
 		session.invalidate();
-		
-		
+
+
 	}
 
 	@ModelAttribute("blogList")
@@ -870,7 +942,49 @@ public class HomeController {
 	}
 	
 	
+	@RequestMapping(value = "/mailer/unsubscribe", method = RequestMethod.GET)
+	public ModelAndView unsubscribeUserFormMailer(@Param("id") String emailid,@Param("c") String mailer_categorym,HttpServletRequest request, HttpServletResponse response) {
+		// create some sample data
+		logger.info("Unsubscribe user from mailer request received");
+		EmailUnsubscribeForm unsubscribeform = new EmailUnsubscribeForm();
+
+		// return a view which will be resolved by an excel view resolver
+		return new ModelAndView("email-unsubscribe", "unsubscribeform", unsubscribeform);
+	}
 	
+	@RequestMapping(value = "/mailer/unsubscribe.do", method = RequestMethod.POST)
+	public String unsubscribeUserFormMailerDo(@ModelAttribute("unsubscribeform") EmailUnsubscribeForm form, HttpServletRequest request, HttpServletResponse response, RedirectAttributes attrs) {
+		// create some sample data
+		logger.info("Unsubscribe user from mailer request received do controller");
+
+		attrs.addAttribute("emailid", form.getEmail());
+		return "redirect:/mailer/unsubscribe-complete";
+	}
+	
+	@RequestMapping(value = "/mailer/unsubscribe-complete", method = RequestMethod.GET)
+	public String unsubscribeUserFormMailerDo(@ModelAttribute("emailid") String emailid, Model map, HttpServletRequest request, HttpServletResponse response) {
+		// create some sample data
+		logger.info("Unsubscribe user from mailer request complete for - "+ emailid);
+		
+		map.addAttribute("emailid", emailid);
+		return "email-unsubscribe-complete";
+	}
+
+	private Cookie setSessionCookie(String cookieName, String cookieValue){
+		logger.info("Setting session cookie- "+ cookieName);
+		Cookie ssoCookie = new Cookie(cookieName,cookieValue);
+		ssoCookie.setPath("/");
+//		String httpOnly = env.getProperty("server.session.cookie.http-only");
+//		System.out.println(httpOnly.equalsIgnoreCase("true")?"HTTPONLY": "NOT HTTPO");
+		// adding the cookie to the HttpResponse
+//		System.out.println(env.getProperty("server.session.cookie.http-only"));
+		ssoCookie.setMaxAge(Integer.valueOf(env.getProperty("server.session.cookie.max-age")));
+		ssoCookie.setSecure(env.getProperty("server.session.cookie.secure").equalsIgnoreCase("true")?true:false);
+		ssoCookie.setHttpOnly(env.getProperty("server.session.cookie.http-only").equalsIgnoreCase("true")?true:false);
+//		ssoCookie.setDomain(env.getProperty("server.session.cookie.domain"));
+		return ssoCookie;
+	}
+
 
 
 	/*	private Map<String, String> blogLinks(){

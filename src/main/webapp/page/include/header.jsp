@@ -1,7 +1,7 @@
 <!--Navbar -->
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <link href="<c:url value="${contextcdn}/resources/css/styling-header.css"/>" rel="stylesheet" type="text/css">
-<c:set var="contextPath" value="/" />
+<c:set var="contextPath" value="/products" />
 <style>
 .new-header{
 background: #000046;  /* fallback for old browsers */

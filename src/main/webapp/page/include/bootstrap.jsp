@@ -21,10 +21,9 @@
 <!-- Material Design Bootstrap -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.7.3/css/mdb.min.css" rel="stylesheet">
 
-
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <!-- McAfee Secure logo -->
-<script type="text/javascript" src="https://cdn.ywxi.net/js/1.js" async></script>
+<script type="text/javascript" src="https://cdn.ywxi.net/js/1.js" defer="defer"></script>
 
 <jsp:include page="./GoogleHeadTag.jsp"></jsp:include>
 <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>

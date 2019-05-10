@@ -33,12 +33,12 @@ function MFRedeem(folio,code,type){
 }
 
 
-function cancelOrder(schemeCode,orderno,type,category){
+function cancelOrder(schemeCode,orderno,type,category,transactionId){
 	console.log("Cancel order request...")
-	if(type== 'SIP'){
+	if(type== 'SIP_COMMNTED'){
 		alert("SIP order cancel process will be available soon. ");
-	}else if(type == 'LUMPSUM'){
-		window.location.assign("/products/my-dashboard/cancel-order?ref="+btoa(schemeCode+"|"+orderno+"|"+type+"|"+category));
+	}else if(type == 'LUMPSUM' || type == 'SIP'){
+		window.location.assign("/products/my-dashboard/cancel-order?ref="+btoa(schemeCode+"|"+orderno+"|"+type+"|"+category+"|"+transactionId));
 		
 	}else{
 		alert("Invalid type of investment");

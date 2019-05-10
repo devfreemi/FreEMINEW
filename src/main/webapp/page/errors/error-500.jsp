@@ -14,7 +14,7 @@
 <meta http-equiv="expires" content="0" />
 <jsp:include page="../include/bootstrap.jsp"></jsp:include>
 </head>
-<body class="login_design" onload="formOnLoad();">
+<body class="login_design">
 	<jsp:include page="../include/GoogleBodyTag.jsp"></jsp:include>
 	<jsp:include page="../include/header.jsp"></jsp:include>
 	<div class="container" style="min-height: 100vh; padding-top: 30px;text-align: center;">

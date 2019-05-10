@@ -26,6 +26,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      	.frameOptions().sameOrigin()
      	
      ;
+     security.logout().logoutUrl("/logout");
     }
 	
 	@Autowired

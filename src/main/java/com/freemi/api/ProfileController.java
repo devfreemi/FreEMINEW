@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.freemi.controller.interfaces.ProfileRestClientService;
 import com.freemi.entity.general.Login;
 import com.freemi.entity.general.LoginResponse;
 import com.freemi.entity.general.Registerform;
@@ -24,6 +26,9 @@ import com.freemi.ui.restclient.RestClient;
 @RestController
 @CrossOrigin(origins="*")
 public class ProfileController {
+	
+	@Autowired
+	ProfileRestClientService profileRestClientService; 
 
 	private static final Logger logger = LogManager.getLogger(ProfileController.class);
 
@@ -40,11 +45,11 @@ public class ProfileController {
 			logger.info("Login request for user id via api- "+ loginForm.getUsermobile());
 
 
-			RestClient client = new RestClient();
+//			RestClient client = new RestClient();
 			ResponseEntity<String> response = null;
 
 			try{
-				response= client.login(loginForm.getUsermobile(), loginForm.getUserpassword(), loginForm.getSystemip());
+				response= profileRestClientService.login(loginForm.getUsermobile(), loginForm.getUserpassword(), loginForm.getSystemip());
 
 				//				logger.debug(response.getStatusCodeValue());
 				if(response.getStatusCodeValue() == 200){
@@ -90,10 +95,10 @@ public class ProfileController {
 			logger.info("Login request for user id via api- "+ registerForm.getMobile());
 
 
-			RestClient client = new RestClient();
+//			RestClient client = new RestClient();
 			ResponseEntity<String> response = null;
 
-			response = client.registerUser(registerForm);
+			response = profileRestClientService.registerUser(registerForm);
 			String status = response.getHeaders().get("STATUS").get(0);
 			if(status.equals("SUCCESS")){
 				//					model.addAttribute("success", "Registration successful. Login to your account");
@@ -130,7 +135,7 @@ public class ProfileController {
 	public Object apigetProfile(HttpServletRequest request, HttpServletResponse httpResponse){
 		
 		logger.error("Request received to fectch profiel data via api");
-		RestClient client = new RestClient();
+//		RestClient client = new RestClient();
 		ResponseEntity<String> response = null;
 		
 		UserProfile profile=null;
@@ -142,7 +147,7 @@ public class ProfileController {
 			logger.error("Processing request for profile data fetch for user- " + mobile);
 			
 		try {
-			response = client.getProfileData(mobile, token,ip);
+			response = profileRestClientService.getProfileData(mobile, token,ip);
 			profile = new ObjectMapper().readValue(response.getBody(), UserProfile.class);
 
 		}catch(HttpStatusCodeException  e){
