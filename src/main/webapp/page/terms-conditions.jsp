@@ -11,12 +11,12 @@
 	rel="stylesheet">
 <link href="<c:url value="${contextcdn}/resources/css/styles.css"/>"
 	rel="stylesheet">
- <link href="<c:url value="${contextcdn}/resources/css/animate.css"/>" type="text/css" rel="stylesheet">
+<link href="<c:url value="${contextcdn}/resources/css/animate.css"/>"
+	type="text/css" rel="stylesheet">
 <jsp:include page="include/bootstrap.jsp"></jsp:include>
 <script src="<c:url value="${contextcdn}/resources/js/common.js" />"></script>
 </head>
-<body class="back_set"
-	>
+<body class="back_set">
 	<div class='thetop'></div>
 	<jsp:include page="include/header.jsp"></jsp:include>
 	<div class="container freemi_container">
@@ -38,9 +38,8 @@
 				AMFI with ARN Code - 141396; to act as Mutual Fund Distributor for
 				online and offline distribution of units of the schemes of mutual
 				funds through its website&nbsp; <a title="www.freemi.in"
-					href="https://www.freemi.in"> www.freemi.in
-				</a>.&nbsp;(&ldquo;NTACTUS&nbsp;websites&rdquo; or
-				&ldquo;website&rdquo;)
+					href="https://www.freemi.in"> www.freemi.in </a>.&nbsp;(&ldquo;NTACTUS&nbsp;websites&rdquo;
+				or &ldquo;website&rdquo;)
 			</p>
 			<!--  -->
 			<p>This NTACTUS&nbsp;Registry account/accounts&nbsp;facility is
@@ -869,12 +868,11 @@
 					<p>
 						<strong>Termination</strong>
 					</p>
-					<p>NTACTUS&nbsp;may terminate the Services by giving 30
-						(thirty) days prior notice in writing to the Registered Customer
-						provided that the Registered Customer shall not be relived of
-						obligations&nbsp;hereunder notwithstanding such termination
-						incurred prior to the date on which such termination shall become
-						effective.</p>
+					<p>NTACTUS may terminate the Services by giving 30 (thirty)
+						days prior notice in writing to the Registered Customer provided
+						that the Registered Customer shall not be relieved of obligations
+						hereunder notwithstanding such termination incurred prior to the
+						date on which such termination shall become effective.</p>
 				</li>
 				<!-- <p>
         <strong>&nbsp;</strong>
@@ -894,22 +892,84 @@
       </p> -->
 			</ol>
 
-		<p style="text-align: center;"><strong>Annexure B</strong><br />Terms and Conditions</p>
-<p><br /><strong><span style="text-decoration: underline;">Online Acceptance Text</span></strong></p>
-<p>&ldquo;I hereby allow Ntactus Financial Service Pvt Ltd (FreEMI.in) to utilize my KYC information such as identity (name, PAN, age etc.), address and signature for sending it to Asset Management Companies for the purpose of validation and to comply with the legal and regulatory requirements. I hereby accept that for any transactions that are submitted offline i.e. with wet signatures, the signature available in my KYC records would be used for signature verification. I agree and understand that I/we shall be solely liable to inform the Ntactus Financial Service Pvt Ltd (FreEMI.in) / AMC in case of any change in my / our KYC information including change in signature/ signatories etc. and in the event of my / our signature not being updated, available or legible in KYC records, the Ntactus Financial Service Pvt Ltd (FreEMI.in) / ABSL AMC would be within its rights to carry out further checks to validate the authenticity of the request or reject any such offline request based on existing KYC information.&rdquo;</p>
-<p style="text-align: center;"><br /><strong>Annexure C</strong><br />Declaration/s / undertaking/s</p>
-<p>&nbsp;</p>
-<p><strong><span style="text-decoration: underline;">Online Declaration/ undertaking to be obtained at the time of each on-line transaction</span></strong></p>
-<p>&ldquo;Having read and understood the content of the SID / SAI of the scheme, I/we hereby apply for units of the scheme. I have read and understood the terms, conditions, details, rules and regulations governing the scheme. I/We hereby declare that the amount invested in the scheme is through legitimate source only and does not involve designed for the purpose of the contravention of any Act, Rules, Regulations, Notifications or Directives of the provisions of the Income Tax Act, Anti Money Laundering Laws, Anti-Corruption Laws or any other applicable laws enacted by the Government of India from time to time. I/we have not received nor have been induced by any rebate or gifts, directly or indirectly in making this investment. I/We confirm that the funds invested in the Scheme, legally belongs to me/us. In event &ldquo;Know Your Client&rdquo; process is not completed by me/us to the satisfaction of the Mutual Fund, (I/we hereby authorize the Mutual Fund, to redeem the funds invested in the Scheme, in favour of the applicant, at the applicable NAV prevailing on the date of such redemption and undertake such other action with such funds that may be required by the law.) The Ntactus Financial Service Pvt Ltd (FreEMI.in) ARN NO:141396 has disclosed to me/us all the commissions (trail commission or any other mode), payable to him for the different competing Schemes of various Mutual Funds amongst which the Scheme is being recommended to me/ us. I/We confirm that I/We do not have any existing Micro SIP/Lumpsum investments which together with the current application will result in aggregate investments exceeding Rs. 50,000 in a year (Applicable for Micro investment only.) with respective AMC.&rdquo;</p>
-<p>&nbsp;</p>
-<p><strong>For NRIs only &ndash;</strong></p>
-<p>&ldquo;I / We confirm that I am/ we are Non Residents of Indian nationality/origin and that I/We have remitted funds from abroad through approved banking channels or from funds in my/ our Non Resident External / Non Resident Ordinary / FCNR account. I/We confirm that details provided by me/us are true and correct.&rdquo;</p>
+			<p style="text-align: center;">
+				<strong>Annexure B</strong><br />Terms and Conditions
+			</p>
+			<p>
+				<br />
+				<strong><span style="text-decoration: underline;">Online
+						Acceptance Text</span></strong>
+			</p>
+			<p>&ldquo;I hereby allow Ntactus Financial Service Pvt Ltd
+				(FreEMI.in) to utilize my KYC information such as identity (name,
+				PAN, age etc.), address and signature for sending it to Asset
+				Management Companies for the purpose of validation and to comply
+				with the legal and regulatory requirements. I hereby accept that for
+				any transactions that are submitted offline i.e. with wet
+				signatures, the signature available in my KYC records would be used
+				for signature verification. I agree and understand that I/we shall
+				be solely liable to inform the Ntactus Financial Service Pvt Ltd
+				(FreEMI.in) / AMC in case of any change in my / our KYC information
+				including change in signature/ signatories etc. and in the event of
+				my / our signature not being updated, available or legible in KYC
+				records, the Ntactus Financial Service Pvt Ltd (FreEMI.in) / ABSL
+				AMC would be within its rights to carry out further checks to
+				validate the authenticity of the request or reject any such offline
+				request based on existing KYC information.&rdquo;</p>
+			<p style="text-align: center;">
+				<br />
+				<strong>Annexure C</strong><br />Declaration/s / undertaking/s
+			</p>
+			<!-- <p>&nbsp;</p> -->
+			<p>
+				<strong><span style="text-decoration: underline;">Online
+						Declaration/ undertaking to be obtained at the time of each
+						on-line transaction</span></strong>
+			</p>
+			<p>&ldquo;Having read and understood the content of the SID / SAI
+				of the scheme, I/we hereby apply for units of the scheme. I have
+				read and understood the terms, conditions, details, rules and
+				regulations governing the scheme. I/We hereby declare that the
+				amount invested in the scheme is through legitimate source only and
+				does not involve designed for the purpose of the contravention of
+				any Act, Rules, Regulations, Notifications or Directives of the
+				provisions of the Income Tax Act, Anti Money Laundering Laws,
+				Anti-Corruption Laws or any other applicable laws enacted by the
+				Government of India from time to time. I/we have not received nor
+				have been induced by any rebate or gifts, directly or indirectly in
+				making this investment. I/We confirm that the funds invested in the
+				Scheme, legally belongs to me/us. In event &ldquo;Know Your
+				Client&rdquo; process is not completed by me/us to the satisfaction
+				of the Mutual Fund, (I/we hereby authorize the Mutual Fund, to
+				redeem the funds invested in the Scheme, in favour of the applicant,
+				at the applicable NAV prevailing on the date of such redemption and
+				undertake such other action with such funds that may be required by
+				the law.) The Ntactus Financial Service Pvt Ltd (FreEMI.in) ARN
+				NO:141396 has disclosed to me/us all the commissions (trail
+				commission or any other mode), payable to him for the different
+				competing Schemes of various Mutual Funds amongst which the Scheme
+				is being recommended to me/ us. I/We confirm that I/We do not have
+				any existing Micro SIP/Lumpsum investments which together with the
+				current application will result in aggregate investments exceeding
+				Rs. 50,000 in a year (Applicable for Micro investment only.) with
+				respective AMC.&rdquo;</p>
+			<!-- <p>&nbsp;</p> -->
+			<p>
+				<strong>For NRIs only &ndash;</strong>
+			</p>
+			<p>&ldquo;I / We confirm that I am/ we are Non Residents of
+				Indian nationality/origin and that I/We have remitted funds from
+				abroad through approved banking channels or from funds in my/ our
+				Non Resident External / Non Resident Ordinary / FCNR account. I/We
+				confirm that details provided by me/us are true and correct.&rdquo;</p>
 
 		</div>
 
 	</div>
 	<div class='scrolltop'>
-    <div class='scroll icon bounceIn'><i class="fa fa-4x fa-angle-up" style="font-size: 30px;"></i></div>
+		<div class='scroll icon bounceIn'>
+			<i class="fa fa-4x fa-angle-up" style="font-size: 30px;"></i>
+		</div>
 	</div>
 	<jsp:include page="include/footer.jsp"></jsp:include>
 </body>

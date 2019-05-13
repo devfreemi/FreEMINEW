@@ -8,7 +8,7 @@ import com.freemi.entity.investment.SelectMFFund;
 @Service
 public interface MailSenderHandler {
 
-	public void mfpurchasenotofication(SelectMFFund selectedFund, BseMFInvestForm userDetails) throws InterruptedException;
+	public void mfpurchasenotofication(SelectMFFund selectedFund, BseMFInvestForm userDetails, String transactionType) throws InterruptedException;
 	public void loginOTPMail(String userid, String otp,String email, String validityTimeinMin) throws InterruptedException;
 	
 }

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ForgotPassword {
 
-	@NotNull @NotEmpty @Size(min=10,max=10) @Pattern(regexp="[6-9][0-9]{9}", message="Inavlid mobile number format!")
+	@NotNull(message="Data null ") @NotEmpty(message="Data empty") @Size(min=10,max=10) @Pattern(regexp="[6-9][0-9]{9}", message="Inavlid mobile number format!")
 	public String usermobile;
 
 	public String getUsermobile() {

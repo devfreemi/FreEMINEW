@@ -21,6 +21,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.Proxy;
 import org.hibernate.validator.constraints.NotBlank;
 
+import com.freemi.common.util.CommonConstants;
 import com.freemi.entity.database.UserBankDetails;
 
 @Entity
@@ -43,7 +44,7 @@ public class BseMFInvestForm implements Serializable {
 	@Column(name="CLIENT_ID")
 	private String clientID;
 	
-	@NotBlank(message="Primary Holder PAn is mandatory")
+	@NotBlank(message="Primary Holder PAN is mandatory")
 	@Column(name="PAN_NO_1")
 	private String pan1="";
 	
@@ -146,8 +147,7 @@ public class BseMFInvestForm implements Serializable {
 	@Column(name="")
 	private String fatcaStatus;
 	
-	@Transient
-	@Column(name="")
+	@Column(name="TAX_STATUS")
 	private String taxStatus;
 	
 	@Transient
@@ -174,11 +174,17 @@ public class BseMFInvestForm implements Serializable {
 	@Column(name="")
 	private String kycType="";
 	
+	@Column(name="CREATED_BY")
+	private String createdBy=CommonConstants.BSE_USER_ID;
+	
 	@Transient
 	private String customerRegistered="N";
 	
 	@Transient
 	private boolean profileRegRequired=false;
+	
+	@Column(name="ACCOUNT_ACTIVE")
+	private String accountActive="Y";
 	
 	@Valid
 	@OneToOne(fetch=FetchType.EAGER, mappedBy="mfForm",cascade=CascadeType.ALL)
@@ -626,6 +632,16 @@ public class BseMFInvestForm implements Serializable {
 
 	public void setCustomerRegistered(String customerRegistered) {
 		this.customerRegistered = customerRegistered;
+	}
+
+
+	public String getAccountActive() {
+		return accountActive;
+	}
+
+
+	public void setAccountActive(String accountActive) {
+		this.accountActive = accountActive;
 	}
 	
 }

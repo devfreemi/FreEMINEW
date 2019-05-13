@@ -36,26 +36,26 @@
 						<div class="row">
 							<div class="col-4">
 								<div class="form-group row" style="font-size: 12px;">
-									<div class="col-sm-6">
+									<div class="col-6">
 										<label>Folio No:</label>
 									</div>
-									<label class="col-sm-6" style="font-weight: 600;">${purchaseForm.portfolio}</label>
+									<label class="col-6" style="font-weight: 600;">${purchaseForm.portfolio}</label>
 								</div>
 							</div>
 							<div class="col-4">
 								<div class="form-group row" style="font-size: 12px;">
-									<div class="col-sm-6">
+									<div class="col-6">
 										<label>Account Holder</label>
 									</div>
-									<label class="col-sm-6" style="font-weight: 600;">${purchaseForm.unitHolderName}</label>
+									<label class="col-6" style="font-weight: 600;">${purchaseForm.unitHolderName}</label>
 								</div>
 							</div>
 							<div class="col-4">
 								<div class="form-group row" style="font-size: 12px;">
-									<div class="col-sm-6">
+									<div class="col-6">
 										<label>Date</label>
 									</div>
-									<label class="col-sm-6" style="font-weight: 600;"><%=(new SimpleDateFormat("dd-MMM-yyyy")).format(new Date())%></label>
+									<label class="col-6" style="font-weight: 600;"><%=(new SimpleDateFormat("dd-MMM-yyyy")).format(new Date())%></label>
 								</div>
 							</div>
 						</div>
@@ -67,7 +67,7 @@
 
 						<!-- One "tab" for each step in the form: -->
 						<div class="tab">
-							<h4 class="text-md-center">1. Scheme Details</h4>
+							<h4 class="text-md-center" style="color: #f16927; font-weight: 500;border-bottom: 1px solid;">1. Scheme Details</h4>
 							<div class="row">
 								<%-- <jsp:include page="bseform-redeem.jsp"></jsp:include> --%>
 								<div class="col-md-12 col-lg-12" style="text-align: left;">
@@ -80,9 +80,9 @@
 
 									<div class="form-group row">
 										<label for="folio"
-											class="col-sm-4 col-form-label col-form-label-sm">Folio
+											class="col-6 col-md-4 col-lg-4 col-form-label col-form-label-sm">Folio
 											No:</label>
-										<div class="col-sm-8">
+										<div class="col-6 col-md-8 col-lg-8">
 											<form:input readonly="true" path="portfolio" id="folio"
 												class="form-control form-control-sm form-control-plaintext" />
 										</div>
@@ -90,18 +90,19 @@
 
 									<div class="form-group row">
 										<label for="fundname"
-											class="col-sm-4 col-form-label col-form-label-sm">Scheme
+											class="col-6 col-md-4 col-lg-4 col-form-label col-form-label-sm">Scheme
 											Name:</label>
-										<div class="col-sm-8">
+										<div class="col-6 col-md-8 col-lg-8">
 											<form:input readonly="true" path="fundName" id="fundname"
 												class="form-control form-control-sm form-control-plaintext" />
 										</div>
 									</div>
 
 									<div class="form-group row">
-										<label for="schemeName" class="col-sm-4 col-form-label col-form-label-sm">Scheme
+										<label for="schemeName"
+											class="col-6 col-md-4 col-lg-4 col-form-label col-form-label-sm">Scheme
 											Code</label>
-										<div class="col-sm-8">
+										<div class="col-6 col-md-8 col-lg-8">
 											<%-- <input type="text" readonly class="form-control-plaintext"
 									id="schemeName" value="${selectedFund.schemeName }"> --%>
 											<span id="growthcode"> <form:input
@@ -116,9 +117,9 @@
 
 									<div class="form-group row">
 										<label for="investtype"
-											class="col-sm-4 col-form-label col-form-label-sm">Investment
+											class="col-6 col-md-4 col-lg-4 col-form-label col-form-label-sm">Investment
 											Type:</label>
-										<div class="col-sm-8">
+										<div class="col-6 col-md-8 col-lg-8">
 
 											<div
 												class="custom-control custom-radio custom-control-inline">
@@ -141,7 +142,7 @@
 									<div class="form-group row">
 										<label for="invCategory" class="col-sm-4 col-form-label">Category
 										</label>
-										<div class="col-sm-8">
+										<div class="col-6 col-md-8 col-lg-8">
 											<div
 												class="custom-control custom-radio custom-control-inline">
 												<form:radiobutton path="fundCategory" value="Z"
@@ -165,9 +166,9 @@
 
 									<div class="form-group row">
 										<label for="redeemamount"
-											class="col-sm-4 col-form-label col-form-label-sm">Purchase
+											class="col-6 col-md-4 col-lg-4 col-form-label col-form-label-sm">Purchase
 											Amount:</label>
-										<div class="col-sm-8">
+										<div class="col-6 col-md-8 col-lg-8">
 											<form:input path="purchaseAmounts" id="purchaseamount"
 												class="form-control form-control-sm" />
 										</div>
@@ -175,9 +176,9 @@
 
 									<%-- <div class="form-group row">
 										<label for="paymodet"
-											class="col-sm-4 col-form-label col-form-label-sm">Payment
+											class="col-6 col-md-4 col-lg-4 col-form-label col-form-label-sm">Payment
 											Mode:</label>
-										<div class="col-sm-8">
+										<div class="col-6 col-md-8 col-lg-8">
 
 											<c:choose>
 												<c:when test="${purchaseForm.investType == 'SIP' }">
@@ -221,32 +222,32 @@
 						<div class="tab">
 							<div class="row">
 								<div class="col-md-12 col-lg-12 purchase-confirm-tab">
-									<h4 class="text-md-center">2. Confirm Details</h4>
+									<h4 class="text-md-center" style="color: #f16927; font-weight: 500;border-bottom: 1px solid;">2. Confirm Details</h4>
 									<!-- ------------------------------  Confirm tab ------------------------------------------------------>
 
 									<div class="form-group row mb-1">
 										<label for="folioconf"
-											class="col-sm-4 col-form-label col-form-label-sm">Folio
+											class="col-6 col-md-4 col-lg-4 col-form-label col-form-label-sm">Folio
 											No:</label>
-										<div class="col-sm-8">
+										<div class="col-6 col-md-8 col-lg-8">
 											<label class="confirm-label" id="folioconf">${purchaseForm.portfolio }</label>
 										</div>
 									</div>
 
 									<div class="form-group row mb-1">
 										<label for="fundnameconf"
-											class="col-sm-4 col-form-label col-form-label-sm">Scheme
+											class="col-6 col-md-4 col-lg-4 col-form-label col-form-label-sm">Scheme
 											Name:</label>
-										<div class="col-sm-8">
+										<div class="col-6 col-md-8 col-lg-8">
 											<label class="confirm-label" id="fundnameconf">${purchaseForm.fundName }</label>
 										</div>
 									</div>
 
 									<div class="form-group row mb-1">
 										<label for="investtypeconf"
-											class="col-sm-4 col-form-label col-form-label-sm">Investment
+											class="col-6 col-md-4 col-lg-4 col-form-label col-form-label-sm">Investment
 											Type:</label>
-										<div class="col-sm-8">
+										<div class="col-6 col-md-8 col-lg-8">
 											<label class="confirm-label" id="investtypeconf">${purchaseForm.investType }</label>
 
 										</div>
@@ -254,38 +255,35 @@
 
 									<div class="form-group row mb-1">
 										<label for="redeemamountconf"
-											class="col-sm-4 col-form-label col-form-label-sm">Purchase
+											class="col-6 col-md-4 col-lg-4 col-form-label col-form-label-sm">Purchase
 											Amount:</label>
-										<div class="col-sm-8">
+										<div class="col-6 col-md-8 col-lg-8">
 											<label class="confirm-label" id="purchaseamountconf"></label>
 										</div>
 									</div>
 
+									<hr>
 									<div class="form-group row mb-1">
-										<label for="paymodeconf"
-											class="col-sm-4 col-form-label col-form-label-sm">Payment
-											Mode:</label>
-										<div class="col-sm-8">
-
-											<label class="confirm-label" id="paymodeconf"></label>
-
-										</div>
-									</div>
-
-									<div class="form-group row mb-1">
-										<label for="agreepolicyconf"
-											class="col-sm-4 col-form-label col-form-label-sm"></label>
-										<div class="col-sm-8">
+										<!-- <label for="agreepolicyconf"
+											class="col-6 col-md-4 col-lg-4 col-form-label col-form-label-sm">Policy</label> -->
+										<div class="col-md-12 col-lg-12">
 
 											<div class="custom-control custom-checkbox">
+												<span data-toggle="modal" data-target="#mfdisclaimer"
+													style="text-decoration: underline; cursor: pointer; color: blue; font-size: 11px;">Disclaimer</span>
 												<form:checkbox path="agreePolicy"
 													class="custom-control-input" id="agreepolicyconf" />
 												<label class="custom-control-label" for="agreepolicyconf">
-													<span style="font-size: 11px;"> Liquid Schemes
-														Subscriptions: <strong>01.00 pm</strong> <br> Liquid
-														Schemes Redemptions &amp; Switch Out: <strong>02:00
-															pm</strong> <br> All other Schemes Purchases, Redemptions
-														&amp; Switch Out: <strong>02.15:00 pm</strong> <br>
+													<span style="font-size: 11px; text-align: justify;">
+														1. Performance history may or may not be in sync with the
+														future performance and should not be considered as a base
+														for investments. <br> 2. The size of the Assets Under
+														Management (AuM) are based on the last published Monthly
+														AUM by the corresponding fund house. <br> 3. If the
+														investors are confused about whether the product is
+														suitable for them or not, then he should consult their
+														financial advisers for a better guidance. <br>
+
 												</span>
 												</label>
 											</div>
@@ -293,7 +291,7 @@
 										</div>
 									</div>
 
-									<form:hidden path="purchaseTransid"/>
+									<form:hidden path="purchaseTransid" />
 									<!-- End of confirm tab -->
 
 									<%-- <div class="form-group row">
@@ -336,6 +334,9 @@
 	<jsp:include page="../include/footer.jsp"></jsp:include>
 
 
+	<jsp:include page="./disclaimer.jsp"></jsp:include>
+
+
 </body>
 
 <script type="text/javascript">
@@ -355,7 +356,7 @@
 		}
 		if (n == (x.length - 1)) {
 			document.getElementById("nextBtn").innerHTML = "Submit";
-			console.log("Additional purhase- "+$("#purchaseamount").val())
+			console.log("Additional purhase- " + $("#purchaseamount").val())
 			$("#purchaseamountconf").text($("#purchaseamount").val());
 			/* $("#paymodeconf").text($("#input[name='pay']:checked").val()); */
 		} else {
@@ -370,8 +371,8 @@
 		console.log("Next page...");
 		var x = document.getElementsByClassName("tab");
 		// Exit the function if any field in the current tab is invalid:
-		console.log("n- "+ n)
-		if (n == 2){
+		console.log("n- " + n)
+		if (n == 2) {
 			console.log("Return false");
 			return false;
 		}
@@ -386,7 +387,7 @@
 			return false;
 		}
 		// Otherwise, display the correct tab:
-		console.log("SHow tab- "+ currentTab);
+		console.log("SHow tab- " + currentTab);
 		showTabAdditional(currentTab);
 	}
 

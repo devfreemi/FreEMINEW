@@ -281,9 +281,16 @@
 		 -->
 		
 	</div>
+	
+	<!-- BSE MF  -->
+		<jsp:include page="./bsestarmfpowered.jsp"></jsp:include>
 	<jsp:include page="../include/footer.jsp"></jsp:include>
 
-	<script>
+	
+	
+</body>
+
+<script type="text/javascript" defer="defer">
 		(function() {
 			window.requestAnimFrame = (function(callback) {
 				return window.requestAnimationFrame
@@ -754,6 +761,5 @@
 		
 		$('.file_upload').file_upload();
 	</script>
-	
-</body>
+
 </html>

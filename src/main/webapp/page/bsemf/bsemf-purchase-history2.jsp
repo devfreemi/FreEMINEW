@@ -95,7 +95,7 @@ table.dataTable thead th, table.dataTable thead td {
 						<h5 style="color: #2793e2; font-family: serif;">No purchase
 							history found</h5>
 						<div style="text-align: center;">
-							<a href="/products/mutual-funds/top-performing"><button
+							<a href="/products/mutual-funds/funds-explorer"><button
 									class="btn btn-sm btn-info">
 									Make your 1<sup>st</sup>Investment
 								</button></a>

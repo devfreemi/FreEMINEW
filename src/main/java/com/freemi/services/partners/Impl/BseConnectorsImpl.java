@@ -131,7 +131,8 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 			}
 		}else{
 			logger.info("BSE Investment is currently disabled");
-			bseOrderResp.setClientCode("000");
+//			bseOrderResp.setClientCode(CommonConstants.BSE_API_SERVICE_DISABLED);
+			bseOrderResp.setSuccessFlag(CommonConstants.BSE_API_SERVICE_DISABLED);
 			bseOrderResp.setBsereMarks("INV_DISABLED");
 		}
 		return bseOrderResp;

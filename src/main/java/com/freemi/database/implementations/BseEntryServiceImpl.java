@@ -279,9 +279,9 @@ public class BseEntryServiceImpl implements BseEntryManager {
 				transStatus.setStatusMsg(bseResult.getBsereMarks());
 				transStatus.setBseOrderNoFromResponse(bseResult.getOrderNoOrSipRegNo());
 
-			}else if (bseResult.getSuccessFlag().equalsIgnoreCase("000")){
+			}else if (bseResult.getSuccessFlag().equalsIgnoreCase(CommonConstants.BSE_API_SERVICE_DISABLED)){
 				logger.info("Transaction disabled. Reason- "+bseResult.getBsereMarks());
-				transStatus.setSuccessFlag("S");
+				transStatus.setSuccessFlag("D");
 				transStatus.setStatusMsg(bseResult.getBsereMarks());
 			}else{
 				logger.info("Transaction has failed. Transaction declined from saving to database. Reason- "+bseResult.getBsereMarks());
@@ -329,7 +329,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	public List<SelectMFFund> getMFOrderHistory(String value) {
 		String clientId = null;
 		List<SelectMFFund> trasactionDetails = null;
-		if(bseCustomerCrudRespository.existsByMobile(value)){
+		if(bseCustomerCrudRespository.existsByMobileAndAccountActive(value,"Y")){
 			clientId = bseCustomerCrudRespository.getClientIdFromMobile(value);
 			trasactionDetails =  bseTransCrudRepository.getByClientID(clientId);
 		}else{
@@ -351,7 +351,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		// TODO Auto-generated method stub
 		String client=null;
 		List<BseAllTransactionsView> groupedTransationDetails = null;
-		if(bseCustomerCrudRespository.existsByMobile(mobileNumber)){
+		if(bseCustomerCrudRespository.existsByMobileAndAccountActive(mobileNumber,"Y")){
 			client = bseCustomerCrudRespository.getClientIdFromMobile(mobileNumber);
 			groupedTransationDetails = bseTransactionsView.findAllByClientID(client);
 		}else{
@@ -397,7 +397,9 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	@Override
 	public String getCustomerPanfromMobile(String mobile) {
 		// TODO Auto-generated method stub
-		return bseCustomerCrudRespository.getCustomerPanNumberFromMobile(mobile);
+		String pan="";
+		pan= bseCustomerCrudRespository.getCustomerPanNumberFromMobile(mobile);
+		return pan;
 	}
 
 	@Override
@@ -423,36 +425,42 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	public UserProfile getCustomerProfileDetailsByMobile(String mobile) {
 		// TODO Auto-generated method stub
 
-		UserProfile userProfile = new UserProfile();
-
-		BseMFInvestForm investorProfileData = bseCustomerCrudRespository.getByMobile(mobile);
+		UserProfile userProfile = null;
 
 		try{
-			userProfile.setUid(investorProfileData.getClientID());
-			userProfile.setMobile(investorProfileData.getMobile());
-			userProfile.setMail(investorProfileData.getEmail());
-			userProfile.setPan(investorProfileData.getPan1());
-			userProfile.setFname(investorProfileData.getInvName());
-			userProfile.setGender(investorProfileData.getGender());
+			if(bseCustomerCrudRespository.existsByMobileAndAccountActive(mobile,"Y")){
+				
 
-			userProfile.setAccountHolder(investorProfileData.getInvName());
+				BseMFInvestForm investorProfileData = bseCustomerCrudRespository.getByMobile(mobile);
 
-			userProfile.setAccountNumber(investorProfileData.getBankDetails().getAccountNumber());
-			userProfile.setIfscCode(investorProfileData.getBankDetails().getIfscCode());
-			userProfile.setBankName(investorProfileData.getBankDetails().getBankName());
-			userProfile.setAccountType(investorProfileData.getBankDetails().getAccountType());
-			userProfile.setBranch(investorProfileData.getBankDetails().getBankBranch());
-			userProfile.setBranchCity(investorProfileData.getBankDetails().getBankCity());
-			userProfile.setAccountState(investorProfileData.getBankDetails().getBranchState());
+				userProfile = new UserProfile();
+				userProfile.setUid(investorProfileData.getClientID());
+				userProfile.setMobile(investorProfileData.getMobile());
+				userProfile.setMail(investorProfileData.getEmail());
+				userProfile.setPan(investorProfileData.getPan1());
+				userProfile.setFname(investorProfileData.getInvName());
+				userProfile.setGender(investorProfileData.getGender());
 
-			userProfile.setHouseNumber(investorProfileData.getAddressDetails().getAddress1());
-			userProfile.setAddress1(investorProfileData.getAddressDetails().getAddress2());
-			userProfile.setAddress2(investorProfileData.getAddressDetails().getAddress3());
-			//		userProfile.setAddress3(addressDetails[2]);
-			userProfile.setCity(investorProfileData.getAddressDetails().getCity());
-			userProfile.setState(investorProfileData.getAddressDetails().getState());
-			userProfile.setPincode(investorProfileData.getAddressDetails().getPinCode());
+				userProfile.setAccountHolder(investorProfileData.getInvName());
 
+				userProfile.setAccountNumber(investorProfileData.getBankDetails().getAccountNumber());
+				userProfile.setIfscCode(investorProfileData.getBankDetails().getIfscCode());
+				userProfile.setBankName(investorProfileData.getBankDetails().getBankName());
+				userProfile.setAccountType(investorProfileData.getBankDetails().getAccountType());
+				userProfile.setBranch(investorProfileData.getBankDetails().getBankBranch());
+				userProfile.setBranchCity(investorProfileData.getBankDetails().getBankCity());
+				userProfile.setAccountState(investorProfileData.getBankDetails().getBranchState());
+
+				userProfile.setHouseNumber(investorProfileData.getAddressDetails().getAddress1());
+				userProfile.setAddress1(investorProfileData.getAddressDetails().getAddress2());
+				userProfile.setAddress2(investorProfileData.getAddressDetails().getAddress3());
+				//		userProfile.setAddress3(addressDetails[2]);
+				userProfile.setCity(investorProfileData.getAddressDetails().getCity());
+				userProfile.setState(investorProfileData.getAddressDetails().getState());
+				userProfile.setPincode(investorProfileData.getAddressDetails().getPinCode());
+
+
+			}
 		}catch(Exception e){
 			logger.error("DB to UserProfile entity mapping error",e);
 		}
@@ -598,7 +606,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		String flag = "F";
 		String aofUploadStatus = "";
 		try{
-			if(bseCustomerCrudRespository.existsByMobile(mobileNumber)){
+			if(bseCustomerCrudRespository.existsByMobileAndAccountActive(mobileNumber,"Y")){
 				//				String registrationStatus = bseCustomerCrudRespository.getBseRegistrationStatus(mobileNumber);
 				//				logger.info("Customer BSE registration status- "+ registrationStatus);
 				//				if(registrationStatus.equalsIgnoreCase("Y")){
@@ -632,7 +640,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		int result = 0;
 		String flag="SUCCESS";
 		try{
-			if(bseCustomerCrudRespository.existsByMobile(mobile)){
+			if(bseCustomerCrudRespository.existsByMobileAndAccountActive(mobile,"Y")){
 				String clientId = bseCustomerCrudRespository.getClientIdFromMobile(mobile);
 				result = bseCustomerCrudRespository.uploadCustomerSignature(clientId, pan, signatureData);
 				logger.info("Status for signature update- "+ result);
@@ -762,18 +770,21 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		logger.info("Querying to get registered investment form data for mobile- "+ mobile);
 		BseMFInvestForm investmentFormdata = null;
 		try{
-			if(bseCustomerCrudRespository.existsByMobile(mobile)){
+			if(bseCustomerCrudRespository.existsByMobileAndAccountActive(mobile,"Y")){
 				String clientId = bseCustomerCrudRespository.getClientIdFromMobile(mobile);
 				investmentFormdata = bseCustomerCrudRespository.findOneByClientID(clientId);
 				AddressDetails address = bseCustomerAddressCrudRepository.findOneByClientID(clientId);
 				UserBankDetails bank = bseCustomerBankDetailsCrudRespository.getOne(clientId);
 				MFNominationForm nominee = bseCustomerNomineeCrudRepository.findOneByClientID(clientId);
-				System.out.println("Address- "+ address + " : Bank: "+ bank);
+//				System.out.println("Address- "+ address + " : Bank: "+ bank);
+				
 
 				investmentFormdata.setAddressDetails(address!=null?address:new AddressDetails());
 				investmentFormdata.setBankDetails(bank!=null?bank:new UserBankDetails());
 				investmentFormdata.setNominee(nominee!=null?nominee:new MFNominationForm());
 
+				
+				
 			}else{
 				logger.info("Cusotmer invest form data not found!");
 			}
@@ -858,7 +869,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		BseApiResponse fatcaResponse=null;
 		String clientId=null;
 		logger.info("Request received to process FATCA details fro customer- "+ customerForm.getPan1());
-		if(bseCustomerCrudRespository.existsByMobile(customerForm.getMobile())){
+		if(bseCustomerCrudRespository.existsByMobileAndAccountActive(customerForm.getMobile(),"Y")){
 			clientId = bseCustomerCrudRespository.getClientIdFromMobile(customerForm.getMobile());
 			fatcaResponse = investmentConnectorBseInterface.fatcaDeclaration(customerForm, null);
 			logger.info("FATCA upload status from BSE for customer- "+clientId + " : "  + fatcaResponse.getResponseCode());
@@ -891,7 +902,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		String clientId=null;
 		logger.info("Request received to fetch customer emandate registration details for client ID- "+ clientCode + " : mandate type: "+ mandateType);
 		try{
-		if(bseCustomerCrudRespository.existsByMobile(mobile)){
+		if(bseCustomerCrudRespository.existsByMobileAndAccountActive(mobile,"Y")){
 			UserBankDetails userbankDetails = getCustomerBankDetails(clientCode);
 			
 			logger.info("Look for mandate corresponding to registered bank- ");
@@ -912,7 +923,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		List<MFCamsFolio> folios=null;
 		logger.info("Request received to fetch customer cams folio details for client ID- "+ mobile + " : mandate type: "+ pan);
 		try{
-		if(bseCustomerCrudRespository.existsByMobile(mobile)){
+		if(bseCustomerCrudRespository.existsByMobileAndAccountActive(mobile,"Y")){
 			pan = bseCustomerCrudRespository.getCustomerPanNumberFromMobile(mobile);
 			
 			folios = mfCamsFolioCrudRepository.findAllByPan(pan);
@@ -965,7 +976,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		List<MFCamsValueByCategroy> folios=null;
 		logger.info("Request received to fetch customer cams folio details by category for client ID- "+ mobile + " :PAN NO: "+ pan);
 		try{
-		if(bseCustomerCrudRespository.existsByMobile(mobile)){
+		if(bseCustomerCrudRespository.existsByMobileAndAccountActive(mobile,"Y")){
 			pan = bseCustomerCrudRespository.getCustomerPanNumberFromMobile(mobile);
 			
 			folios = bseCamsByCategoryRepository.findAllByPan(pan);

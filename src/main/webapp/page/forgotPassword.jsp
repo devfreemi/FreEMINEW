@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-	pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -11,7 +11,7 @@
 	rel="stylesheet">
 <link href="<c:url value="${contextcdn}/resources/css/styles.css"/>"
 	rel="stylesheet">
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Forgot Password</title>
 <meta http-equiv="cache-control" content="max-age=0" />
 <meta http-equiv="cache-control" content="no-cache" />
@@ -64,19 +64,9 @@
 					action="${pageContext.request.contextPath}/forgotPassword.do"
 					commandName="forgotPasswordForm">
 
-					<%-- <div class="form-group" style="margin-bottom: 50px;">
-						<span class="span_style"> <i
-							class="fas fa-mobile-alt icon_style"
-							style="font-size: 30px; margin-top: 5px;"></i> <form:input
-								type="text" style="padding-left: 35px;"
-								class="form-control input-sm " path="usermobile"
-								placeholder="Your 10-digit registered mobile number"
-								maxlength="10" />
-						</span>
-					</div> --%>
 					<div class="md-form">
 					<i class="fas fa-mobile-alt prefix"></i>
-						<form:input path="" type="text" id="form1" pattern="[0-9]{10}" maxlength="10" class="form-control form-control-sm" placeholder="10 digit mobile number"></form:input> 
+						<form:input path="usermobile" type="text" id="form1" pattern="[0-9]{10}" maxlength="10" class="form-control form-control-sm" placeholder="10 digit mobile number"></form:input> 
 					</div>
 					<div style="margin-bottom: 20px;">
 						<div class="g-recaptcha"
@@ -89,7 +79,7 @@
 					</button>
 					<a href="${pageContext.request.contextPath}/login"
 						style="text-decoration: none; margin-top: 10px;">
-						<button type="button" class="btn btn-block btn-sm purple-gradient">
+						<button type="button" class="btn btn-block btn-sm purple-gradient white-text">
 							<span> <i class="fas fa-backward"></i> Back
 							</span>
 						</button>

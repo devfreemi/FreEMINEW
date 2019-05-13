@@ -69,14 +69,17 @@ public class MailSenderImpl implements com.freemi.controller.interfaces.MailSend
 		return mail;
 	}
 
-	private void processMailRequest(Mail mail) throws MessagingException{
+	private void processMailRequest(Mail mail, boolean bccSupport) throws MessagingException{
 
 		logger.info("Begin process to format mail...");
 		MimeMessage message = javaMailSender.createMimeMessage();
 		MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED, StandardCharsets.UTF_8.toString());	//True indicate we need multipart message
 		helper.setFrom(mail.getFrom());
 		helper.setTo(mail.getTo());
-
+		if(bccSupport){
+			helper.setBcc(env.getProperty("investment.bse.mail.support.account"));
+		}
+		
 		helper.setText(mail.getContent(),true);	//True flag to indicate the text included is HTML
 		message.setSubject(mail.getSubject());
 		
@@ -100,7 +103,7 @@ public class MailSenderImpl implements com.freemi.controller.interfaces.MailSend
 		try{
 			if(env.getProperty(CommonConstants.EMAIL_SEND_ENABLED).equalsIgnoreCase("Y")){
 				javaMailSender.send(message);
-				logger.info("Mail sent for- "+ mail.getTo());
+				logger.info("Mail sent for- "+ mail.getTo().toLowerCase());
 			}else{
 				logger.info("Mail service is disabled currently. SKipping mail trigger.");
 			}
@@ -112,8 +115,8 @@ public class MailSenderImpl implements com.freemi.controller.interfaces.MailSend
 
 	@Async
 	@Override
-	public void mfpurchasenotofication(SelectMFFund selectedFund, BseMFInvestForm userDetails) throws InterruptedException {
-
+	public void mfpurchasenotofication(SelectMFFund selectedFund, BseMFInvestForm userDetails,String transactionCategory) throws InterruptedException {
+		logger.info("Request received to process MF transaction mail for client- "+ userDetails.getClientID());
 		try{
 			if(userDetails.getEmail()!=null){
 				InternetAddress address = new InternetAddress(env.getProperty(CommonConstants.MAIL_ACCOUNT_ID), "FreEMI");
@@ -121,17 +124,22 @@ public class MailSenderImpl implements com.freemi.controller.interfaces.MailSend
 				Map<String, Object> replacementContent= new HashMap<String,Object>();
 				String date = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
 				
-				replacementContent.put("transactionDate", date);
-				replacementContent.put("username", userDetails.getInvName());
-				replacementContent.put("mffundname", selectedFund.getSchemeName());
-				replacementContent.put("transactionno", selectedFund.getTransactionID());
+				replacementContent.put("investcategory", transactionCategory!=null?transactionCategory:"<error>");
+				replacementContent.put("username", userDetails.getInvName()!=null?userDetails.getInvName():"investor");
+				replacementContent.put("mffundname", selectedFund.getSchemeName()!=null?selectedFund.getSchemeName():"<Name Missing>");
+				replacementContent.put("transactionno", selectedFund.getTransactionID()!=null?selectedFund.getTransactionID():"<blank>");
 
-				replacementContent.put("investtype", selectedFund.getInvestype());
+				replacementContent.put("investtype", selectedFund.getInvestype()!=null?selectedFund.getInvestype():"<blank>");
 				replacementContent.put("navdate", date);
-				replacementContent.put("purchaseamount", selectedFund.getInvestAmount());
+				replacementContent.put("amount", selectedFund.getInvestAmount()!=0?selectedFund.getInvestAmount():"<blank>");
 
-				Mail mail = processMailAddress(address, replacementContent, userDetails.getEmail(), null, "Mutual Fund Transaction","mf-transaction-lumpsum.txt");
-				processMailRequest(mail);
+				Mail mail = processMailAddress(address, replacementContent, userDetails.getEmail(), null, "Mutual Fund Transaction","mf-transaction.txt");
+				
+				boolean bccSupport =false;
+				if(env.getProperty("investment.bse.mail.support").equalsIgnoreCase("Y")){
+					bccSupport = true;
+				}
+				processMailRequest(mail,bccSupport);
 
 			}else{
 				logger.info("Investor mail ID not found. Not proceesing to send transaction mail.");
@@ -159,7 +167,8 @@ public class MailSenderImpl implements com.freemi.controller.interfaces.MailSend
 				replacementContent.put("validityTime", validateTime);
 
 				Mail mail = processMailAddress(address, replacementContent, emailId, null, otp+ " is your OTP to login to your FreEMI Account","otp-login-mail.txt");
-				processMailRequest(mail);
+				
+				processMailRequest(mail,false);
 
 			}else{
 				logger.info("Investor mail ID not found. Not proceesing to send OTP mail.");

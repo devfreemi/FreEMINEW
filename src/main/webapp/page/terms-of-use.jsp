@@ -17,9 +17,14 @@
 	type="text/css" rel="stylesheet">
 <jsp:include page="include/bootstrap.jsp"></jsp:include>
 <script src="<c:url value="${contextcdn}/resources/js/common.js" />"></script>
+<style type="text/css">
+h5{
+font-weight: 500;
+}
+</style>
+
 </head>
-<body class="back_set"
-	>
+<body class="back_set">
 	<div class='thetop'></div>
 	<jsp:include page="include/header.jsp"></jsp:include>
 	<div class="container freemi_container">
@@ -79,7 +84,7 @@
 				Process, whereas investment services relating to mutual funds is
 				powered by Ntactus Financial Services Private Limited. In addition,
 				Company may provide third party services including but not limited
-				to credit check services, UIDAI`s Adhaar based authentication
+				to credit check services, UIDAI`s Aadhaar based authentication
 				service, and any other services to retrieve and use your information
 				through third party sites (eg. Bank sites etc.) in conjunction with
 				your selection of the Services ("ancillary services"). The above
@@ -109,7 +114,6 @@
 				information as necessary to comply with our legal obligations,
 				resolve disputes and enforce our agreements entered into for
 				providing Services and ancillary services.</p>
-			<p>&nbsp;</p>
 			<h5>2. License and Website Access</h5>
 			<p>You acknowledge and agree that Company owns all legal right,
 				title and interest in and to the Services, including any
@@ -153,7 +157,6 @@
 				information as we have outlined in our Privacy Policy. This Privacy
 				Policy explains how Company treats your personal information when
 				you access the Website and use other ancillary Services.</p>
-			<p>&nbsp;</p>
 			<h5>4. Your Registration/Account</h5>
 			<p>In consideration of your use of the Website and registering
 				with us, you represent that you are of legal age to form a binding
@@ -189,13 +192,11 @@
 				Website or use of the Services. Additional terms and conditions will
 				apply to your purchase of services that you select. Please read
 				these additional terms and conditions carefully.</p>
-			<p>&nbsp;</p>
 			<h5>5. Eligibility</h5>
 			<p>You declare and confirm that you are a resident of India,
 				above 18 (Eighteen) years of age, and have the capacity to contract
 				as specified under the Indian Contract Act, 1872, while availing the
 				Services offered herein via this.</p>
-			<p>&nbsp;</p>
 			<h5>6. Submitted Content</h5>
 			<p>By sharing or submitting any content including any data and
 				information on the Website, you agree that you shall be solely
@@ -241,7 +242,6 @@
 				or negligence of any such third parties or for any personal
 				injuries, death, property damage, or other damages or expenses
 				resulting from your interactions with the third parties.</p>
-			<p>&nbsp;</p>
 			<h5>
 				8. Disclaimer of Warranty
 			</h5>
@@ -271,7 +271,6 @@
 				or other material purchased or obtained by you through the services
 				will meet your expectations, and (v) any errors in the technology
 				will be corrected.</p>
-			<p>&nbsp;</p>
 			<h5>
 				9. Limitation of Liability
 			</h5>
@@ -291,7 +290,6 @@
 				your computer equipment or other property as the result of your
 				access to the Website or your downloading of any content from the
 				Website.</p>
-			<p>&nbsp;</p>
 			<p>If, despite the limitation above, Company is found liable for
 				any proven and actual loss or damage which arises out of or in any
 				way connected with any of the occurrences described above, then you
@@ -304,7 +302,6 @@
 				websites, you acknowledge and agree that under no circumstances
 				shall Company be liable for your using the services offered or
 				provided by any third party service provider.</p>
-			<p>&nbsp;</p>
 			<h5>
 				10.Indemnity
 			</h5>
@@ -315,7 +312,6 @@
 				nature, including reasonable attorneys' fees, or arising out of or
 				related to your breach of this TOU, your violation of any law or the
 				rights of a third party, or your use of the Website.</p>
-			<p>&nbsp;</p>
 			<h5>
 				11. Additional Terms and Conditions
 			</h5>
@@ -332,7 +328,6 @@
 				agreement to be bound by Terms, as amended. If you do not agree to
 				the changes, you may please discontinue your use of the Services and
 				ancillary Services.</p>
-			<p>&nbsp;</p>
 			<p>Company reserves the right to discontinue or suspend,
 				temporarily or permanently, the Services/ancillary services, by
 				giving reasonable time period notice, on a best effort basis, unless
@@ -341,13 +336,12 @@
 				Services. You agree that Company will not be liable to you in any
 				manner whatsoever for any modification or discontinuance of the
 				Services.</p>
-			<p>&nbsp;</p>
 			<p>You agree not to use the Services and ancillary services for
 				illegal purposes or for the transmission of material that is
 				unlawful, harassing, libelous (untrue and damaging to others),
 				invasive of another's privacy, abusive, threatening, or obscene, or
 				that infringes the rights of other.</p>
-			<p>&nbsp;</p>
+			<!-- <p>&nbsp;</p> -->
 			<p>Company may, from time to time, announce certain offers with
 				intent to promote its Website and/or Services/ ancillary services
 				(Promotional Offers). The Promotional Offer(s) would always be
@@ -358,7 +352,7 @@
 				conflict with these Terms. Company reserves the right to withdraw,
 				discontinue, modify, extend and suspend the Promotional Offer(s) and
 				the terms governing it, at its sole discretion.</p>
-			<p>&nbsp;</p>
+			<!-- <p>&nbsp;</p> -->
 			<h5>
 				12. General
 			</h5>

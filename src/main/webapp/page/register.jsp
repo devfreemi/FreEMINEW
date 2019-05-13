@@ -115,12 +115,12 @@
 
 					<div>
 						<button type="submit" id="registerSubmit"
-							class="btn btn-sm btn-block blue-gradient">
+							class="btn btn-sm btn-block blue-gradient white-text">
 							<span>Register</span>
 						</button>
 						<a href="${pageContext.request.contextPath}/login"
 							style="text-decoration: none; margin-top: 10px;">
-							<button type="button" class="btn btn-sm btn-block purple-gradient">
+							<button type="button" class="btn btn-sm btn-block purple-gradient white-text">
 								<span> Already registered? Login </span>
 							</button>
 						</a>

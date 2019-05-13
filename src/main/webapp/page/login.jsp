@@ -157,14 +157,14 @@
 					</div> -->
 					<div class="login_buttons">
 						<button type="submit" id="loginsubmit"
-							class="btn btn-sm btn-block blue-gradient">
+							class="btn btn-sm btn-block blue-gradient white-text">
 							<span id="loginbasic" style="display: block;"><i class="fas fa-lock"></i> Login</span><span id="loginspin" style="display: none;">Please wait <i class="fas fa-spinner fa-spin"></i></span>
 						</button>
 
 						<a href="${pageContext.request.contextPath}/register"
 							style="text-decoration: none; margin-top: 10px">
 							<button type="button"
-								class="btn btn-sm btn-block purple-gradient"
+								class="btn btn-sm btn-block purple-gradient white-text"
 								style="text-decoration: none;">
 								<i class="fas fa-user-plus"></i> Sign Up
 							</button>

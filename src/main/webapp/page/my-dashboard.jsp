@@ -81,17 +81,21 @@ table th {
 							<h5>Loans</h5>
 						</div>
 						<div class="box-body">
-							<div class="row">
+							<!-- <div class="row">
 								<div class="col-6">Loan Status</div>
 								<div class="col-6">Active</div>
 							</div>
 							<div class="row">
 								<div class="col-6">Total loan(s)</div>
 								<div class="col-6">2</div>
+							</div> -->
+							<div class="row">
+								<div class="col-8">We will be available soon!</div>
 							</div>
+							
 						</div>
 						<div class="footer_link">
-							<span>VIEW DETAILS</span>
+							<!-- <span>VIEW DETAILS</span> -->
 						</div>
 					</div>
 
@@ -134,17 +138,21 @@ table th {
 							<h5>Insurance</h5>
 						</div>
 						<div class="box-body">
-							<div class="row">
+							<!-- <div class="row">
 								<div class="col-6">Life Secured</div>
 								<div class="col-6">No</div>
 							</div>
 							<div class="row">
 								<div class="col-6">Plans Activated</div>
 								<div class="col-6">0</div>
+							</div> -->
+							
+							<div class="row">
+								<div class="col-8">We will be available soon!</div>
 							</div>
 						</div>
 						<div class="footer_link">
-							<span>VIEW DETAILS</span>
+							<!-- <span>VIEW DETAILS</span> -->
 
 						</div>
 					</div>
@@ -608,7 +616,8 @@ table th {
 												sometime</span>
 										</c:when>
 										<c:when test="${ORDERHISTORY == 'EMPTY' }">
-											<span>You have not yet purchased any Registry.</span>
+											<span>You have not yet purchased any funds.</span>
+											<a href="/products/mutual-funds/funds-explorer">Start investing</a>
 										</c:when>
 									</c:choose>
 									<div style="overflow-x: auto;"></div>

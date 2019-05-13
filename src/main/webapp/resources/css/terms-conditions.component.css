@@ -1,26 +1,30 @@
-.terms_header{
-    padding: 20px;
-    background: linear-gradient(to right, #1f476f, #f76f6f);
+.terms_header {
+	padding: 20px;
+	/* background: linear-gradient(to right, #1f476f, #f76f6f);
     background: -webkit-linear-gradient(to right, #1f476f, #f76f6f);
     background: -moz-linear-gradient(to right, #1f476f, #f76f6f);
-    background: -o-linear-gradient(to right, #1f476f, #f76f6f);
-
+    background: -o-linear-gradient(to right, #1f476f, #f76f6f); */
+	background: #34e89e; /* fallback for old browsers */
+	background: -webkit-linear-gradient(to right, #0f3443, #34e89e);
+	/* Chrome 10-25, Safari 5.1-6 */
+	background: linear-gradient(to right, #0f3443, #34e89e);
+	/* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
-.terms_header_style{
-    color: white;
-    font-family: serif;
+.terms_header_style {
+	color: white;
+	font-family: serif;
 }
 
-.terms_topic{
-    text-align: center;
-    margin-top: 15px;
+.terms_topic {
+	text-align: center;
+	margin-top: 15px;
 }
 
-.terms_contents_general{
-    font-family: GTAmerica-Regular;
-    font-size: 14px;
-    color: #575552;
-    margin-top: 20px;
+.terms_contents_general {
+	/* font-family: GTAmerica-Regular; */
+	font-size: 14px;
+	color: #575552;
+	margin-top: 20px;
+	text-align: justify;
 }
-

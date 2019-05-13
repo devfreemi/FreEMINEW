@@ -39,7 +39,7 @@ border: 1px solid #8b8e90;
 	<jsp:include page="../include/header.jsp"></jsp:include>
 	<div class="container">
 
-		<section class="purchase_status">
+		<section class="purchase_status" style="margin-bottom: 5rem;">
 			<div class="row" style="margin: auto;">
 				<div class="col-md-6 col-lg-6"
 					style="margin: auto; text-align: center; padding: 20px; background: aliceblue;">
@@ -58,10 +58,9 @@ border: 1px solid #8b8e90;
 								<div class="row" style="margin: auto;">
 									<div class="col-md-6 col-lg-6"
 										style="margin: auto; text-align: center;">
-										<a class="transaction-redirect1"
+										<a
 											style="text-decoration: none;"
-											href="${pageContext.request.contextPath}/mutual-funds/funds-explorer">Place
-											Another Order</a>
+											href="${pageContext.request.contextPath}/mutual-funds/funds-explorer"><button class="btn btn-sm mdb-color darken-1 white-text">Place another Order</button> </a>
 									</div>
 								</div>
 							</section>
@@ -135,10 +134,9 @@ border: 1px solid #8b8e90;
 								<div class="row" style="margin: auto;">
 									<div class="col-md-6 col-lg-6"
 										style="margin: auto; text-align: center;">
-										<a class="transaction-redirect1"
+										<a
 											style="text-decoration: none;"
-											href="${pageContext.request.contextPath}/mutual-funds/funds-explorer">Place
-											Another Order</a>
+											href="${pageContext.request.contextPath}/mutual-funds/funds-explorer"><button class="btn btn-sm mdb-color darken-1 white-text">Place another Order</button> </a>
 									</div>
 								</div>
 							</section>
@@ -153,5 +151,7 @@ border: 1px solid #8b8e90;
 		</section>
 
 	</div>
+
+	<jsp:include page="../include/footer.jsp"></jsp:include>
 </body>
 </html>

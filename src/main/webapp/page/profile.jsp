@@ -69,32 +69,7 @@
 										<form:form commandName="profileBasic"
 											action="${pageContext.request.contextPath}/profileBasic.do"
 											method="POST">
-											<!-- <div>Data - {{profileData | json }}</div> -->
-											<!-- <div>Data - {{profileData.fname }}</div> -->
 											<form:hidden path="uid" />
-											
-
-											<div class="form-group">
-												<div class="row">
-													<div class="col-md-4 col-lg-4">
-														<label>PAN number</label>
-													</div>
-													<div class="col-md-8 col-lg-8">
-														<div class="input-group input-group-sm mb-3"
-															style="margin-bottom: 0;">
-															<form:input type="text"
-																class="form-control form-control-sm" path="pan"
-																readonly="true" />
-															<div class="input-group-append">
-																<span class="input-group-text" id="basic-addon2">
-																	<i class="fas fa-id-card" aria-hidden="true"
-																	></i>
-																</span>
-															</div>
-														</div>
-													</div>
-												</div>
-											</div>
 
 											<div class="form-group">
 												<div class="row">
@@ -148,7 +123,7 @@
 															class="custom-control custom-radio custom-control-inline">
 															<form:radiobutton path="gender" value="M"
 																id="customRadioInline3" name="customRadioInline3"
-																class="custom-control-input" />
+																class="custom-control-input" disabled="disabled"/>
 															<label class="custom-control-label"
 																for="customRadioInline3">Male</label>
 														</div>
@@ -156,7 +131,7 @@
 															class="custom-control custom-radio custom-control-inline">
 															<form:radiobutton path="gender" value="F"
 																id="customRadioInline4" name="customRadioInline4"
-																class="custom-control-input" />
+																class="custom-control-input" disabled="disabled" />
 															<label class="custom-control-label"
 																for="customRadioInline4">Female</label>
 														</div>
@@ -181,30 +156,30 @@
 												</div>
 											</div>
 											
-											<%-- <div class="form-group">
+											<div class="form-group">
 												<div class="row">
 													<div class="col-md-4 col-lg-4">
-														<label>AADHAAR number (Optional)</label>
+														<label>PAN number</label>
 													</div>
 													<div class="col-md-8 col-lg-8">
 														<div class="input-group input-group-sm mb-3"
 															style="margin-bottom: 0;">
 															<form:input type="text"
-																class="form-control form-control-sm" path="aadhaar" />
+																class="form-control form-control-sm" path="pan"
+																readonly="true" />
 															<div class="input-group-append">
-																<span class="input-group-text" id="basic-addon2"
-																	style="padding: 1px 7px;background: transparent;"> <img
-																	src="<c:url value="${contextPath}/resources/images/aadhaar_icon.png"/>"
-																	class="img-fluid" style="height: 20px;" alt="A">
+																<span class="input-group-text" id="basic-addon2">
+																	<i class="fas fa-id-card" aria-hidden="true"
+																	></i>
 																</span>
 															</div>
 														</div>
-														<!-- <span style="font-size: 12px;">*Click the icon to sync data</span> -->
 													</div>
 												</div>
-											</div>  --%>
+											</div>
 											
-											<div class="form-group">
+											
+											<%-- <div class="form-group">
 												<div class="row">
 													<div class="col-md-4 col-lg-4"></div>
 													<div class="col-md-8 col-lg-8">
@@ -216,7 +191,7 @@
 															onclick="editBasicDetails=!editBasicDetails" alt="Edit">
 													</div>
 												</div>
-											</div>
+											</div> --%>
 
 										</form:form>
 
@@ -253,7 +228,7 @@
 													<span class="span_style"> <form:input
 															type="password" class="form-control input-sm "
 															placeholder="Confirm New Password"
-															path="confirmNewPassword" maxlength="24" /> <!-- <i *ngIf="newpassword == confirmpassword" class="fas fa-check"></i> -->
+															path="confirmNewPassword" maxlength="24" />
 													</span>
 												</div>
 
@@ -347,6 +322,7 @@
 														class="form-control form-control-sm" path="bankName" /> --%>
 															<form:select class="form-control form-control-sm"
 																path="bankName" id="bankName">
+																<form:option value="">Select</form:option>
 																<form:options items="${bankNames }" />
 															</form:select>
 														</div>
@@ -426,33 +402,23 @@
 													</div>
 												</div>
 
-												<div class="form-group">
+												<!-- <div class="form-group">
 													<div class="row">
 														<div class="col-md-4 col-lg-4"></div>
 														<div class="col-md-8 col-lg-8">
 															<button type="submit" class="btn btn-sm btn-primary">Update
 																Bank Details</button>
-															<!-- <button type="button" (click)="editBankDetails=!editBankDetails" class="btn btn-primary">Edit Bank Details</button> -->
-
-															<!-- <img src="assets/images/edit.png" class="img-fluid" style="height: 30px; float: right;" (click)="editBankDetails=!editBankDetails"
-                          alt="Edit"> -->
 														</div>
 													</div>
-												</div>
+												</div> -->
 
 											</form:form>
 										</div>
 									</div>
 									<div class="col-md-6 col-lg-6" style="margin: -1px;">
 										<div class="row">
-											<!-- <div class="col-md-4 col-lg-4">
-                  <label>Fetch accounts linked to your mobile number</label>
-                </div> -->
 											<div class="col-md-12 col-lg-12"
 												style="text-align: center; margin: auto;">
-												<!-- <button type="button" class="btn btn-outline-secondary" style="margin-top: 15px;">
-                    Fetch accounts linked to your mobile number
-                  </button> -->
 											</div>
 										</div>
 									</div>
@@ -564,7 +530,7 @@
 												</div>
 											</div>
 
-											<div class="form-group">
+											<!-- <div class="form-group">
 												<div class="row">
 													<div class="col-md-4 col-lg-4"></div>
 													<div class="col-md-8 col-lg-8">
@@ -572,7 +538,7 @@
 															Details</button>
 													</div>
 												</div>
-											</div>
+											</div> -->
 
 										</form:form>
 									</div>

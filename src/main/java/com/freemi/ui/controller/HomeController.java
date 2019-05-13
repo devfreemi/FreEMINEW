@@ -702,7 +702,7 @@ public class HomeController {
 		logger.info("@@@@ Forgot password request submit..");
 
 		if(bindingResult.hasErrors()){
-			logger.info("Error in forgot form");
+			logger.info("Error in forgot form- "+ bindingResult.getFieldError());
 			model.addAttribute("error", bindingResult.getFieldError().getDefaultMessage());
 			return "forgotPassword";
 		}

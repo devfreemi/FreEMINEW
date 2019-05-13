@@ -61,9 +61,9 @@ public class CommonConstants {
 	
 	
 //	BSE DETAILS
-	public static final String BSE_USER_ID = "SUMANTA1";
+	public static final String BSE_USER_ID = "2627301";
 	public static final String BSE_MEMBER_ID = "26273";
-	public static final String BSE_CLIENT_CODE = "2627301";
+//	public static final String BSE_CLIENT_CODE = "2627301";
 	
 	public static final String BSE_TRANS_MODE_DEMAT="D";
 	public static final String BSE_TRANS_MODE_PHYSICAL="P";

@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freemi.common.util.CommonConstants;
 import com.freemi.common.util.CommonTask;
 import com.freemi.common.util.InvestFormConstants;
@@ -70,7 +71,7 @@ public class ProfileManageController{
 		String returnurl = "";
 		int error = 0;
 //		RestClient client = new RestClient();
-//		ResponseEntity<String> response = null;
+		ResponseEntity<String> response = null;
 		if(session.getAttribute("token") == null){
 			try {
 				returnurl="redirect:/login?ref="+ URLEncoder.encode(request.getRequestURL().toString(), StandardCharsets.UTF_8.toString());
@@ -117,10 +118,49 @@ public class ProfileManageController{
 //			User profile data collection from DB
 			try{
 				UserProfile profile = bseEntryManager.getCustomerProfileDetailsByMobile(session.getAttribute("userid").toString());
-				
-				model.addAttribute("profileBasic", profile);
-				model.addAttribute("profileAccount", profile);
-				model.addAttribute("profileAddress", profile);
+				if(profile!=null){
+					model.addAttribute("profileBasic", profile);
+					model.addAttribute("profileAccount", profile);
+					model.addAttribute("profileAddress", profile);
+					model.addAttribute("INV_PROF","Y");
+					
+				}else{
+					logger.info("Investment profile not found. Querying for basic details from LDAP");
+//					Search Basic Details from LDAP
+					try {
+						response = profileRestClientService.getProfileData(session.getAttribute("userid").toString(), session.getAttribute("token").toString(), CommonTask.getClientSystemDetails(request).getClientIpv4Address());
+//						logger.info(response.getBody());
+//						logger.info(response.getHeaders());
+						logger.info("Get Profile details rsponse- "+ response.getBody());
+						profile = new ObjectMapper().readValue(response.getBody(), UserProfile.class);
+//						logger.info(profile.getGender());
+						
+						model.addAttribute("profileBasic", profile);
+						model.addAttribute("profileAccount", profile);
+						model.addAttribute("profileAddress", profile);
+						model.addAttribute("profilePasswordChangeForm", new ProfilePasswordChangeForm());
+						logger.info("Profile details retrieved for customer from LDAP- "+profile.getMobile());
+					}catch(HttpStatusCodeException  e){
+						logger.info("Unable to fetch profile details from LDAP- " + e.getStatusCode());
+						if(e.getStatusCode().value() == 401){
+							model.addAttribute("error", "Token validation failed. Please check if it expired");
+						}else{
+						model.addAttribute("error", "Unable to process request curretnly");
+						}
+						error =1;
+					} catch (JsonProcessingException e) {
+						model.addAttribute("error","Invalid form data");
+						error = 1;
+					}catch(Exception e){
+//						e.printStackTrace();
+						model.addAttribute("error","Error processing request");
+						error =1;
+					}
+					
+					
+					
+					model.addAttribute("INV_PROF","N");
+				}
 				model.addAttribute("profilePasswordChangeForm", new ProfilePasswordChangeForm());
 				model.addAttribute("states", InvestFormConstants.states);
 				model.addAttribute("bankNames", InvestFormConstants.bankNames);
@@ -410,8 +450,8 @@ public class ProfileManageController{
 					map.addAttribute("STATUS", "Y");
 					map.addAttribute("PWDCHANGE", "N");
 					map.addAttribute("success", "Set your new password");
-					session.setAttribute("user", user);
-					session.setAttribute("token", token);
+					/*session.setAttribute("user", user);
+					session.setAttribute("token", token);*/
 				}
 			}catch(HttpStatusCodeException  e){
 				logger.info("Connection failure to reset password token validation link - " + e.getStatusCode());

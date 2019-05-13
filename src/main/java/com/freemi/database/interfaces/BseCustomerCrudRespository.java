@@ -15,7 +15,8 @@ public interface BseCustomerCrudRespository extends JpaRepository<BseMFInvestFor
 	public List<BseMFInvestForm> findByPan1(String pan1);
 	public List<BseMFInvestForm> getByClientID(String customerId);
 	public BseMFInvestForm getByMobile(String mobile);
-	public boolean existsByMobile(String mobile);
+	
+	public boolean existsByMobileAndAccountActive(String mobile,String status);
 	public boolean existsByPan1(String pan);
 	public boolean existsByClientID(String clientID);
 	
