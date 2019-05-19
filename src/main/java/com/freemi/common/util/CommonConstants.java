@@ -85,4 +85,21 @@ public class CommonConstants {
 	public static final String GENERATE_PASSWORD_BY_FREEMI = "GENERATE_PASS_MF_REGISTER";
 	
 	
+	
+	
+	/*SMS RELATED CONSTANTS*/
+	
+	
+	public static final String SMS_OTP_REGISTRATION = "sms.otp.registration";
+	public static final String SMS_SEND_ENABLED ="sms.server.send.enabled";
+	public static final String SMS_ROUTE_TRANSACTIONAL="sms.route.transactional";
+	public static final String SMS_ROUTE_PROMOTIONAL="sms.route.promotional";
+	public static final String SMS_SENDER_ID = "sms.sender";
+	public static final String SERVICE_PROVIDER_AUTHKEY="provider_authkey";
+	public static final String SERVICE_PROVIDER_URL="sms.server.baseurl";
+	
+	
+	/*-----------------------------------------------------------------------------*/
+	
+	
 }

@@ -21,6 +21,7 @@ import com.freemi.entity.investment.BsemfTransactionHistory;
 import com.freemi.entity.investment.MFCamsFolio;
 import com.freemi.entity.investment.MFCamsValueByCategroy;
 import com.freemi.entity.investment.MFFatcaDeclareForm;
+import com.freemi.entity.investment.MFKarvyValueByCategory;
 import com.freemi.entity.investment.SelectMFFund;
 import com.freemi.entity.investment.TransactionStatus;
 
@@ -80,7 +81,8 @@ public interface BseEntryManager {
 	//PORTFOLIO Crud respository
 	public List<String> getSelectedAmcPortfolio(String amcCode, String clientId, String rtaAgent);
 	public List<MFCamsFolio> getCamsPortfolio(String mobile, String pan);
-	public List<MFCamsValueByCategroy> getCustomersInvByCategory(String mobile, String pan);
+	public List<MFCamsValueByCategroy> getCustomersCamsInvByCategory(String mobile, String pan);
+	public List<MFKarvyValueByCategory> getCustomersKarvyInvByCategory(String mobile, String pan);
 	
 	public MFCamsFolio getCamsFundsDetailsForRedeem(String code, String mobile, String folioNumber);
 	

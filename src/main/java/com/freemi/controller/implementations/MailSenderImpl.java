@@ -89,8 +89,9 @@ public class MailSenderImpl implements com.freemi.controller.interfaces.MailSend
 
 	public String getContentFromTemplate(Map<String, Object> mailData, String templateName){
 		logger.info("Starting processing mail content");
-		StringBuffer mailContent = new StringBuffer();
+		StringBuffer mailContent = null;
 		try{
+			mailContent =  new StringBuffer();
 			mailContent.append(FreeMarkerTemplateUtils.processTemplateIntoString(fmConfiguration.getTemplate(templateName), mailData));
 		}catch(Exception e){
 			logger.info("Mail template freemarker engine error ", e);

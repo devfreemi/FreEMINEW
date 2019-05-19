@@ -186,6 +186,15 @@ public class BseMFInvestForm implements Serializable {
 	@Column(name="ACCOUNT_ACTIVE")
 	private String accountActive="Y";
 	
+	@Column(name="PAN1_VALIDITY")
+	private String pan1verified="N";
+	
+	@Column(name="PAN2_VALIDITY")
+	private String pan2verified="N";
+	
+	@Column(name="PAN1_KYC_VERIFIED")
+	private String pan1KycVerified="N";
+	
 	@Valid
 	@OneToOne(fetch=FetchType.EAGER, mappedBy="mfForm",cascade=CascadeType.ALL)
 	private MFNominationForm nominee;
@@ -642,6 +651,46 @@ public class BseMFInvestForm implements Serializable {
 
 	public void setAccountActive(String accountActive) {
 		this.accountActive = accountActive;
+	}
+
+
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
+
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
+	}
+
+
+	public String getPan1verified() {
+		return pan1verified;
+	}
+
+
+	public void setPan1verified(String pan1verified) {
+		this.pan1verified = pan1verified;
+	}
+
+
+	public String getPan2verified() {
+		return pan2verified;
+	}
+
+
+	public void setPan2verified(String pan2verified) {
+		this.pan2verified = pan2verified;
+	}
+
+
+	public String getPan1KycVerified() {
+		return pan1KycVerified;
+	}
+
+
+	public void setPan1KycVerified(String pan1KycVerified) {
+		this.pan1KycVerified = pan1KycVerified;
 	}
 	
 }

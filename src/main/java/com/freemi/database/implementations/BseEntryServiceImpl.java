@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.freemi.common.util.BseRelatedActions;
 import com.freemi.common.util.CommonConstants;
+import com.freemi.common.util.InvestFormConstants;
 import com.freemi.controller.interfaces.InvestmentConnectorBseInterface;
 import com.freemi.database.interfaces.BseCamsByCategoryRepository;
 import com.freemi.database.interfaces.BseCustomerAddressCrudRepository;
@@ -24,6 +25,7 @@ import com.freemi.database.interfaces.BseCustomerCrudRespository;
 import com.freemi.database.interfaces.BseCustomerFATCACrudRepository;
 import com.freemi.database.interfaces.BseCustomerNomineeCrudRepository;
 import com.freemi.database.interfaces.BseFundsExplorerRepository;
+import com.freemi.database.interfaces.BseKarvyByCategoryRepository;
 import com.freemi.database.interfaces.BseMandateCrudRepository;
 import com.freemi.database.interfaces.BseOrderEntryResponseRepository;
 import com.freemi.database.interfaces.BseSelectedCategoryFundsRepository;
@@ -52,6 +54,7 @@ import com.freemi.entity.investment.BseOrderEntryResponse;
 import com.freemi.entity.investment.BsemfTransactionHistory;
 import com.freemi.entity.investment.MFCamsFolio;
 import com.freemi.entity.investment.MFCamsValueByCategroy;
+import com.freemi.entity.investment.MFKarvyValueByCategory;
 import com.freemi.entity.investment.MFNominationForm;
 import com.freemi.entity.investment.SelectMFFund;
 import com.freemi.entity.investment.TransactionStatus;
@@ -115,6 +118,9 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	
 	@Autowired
 	BseCamsByCategoryRepository bseCamsByCategoryRepository;
+	
+	@Autowired
+	BseKarvyByCategoryRepository bseKarvyByCategoryRepository;
 
 	/*@Autowired
 	MailSenderHandler mailSenderHandler;*/
@@ -436,17 +442,23 @@ public class BseEntryServiceImpl implements BseEntryManager {
 				userProfile = new UserProfile();
 				userProfile.setUid(investorProfileData.getClientID());
 				userProfile.setMobile(investorProfileData.getMobile());
+				userProfile.setDob(investorProfileData.getInvDOB());
 				userProfile.setMail(investorProfileData.getEmail());
-				userProfile.setPan(investorProfileData.getPan1());
+				userProfile.setPan1(investorProfileData.getPan1());
+				userProfile.setPan2(investorProfileData.getPan2());
+				userProfile.setPan2Verified(investorProfileData.getPan2verified());
+				userProfile.setPan1verified(investorProfileData.getPan1verified());
 				userProfile.setFname(investorProfileData.getInvName());
 				userProfile.setGender(investorProfileData.getGender());
-
+				userProfile.setTaxStatus(InvestFormConstants.fatcaTaxStatusIndividual.get(investorProfileData.getTaxStatus()));
+				userProfile.setHoldingMode(InvestFormConstants.holdingMode.get(investorProfileData.getHoldingMode()));
+				userProfile.setPan1Verifiedkyc(investorProfileData.getPan1KycVerified());
 				userProfile.setAccountHolder(investorProfileData.getInvName());
-
+				
 				userProfile.setAccountNumber(investorProfileData.getBankDetails().getAccountNumber());
 				userProfile.setIfscCode(investorProfileData.getBankDetails().getIfscCode());
 				userProfile.setBankName(investorProfileData.getBankDetails().getBankName());
-				userProfile.setAccountType(investorProfileData.getBankDetails().getAccountType());
+				userProfile.setAccountType(InvestFormConstants.accountTypes.get(investorProfileData.getBankDetails().getAccountType()));
 				userProfile.setBranch(investorProfileData.getBankDetails().getBankBranch());
 				userProfile.setBranchCity(investorProfileData.getBankDetails().getBankCity());
 				userProfile.setAccountState(investorProfileData.getBankDetails().getBranchState());
@@ -456,13 +468,19 @@ public class BseEntryServiceImpl implements BseEntryManager {
 				userProfile.setAddress2(investorProfileData.getAddressDetails().getAddress3());
 				//		userProfile.setAddress3(addressDetails[2]);
 				userProfile.setCity(investorProfileData.getAddressDetails().getCity());
-				userProfile.setState(investorProfileData.getAddressDetails().getState());
+				userProfile.setState(InvestFormConstants.states.get(investorProfileData.getAddressDetails().getState()));
 				userProfile.setPincode(investorProfileData.getAddressDetails().getPinCode());
+				
+				userProfile.setNomineeAvailable(investorProfileData.getNominee().getIsNominate());
+				userProfile.setNomineeName(investorProfileData.getNominee().getNomineeName());
+				userProfile.setNomineeRelation(investorProfileData.getNominee().getNomineeRelation());
+				
 
 
 			}
 		}catch(Exception e){
 			logger.error("DB to UserProfile entity mapping error",e);
+			userProfile = new UserProfile();
 		}
 		return userProfile;
 	}
@@ -971,7 +989,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	}
 
 	@Override
-	public List<MFCamsValueByCategroy> getCustomersInvByCategory(String mobile, String pan) {
+	public List<MFCamsValueByCategroy> getCustomersCamsInvByCategory(String mobile, String pan) {
 
 		List<MFCamsValueByCategroy> folios=null;
 		logger.info("Request received to fetch customer cams folio details by category for client ID- "+ mobile + " :PAN NO: "+ pan);
@@ -988,6 +1006,26 @@ public class BseEntryServiceImpl implements BseEntryManager {
 			logger.error("Failed to query database to fetch exising customer. ",e);
 		}
 
+		return folios;
+	}
+
+	@Override
+	public List<MFKarvyValueByCategory> getCustomersKarvyInvByCategory(String mobile, String pan) {
+		List<MFKarvyValueByCategory> folios=null;
+		logger.info("Request received to fetch customer Karvy folio details by category for client ID- "+ mobile + " :PAN NO: "+ pan);
+		try{
+		if(bseCustomerCrudRespository.existsByMobileAndAccountActive(mobile,"Y")){
+			pan = bseCustomerCrudRespository.getCustomerPanNumberFromMobile(mobile);
+			
+			folios =bseKarvyByCategoryRepository.getAllByPan(pan);
+			
+			logger.info("Karvy Folio details by category look up complete");
+
+		}
+		}catch(Exception e){
+			logger.error("Failed to query database to fetch exising customer karvy folio. ",e);
+		}
+		
 		return folios;
 	}
 

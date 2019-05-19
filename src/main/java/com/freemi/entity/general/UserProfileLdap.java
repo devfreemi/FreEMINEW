@@ -1,44 +1,18 @@
 package com.freemi.entity.general;
 
-import java.io.Serializable;
-
-import org.springframework.stereotype.Component;
-
-@Component
-public class UserProfile implements Serializable {
+public class UserProfileLdap {
 	
-	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private String uid;
 	private String mobile;
 	private String mail;
 	private String fname;
-	private String investor2;
-	private String dob;
 	private String accountHolder;
-	private String holdingMode;
-	private String taxStatus;
-	private String pan1;
-	private String pan2;
-	
-	private String pan1verified;
-	private String pan2Verified;
-	
-	private String pan1Verifiedkyc;
-	
 	private String ifscCode;
 	private String bankName;
 	private String accountNumber;
-	private String accountType;
-	private String branch;
-	private String branchCity;
-	private String accountState;
-	
 	private String aadhaar;
-	
+	private String pan;
 	private String gender;
 	private String houseNumber;
 	private String address1;
@@ -49,11 +23,6 @@ public class UserProfile implements Serializable {
 	private String landmark;
 	
 	private String userPassword;
-	
-	private String nomineeAvailable;
-	private String nomineeName;
-	private String nomineeRelation;
-	
 
 	public String getUid() {
 		return uid;
@@ -95,63 +64,6 @@ public class UserProfile implements Serializable {
 		this.accountHolder = accountHolder;
 	}
 
-	public String getHoldingMode() {
-		return holdingMode;
-	}
-
-	public void setHoldingMode(String holdingMode) {
-		this.holdingMode = holdingMode;
-	}
-
-	public String getTaxStatus() {
-		return taxStatus;
-	}
-
-	public void setTaxStatus(String taxStatus) {
-		this.taxStatus = taxStatus;
-	}
-
-	public String getPan1() {
-		return pan1;
-	}
-
-	public void setPan1(String pan1) {
-		this.pan1 = pan1;
-	}
-
-	public String getPan2() {
-		return pan2;
-	}
-
-	public void setPan2(String pan2) {
-		this.pan2 = pan2;
-	}
-
-	public String getPan1verified() {
-		return pan1verified;
-	}
-
-	public void setPan1verified(String pan1verified) {
-		this.pan1verified = pan1verified;
-	}
-
-	public String getPan2Verified() {
-		return pan2Verified;
-	}
-
-	public void setPan2Verified(String pan2Verified) {
-		this.pan2Verified = pan2Verified;
-	}
-
-
-	public String getPan1Verifiedkyc() {
-		return pan1Verifiedkyc;
-	}
-
-	public void setPan1Verifiedkyc(String pan1Verifiedkyc) {
-		this.pan1Verifiedkyc = pan1Verifiedkyc;
-	}
-
 	public String getIfscCode() {
 		return ifscCode;
 	}
@@ -176,44 +88,20 @@ public class UserProfile implements Serializable {
 		this.accountNumber = accountNumber;
 	}
 
-	public String getAccountType() {
-		return accountType;
-	}
-
-	public void setAccountType(String accountType) {
-		this.accountType = accountType;
-	}
-
-	public String getBranch() {
-		return branch;
-	}
-
-	public void setBranch(String branch) {
-		this.branch = branch;
-	}
-
-	public String getBranchCity() {
-		return branchCity;
-	}
-
-	public void setBranchCity(String branchCity) {
-		this.branchCity = branchCity;
-	}
-
-	public String getAccountState() {
-		return accountState;
-	}
-
-	public void setAccountState(String accountState) {
-		this.accountState = accountState;
-	}
-
 	public String getAadhaar() {
 		return aadhaar;
 	}
 
 	public void setAadhaar(String aadhaar) {
 		this.aadhaar = aadhaar;
+	}
+
+	public String getPan() {
+		return pan;
+	}
+
+	public void setPan(String pan) {
+		this.pan = pan;
 	}
 
 	public String getGender() {
@@ -291,46 +179,7 @@ public class UserProfile implements Serializable {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-
-	public String getDob() {
-		return dob;
-	}
-
-	public void setDob(String dob) {
-		this.dob = dob;
-	}
-
-	public String getInvestor2() {
-		return investor2;
-	}
-
-	public void setInvestor2(String investor2) {
-		this.investor2 = investor2;
-	}
-
-	public String getNomineeAvailable() {
-		return nomineeAvailable;
-	}
-
-	public void setNomineeAvailable(String nomineeAvailable) {
-		this.nomineeAvailable = nomineeAvailable;
-	}
-
-	public String getNomineeName() {
-		return nomineeName;
-	}
-
-	public void setNomineeName(String nomineeName) {
-		this.nomineeName = nomineeName;
-	}
-
-	public String getNomineeRelation() {
-		return nomineeRelation;
-	}
-
-	public void setNomineeRelation(String nomineeRelation) {
-		this.nomineeRelation = nomineeRelation;
-	}
+	
 	
 	
 

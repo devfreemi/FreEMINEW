@@ -40,8 +40,9 @@ public class RequestInceptorCustom  extends HandlerInterceptorAdapter {
                 if (serviceName.equals("SOMETHING")) {
 
                 }*/
-        if(reqUri.contains(/*"/mutual-funds/mfPurchaseConfirm.do"*/"tax-calculator")){
-//        	System.out.println("Registration");
+       
+        
+        if(reqUri.contains(/*"/mutual-funds/mfPurchaseConfirm.do"*/"unknown")){
         	HttpSession session = request.getSession();
         	if(session.getAttribute("token")==null){
         		logger.info("pre-handle- User sesssion not found. Rejecting purchase transaction");

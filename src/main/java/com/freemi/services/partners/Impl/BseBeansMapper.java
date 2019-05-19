@@ -221,7 +221,7 @@ public class BseBeansMapper {
 		bseOrderForm.setOrderVal(fundDetails.getInvestAmount());	//to do for all redeem 
 		bseOrderForm.setQty("");
 		bseOrderForm.setAllRedeem("N");		// to do
-		bseOrderForm.setFolioNo(fundDetails.getPortfolio());
+		bseOrderForm.setFolioNo(fundDetails.getPortfolio().equalsIgnoreCase("NEW")?"":fundDetails.getPortfolio());
 
 		bseOrderForm.setKYCStatus("Y");
 		bseOrderForm.setRefNo(fundDetails.getBseRefNo());

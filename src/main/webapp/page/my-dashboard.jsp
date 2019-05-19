@@ -61,7 +61,7 @@ table th {
 
 <body class="back_set">
 	<jsp:include page="include/header.jsp"></jsp:include>
-	<div class="container">
+	<div class="container" style="margin-bottom: 5rem;">
 		<div style="color: #FF5722;">
 			<!-- class="dashboard_header" -->
 			<h2>
@@ -330,8 +330,8 @@ table th {
 								<c:choose>
 									<c:when test="${FILE_UPLOAD == 'S'}">
 										<div id="aofuploadbutton">
-											<button class="btn btn-sm btn-primary" id="aofuploadbtn"
-												onclick="initiateAOFUpload(<%=session.getAttribute("userid").toString()%>);">
+											<button class="btn btn-sm btn-primary" id="aofuploadbtn" 
+											onclick="initiateAOFUpload(<%=session.getAttribute("userid").toString()%>);">
 												UPLOAD YOUR AOF <i class="fas fa-upload"></i>
 											</button>
 										</div>
@@ -349,7 +349,7 @@ table th {
 										</div>
 									</c:otherwise>
 								</c:choose>
-
+								
 								<!-- End of modal  -->
 								<div>
 									<span id="signuploadstatus" style="font-size: 11px;"></span>
@@ -357,7 +357,7 @@ table th {
 
 								<div id="aofuploadbutton">
 									<button class="btn btn-sm btn-primary" id="aofuploadbtn"
-										hidden="hidden"
+										hidden="hidden" 
 										onclick="initiateAOFUpload(<%=session.getAttribute("userid").toString()%>);">
 										UPLOAD YOUR AOF <i class="fas fa-upload"></i>
 									</button>
@@ -487,6 +487,9 @@ table th {
 							</div>
 
 						</div>
+						
+						<%int counter =1;%>
+						
 						<div class="tab-pane fade custom-tab" id="registry"
 							role="tabpanel" aria-labelledby="contact-tab">
 
@@ -519,7 +522,7 @@ table th {
 
 													<tbody>
 
-														<c:forEach var="listVar" items="${mforderhistory}"
+														<c:forEach var="listVar" items="${camsorderhistory}"
 															varStatus="loop">
 															<tr>
 																<td style="width: 14rem;" valign="middle"><img
@@ -527,7 +530,8 @@ table th {
 																	class="img-fluid" style="width: 3rem;">
 																	${listVar.fundName }</td>
 																<td valign="middle">${listVar.collaboratedAmount }</td>
-																<td valign="middle">${loop.index}</td>
+																<%-- <td valign="middle">${loop.index}</td> --%>
+																<td valign="middle"><%=counter%></td>
 																<td valign="middle"></td>
 																<td valign="middle"></td>
 																<td style="font-weight: 600;" valign="middle">
@@ -536,14 +540,110 @@ table th {
 																	maxFractionDigits="3" /> --%>
 																</td>
 																<td style="text-align: center;"><a class=""
-																	data-toggle="collapse" href="#collapse${loop.index}"
+																	<%-- data-toggle="collapse" href="#collapse${loop.index}" --%>
+																	data-toggle="collapse" href="#collapse<%=counter%>"
 																	role="button" aria-expanded="false"
-																	aria-controls="collapse${loop.index}"> <span
+																	<%-- aria-controls="collapse${loop.index}"> <span --%>
+																	aria-controls="collapse<%=counter%>"> <span
 																		class="fas fa-chevron-right" id="rotate"></span>
 																</a></td>
 
 															</tr>
 															<tr>
+
+																<td colspan="7" style="padding: 0px;">
+																	<%-- <div class="collapse" id="collapse${loop.index}" --%>
+																	<div class="collapse" id="collapse<%=counter%>"
+																		style="margin: .2rem;">
+																		<div class="card card-body" style="padding: 0;">
+																			<table class="table table-sm">
+																				<thead class="#00796b teal darken-2 white-text">
+																					<tr class="mftransdetailhead">
+																						<th scope="col" style="width: 20rem;"
+																							valign="middle">Folio <br> Scheme
+																							Code/Name
+																						</th>
+																						<th scope="col" valign="middle">Market Value</th>
+																						<th scope="col" valign="middle">Units</th>
+																						<th scope="col" valign="middle">Appreciation</th>
+																					</tr>
+																				</thead>
+																				<tbody>
+																					<c:forEach var="folioList"
+																						items="${listVar.camsFolioLists}"
+																						varStatus="innerloop">
+																						<tr>
+																							<td valign="middle">${folioList.folioNumber }<br>${folioList.schemeName }
+																								/ ${folioList.rtaCode }
+																							</td>
+																							<td valign="middle">${folioList.invAmount }</td>
+																							<td valign="middle">${folioList.units }</td>
+																							<td valign="middle">
+																								<div class="btn-group">
+																									<button type="button"
+																										class="btn btn-secondary dropdown-toggle btn-sm"
+																										data-toggle="dropdown" aria-haspopup="true"
+																										aria-expanded="false"
+																										style="font-size: 11px; padding: 5px; width: 7rem;">TRANSACT</button>
+																									<div class="dropdown-menu dropdown-menu-right">
+																										<button class="dropdown-item" type="button"
+																											style="font-size: 12px; color: #238019; font-weight: 600;"
+																											onclick="AdditionalPurchase('${folioList.folioNumber}','${folioList.rtaCode }','${folioList.trasanctionType }')">
+																											Invest More <i class="fas fa-arrow-left"></i>
+																										</button>
+
+																										<c:if test="${folioList.invAmount > 0 }">
+																											<button class="dropdown-item" type="button"
+																												style="font-size: 12px; color: #da2323; font-weight: 600;"
+																												onclick="MFRedeem('${folioList.folioNumber}','${folioList.rtaCode }','${folioList.trasanctionType }')">
+																												Redeem <i class="fas fa-arrow-right"></i>
+																											</button>
+																										</c:if>
+																									</div>
+																								</div>
+																							</td>
+																						</tr>
+																					</c:forEach>
+																				</tbody>
+																			</table>
+																		</div>
+																	</div>
+
+																</td>
+
+															</tr>
+															
+															<%=counter+=1 %>
+														</c:forEach>
+														
+														
+														<!-- KARVY FUNDS -->
+														
+														<c:forEach var="listVar" items="${karvyorderhistory}"
+															varStatus="loop2">
+															<tr>
+																<td style="width: 14rem;" valign="middle"><img
+																	src="<c:url value="${contextcdn}/resources/images/partnerlogo/mf/${listVar.amcicon }"/>"
+																	class="img-fluid" style="width: 3rem;">
+																	${listVar.funName }</td>
+																<td valign="middle">${listVar.totalInvestment }</td>
+																<td valign="middle"><%=counter %></td>
+																<td valign="middle"></td>
+																<td valign="middle"></td>
+																<td style="font-weight: 600;" valign="middle">
+																	<%-- <fmt:formatNumber
+																	value="${listVar.invAmount }" type="number"
+																	maxFractionDigits="3" /> --%>
+																</td>
+																<td style="text-align: center;"><a class=""
+																	data-toggle="collapse" href="#collapse%=counter %>"
+																	role="button" aria-expanded="false"
+																	aria-controls="collapse%=counter %>"> <span
+																		class="fas fa-chevron-right" id="rotate"></span>
+																</a></td>
+
+															</tr>
+															<%-- <tr>
 
 																<td colspan="7" style="padding: 0px;">
 																	<div class="collapse" id="collapse${loop.index}"
@@ -604,8 +704,16 @@ table th {
 
 																</td>
 
-															</tr>
+															</tr> --%>
+															
+															<%=counter+=1 %>
 														</c:forEach>
+														
+														<!-- END OF KARVY FUNDS -->
+														
+														
+														
+														
 													</tbody>
 
 												</table>
