@@ -44,6 +44,7 @@ import com.freemi.common.util.CommonTask;
 import com.freemi.controller.interfaces.BseRestClientService;
 import com.freemi.controller.interfaces.MailSenderHandler;
 import com.freemi.controller.interfaces.ProfileRestClientService;
+import com.freemi.controller.interfaces.SmsSenderInterface;
 import com.freemi.database.service.DatabaseEntryManager;
 import com.freemi.entity.database.CampaignSignupForm;
 import com.freemi.entity.database.EmailUnsubscribeForm;
@@ -77,13 +78,16 @@ public class HomeController {
 	ProfileRestClientService profileRestClientService;
 
 	@Autowired
+	SmsSenderInterface smsSenderInterface;
+	
+	@Autowired
 	private Environment env;
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String home(Model map) {
 		//logger.info("@@@@ Inside Login..");
 		logger.info("@@@@ HomeController @@@@");
-		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
+//		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 		/*return "index";*/
 		return "redirect:/mutual-funds/funds-explorer";
 	}
@@ -94,14 +98,14 @@ public class HomeController {
 		//logger.info("@@@@ Inside Login..");
 
 		logger.info("@@@@ LoginController @@@@");
-		System.out.println("Referrer url if passed-"+ referrerUrl!=null?referrerUrl:request.getHeader("Referer"));
+		logger.debug("Referrer url if passed-"+ referrerUrl!=null?referrerUrl:request.getHeader("Referer"));
 
 
 
 		//		map.addAttribute("login", login);
 		//		logger.info("Referer- "+ request.getHeader("Referer"));
 		//		model.addAttribute("returnSite", request.getHeader("Referer"));
-		System.out.println("url from referrer- "+ request.getHeader("Referer"));
+		logger.debug("url from referrer- "+ request.getHeader("Referer"));
 		try {
 			//			login.setReturnUrl(referrerUrl!=null?URLDecoder.decode(referrerUrl, StandardCharsets.UTF_8.toString()):request.getHeader("Referer"));
 
@@ -113,7 +117,7 @@ public class HomeController {
 			login.setReturnUrl(returnUrl);
 			otpForm.setReturnUrl(returnUrl);
 			session.setAttribute("returnSite", referrerUrl!=null?URLDecoder.decode(referrerUrl, StandardCharsets.UTF_8.toString()):request.getHeader("Referer"));
-			System.out.println("Set return url- "+ login.getReturnUrl());
+			logger.debug("Set return url- "+ login.getReturnUrl());
 		} catch (UnsupportedEncodingException e) {
 			logger.error("Failed to decode string",e);
 		}
@@ -188,7 +192,7 @@ public class HomeController {
 		logger.info("@@@@ Inside Login do..");
 		//		logger.info("Referer- "+ request.getHeader("Referer"));
 		//		String referer = request.getHeader("Referer");
-		System.out.println("Recpcha form resuest- "+ request.getParameter("g-recaptcha-response"));
+		logger.debug("Recpcha form resuest- "+ request.getParameter("g-recaptcha-response"));
 
 		String ip = CommonTask.getClientSystemIp(request);
 
@@ -211,7 +215,7 @@ public class HomeController {
 		}
 
 		//		logger.info("Beginning attemptAuthentication() from IP- "+ request.getRemoteHost()+ "/"+request.getHeader("X-Forwarded-for"));
-		System.out.println("OTP login check- "+ login.isOtpLogin());
+		logger.debug("OTP login check- "+ login.isOtpLogin());
 
 		String returnUrl="";
 		String referer = (String) session.getAttribute("returnSite");
@@ -325,9 +329,9 @@ public class HomeController {
 		//		logger.info("Referer- "+ request.getHeader("Referer"));
 		//		String referer = request.getHeader("Referer");
 		logger.info("Sessuion id during login- "+ session.getId());
-		System.out.println("Recpcha form resuest- "+ request.getParameter("g-recaptcha-response"));
+		logger.debug("Recpcha form resuest- "+ request.getParameter("g-recaptcha-response"));
 
-		System.out.println("Fetching after login url- "+ login.getReturnUrl() + " OTPMIT - "+ login.isOtpSubmit());
+		logger.debug("Fetching after login url- "+ login.getReturnUrl() + " OTPMIT - "+ login.isOtpSubmit());
 
 		String ip = CommonTask.getClientSystemIp(request);
 
@@ -350,11 +354,11 @@ public class HomeController {
 		}
 
 		//		logger.info("Beginning attemptAuthentication() from IP- "+ request.getRemoteHost()+ "/"+request.getHeader("X-Forwarded-for"));
-		System.out.println("OTP login check- "+ login.isOtpLogin());
+		logger.debug("OTP login check- "+ login.isOtpLogin());
 
 		String returnUrl="";
 		String referer = (String) session.getAttribute("returnSite");
-		System.out.println("login2.do referer- "+ referer);
+		logger.debug("login2.do referer- "+ referer);
 		//		returnUrl = redirectUrlAfterLogin(referer);
 
 //		RestClient client = new RestClient();
@@ -372,17 +376,18 @@ public class HomeController {
 					responseEntity = profileRestClientService.validateuserIdAndGetMail(login.getUsermobile());
 					String[] userStatus = responseEntity.getBody().toString().split(",");
 
-					System.out.println(Arrays.asList(userStatus));
+					logger.info(Arrays.asList(userStatus));
 					if(userStatus[0].equalsIgnoreCase("VALID")){
 						if(!userStatus[1].equals("NO_EMAIL")){
 							String resultotp= bseRestClientService.otpGeneration(login.getUsermobile());
-							System.out.println("RECEIVED OTP RESPONSE: "+ resultotp);
+							logger.debug("RECEIVED OTP RESPONSE: "+ resultotp);
 							if(resultotp.contains("OTP")){
 								//				Trigger mail 
 								session.setAttribute("OTP", resultotp.split("=")[1]);
 								try {
 									mailSenderHandler.loginOTPMail(login.getUsermobile(), resultotp.split("=")[1], userStatus[1], "5");
-									returnUrl="OTP_SENT";
+									smsSenderInterface.sendOtp(login.getUsermobile(), resultotp.split("=")[1], "5", null);
+//									returnUrl="OTP_SENT";
 								} catch (InterruptedException e) {
 									logger.error("Failed to send mail for OTP- ",e);
 								}
@@ -523,7 +528,7 @@ public class HomeController {
 							
 							logger.info("Setting session in cookie for customer is complete after OTP validaation.");
 						}catch(Exception e){
-							System.out.println("Error setting cookie in session..");
+							logger.error("Error setting cookie in session..",e);
 						}
 
 						returnUrl="SUCCESS";

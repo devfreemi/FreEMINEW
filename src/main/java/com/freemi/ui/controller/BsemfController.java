@@ -132,7 +132,13 @@ public class BsemfController {
 		}else{
 			logger.info("registerUserMfGet(): selectFund is null.");
 		}
-
+		
+		if(userType.equalsIgnoreCase("01")){
+			if(session.getAttribute("userid")!=null){
+				map.addAttribute("LOGGED", "Y");
+			}
+			
+		}
 		if(userType.equalsIgnoreCase("02")){
 			//			Marking this register customer in LDAP
 			investForm.setProfileRegRequired(true);
@@ -186,7 +192,7 @@ public class BsemfController {
 	}
 
 	@RequestMapping(value = "/mutual-funds/mfInvestRegister.do", method = RequestMethod.POST)
-	public String registerBsepost(@Valid @ModelAttribute("mfInvestForm") BseMFInvestForm investForm,BindingResult bindResult, Model map, HttpServletRequest request, HttpServletResponse response, RedirectAttributes attrs) {
+	public String registerBsepost(@Valid @ModelAttribute("mfInvestForm") BseMFInvestForm investForm,BindingResult bindResult, Model map, HttpServletRequest request, HttpServletResponse response, RedirectAttributes attrs, HttpSession session) {
 
 		logger.info("BSE MF STAR Customer Register post controller");
 		String returnUrl = "bsemf/bse-registration-status";
@@ -213,6 +219,28 @@ public class BsemfController {
 			map.addAttribute("nomineeRelation", InvestFormConstants.nomineeRelation);
 			map.addAttribute("addressType", InvestFormConstants.fatcaAddressType);
 			return "bsemf/bse-form-new-customer";
+		}
+		
+		if(session.getAttribute("token")!=null){
+			if(session.getAttribute("userid")!=null){
+				if(!session.getAttribute("userid").toString().equalsIgnoreCase(investForm.getMobile())){
+					map.addAttribute("error", "Mobile no. must be same as that of logged account. ");
+
+					map.addAttribute("holingNature", InvestFormConstants.holdingMode);
+					map.addAttribute("dividendPayMode", InvestFormConstants.dividendPayMode);
+					map.addAttribute("occupation", InvestFormConstants.occupationList);
+					map.addAttribute("bankNames", InvestFormConstants.bankNames);
+					map.addAttribute("accountTypes", InvestFormConstants.accountTypes);
+					map.addAttribute("states", InvestFormConstants.states);
+					map.addAttribute("wealthSource", InvestFormConstants.fatcaWealthSource);
+					map.addAttribute("incomeSlab", InvestFormConstants.fatcaIncomeSlab);
+					map.addAttribute("politicalView", InvestFormConstants.fatcaPoliticalView);
+					map.addAttribute("occupationType", InvestFormConstants.fatcaOccupationType);
+					map.addAttribute("nomineeRelation", InvestFormConstants.nomineeRelation);
+					map.addAttribute("addressType", InvestFormConstants.fatcaAddressType);
+					return "bsemf/bse-form-new-customer";
+				}
+			}
 		}
 
 		if(bindResult.hasErrors()){
@@ -844,7 +872,7 @@ public class BsemfController {
 		try{
 			//Check if existing BSE registered customer or not
 			boolean flag = bseEntryManager.isExisitngCustomer(pan, mobile);
-			logger.info("Is existing customer? - "+ pan+ " : "+ flag);
+			logger.info("Is existing MF customer ? - "+ pan+ " : "+ flag);
 			session.removeAttribute("selectFund");
 			session.setAttribute("selectFund", selectedFund);
 			if(flag && session.getAttribute("token")==null){

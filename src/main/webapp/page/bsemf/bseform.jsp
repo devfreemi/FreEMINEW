@@ -127,8 +127,9 @@
 									Birth<sup style="color: red">*</sup>
 								</span>
 							</div>
-							<form:input type="text" path="invDOB" required="required" maxlength="10"
-								class="form-control form-control-custom" id="investorDOB" />
+							<form:input type="text" path="invDOB" required="required"
+								maxlength="10" class="form-control form-control-custom"
+								id="investorDOB" />
 						</div>
 						<span style="font-size: 10px; color: #d05c41;"><sup>*</sup>Age
 							limit: 18-65 years</span>
@@ -148,18 +149,41 @@
 								aria-describedby="basic-addon3" />
 						</div>
 					</div>
-					<div class="form-group col-md-6">
-						<div class="input-group mb-1">
-							<div class="input-group-prepend">
-								<span class="input-group-text" id="basic-addon3">Mobile
-									no.<sup style="color: red">*</sup>
-								</span>
+
+					<c:choose>
+						<c:when test="${LOGGED == 'Y' }">
+							<div class="form-group col-md-6">
+								<div class="input-group mb-1">
+									<div class="input-group-prepend">
+										<span class="input-group-text" id="basic-addon3">Mobile
+											no.<sup style="color: red">*</sup>
+										</span>
+									</div>
+									<form:input type="text"
+										class="form-control form-control-custom" maxlength="10"
+										pattern="[0-9]*" id="mobile" path="mobile" required="required"
+										aria-describedby="basic-addon3" readonly="true" />
+								</div>
 							</div>
-							<form:input type="text" class="form-control form-control-custom"
-								maxlength="10" pattern="[0-9]*" id="mobile" path="mobile"
-								required="required" aria-describedby="basic-addon3" />
-						</div>
-					</div>
+						</c:when>
+						<c:otherwise>
+							<div class="form-group col-md-6">
+								<div class="input-group mb-1">
+									<div class="input-group-prepend">
+										<span class="input-group-text" id="basic-addon3">Mobile
+											no.<sup style="color: red">*</sup>
+										</span>
+									</div>
+									<form:input type="text"
+										class="form-control form-control-custom" maxlength="10"
+										pattern="[0-9]*" id="mobile" path="mobile" required="required"
+										aria-describedby="basic-addon3" />
+								</div>
+							</div>
+						</c:otherwise>
+
+					</c:choose>
+
 
 				</div>
 
@@ -549,7 +573,8 @@
 		<div class="animated fadeIn">
 			<div class="sectionheader">
 				<h5>
-					<i class="fas fa-file-signature"></i> FATCA DECLARATION FOR INDIVIDUAL
+					<i class="fas fa-file-signature"></i> FATCA DECLARATION FOR
+					INDIVIDUAL
 				</h5>
 			</div>
 
@@ -1010,7 +1035,7 @@
 						id="branchStateDisplay"></span></label>
 				</div>
 			</div>
-			
+
 			<!-- End of Bank info summary  -->
 			<div class="sectionheader1">
 				<h5>
@@ -1020,8 +1045,9 @@
 
 			<div class="row gap_custom">
 				<div class="col-md-6">
-					<label class="col-5 col-md-5 col-form-label label_design">US/Canada Citizen
-						</label> <label class="col-6 col-md-6 col-form-label label_design1"><span
+					<label class="col-5 col-md-5 col-form-label label_design">US/Canada
+						Citizen </label> <label
+						class="col-6 col-md-6 col-form-label label_design1"><span
 						id="uscitizenshipcheckdisplay"></span></label>
 				</div>
 				<div class="col-md-6">
@@ -1034,46 +1060,48 @@
 
 			<div class="row gap_custom">
 				<div class="col-md-6">
-					<label class="col-5 col-md-5 col-form-label label_design">Father's Name
-						Type</label> <label class="col-6 col-md-6 col-form-label label_design1"><span
+					<label class="col-5 col-md-5 col-form-label label_design">Father's
+						Name Type</label> <label
+						class="col-6 col-md-6 col-form-label label_design1"><span
 						id="fathernamedisplay"></span></label>
 				</div>
 				<div class="col-md-6">
-					<label class="col-5 col-md-5 col-form-label label_design">Spouse Name
-						</label> <label class="col-6 col-md-6 col-form-label label_design1"><span
+					<label class="col-5 col-md-5 col-form-label label_design">Spouse
+						Name </label> <label class="col-6 col-md-6 col-form-label label_design1"><span
 						id="spousenamedisplay"></span></label>
 				</div>
 			</div>
 
 			<div class="row gap_custom">
 				<div class="col-md-6">
-					<label class="col-5 col-md-5 col-form-label label_design">Wealth Source
-						</label> <label class="col-6 col-md-6 col-form-label label_design1"><span
+					<label class="col-5 col-md-5 col-form-label label_design">Wealth
+						Source </label> <label class="col-6 col-md-6 col-form-label label_design1"><span
 						id="wealthsourcedisplay"></span></label>
 				</div>
 				<div class="col-md-6">
-					<label class="col-5 col-md-5 col-form-label label_design">Income Slab</label>
-					<label class="col-6 col-md-6 col-form-label label_design1"><span
+					<label class="col-5 col-md-5 col-form-label label_design">Income
+						Slab</label> <label class="col-6 col-md-6 col-form-label label_design1"><span
 						id="incomeslabdisplay"></span></label>
 				</div>
 			</div>
 
 			<div class="row gap_custom">
 				<div class="col-md-6">
-					<label class="col-5 col-md-5 col-form-label label_design">Occupation Type
-						Address</label> <label class="col-6 col-md-6 col-form-label label_design1"><span
+					<label class="col-5 col-md-5 col-form-label label_design">Occupation
+						Type Address</label> <label
+						class="col-6 col-md-6 col-form-label label_design1"><span
 						id="occupationtypedisplay"></span></label>
 				</div>
 				<div class="col-md-6">
-					<label class="col-5 col-md-5 col-form-label label_design">Political View
-						</label> <label class="col-6 col-md-6 col-form-label label_design1"><span
+					<label class="col-5 col-md-5 col-form-label label_design">Political
+						View </label> <label class="col-6 col-md-6 col-form-label label_design1"><span
 						id="politicalviewdisplay"></span></label>
 				</div>
 			</div>
 
 			<!-- FATCA Declaration  -->
-			
-			
+
+
 			<!-- End of FATCA declaration  -->
 
 			<div class="sectionheader1">

@@ -45,6 +45,8 @@ public interface ProfileRestClientService {
 	
 	public ResponseEntity<String> isUserExisitng(String mobile) throws JsonProcessingException;
 	
+	public ResponseEntity<String> validateUserToken(String userid, String token,String requestingIp);
+	
 	
 
 }

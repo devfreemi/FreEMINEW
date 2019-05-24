@@ -1,5 +1,8 @@
 package com.freemi.ui.config;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -10,15 +13,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.freemi.common.util.CommonConstants;
+import com.freemi.common.util.CommonTask;
+import com.freemi.controller.interfaces.ProfileRestClientService;
+import com.freemi.ui.restclient.RestClient;
 
 public class RequestInceptorCustom  extends HandlerInterceptorAdapter {
 	
 	private static final Logger logger = LogManager.getLogger(RequestInceptorCustom.class);
+	
+	@Autowired
+	ProfileRestClientService profileRestClientService;
 	
 	@Override
     public boolean preHandle(HttpServletRequest request,
@@ -31,8 +41,7 @@ public class RequestInceptorCustom  extends HandlerInterceptorAdapter {
         response.addHeader("Access-Control-Allow-Headers", "Content-Type");
         response.addHeader("Cache-Control", "private");*/
 	 	
-	 	logger.info("Validating request received for url -"+ request.getRequestURI());
-	 	boolean flag=true;
+	 	logger.debug("RequestInceptorCustom- preHandle(): Validating request received for url -"+ request.getRequestURI());
 
         String reqUri = request.getRequestURI();
        /* String serviceName = reqUri.substring(reqUri.lastIndexOf("/") + 1,
@@ -40,24 +49,46 @@ public class RequestInceptorCustom  extends HandlerInterceptorAdapter {
                 if (serviceName.equals("SOMETHING")) {
 
                 }*/
-       
-        
-        if(reqUri.contains(/*"/mutual-funds/mfPurchaseConfirm.do"*/"unknown")){
+
+        if(CommonConstants.protectedUrl.contains(reqUri)){
+        	logger.info("Accessing protected URL. Validate session.." +  request.getRequestURI());
         	HttpSession session = request.getSession();
         	if(session.getAttribute("token")==null){
-        		logger.info("pre-handle- User sesssion not found. Rejecting purchase transaction");
-        		request.setAttribute("LOGGED", "FALSE");
-        		flag = false;
+        		logger.debug("pre-handle- User sesssion not found. Rejecting access");
+        		logger.debug("Context path- "+ request.getContextPath());
+        		response.sendRedirect(request.getContextPath()+"/login?ref="+URLEncoder.encode(request.getRequestURL().toString(), StandardCharsets.UTF_8.toString()));
+        		return false;
         	}else{
-        		request.setAttribute("LOGGED", "TRUE");
-        		logger.info("User session is found. User is logged in");
+        		logger.info("Validate session token.");
+        		
+        		try{
+        		ResponseEntity<String> apiresponse = profileRestClientService.validateUserToken(session.getAttribute("userid")!=null?session.getAttribute("userid").toString():"BLANK", session.getAttribute("token").toString(), CommonTask.getClientSystemIp(request));
+        		logger.info("RESPONSE- "+ apiresponse.getBody());
+        		if(apiresponse.getBody().equals("VALID")){
+        			return true;
+        		}else if(apiresponse.getBody().equals("EXPIRED")){
+        			logger.info("Session has expired. Clear current sessions and relogin..");
+        			session.invalidate();
+        			response.sendRedirect(request.getContextPath()+"/login?ref="+URLEncoder.encode(request.getRequestURL().toString(), StandardCharsets.UTF_8.toString()));
+            		return false;
+        			
+        		}else{
+        			logger.info("Session mismtach or invalid.. Mot allowing to access.");
+        			response.sendRedirect(request.getContextPath());
+            		return false;
+        		}
+        		}catch(Exception e){
+        			logger.error("RequestInceptorCustom- preHandle(): Failed to validate session..",e);
+        			response.sendRedirect(request.getContextPath());
+            		return false;
+        		}
         	}
         }
         
-//        if()
-        return super.preHandle(request, response, handler);
-//        return flag;
-    }
+//        return super.preHandle(request, response, handler);
+
+        return true; 
+	}
 	
 	
 	@Override

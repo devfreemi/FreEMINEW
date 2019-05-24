@@ -67,6 +67,8 @@ public class ProfileManageController{
 
 	@Autowired
 	ProfileRestClientService profileRestClientService;
+	
+	
 
 	private static final Logger logger = LogManager.getLogger(ProfileManageController.class);
 
@@ -88,85 +90,91 @@ public class ProfileManageController{
 				returnurl="redirect:/login";
 			}
 		}else{
-			returnurl="profile2";
-			
-		
-			passform.setMobile(session.getAttribute("userid").toString());
-			
-			//			User profile data collection from DB
-			try{
-				UserProfile profile = bseEntryManager.getCustomerProfileDetailsByMobile(session.getAttribute("userid").toString());
-				if(profile!=null){
-					model.addAttribute("profileBasic", profile);
-					model.addAttribute("INV_PROF","Y");
-				}else{
-					model.addAttribute("INV_PROF","N");
+
+			ResponseEntity<String> sessionValidCheck = profileRestClientService.validateUserToken(session.getAttribute("userid")!=null?session.getAttribute("userid").toString():"BLANK", session.getAttribute("token").toString(), CommonTask.getClientSystemIp(request));
+			logger.info("getProfile(): Session validation status- "+ sessionValidCheck.getBody());
+
+				returnurl="profile2";
+
+				passform.setMobile(session.getAttribute("userid").toString());
+
+				//			User profile data collection from DB
+				try{
+					UserProfile profile = bseEntryManager.getCustomerProfileDetailsByMobile(session.getAttribute("userid").toString());
+					if(profile!=null){
+						model.addAttribute("profileBasic", profile);
+						model.addAttribute("INV_PROF","Y");
+					}else{
+						model.addAttribute("INV_PROF","N");
+					}
+				}catch(Exception e){
+					model.addAttribute("errorinv", "Unable to fetch Profiel details");
+					logger.error("Unable to fetch your investment profile details.",e);
+					error =1;
+					model.addAttribute("profileBasic", new UserProfile());
 				}
-			}catch(Exception e){
-				model.addAttribute("errorinv", "Unable to fetch Profiel details");
-				logger.error("Unable to fetch your investment profile details.",e);
-				error =1;
-				model.addAttribute("profileBasic", new UserProfile());
-			}
 
-			//				START BASIC DETAILS QUERY
-			logger.info("Fetch basic details...");
-			//					Search Basic Details from LDAP
-			try {
-				response = profileRestClientService.getProfileData(session.getAttribute("userid").toString(), session.getAttribute("token").toString(), CommonTask.getClientSystemDetails(request).getClientIpv4Address());
-				//						logger.info(response.getBody());
-				//						logger.info(response.getHeaders());
-				logger.info("Get Profile details response- "+ response.getBody());
-				userDetails = new ObjectMapper().readValue(response.getBody(), UserProfileLdap.class);
-				//						logger.info(profile.getGender());
+				//				START BASIC DETAILS QUERY
+				logger.info("Fetch basic details...");
+				//					Search Basic Details from LDAP
+				try {
+					response = profileRestClientService.getProfileData(session.getAttribute("userid").toString(), session.getAttribute("token").toString(), CommonTask.getClientSystemDetails(request).getClientIpv4Address());
+					//						logger.info(response.getBody());
+					//						logger.info(response.getHeaders());
+					logger.info("Get Profile details response- "+ response.getBody());
+					userDetails = new ObjectMapper().readValue(response.getBody(), UserProfileLdap.class);
+					//						logger.info(profile.getGender());
 
-				model.addAttribute("profilefreemi", userDetails);
-				/*model.addAttribute("profileAccount", userDetails);
+					model.addAttribute("profilefreemi", userDetails);
+					/*model.addAttribute("profileAccount", userDetails);
 					model.addAttribute("profileAddress", userDetails);*/
 
-				logger.info("Profile details retrieved for customer from LDAP- "+userDetails.getMobile());
-			}catch(HttpStatusCodeException  e){
-				logger.info("Unable to fetch profile details from LDAP- " + e.getStatusCode());
-				if(e.getStatusCode().value() == 401){
-					model.addAttribute("error", "Token validation failed. Please check if it expired");
-				}else{
-					model.addAttribute("error", "Unable to process request curretnly");
+					logger.info("Profile details retrieved for customer from LDAP- "+userDetails.getMobile());
+				}catch(HttpStatusCodeException  e){
+					logger.info("Unable to fetch profile details from LDAP- " + e.getStatusCode());
+					if(e.getStatusCode().value() == 401){
+						model.addAttribute("error", "Token validation failed. Please check if it expired");
+					}else{
+						model.addAttribute("error", "Unable to process request curretnly");
+					}
+					model.addAttribute("profilefreemi", new UserProfile());
+				} catch (JsonProcessingException e) {
+					model.addAttribute("error","Invalid form data");
+					model.addAttribute("profilefreemi", new UserProfile());
+
+				}catch(Exception e){
+					//						e.printStackTrace();
+					model.addAttribute("error","Error processing request");
+					model.addAttribute("profilefreemi", new UserProfile());
 				}
-				model.addAttribute("profilefreemi", new UserProfile());
-			} catch (JsonProcessingException e) {
-				model.addAttribute("error","Invalid form data");
-				model.addAttribute("profilefreemi", new UserProfile());
-
-			}catch(Exception e){
-				//						e.printStackTrace();
-				model.addAttribute("error","Error processing request");
-				model.addAttribute("profilefreemi", new UserProfile());
-			}
 
 
-			//				----------------------
+				//				----------------------
 
 
 
-			/*	model.addAttribute("states", InvestFormConstants.states);
+				/*	model.addAttribute("states", InvestFormConstants.states);
 				model.addAttribute("bankNames", InvestFormConstants.bankNames);
 				model.addAttribute("accountTypes", InvestFormConstants.accountTypes);*/
 
 
-			if(error == 1){
-				model.addAttribute("error","Sorry. Unable to fetch your details currently.");
+				if(error == 1){
+					model.addAttribute("error","Sorry. Unable to fetch your details currently.");
 
-				/*model.addAttribute("profileAccount", new UserProfile());
+					/*model.addAttribute("profileAccount", new UserProfile());
 				model.addAttribute("profileAddress", new UserProfile());*/
-			}
+				}
 
+			
 
 		}
-		
-		
+
+
 		model.addAttribute("profilePasswordChangeForm",passform);
 		model.addAttribute("contextcdn", environment.getProperty(CommonConstants.CDN_URL));
 		logger.info("@@@@ ProfileController complete. @@@@");
+
+
 		return returnurl;
 	}
 
@@ -304,48 +312,48 @@ public class ProfileManageController{
 		//		RestClient client = new RestClient();
 		ResponseEntity<String> response = null;
 		try{
-		if(bindingResult.hasErrors()){
-//			model.addAttribute("error", bindingResult.getFieldError().getDefaultMessage());
-			
-			logger.info("Change password form validation failed- "+ bindingResult.getFieldError().getDefaultMessage());
-			returnurl =  bindingResult.getFieldError().getDefaultMessage();
-		}else if(session.getAttribute("token") == null){
-//			returnurl="redirect:/login";
-			logger.info("no session found of the user to change password.");
-			returnurl ="Session invalid. Try again after login.";
-		}else{
-//			returnurl="redirect:/profile";
-			try {
-				response = profileRestClientService.updateProfilePassword(passChangeForm,session.getAttribute("userid").toString(), session.getAttribute("token").toString(),CommonTask.getClientSystemDetails(request).getClientIpv4Address());
-				//				System.err.println(response.getBody());
-				logger.info("Password change response-  " + response.getBody());
-				if(response.getBody().equals("SUCCESS")){
-//					model.addAttribute("passchange", "Password updated successfully");
-					returnurl = "SUCCESS";
-				}else if(response.getBody().equals("OLD_PASSWORD_INVALID")){
-					returnurl = "Previous password do not match";
-				}
-				else{
-//					model.addAttribute("passchange", "Failed to update. previous password may not be valid");
-					returnurl = "Failed to change password. Contact Admin.";
+			if(bindingResult.hasErrors()){
+				//			model.addAttribute("error", bindingResult.getFieldError().getDefaultMessage());
+
+				logger.info("Change password form validation failed- "+ bindingResult.getFieldError().getDefaultMessage());
+				returnurl =  bindingResult.getFieldError().getDefaultMessage();
+			}else if(session.getAttribute("token") == null){
+				//			returnurl="redirect:/login";
+				logger.info("no session found of the user to change password.");
+				returnurl ="Session invalid. Try again after login.";
+			}else{
+				//			returnurl="redirect:/profile";
+				try {
+					response = profileRestClientService.updateProfilePassword(passChangeForm,session.getAttribute("userid").toString(), session.getAttribute("token").toString(),CommonTask.getClientSystemDetails(request).getClientIpv4Address());
+					//				System.err.println(response.getBody());
+					logger.info("Password change response-  " + response.getBody());
+					if(response.getBody().equals("SUCCESS")){
+						//					model.addAttribute("passchange", "Password updated successfully");
+						returnurl = "SUCCESS";
+					}else if(response.getBody().equals("OLD_PASSWORD_INVALID")){
+						returnurl = "Previous password do not match";
+					}
+					else{
+						//					model.addAttribute("passchange", "Failed to update. previous password may not be valid");
+						returnurl = "Failed to change password. Contact Admin.";
+					}
+
+				}catch(HttpStatusCodeException  e){
+					logger.error("Change profile password HttpStatusCodeException - ", e);
+					//				model.addAttribute("error", "Unable to process request curretnly");
+					returnurl = "Unable to process request currently";
+				} catch (JsonProcessingException e) {
+					logger.error("error changing password JsonProcessingException()", e);
+					//				model.addAttribute("error","Invalid form data");
+					returnurl ="Invalid form data";
+				}catch(Exception e){
+					logger.error("error changing password Exception()", e);
+					//				model.addAttribute("error","Error processing request");
+					returnurl ="Error processing request";
 				}
 
-			}catch(HttpStatusCodeException  e){
-				logger.error("Change profile password HttpStatusCodeException - ", e);
-//				model.addAttribute("error", "Unable to process request curretnly");
-				returnurl = "Unable to process request currently";
-			} catch (JsonProcessingException e) {
-				logger.error("error changing password JsonProcessingException()", e);
-//				model.addAttribute("error","Invalid form data");
-				returnurl ="Invalid form data";
-			}catch(Exception e){
-				logger.error("error changing password Exception()", e);
-//				model.addAttribute("error","Error processing request");
-				returnurl ="Error processing request";
+
 			}
-
-
-		}
 		}catch(Exception e){
 			returnurl = "Internal error.";
 		}

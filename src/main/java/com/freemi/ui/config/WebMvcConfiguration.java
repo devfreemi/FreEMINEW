@@ -87,7 +87,13 @@ public ViewResolver configureViewResolver1() {
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(new DeviceInterceptorCustom());
-		registry.addInterceptor(new RequestInceptorCustom());
+//		registry.addInterceptor(new RequestInceptorCustom());
+		registry.addInterceptor(customInterceptor()).addPathPatterns(("/**"));
+	}
+	
+	@Bean
+	public RequestInceptorCustom customInterceptor() {
+	    return new RequestInceptorCustom();
 	}
 	
 }

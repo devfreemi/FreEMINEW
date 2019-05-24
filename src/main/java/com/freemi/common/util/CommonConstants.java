@@ -1,7 +1,15 @@
 package com.freemi.common.util;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 public class CommonConstants {
 
+//	Service URL Properties
+	public static final String URL_SERVICE_PROFILE="url.service.profile";
+	
 //	Environment properties
 	public static final String CDN_URL="link.content.cdn";
 	public static final String BSE_ENABLED="investment.bse.enabled";
@@ -100,6 +108,21 @@ public class CommonConstants {
 	
 	
 	/*-----------------------------------------------------------------------------*/
+	
+	
+	public static List<String> protectedUrl = new ArrayList<String>(){
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		{
+			add("/products/profile");
+			add("/products/my-dashboard");
+			add("/products/mutual-funds/view-purchase-history");
+			
+		}
+	};
 	
 	
 }

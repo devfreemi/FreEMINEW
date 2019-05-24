@@ -33,7 +33,7 @@ public class SmsSenderImpl implements SmsSenderInterface {
 		logger.info("Send OTP to mobile number- "+ mobile);
 		if(env.getProperty(com.freemi.common.util.CommonConstants.SMS_SEND_ENABLED).equalsIgnoreCase("Y")){
 			if(mobile!=null){
-				String message= otp + " is your OTP to login to your FreEMI Account. The otp is valis for "+ validyTime + " minute";
+				String message= otp + " is your OTP to login to your FreEMI Account. The otp is valis for "+ validyTime + " minute(s)";
 				prepareSms(mobile,message,env.getProperty(CommonConstants.SMS_ROUTE_TRANSACTIONAL));
 			}else{
 				logger.info("No mobile number found to send registration sms.");
@@ -54,7 +54,7 @@ public class SmsSenderImpl implements SmsSenderInterface {
 //		System.out.println("Enter");
 		try{
 		ResponseEntity<String> result = template.exchange(
-				smsAPIBuilder(mobile,env.getProperty(message),env.getProperty(CommonConstants.SMS_SENDER_ID),msgRoute
+				smsAPIBuilder(mobile,message,env.getProperty(CommonConstants.SMS_SENDER_ID),msgRoute
 						).build().encode().toUri(),
 				HttpMethod.GET,
 				entity,
@@ -78,6 +78,8 @@ public class SmsSenderImpl implements SmsSenderInterface {
 				.queryParam("route", route)
 				.queryParam("country", "91")
 				;
+		
+		logger.debug(uriBuilder.toUriString());
 		return uriBuilder;
 	}
 

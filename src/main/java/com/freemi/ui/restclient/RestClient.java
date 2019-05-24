@@ -15,6 +15,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.freemi.common.util.CommonConstants;
 import com.freemi.controller.interfaces.ProfileRestClientService;
 import com.freemi.entity.database.CampaignSignupForm;
 import com.freemi.entity.general.ContactUsForm;
@@ -24,6 +25,7 @@ import com.freemi.entity.general.Login;
 import com.freemi.entity.general.ProfilePasswordChangeForm;
 import com.freemi.entity.general.Registerform;
 import com.freemi.entity.general.ResetPassword;
+import com.freemi.entity.general.SessionToken;
 import com.freemi.entity.general.UserProfile;
 import com.google.gson.JsonObject;
 
@@ -63,7 +65,7 @@ public class RestClient implements ProfileRestClientService {
 	public ResponseEntity<String> login(String userid, String password, String ip){
 
 		logger.info("Requesting logging for profile- "+ userid);
-		final String url = env.getProperty("url.service.profile")+"/login";
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_PROFILE)+"/login";
 		logger.info("Reuqesting url- "+ url);
 		RestTemplate restTemplate = new RestTemplate();
 
@@ -94,7 +96,7 @@ public class RestClient implements ProfileRestClientService {
 	public ResponseEntity<String> validateuserIdAndGetMail(String userId) throws JsonProcessingException{
 
 		logger.info("Initiaitng API call check if user exist and get email Id - "+ userId);
-		final String url = env.getProperty("url.service.profile") + "/publicenv/getemailidifexistforotp/"+userId;
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_PROFILE) + "/publicenv/getemailidifexistforotp/"+userId;
 		RestTemplate restTemplate = new RestTemplate();
 		//		System.out.println(registerForm);
 		HttpHeaders headers = new HttpHeaders();	
@@ -108,7 +110,7 @@ public class RestClient implements ProfileRestClientService {
 	public ResponseEntity<String> registerUser(Registerform registerForm) throws JsonProcessingException{
 
 		logger.info("Initiaitng API call to register user- "+ registerForm.getMobile());
-		final String url = env.getProperty("url.service.profile") + "/publicenv/registerUser";
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_PROFILE) + "/publicenv/registerUser";
 		ObjectMapper mapper = new ObjectMapper();
 		RestTemplate restTemplate = new RestTemplate();
 		String formdata= mapper.writeValueAsString(registerForm);
@@ -124,7 +126,7 @@ public class RestClient implements ProfileRestClientService {
 	public ResponseEntity<String> otpLogin(Login loginForm) throws JsonProcessingException{
 
 		logger.info("Initiating API call to login user by OTP- "+ loginForm.getUsermobile());
-		final String url = env.getProperty("url.service.profile") + "/publicenv/otplogin";
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_PROFILE) + "/publicenv/otplogin";
 		RestTemplate restTemplate = new RestTemplate();
 //		ObjectMapper mapper = new ObjectMapper();
 		
@@ -153,7 +155,7 @@ public class RestClient implements ProfileRestClientService {
 
 	@Override
 	public ResponseEntity<String> contactUs(ContactUsForm contactUsData) throws JsonProcessingException{
-		final String url = env.getProperty("url.service.profile") + "/publicenv/contactusrequest";
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_PROFILE) + "/publicenv/contactusrequest";
 		ObjectMapper mapper = new ObjectMapper();
 		RestTemplate restTemplate = new RestTemplate();
 		String formdata= mapper.writeValueAsString(contactUsData);
@@ -167,7 +169,7 @@ public class RestClient implements ProfileRestClientService {
 
 	@Override
 	public ResponseEntity<String> campaignSingUp(CampaignSignupForm campaignSignUpForm) throws JsonProcessingException{
-		final String url = env.getProperty("url.service.profile") + "/publicenv/campaignSignUp";
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_PROFILE) + "/publicenv/campaignSignUp";
 		ObjectMapper mapper = new ObjectMapper();
 		RestTemplate restTemplate = new RestTemplate();
 		String formdata= mapper.writeValueAsString(campaignSignUpForm);
@@ -183,7 +185,7 @@ public class RestClient implements ProfileRestClientService {
 	
 	@Override
 	public ResponseEntity<String> fsecureRequest(FSecure contactUsData,String requestingIp) throws JsonProcessingException{
-		final String url = env.getProperty("url.service.profile") + "/publicenv/fSecureRequest";
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_PROFILE) + "/publicenv/fSecureRequest";
 		ObjectMapper mapper = new ObjectMapper();
 		RestTemplate restTemplate = new RestTemplate();
 		String formdata= mapper.writeValueAsString(contactUsData);
@@ -197,7 +199,7 @@ public class RestClient implements ProfileRestClientService {
 
 	@Override
 	public ResponseEntity<String> forgotPassword(ForgotPassword forgotPasswordForm) throws JsonProcessingException{
-		final String url = env.getProperty("url.service.profile") + "/forgotPassword/";
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_PROFILE) + "/forgotPassword/";
 		RestTemplate restTemplate = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Authorization", ANONYMOUS_TOKEN);
@@ -207,7 +209,7 @@ public class RestClient implements ProfileRestClientService {
 	
 	@Override
 	public ResponseEntity<String> getProfileData(String userid, String token, String requestingIp) throws JsonProcessingException{
-		final String url = env.getProperty("url.service.profile") + "/getProfileData";
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_PROFILE) + "/getProfileData";
 		RestTemplate restTemplate = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Authorization", token);
@@ -221,7 +223,7 @@ public class RestClient implements ProfileRestClientService {
 
 	@Override
 	public ResponseEntity<String> updateProfileData(UserProfile profileData,String userid, String token, String requestingIp) throws JsonProcessingException{
-		final String url = env.getProperty("url.service.profile") + "/updateProfileData/"+userid;
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_PROFILE) + "/updateProfileData/"+userid;
 		ObjectMapper mapper = new ObjectMapper();
 		RestTemplate restTemplate = new RestTemplate();
 		String formdata= mapper.writeValueAsString(profileData);
@@ -236,7 +238,7 @@ public class RestClient implements ProfileRestClientService {
 
 	@Override
 	public ResponseEntity<String> updateProfilePassword(ProfilePasswordChangeForm passchangeForm,String userid, String token,String requestingIp) throws JsonProcessingException{
-		final String url = env.getProperty("url.service.profile") + "/profilePasswordChange/"+userid;
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_PROFILE) + "/profilePasswordChange/"+userid;
 		ObjectMapper mapper = new ObjectMapper();
 		RestTemplate restTemplate = new RestTemplate();
 		String formdata= mapper.writeValueAsString(passchangeForm);
@@ -250,7 +252,7 @@ public class RestClient implements ProfileRestClientService {
 
 	@Override
 	public ResponseEntity<String> forgotPasswordUpdate(ResetPassword forgotPasswordChangeForm,String userid, String token,String requestingIp) throws JsonProcessingException{
-		final String url = env.getProperty("url.service.profile") + "/forgotPasswordReset/"+userid;
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_PROFILE) + "/forgotPasswordReset/"+userid;
 		ObjectMapper mapper = new ObjectMapper();
 		RestTemplate restTemplate = new RestTemplate();
 		String formdata= mapper.writeValueAsString(forgotPasswordChangeForm);
@@ -267,7 +269,7 @@ public class RestClient implements ProfileRestClientService {
 	@Override
 	public ResponseEntity<String> validateResetPasswordToken(String userid, String token,String requestingIp) throws JsonProcessingException{
 		logger.info("Reset password token validation rest call- "+ token);
-		final String url = env.getProperty("url.service.profile") + "/validatePasswordToken/"+userid;
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_PROFILE) + "/validatePasswordToken/"+userid;
 		RestTemplate restTemplate = new RestTemplate();
 
 		HttpHeaders headers = new HttpHeaders();
@@ -281,12 +283,40 @@ public class RestClient implements ProfileRestClientService {
 
 	@Override
 	public ResponseEntity<String> isUserExisitng(String mobile) throws JsonProcessingException{
-		final String url = env.getProperty("url.service.profile") + "/checkUserExist/"+mobile;
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_PROFILE) + "/checkUserExist/"+mobile;
 		RestTemplate restTemplate = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Authorization", ANONYMOUS_TOKEN);
 		HttpEntity<String> entity = new HttpEntity<String>(headers);
 		return restTemplate.postForEntity(url, entity,  String.class);
+	}
+
+	@Override
+	public ResponseEntity<String> validateUserToken(String userid, String token, String requestingIp) {
+		logger.info("Validate user session token - "+ token);
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_PROFILE) + "/validateSessionToken/"+userid;
+		ObjectMapper mapper = new ObjectMapper();
+		RestTemplate restTemplate = new RestTemplate();
+		SessionToken sessiontoken = new SessionToken();
+		sessiontoken.setToken(token);
+		sessiontoken.setUserid(userid);
+		sessiontoken.setSystemip(requestingIp);
+		ResponseEntity<String> response=null;
+		
+		String formdata =null;
+		try {
+			formdata= mapper.writeValueAsString(sessiontoken);
+			HttpHeaders headers = new HttpHeaders();
+			headers.set("Authorization", ANONYMOUS_TOKEN);
+			headers.set("requestingIp", requestingIp);
+			HttpEntity<String> entity = new HttpEntity<String>(formdata,headers);
+			response = restTemplate.postForEntity(url, entity,  String.class);
+			logger.debug("validateUserToken(): Session validation response- "+ response);
+		} catch (JsonProcessingException e) {
+			logger.info("Failed to carry out session validation for user - "+userid,e);
+		}
+		
+		return response;
 	}
 
 
