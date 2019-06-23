@@ -326,7 +326,7 @@ public class RestClientBse implements BseRestClientService {
 		} catch (JsonProcessingException e) {
 			logger.error("fatcaDeclaration(): Failed to write form data", e);
 		}
-		logger.info("Requesting FATCA registartion to API- "+ formdata);
+		logger.info("Requesting FATCA registration to API- "+ formdata);
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
 		HttpEntity<String> entity = new HttpEntity<String>(formdata,headers);

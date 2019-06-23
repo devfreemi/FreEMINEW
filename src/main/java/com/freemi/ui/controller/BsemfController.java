@@ -8,10 +8,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.Period;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -28,6 +26,7 @@ import javax.validation.Valid;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.aspectj.weaver.CustomMungerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
@@ -113,7 +112,7 @@ public class BsemfController {
 	InvestmentConnectorBseInterface investmentConnectorBseInterface;
 
 	@Autowired
-	private Environment env;
+	Environment env;
 
 	@Autowired
 	MailSenderHandler mailSenderHandler;
@@ -193,6 +192,12 @@ public class BsemfController {
 		//		return "bsemf/test";
 	}
 
+	@RequestMapping(value = {"/mutual-funds/mfInvestRegister"}, method = RequestMethod.GET)
+	public String defaultPostUrl(@Valid @ModelAttribute("mfInvestForm") BseMFInvestForm investForm,BindingResult bindResult, Model map, HttpServletRequest request, HttpServletResponse response, RedirectAttributes attrs, HttpSession session) {
+		return "redirect:/";
+	
+	}
+	
 	@RequestMapping(value = "/mutual-funds/mfInvestRegister.do", method = RequestMethod.POST)
 	public String registerBsepost(@Valid @ModelAttribute("mfInvestForm") BseMFInvestForm investForm,BindingResult bindResult, Model map, HttpServletRequest request, HttpServletResponse response, RedirectAttributes attrs, HttpSession session) {
 
@@ -200,96 +205,69 @@ public class BsemfController {
 		String returnUrl = "bsemf/bse-registration-status";
 		String mfRegflag = "NOT_COMPLETE";
 		String fatcaFlag = "FAIL";
+		String validationerrormsg="";
 		BseApiResponse fatresponse = null;
-		//		SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy-mm-dd");
+		boolean validationpass = true;
+		SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy-mm-dd");
 		SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("dd/mm/yyyy");
+		
 		//		String error = "N";
 
-		if(!investForm.isUbo()){
-			map.addAttribute("error", "Confirm the policy");
-
-			map.addAttribute("holingNature", InvestFormConstants.holdingMode);
-			map.addAttribute("dividendPayMode", InvestFormConstants.dividendPayMode);
-			map.addAttribute("occupation", InvestFormConstants.occupationList);
-			map.addAttribute("bankNames", InvestFormConstants.bankNames);
-			map.addAttribute("accountTypes", InvestFormConstants.accountTypes);
-			map.addAttribute("states", InvestFormConstants.states);
-			map.addAttribute("wealthSource", InvestFormConstants.fatcaWealthSource);
-			map.addAttribute("incomeSlab", InvestFormConstants.fatcaIncomeSlab);
-			map.addAttribute("politicalView", InvestFormConstants.fatcaPoliticalView);
-			map.addAttribute("occupationType", InvestFormConstants.fatcaOccupationType);
-			map.addAttribute("nomineeRelation", InvestFormConstants.nomineeRelation);
-			map.addAttribute("addressType", InvestFormConstants.fatcaAddressType);
-			return "bsemf/bse-form-new-customer";
+		if(bindResult.hasErrors()){
+			validationpass = false;
+//			logger.error("Error in binding result during registartion.. Return to form- ");
+//			map.addAttribute("error", bindResult.getFieldError().getDefaultMessage());
+			validationerrormsg=bindResult.getFieldError().getDefaultMessage();
 		}
+		else if(!investForm.isUbo()){
+			validationpass = false;
+			validationerrormsg="Confirm the policy";
 
-		if(session.getAttribute("token")!=null){
+		}
+		else if(session.getAttribute("token")!=null){
 			if(session.getAttribute("userid")!=null){
 				if(!session.getAttribute("userid").toString().equalsIgnoreCase(investForm.getMobile())){
-					map.addAttribute("error", "Mobile no. must be same as that of logged account. ");
-
-					map.addAttribute("holingNature", InvestFormConstants.holdingMode);
-					map.addAttribute("dividendPayMode", InvestFormConstants.dividendPayMode);
-					map.addAttribute("occupation", InvestFormConstants.occupationList);
-					map.addAttribute("bankNames", InvestFormConstants.bankNames);
-					map.addAttribute("accountTypes", InvestFormConstants.accountTypes);
-					map.addAttribute("states", InvestFormConstants.states);
-					map.addAttribute("wealthSource", InvestFormConstants.fatcaWealthSource);
-					map.addAttribute("incomeSlab", InvestFormConstants.fatcaIncomeSlab);
-					map.addAttribute("politicalView", InvestFormConstants.fatcaPoliticalView);
-					map.addAttribute("occupationType", InvestFormConstants.fatcaOccupationType);
-					map.addAttribute("nomineeRelation", InvestFormConstants.nomineeRelation);
-					map.addAttribute("addressType", InvestFormConstants.fatcaAddressType);
-					return "bsemf/bse-form-new-customer";
+					validationpass = false;
+					validationerrormsg="Mobile no. must be same as that of logged account. ";
 				}
 			}
 		}
+		else{
+			try{
+				logger.info("registerBsepost() : Investor DOB: "+ investForm.getInvDOB());
+				Date dob = simpleDateFormat2.parse(investForm.getInvDOB());
+				Calendar dobdt = Calendar.getInstance();
+				dobdt.setTime(dob);
 
-		if(bindResult.hasErrors()){
-			logger.error("Error in binding result during registartion.. Return to form- ");
-			map.addAttribute("error", bindResult.getFieldError().getDefaultMessage());
+				Calendar todaydt = Calendar.getInstance();
+				todaydt.setTime(new Date());
+				if(dob.after(new Date())){
+					validationpass = false;
+					validationerrormsg="DOB given is future date!";
+				}
+				int age= todaydt.get(Calendar.YEAR) - dobdt.get(Calendar.YEAR);
+				if(age < 18 || age > 65 ){
+					validationpass = false;
+					validationerrormsg="Allowed Investment age is 18-65 years";
+				}
 
-			
-		}
-		
-		boolean dobValid=true;
-		String dobissuemsg="";
+				/*	System.out.println("is date future -"+ dob.after(new Date()));
 
-		try{
-			logger.info("registerBsepost() : Investor DOB: "+ investForm.getInvDOB());
-			Date dob = simpleDateFormat2.parse(investForm.getInvDOB());
-//			System.out.println("Calucated date- "+ dob);
-			Calendar dobdt = Calendar.getInstance();
-			dobdt.setTime(dob);
-			
-			Calendar todaydt = Calendar.getInstance();
-			todaydt.setTime(new Date());
-			if(dob.after(new Date())){
-				dobValid = false;
-				dobissuemsg="DOB given is future date!";
-			}
-			int age= todaydt.get(Calendar.YEAR) - dobdt.get(Calendar.YEAR);
-			if(age < 18 || age > 65 ){
-				dobValid = false;
-				dobissuemsg="Allowed Investment age is 18-65 years";
-			}
-			
-		/*	System.out.println("is date future -"+ dob.after(new Date()));
-			
 			System.out.println("Age- "+ (todaydt.get(Calendar.YEAR) - dobdt.get(Calendar.YEAR) ));*/
-			logger.info("Investor DOB is in desired format. Proceed");
-			
-			
-			
-		}catch(Exception e){
-			dobValid = false;
-			dobissuemsg = "Invalid date of birth format";
-			
+				logger.info("Investor DOB is in desired format. Proceed");
+
+			}catch(Exception e){
+				validationpass = false;
+				validationerrormsg = "Invalid date of birth format";
+
+			}
 		}
-		
-		if(!dobValid){
-			map.addAttribute("error", dobissuemsg);
-			logger.error("Parse exception of date of birth. - "+ investForm.getInvDOB());
+
+		if(!validationpass){
+			logger.info("Error validating form data: "+ validationerrormsg);
+			
+			map.addAttribute("error", validationerrormsg);
+			
 			map.addAttribute("holingNature", InvestFormConstants.holdingMode);
 			map.addAttribute("dividendPayMode", InvestFormConstants.dividendPayMode);
 			map.addAttribute("occupation", InvestFormConstants.occupationList);
@@ -304,16 +282,14 @@ public class BsemfController {
 			map.addAttribute("nomineeRelation", InvestFormConstants.nomineeRelation);
 			map.addAttribute("addressType", InvestFormConstants.fatcaAddressType);
 			return "bsemf/bse-form-new-customer";
-			
+
 		}
-
-
 
 		try{
 
 			//			Check if user required to be registered at portal first
 			logger.info("Is profile generation required during MF profile registration? - "+ investForm.isProfileRegRequired());
-			if(investForm.isProfileRegRequired() && CommonConstants.BSE_CALL_TEST_ENABLED.equalsIgnoreCase("N")){
+			if(investForm.isProfileRegRequired() && env.getProperty(CommonConstants.BSE_CALL_TEST_ENABLED).equalsIgnoreCase("N")){
 				logger.info("This is a fresh customer. Register the user first for portal");
 				Registerform registerForm = new Registerform();
 				registerForm.setMobile(investForm.getMobile());
@@ -351,7 +327,7 @@ public class BsemfController {
 				}
 
 			}else{
-				logger.info("Profile is already registered... Skipping the process for mobile- "+ investForm.getMobile());
+				logger.info("BSE Test is enabled... Skipping the process for mobile number profile generation- "+ investForm.getMobile());
 			}
 
 			//			Map other required fields for FATCA based on PAN
@@ -485,6 +461,19 @@ public class BsemfController {
 			map.addAttribute("nomineeRelation", InvestFormConstants.nomineeRelation);
 			map.addAttribute("addressType", InvestFormConstants.fatcaAddressType);
 		}
+		
+		if(returnUrl.equals("bsemf/bse-form-new-customer")){
+			logger.info("Returning with date format- "+ investForm.getInvDOB());
+			try{
+				logger.info("Convert DOB");
+				Date dob = simpleDateFormat1.parse(investForm.getInvDOB());
+				String convt = simpleDateFormat2.format(dob);
+				investForm.setInvDOB(convt);
+			}catch(Exception e){
+				logger.error("Failed converting DOB format. Setting as it is...");
+			}
+		}
+		
 		return returnUrl;
 
 	}
@@ -1017,6 +1006,7 @@ public class BsemfController {
 
 				//				RestClient client = new RestClient();
 				ResponseEntity<String> responseProfile = null;
+				
 				try {
 					responseProfile = profileRestClientService.isUserExisitng(selectedFund.getMobile());
 					logger.info("Response for user existing check- "+ responseProfile.getBody());
@@ -1024,7 +1014,9 @@ public class BsemfController {
 				}catch(HttpStatusCodeException  e){
 					logger.info("Failed to check user exisitng status - " + e.getStatusCode());
 				} catch (JsonProcessingException e) {
+					logger.error("Json parsing excetption- ",e);
 				}catch(Exception e){
+					logger.error("Error processing request- ",e);
 				}
 				if(responseProfile.getBody().equalsIgnoreCase("Y")){
 
@@ -1046,7 +1038,7 @@ public class BsemfController {
 				//					returnUrl="redirect:/mutual-funds/register";
 			}
 		}catch(Exception e){
-			logger.error("Failed to check customer in databases",e);
+			logger.error("Failed to check customer in databases/LDAP",e);
 
 		}
 		/*try{
@@ -1110,6 +1102,13 @@ public class BsemfController {
 					customerData =  bseEntryManager.getCustomerByPan(selectedFund.getPan());
 					//				logger.info("Data size returned- "+ customerData.size());
 					//Find customer's portfolio
+					
+					if(customerData.get(0).getBseregistrationSuccess().equalsIgnoreCase("N")){
+						map.addAttribute("REG_COMPLETE", "N");
+					}else{
+						map.addAttribute("REG_COMPLETE", "Y");
+					}
+					
 					logger.info("Search for customer portfolio for details: "+ selectedFund.getAmcCode() + " :PAN : "+ customerData.get(0).getClientID() + " : RTA Agent: "+ selectedFund.getRtaAgent());
 					customerPortfolios = bseEntryManager.getSelectedAmcPortfolio(selectedFund.getAmcCode(), selectedFund.getPan(),selectedFund.getRtaAgent());
 
@@ -1487,7 +1486,7 @@ public class BsemfController {
 
 
 					//					purchaseForm.setSchemeCode(bseSeletedFundDetails.getSchemeCode());
-					
+
 					//					purchaseForm.setInvestType(folioDetails.getTrasanctionType()!=null?folioDetails.getTrasanctionType():"LUMPSUM");
 					purchaseForm.setInvestType("LUMPSUM");
 
@@ -1671,7 +1670,7 @@ public class BsemfController {
 				}
 			}else{
 				karvyFund = bseEntryManager.getKarvyFundsDetailsForRedeem(rtaCode, session.getAttribute("userid").toString(), portfolio);
-				
+
 				if(karvyFund == null){
 					map.addAttribute("FUNDAVAILABLE", "N");
 					map.addAttribute("error", "No fund value to redeem. Please select appropriate fund for redemption.");
@@ -1685,7 +1684,7 @@ public class BsemfController {
 
 					redeemForm.setInvestType(karvyFund.getTrasanctionType()!=null?karvyFund.getTrasanctionType():"NA");
 					redeemForm.setTotalValue(karvyFund.getInvAmount());
-				
+
 				}
 			}
 
@@ -2068,10 +2067,10 @@ public class BsemfController {
 				orderUrl.setLogOutURL(orderCallUrl);
 				BseOrderPaymentResponse orderUrlReponse= investmentConnectorBseInterface.getPaymentUrl(orderUrl);
 				logger.info("Pending payments response code- "+ orderUrlReponse.getStatusCode());
-				
+
 				if(orderUrlReponse.getStatusCode().equals(CommonConstants.BSE_API_SERVICE_DISABLED)){
 					logger.info("Servvices are currently disabled by Admin. Please try after sometime");
-				}else if(orderUrlReponse.getStatusCode().equals(100)){
+				}else if(orderUrlReponse.getStatusCode().equalsIgnoreCase("100")){
 					returnUrl="redirect:"+orderUrlReponse.getPayUrl();	
 				}else{
 					logger.info("Unable to process payment request..  Return to dashboard...");

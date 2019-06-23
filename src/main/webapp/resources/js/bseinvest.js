@@ -98,7 +98,7 @@ $(document).on("click", "#reinvestcategory", function() {
 function showTab(n) {
 	// This function will display the specified tab of the form ...
 	var x = document.getElementsByClassName("tab");
-	//	console.log(n);
+//	console.log("Showtab- "+n);
 	x[n].style.display = "block";
 
 	// ... and fix the Previous/Next buttons:
@@ -119,11 +119,11 @@ function showTab(n) {
 
 function nextPrev(n) {
 	// This function will figure out which tab to display
-	// console.log("n- " + n);
-	// console.log("Current tab- " + currentTab);
+//	 console.log("nextPrev- " + n);
+//	 console.log("Current tab- " + currentTab);
 
 	if (n == 1 && currentTab == 3) {
-		console.log("Display progress");
+//		console.log("Display progress");
 		$("#display_progress").css({
 			"display" : "block"
 		});
@@ -132,16 +132,23 @@ function nextPrev(n) {
 	}
 	var x = document.getElementsByClassName("tab");
 	// Exit the function if any field in the current tab is invalid:
-	if (n == 1) {
-		//console.log("1st form")
+	var z =currentTab + n;
+//	console.log("z- "+ z);
+	if (z == 1) {
+//		console.log("1st form")
 		if (!validBasicForm())
 			return false;
 	}
 
-	if (n == 2) {
-		//console.log("2nd form");
+	if (z == 2) {
+//		console.log("2nd form");
 
 		if (!validBankForm())
+			return false;
+	}
+	
+	if (z == 3) {
+		if (!validFatcaForm())
 			return false;
 	}
 
@@ -151,16 +158,19 @@ function nextPrev(n) {
 	currentTab = currentTab + n;
 	// if you have reached the end of the form... :
 	if (currentTab == (x.length - 1)) {
+//		console.log("Show confirm page..." + currentTab);
 		populateConfirmPage();
 	}
 
 	if (currentTab >= x.length) {
 		//...the form gets submitted:
+//		console.log("Submit the form ... "+ z);
 		document.getElementById("regForm").submit();
 
 		return false;
 	}
 	// Otherwise, display the correct tab:
+//	console.log("Calling showtab- "+n);
 	showTab(currentTab);
 	setDefaultvalues();
 }
@@ -191,9 +201,29 @@ function validateForm() {
 }
 
 function validBasicForm() {
-	if ($("#investorDOB").val() == "") {
-		console.log("DOB missing")
-		$("#mandateField").text("Fields are mandatory");
+	$("#nextBtn").removeAttr("disabled");
+	$("#mandateField").text("");
+	var dt= $("#investorDOB").val();
+	
+	var splitdt = dt.split("/");
+	dob = new Date(splitdt[2]+"-"+splitdt[1]+"-"+splitdt[0]);
+	var today = new Date();
+	var diff = Math.floor((today - dob)/(1000*60*60*24*365));
+	
+	var gender = $("input[name='gender']:checked").val();
+	
+	if(gender == undefined){
+		$("#mandateField").text("Please select your gender");
+		return false;
+	}
+	
+	if(dob>today || diff <18 || diff > 65){
+		$("#mandateField").text("Investor age must be between 18-65 years as per document.");
+		return false;
+	}
+	
+	if ($("#investorDOB").val() == "" || $("#invName").val() == "" || $("#email").val() == "" ||$("#mobile").val() == "") {
+		$("#mandateField").text("Please provide mandatory fields data.");
 		return false;
 	}
 
@@ -201,14 +231,40 @@ function validBasicForm() {
 }
 
 function validBankForm() {
-	if ($("#ifsc").val() == "") {
-		console.log("IFSC missing")
-		$("#mandateField").text("IFSC code mandatory");
+	$("#nextBtn").removeAttr("disabled");
+	$("#mandateField").text("");
+	if ($("#accountno").val() == "" || $("#ifsc").val() == "" || $("#address1").val() == "" || $("#address_city").val() == "" || $("#pinCode").val() == "" || $("#addState :selected").val() == "" ) {
+		$("#mandateField").text("Please provide mandatory fields data.");
 		return false;
 	}
 
 	return true;
 }
+
+function validFatcaForm() {
+	$("#nextBtn").removeAttr("disabled");
+	$("#mandateField").text("");
+	
+	if ($("#birthplace").val() == "" || $("#occupationType :selected").val() == "" || $("#incomeslab :selected").val() == "" || $("#wealthsource :selected").val() == "" || $("#politicalview :selected").val() == "" ) {
+		$("#mandateField").text("Please provide mandatory fields data.");
+		return false;
+	}
+
+	return true;
+}
+
+function validConfirmForm() {
+	$("#mandateField").text("");
+	if($("input[name='ubo']:checked").val()){
+		$("#nextBtn").removeAttr("disabled");
+	}
+	if($("input[name='ubo']:checked").val() == undefined){
+		$("#nextBtn").attr("disabled", "disabled");
+	}
+
+	return true;
+}
+
 
 function fixStepIndicator(n) {
 	// This function removes the "active" class of all steps...
@@ -236,6 +292,13 @@ function setDefaultvalues() {
 function populateConfirmPage() {
 	//	console.log("last page called");
 	//	console.log(document.getElementById("holdingMode").value);
+	
+	if($("input[name='ubo']:checked").val()){
+		$("#nextBtn").removeAttr("disabled");
+	}
+	if($("input[name='ubo']:checked").val() == undefined){
+		$("#nextBtn").attr("disabled", "disabled");
+	}
 
 	//Personal Details
 	$("#nameDisplay").text($("#invName").val());
@@ -260,16 +323,13 @@ function populateConfirmPage() {
 	
 	$("#secondapplicantName").text($("#applicant2Val").val());
 	$("#secondapplicantPan").text($("#pan2").val());
+	$("#pan1kycverifyDisplay").text($("#pan1kycverified :selected").text());
+	if($("#pan1kycverified :selected").val() == 'N'){
+		$("#pan1kycverifyDisplay").css({"color":"white","background":"#ef2e2eed","padding":"2px 10px","border-radius":"2px"});
+	}else{
+		$("#pan1kycverifyDisplay").css({"color":"white","background":"#1cad1ced","padding":"2px 10px","border-radius":"2px"});
+	}
 
-	//$("#").text($("#").val());
-	/* 		var x = "Y";
-	 if (document.getElementById("nominate").checked) {
-	 x = "N";
-	 }
-
-	 //Nominee Details
-	 $("#nomineeSelected").text(x);
-	 $("#isNominate").val(x); */
 
 	var x = $("input[name='nominee.isNominate']:checked").val();
 
@@ -289,25 +349,27 @@ function populateConfirmPage() {
 	$("#nomineeStateDisplay").text($("#nomineeState").val());
 	$("#nomineePercentageDisplay").text($("#nomineePercent").val());
 	$("#nomineeRelationDisplay").text($("#relation").val());
-	//	$("#").text($("#").val());
-	//	$("#").text($("#").val());
+	
+//	ADdress Details
+	$("#add1Display").text($("#address1").val());
+	$("#add2Display").text($("#address2").val());
+	$("#add3Display").text($("#address3").val());
+	$("#addCityDisplay").text($("#address_city").val());
+	$("#addpincodeDisplay").text($("#pinCode").val());
+	$("#addSateDisplay").text($("#addState :selected").text());
+	
 
 	//Investment Details
-	//$("#investmentFrequency").text($("#investFrequency").val());
+	/*
 	$("#monthlyInvestDate").text($("#monthlyInvDate").val());
-	$("#startFrom").text(
-			($("#investStartMonth").val()) + "-"
-					+ ($("#investStartYear").val()));
-	$("#investTillDate").text(
-			($("#investEndMonth").val()) + "-"
-					+ ($("#investEndYear").val()));
-
+	$("#startFrom").text(($("#investStartMonth").val()) + "-"+ ($("#investStartYear").val()));
+	$("#investTillDate").text(($("#investEndMonth").val()) + "-"+ ($("#investEndYear").val()));
+	*/
+	
 	//Account Details
 	$("#accHolderDisplay").text($("#invName").val());
-	/*$("#paymentModeDisplay").text(
-			$("input[name='gridRadios']:checked").val());*/
-	$("#paymentModeDisplay").text(
-			$("#dividendPayMode :selected").text());
+	
+	$("#paymentModeDisplay").text($("#dividendPayMode :selected").text());
 	$("#accountTypeDisplay").text($("#accountType :selected").text());
 	$("#accNumberDisplay").text($("#accountno").val());
 
@@ -317,19 +379,21 @@ function populateConfirmPage() {
 	$("#branchAddressDisplay").text($("#bankAddress").val());
 	$("#bankCityDisplay").text($("#bankCity").val());
 	$("#branchStateDisplay").text($("#bankState").val());
-	//	$("#").text($("#").val());
-	
+		
 	$("#branchStateDisplay").text($("#bankState").val());
 	
 	
 //	FATCA
 	var f = $("input[name='fatcaDetails.usCitizenshipCheck']:checked").val();
-	console.log("US citizen> "+ f);
+//	console.log("US citizen> "+ f);
 	
 	if(f){
 		$("#uscitizenshipcheckdisplay").text("Not a citizen of US/Canada");
+		$("#uscitizenshipcheckdisplay").css({"color":"white","background":"rgba(26, 115, 53, 0.93)","padding":"2px 10px","border-radius":"2px"});
+		
 	}else{
 		$("#uscitizenshipcheckdisplay").text("Citizen of US/Canada");
+		$("#uscitizenshipcheckdisplay").css({"color":"white","background":"#ef2e2eed","padding":"2px 10px","border-radius":"2px"});
 	}
 	
 	$("#birthplacedisplay").text($("#birthplace").val());
@@ -339,6 +403,7 @@ function populateConfirmPage() {
 	$("#incomeslabdisplay").text($("#incomeslab :selected").text());
 	$("#occupationtypedisplay").text($("#occupationType :selected").text());
 	$("#politicalviewdisplay").text($("#politicalview :selected").text());
+	
 	
 
 }

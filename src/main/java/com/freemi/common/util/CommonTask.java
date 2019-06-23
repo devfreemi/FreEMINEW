@@ -36,7 +36,7 @@ public class CommonTask {
 			remoteAddr = request.getHeader("X-FORWARDED-FOR");
 			if (remoteAddr == null || "".equals(remoteAddr)) {
 				remoteAddr = request.getRemoteAddr();
-				logger.info("Ip address of requestor- "+ remoteAddr);
+				logger.info("Ip address of requester- "+ remoteAddr);
 			}else{
 				logger.info("Ip address of requestor from X- "+ remoteAddr);
 			}

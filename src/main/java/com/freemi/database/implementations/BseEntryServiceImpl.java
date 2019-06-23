@@ -147,12 +147,19 @@ public class BseEntryServiceImpl implements BseEntryManager {
 				logger.info("Customer already registered both at FREEMI and BSE");
 				flag="EXIST";
 			}else{
-				logger.info("Customer registered at FREEMI but BSE registration not complete. Try to register at BSE end only with current details");
+				logger.info("Customer registered at FREEMI but BSE registration not complete. Update current data and try to register at BSE end only with current details");
+//				System.out.println("line- "+customerForm.getBankDetails().getSerialNo());
 				customerid= bseCustomerCrudRespository.getClientIdFromPan(customerForm.getPan1());
 				customerForm.setClientID(customerid);
 				customerForm.getBankDetails().setClientID(customerid);
 				customerForm.getAddressDetails().setClientID(customerid);
 				customerForm.getNominee().setClientID(customerid);
+				customerForm.getFatcaDetails().setClientID(customerid);
+				
+				BseMFInvestForm toUpdateForm = bseCustomerCrudRespository.getByMobile(customerForm.getMobile());
+				mapUpdatedCustomerMfData(customerForm,toUpdateForm);
+				bseCustomerCrudRespository.saveAndFlush(toUpdateForm);
+				logger.info("Customer current details saved/updated in database...");
 				registerCustomerToBse = true;
 			}
 		}else{
@@ -168,7 +175,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 
 			}while(bseCustomerCrudRespository.existsByClientID(customerid));
 
-			System.out.println("Generated login ID for customer with PAN - "+customerForm.getPan1()+ " : " + customerid);
+			logger.info("Generated login ID for customer with PAN - "+customerForm.getPan1()+ " : " + customerid);
 			customerForm.setClientID(customerid);
 			customerForm.getBankDetails().setClientID(customerid);
 			customerForm.getAddressDetails().setClientID(customerid);
@@ -1053,6 +1060,80 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		}
 		
 		return folios;
+	}
+	
+	
+	private BseMFInvestForm mapUpdatedCustomerMfData(BseMFInvestForm customerForm,BseMFInvestForm toupdateForm){
+		SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy-mm-dd");
+		SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("dd/mm/yyyy");
+		
+		//		Basic details
+		
+		
+		
+		toupdateForm.setPan2(customerForm.getPan2());
+		toupdateForm.setInvName(customerForm.getInvName());
+		toupdateForm.setApplicant2(customerForm.getApplicant2());
+//		toupdateForm.setInvDOB(customerForm);
+		
+		try {
+			Date date1 = simpleDateFormat2.parse(customerForm.getInvDOB());
+			String bseFormatDob = simpleDateFormat1.format(date1);
+			logger.info("DOB field converted to DB format for record update- "+ bseFormatDob);
+			toupdateForm.setInvDOB(bseFormatDob);
+		} catch (ParseException e) {
+			logger.error("mapUpdatedCustomerMfData(): failed to convert date. Leaving date to default format. ",e.getMessage());
+			toupdateForm.setInvDOB(customerForm.getInvDOB());
+			
+		}
+		
+		toupdateForm.setGender(customerForm.getGender());
+		toupdateForm.setAadhaar(customerForm.getAadhaar());
+		toupdateForm.setHoldingMode(customerForm.getHoldingMode());
+		toupdateForm.setEmail(customerForm.getEmail());
+//		toupdateForm.setMobile(customerForm.getMobile());
+		toupdateForm.setDividendPayMode(customerForm.getDividendPayMode());
+		toupdateForm.setDeclaration(customerForm.getDeclaration());
+		toupdateForm.setOccupation(customerForm.getOccupation());
+		toupdateForm.setTaxStatus(customerForm.getTaxStatus());
+//		toupdateForm.setPlaceOfBirth(customerForm.getPlaceOfBirth());
+//		toupdateForm.setFatherOrSpouse(customerForm.getFatherOrSpouse());
+		
+		toupdateForm.getNominee().setNomineeName(customerForm.getNominee().getNomineeName());
+		toupdateForm.getNominee().setNomineeRelation(customerForm.getNominee().getNomineeRelation());
+		
+		toupdateForm.getBankDetails().setAccountNumber(customerForm.getBankDetails().getAccountNumber());
+		toupdateForm.getBankDetails().setAccountType(customerForm.getBankDetails().getAccountType());
+		toupdateForm.getBankDetails().setIfscCode(customerForm.getBankDetails().getIfscCode());
+		toupdateForm.getBankDetails().setBankName(customerForm.getBankDetails().getBankName());
+		toupdateForm.getBankDetails().setBankBranch(customerForm.getBankDetails().getBankBranch());
+		toupdateForm.getBankDetails().setBankAddress(customerForm.getBankDetails().getBankAddress());
+		toupdateForm.getBankDetails().setBankCity(customerForm.getBankDetails().getBankCity());
+		toupdateForm.getBankDetails().setBranchState(customerForm.getBankDetails().getBranchState());
+		
+		toupdateForm.getAddressDetails().setAddress1(customerForm.getAddressDetails().getAddress1());
+		toupdateForm.getAddressDetails().setAddress2(customerForm.getAddressDetails().getAddress2());
+		toupdateForm.getAddressDetails().setAddress3(customerForm.getAddressDetails().getAddress3());
+		toupdateForm.getAddressDetails().setCity(customerForm.getAddressDetails().getCity());
+		toupdateForm.getAddressDetails().setPinCode(customerForm.getAddressDetails().getPinCode());
+		toupdateForm.getAddressDetails().setState(customerForm.getAddressDetails().getState());
+		toupdateForm.getFatcaDetails().setAddressType(customerForm.getFatcaDetails().getAddressType());
+		
+		
+//		toupdateForm.setPanValidationStatus(customerForm);
+		
+//		toupdateForm.setInvestmentType(customerForm.getInvestmentType());
+//		toupdateForm.setAadhaarVerifyStatusCode(customerForm);
+//		toupdateForm.setKycType(customerForm.getKycType());
+//		toupdateForm.setAddressDetails(customerForm);
+//		toupdateForm.setRegistrationTime(customerForm.getRegistrationTime());
+//		toupdateForm.setFatcaDetails(customerForm);
+//		toupdateForm.setAccountActive(customerForm);
+//		toupdateForm.setPan1verified(customerForm);
+//		toupdateForm.setPan2verified(customerForm);
+//		toupdateForm.setPan1KycVerified(customerForm);
+		toupdateForm.setLastModifiedDate(new Date());
+		return toupdateForm;
 	}
 
 

@@ -14,8 +14,8 @@
 }
 
 .input-group .input-group-text {
-	font-size: 13px;
-	font-weight: 500;
+	font-size: .75rem;
+	font-weight: 400;
 	background: #3984c5;
 	color: #f7f7f7;
 }

@@ -504,7 +504,7 @@ table th {
 											<div id="accordion">
 												<table class="table table-sm">
 													<caption>Mutual Funds Purchase History</caption>
-													<thead class="blue-gradient white-text">
+													<thead class="#3949ab indigo darken-1 white-text">
 														<tr>
 															<th scope="col" valign="middle">Mutual Fund</th>
 															<th scope="col" valign="middle">Invested Amount (Rs.)</th>

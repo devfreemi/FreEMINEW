@@ -54,8 +54,7 @@ public class BseBeansMapper {
 			String bseFormatDob = simpleDateFormat2.format(date1);
 			clientFregirationForm.setClientDob(bseFormatDob);
 		} catch (ParseException e) {
-			logger.error("InvestmentFormToBseBeans(): failed to convert date: ",e);
-			logger.info("For exception, Setting the DOB as received format..");
+			logger.error("InvestmentFormToBseBeans(): failed to convert date. Setting the data as is format ",e.getMessage());
 			clientFregirationForm.setClientDob(registrationForm.getInvDOB());
 			
 		}
@@ -116,7 +115,8 @@ public class BseBeansMapper {
 			String bseFormatDob = simpleDateFormat2.format(date1);
 			fatcaForm.setDOB(bseFormatDob);
 		} catch (ParseException e) {
-			logger.error("InvestmentFormToBseFATCABeans(): failed to convert date: ",e);
+			logger.error("InvestmentFormToBseFATCABeans(): failed to convert date: Setting default format.",e.getMessage());
+			fatcaForm.setDOB(registrationForm.getInvDOB());
 		}
 		System.out.println("DOB for fatca- "+ fatcaForm.getDOB());
 //		fatcaForm.setDOB(registrationForm.getInvDOB());

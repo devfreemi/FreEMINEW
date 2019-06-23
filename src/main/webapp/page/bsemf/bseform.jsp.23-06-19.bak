@@ -24,9 +24,7 @@
 		<div class="animated fadeIn">
 
 			<div class="sectionheader">
-				<h5>
-					<i class="fas fa-info-circle"></i> Unit Holder Information
-				</h5>
+				<h5>Unit Holder Information</h5>
 			</div>
 
 			<div style="text-align: center; margin-bottom: 15px;">
@@ -55,6 +53,7 @@
 						</div>
 						<form:select class="custom-select" id="holdingMode"
 							path="holdingMode">
+							<%-- <form:option value="Single" selected="true">Single</form:option> --%>
 							<form:options items="${holingNature}" />
 						</form:select>
 					</div>
@@ -71,41 +70,6 @@
 						</form:select>
 					</div>
 				</div>
-			</div>
-
-			<div class="form-row">
-
-				<div class="form-group col-md-6">
-					<div class="input-group mb-1">
-						<div class="input-group-prepend">
-							<span class="input-group-text" id="basic-addon3">Are you
-								already KYC verified?<sup style="color: red">*</sup>
-							</span>
-						</div>
-						<form:select class="custom-select" id="pan1kycverified"
-							path="pan1verified">
-							<form:option value="N">No</form:option>
-							<form:option value="Y">Yes</form:option>
-						</form:select>
-					</div>
-
-
-				</div>
-
-				<div class="form-group col-md-6">
-					<div
-						style="color: black; font-size: 11px; background: #feffc1; padding: 5px; border-radius: 3px;">
-						<span>You must be KYC verified to be able to invest. You
-							can check KYC status at <a
-							href="https://www.cvlkra.com/kycpaninquiry.aspx" target="_blank">CVL</a>,
-							<a href="https://camskra.com/" target="_blank">CAMS</a>, etc.
-						</span> <br>For Non-KYC, offline process will be generated to help
-						complete your KYC.
-					</div>
-
-				</div>
-
-
 			</div>
 
 			<div class="form-row">
@@ -163,11 +127,11 @@
 									Birth<sup style="color: red">*</sup>
 								</span>
 							</div>
-							<form:input type="text" path="invDOB" required="required" data-provide="datepicker"  data-date-start-date="-65y" data-date-end-date="-6750d"
-								maxlength="10" class="form-control form-control-custom datepicker"
+							<form:input type="text" path="invDOB" required="required"
+								maxlength="10" class="form-control form-control-custom"
 								id="investorDOB" />
 						</div>
-						<span style="font-size: 10px; color: #ff1111;"><sup>*</sup>Age
+						<span style="font-size: 10px; color: #d05c41;"><sup>*</sup>Age
 							limit: 18-65 years</span>
 					</div>
 
@@ -357,7 +321,25 @@
 					<i class="fas fa-university"></i> Bank Account Details
 				</h5>
 			</div>
-		
+			<!-- 	<fieldset class="form-group">
+								<div class="row">
+									<legend class="col-form-label label_design col-md-6 pt-0">Mode of Payment</legend>
+									<label for="accountnum"
+										class="col-md-6 col-form-label label_design">Mode of
+										Payment</label>
+									<div class="col-md-6">
+										<div class="form-check">
+											<input class="form-check-input" type="radio"
+												name="gridRadios" id="gridRadios1"
+												value="Register As Biller" checked> <label
+												class="form-check-label" for="gridRadios1"> Register
+												As Biller </label>
+											<div style="font-size: 11px; color: #f72e53;">SIP will
+												begin after 15 days</div>
+										</div>
+									</div>
+								</div>
+							</fieldset> -->
 
 			<div class="form-row">
 				<div class="form-group col-md-6">
@@ -367,11 +349,11 @@
 								style="color: red">*</sup></span>
 						</div>
 						<form:input type="text" class="form-control form-control-custom"
-							id="accountno" path="bankDetails.accountNumber" maxlength="18"
+							id="accountno" path="bankDetails.accountNumber"
 							aria-describedby="basic-addon3" />
 					</div>
 					<span style="font-size: 10px; color: #d05c41;"><sup>*</sup>Account
-						must belong to primary account holder.</span>
+						must belong to investor.</span>
 				</div>
 
 				<div class="form-group col-md-6">
@@ -413,6 +395,7 @@
 						<form:select class="custom-select" id="bankName"
 							path="bankDetails.bankName">
 							<form:option value="">Select your bank</form:option>
+							<%-- <form:option value="ICICI">ICICI Bank</form:option> --%>
 							<form:options items="${bankNames}" />
 
 						</form:select>
@@ -468,9 +451,7 @@
 					</div>
 				</div>
 			</div>
-		
-		
-			<!-- ------------------------------------------------- ADDRESS ------------------------------------------------------------ -->
+
 			<div class="sectionheader">
 				<h5>
 					<i class="fas fa-address-card"></i> Address Details
@@ -517,7 +498,7 @@
 							<span class="input-group-text" id="basic-addon3">Address 2</span>
 						</div>
 						<form:input type="text" class="form-control form-control-custom"
-							id="address2" path="addressDetails.address2"
+							id="address1" path="addressDetails.address2"
 							aria-describedby="basic-addon3" />
 					</div>
 				</div>
@@ -540,7 +521,7 @@
 								style="color: red">*</sup></span>
 						</div>
 						<form:input type="text" class="form-control form-control-custom"
-							required="required" id="address_city" path="addressDetails.city"
+							required="required" id="address city" path="addressDetails.city"
 							aria-describedby="basic-addon3" />
 					</div>
 				</div>
@@ -564,7 +545,7 @@
 							<span class="input-group-text" id="basic-addon3">State<sup
 								style="color: red">*</sup></span>
 						</div>
-						<form:select class="custom-select" id="addState"
+						<form:select class="custom-select" id="bankName"
 							required="required" path="addressDetails.state">
 							<form:option value="" selected="true">Select your State</form:option>
 							<form:options items="${states}" />
@@ -575,6 +556,13 @@
 
 			</div>
 
+			<%-- <div class="sectionheader">
+				<h5>Sign your form</h5>
+			</div>
+
+			<div class="form-row">
+			<jsp:include page="sign-panel.jsp"></jsp:include>
+			</div> --%>
 
 		</div>
 	</div>
@@ -606,7 +594,15 @@
 				<hr>
 			</div>
 
-			
+			<div class="form-row mb-3"
+				style="padding-left: 10px; font-weight: 400;">
+				<div class="custom-control custom-checkbox">
+					<form:checkbox class="custom-control-input"
+						path="fatcaDetails.usCitizenshipCheck" id="uscitizencheck" />
+					<label class="custom-control-label" for="uscitizencheck">I
+						am not a citizen of US/Canada</label>
+				</div>
+			</div>
 
 			<div class="form-row">
 				<div class="form-group col-md-6">
@@ -625,8 +621,8 @@
 				<div class="form-group col-md-6">
 					<div class="input-group mb-1">
 						<div class="input-group-prepend">
-							<span class="input-group-text" id="basic-addon3">Wealth Source<sup
-								style="color: red">*</sup></span>
+							<span class="input-group-text" id="basic-addon3"><sup
+								style="color: red">*</sup>Wealth Source</span>
 						</div>
 						<form:select class="custom-select" id="wealthsource"
 							required="required" path="fatcaDetails.wealthSource">
@@ -665,12 +661,14 @@
 				</div>
 			</div>
 
+
+
 			<div class="form-row">
 				<div class="form-group col-md-6">
 					<div class="input-group mb-1">
 						<div class="input-group-prepend">
-							<span class="input-group-text" id="basic-addon3">Income Slab<sup
-								style="color: red">*</sup></span>
+							<span class="input-group-text" id="basic-addon3"><sup
+								style="color: red">*</sup>Income Slab</span>
 						</div>
 						<form:select class="custom-select" id="incomeslab"
 							required="required" path="fatcaDetails.incomeSlab">
@@ -682,8 +680,8 @@
 				<div class="form-group col-md-6">
 					<div class="input-group mb-1">
 						<div class="input-group-prepend">
-							<span class="input-group-text" id="basic-addon3">Occupation Type<sup
-								style="color: red">*</sup></span>
+							<span class="input-group-text" id="basic-addon3"><sup
+								style="color: red">*</sup>Occupation Type</span>
 						</div>
 						<form:select class="custom-select" id="occupationType"
 							required="required" path="fatcaDetails.occupationType">
@@ -695,11 +693,15 @@
 			</div>
 
 
+
+
+
 			<div class="form-row">
 				<div class="form-group col-md-6">
 					<div class="input-group mb-1">
 						<div class="input-group-prepend">
-							<span class="input-group-text" id="basic-addon3">Political View Type<sup
+							<span class="input-group-text" id="basic-addon3"><sup
+								style="color: red">*</sup>Political View Type<sup
 								style="color: red">*</sup> </span>
 						</div>
 						<form:select class="custom-select" id="politicalview"
@@ -710,19 +712,106 @@
 					</div>
 				</div>
 
-				
+				<%-- <div class="form-group col-md-6">
+					<div class="input-group mb-1">
+						<div class="input-group-prepend">
+							<span class="input-group-text">State</span>
+						</div>
+						<form:input type="text" class="form-control form-control-custom"
+							id="bankState" path="bankDetails.branchState"
+							aria-describedby="basic-addon3" readonly="true" />
+					</div>
+				</div> --%>
 			</div>
-			
-			
-			<div class="form-row mb-3"
-				style="padding-left: 10px; font-weight: 400;background: #fd6d6d;">
-				<div class="custom-control custom-checkbox">
-					<form:checkbox class="custom-control-input"
-						path="fatcaDetails.usCitizenshipCheck" id="uscitizencheck" />
-					<label class="custom-control-label" for="uscitizencheck" style="color: white;">I
-						am not a citizen of US/Canada</label>
+
+			<%-- 
+			<div class="sectionheader">
+				<h5>Address Details</h5>
+			</div>
+
+			<div class="form-row">
+				<div class="form-group col-md-6">
+					<div class="input-group mb-1">
+						<div class="input-group-prepend">
+							<span class="input-group-text" id="basic-addon3">Address 1<sup
+								style="color: red">*</sup></span>
+						</div>
+						<form:input type="text" class="form-control form-control-custom"
+							required="required" id="address1" path="addressDetails.address1"
+							aria-describedby="basic-addon3" />
+					</div>
 				</div>
+
+				<div class="form-group col-md-6">
+					<div class="input-group mb-1">
+						<div class="input-group-prepend">
+							<span class="input-group-text" id="basic-addon3">Address 2</span>
+						</div>
+						<form:input type="text" class="form-control form-control-custom"
+							id="address1" path="addressDetails.address2"
+							aria-describedby="basic-addon3" />
+					</div>
+				</div>
+
+				<div class="form-group col-md-6">
+					<div class="input-group mb-1">
+						<div class="input-group-prepend">
+							<span class="input-group-text" id="basic-addon3">Address 3</span>
+						</div>
+						<form:input type="text" class="form-control form-control-custom"
+							id="address3" path="addressDetails.address3"
+							aria-describedby="basic-addon3" />
+					</div>
+				</div>
+
+				<div class="form-group col-md-6">
+					<div class="input-group mb-1">
+						<div class="input-group-prepend">
+							<span class="input-group-text" id="basic-addon3">City<sup
+								style="color: red">*</sup></span>
+						</div>
+						<form:input type="text" class="form-control form-control-custom"
+							required="required" id="address city" path="addressDetails.city"
+							aria-describedby="basic-addon3" />
+					</div>
+				</div>
+
+				<div class="form-group col-md-6">
+					<div class="input-group mb-1">
+						<div class="input-group-prepend">
+							<span class="input-group-text" id="basic-addon3">Pin Code<sup
+								style="color: red">*</sup></span>
+						</div>
+						<form:input type="text" class="form-control form-control-custom"
+							id="pinCode" path="addressDetails.pinCode" maxlength="6"
+							required="required" aria-describedby="basic-addon3" />
+					</div>
+				</div>
+
+				<div class="form-group col-md-6">
+					<div class="input-group mb-1">
+						<div class="input-group-prepend">
+							<span class="input-group-text" id="basic-addon3">State<sup
+								style="color: red">*</sup></span>
+						</div>
+						<form:select class="custom-select" id="bankName"
+							required="required" path="addressDetails.state">
+							<form:option value="" selected="true">Select your State</form:option>
+							<form:options items="${states}" />
+
+						</form:select>
+					</div>
+				</div>
+
 			</div>
+ --%>
+			<%-- <div class="sectionheader">
+				<h5>Sign your form</h5>
+			</div>
+
+			<div class="form-row">
+			<jsp:include page="sign-panel.jsp"></jsp:include>
+			</div> --%>
 
 		</div>
 	</div>
@@ -749,19 +838,6 @@
 					<label class="col-5 col-md-5 col-form-label label_design">PAN
 						No</label> <label class="col-6 col-md-6 col-form-label label_design1"><span
 						id="PANDisplay" style="text-transform: uppercase;"></span></label>
-				</div>
-			</div>
-			
-			<div class="row gap_custom">
-				<div class="col-md-6">
-					<label class="col-5 col-md-5 col-form-label label_design">KYC Verified? </label> 
-					<label class="col-6 col-md-6 col-form-label label_design1"><span
-						id="pan1kycverifyDisplay"></span></label>
-				</div>
-				<div class="col-md-6">
-					<label class="col-5 col-md-5 col-form-label label_design">Occupation
-					</label> <label class="col-6 col-md-6 col-form-label label_design1"><span
-						id="occupationDisplay"></span></label>
 				</div>
 			</div>
 
@@ -807,6 +883,18 @@
 				</div>
 			</div>
 
+			<div class="row gap_custom">
+				<!-- <div class="col-md-6">
+					<label class="col-5 col-md-5 col-form-label label_design">Income
+						slab </label> <label class="col-6 col-md-6 col-form-label label_design1"><span
+						id="incomeslabDisplay"></span></label>
+				</div> -->
+				<div class="col-md-6">
+					<label class="col-5 col-md-5 col-form-label label_design">Occupation
+					</label> <label class="col-6 col-md-6 col-form-label label_design1"><span
+						id="occupationDisplay"></span></label>
+				</div>
+			</div>
 
 			<div class="row gap_custom" id="secApplicant">
 				<div class="col-md-6">
@@ -856,60 +944,24 @@
 					</div>
 				</div>
 
+				<!-- <div class="row gap_custom">
+					<div class="col-md-6">
+						<label class="col-5 col-md-5 col-form-label label_design">Date
+							of Birth </label> <label
+							class="col-6 col-md-6 col-form-label label_design1"><span
+							id="nomineeDOBDisplay"></span></label>
+					</div>
+
+					<div class="col-md-6">
+						<label class="col-5 col-md-5 col-form-label label_design">Relation
+						</label> <label class="col-6 col-md-6 col-form-label label_design1"><span
+							id="nomineeRelationDisplay"></span></label>
+					</div>
+				</div> -->
+
 			</div>
 
 			<!-- End of nominee selecttion -->
-			
-			
-			<!-- ---------------------------------------------------------------------------------------------------------  -->
-			<div class="sectionheader1">
-				<h5>
-					<i class="far fa-address-card"></i> Address Details
-				</h5>
-			</div>
-
-				<div class="row gap_custom">
-					<div class="col-md-6">
-						<label class="col-5 col-md-5 col-form-label label_design">Address 1
-						</label> <label class="col-6 col-md-6 col-form-label label_design1"><span
-							id="add1Display"></span></label>
-					</div>
-					<div class="col-md-6">
-						<label class="col-5 col-md-5 col-form-label label_design">Address 2
-						</label> <label class="col-6 col-md-6 col-form-label label_design1"><span
-							id="add2Display"></span></label>
-					</div>
-				</div>
-				
-				<div class="row gap_custom">
-					<div class="col-md-6">
-						<label class="col-5 col-md-5 col-form-label label_design">Address 3
-						</label> <label class="col-6 col-md-6 col-form-label label_design1"><span
-							id="add3Display"></span></label>
-					</div>
-					<div class="col-md-6">
-						<label class="col-5 col-md-5 col-form-label label_design">City
-						</label> <label class="col-6 col-md-6 col-form-label label_design1"><span
-							id="addCityDisplay"></span></label>
-					</div>
-				</div>
-				
-				<div class="row gap_custom">
-					<div class="col-md-6">
-						<label class="col-5 col-md-5 col-form-label label_design">Pin Code
-						</label> <label class="col-6 col-md-6 col-form-label label_design1"><span
-							id="addpincodeDisplay"></span></label>
-					</div>
-					<div class="col-md-6">
-						<label class="col-5 col-md-5 col-form-label label_design">State
-						</label> <label class="col-6 col-md-6 col-form-label label_design1"><span
-							id="addSateDisplay"></span></label>
-					</div>
-				</div>
-
-
-			<!-- End of Address Details -->
-			
 
 			<!-- Bank info summary  -->
 			<div class="sectionheader1">
@@ -1009,7 +1061,7 @@
 			<div class="row gap_custom">
 				<div class="col-md-6">
 					<label class="col-5 col-md-5 col-form-label label_design">Father's
-						Name</label> <label
+						Name Type</label> <label
 						class="col-6 col-md-6 col-form-label label_design1"><span
 						id="fathernamedisplay"></span></label>
 				</div>
@@ -1036,7 +1088,7 @@
 			<div class="row gap_custom">
 				<div class="col-md-6">
 					<label class="col-5 col-md-5 col-form-label label_design">Occupation
-						Type</label> <label
+						Type Address</label> <label
 						class="col-6 col-md-6 col-form-label label_design1"><span
 						id="occupationtypedisplay"></span></label>
 				</div>
@@ -1064,8 +1116,8 @@
 
 				<div class="custom-control custom-checkbox">
 					<form:checkbox path="ubo" id="customCheck1"
-						class="custom-control-input" onchange="validConfirmForm();" />
-					<label class="custom-control-label" for="customCheck1" style="color: black;">I
+						class="custom-control-input" />
+					<label class="custom-control-label" for="customCheck1">I
 						agree to the terms &amp; conditions </label>
 				</div>
 

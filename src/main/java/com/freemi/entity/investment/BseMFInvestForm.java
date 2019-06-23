@@ -195,6 +195,9 @@ public class BseMFInvestForm implements Serializable {
 	@Column(name="PAN1_KYC_VERIFIED")
 	private String pan1KycVerified="N";
 	
+	@Column(name="LAST_MODIFIED_AT")
+	private Date lastModifiedDate;
+	
 	@Valid
 	@OneToOne(fetch=FetchType.EAGER, mappedBy="mfForm",cascade=CascadeType.ALL)
 	private MFNominationForm nominee;
@@ -691,6 +694,16 @@ public class BseMFInvestForm implements Serializable {
 
 	public void setPan1KycVerified(String pan1KycVerified) {
 		this.pan1KycVerified = pan1KycVerified;
+	}
+
+
+	public Date getLastModifiedDate() {
+		return lastModifiedDate;
+	}
+
+
+	public void setLastModifiedDate(Date lastModifiedDate) {
+		this.lastModifiedDate = lastModifiedDate;
 	}
 	
 }

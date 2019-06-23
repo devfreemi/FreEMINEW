@@ -109,11 +109,12 @@
 	<jsp:include page="../include/footer.jsp"></jsp:include>
 
 </body>
-<script defer="defer">
+<script>
 	//Material Select Initialization
-	$(document).ready(function() {
+	/* $(document).ready(function() {
 		$('.mdb-select').materialSelect();
-	});
+		
+	}); */
 </script>
 <script src="<c:url value="${contextPath}/resources/js/bseinvest.js" />"
 	defer="defer"></script>

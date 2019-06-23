@@ -109,7 +109,7 @@ public class RestClient implements ProfileRestClientService {
 	@Override
 	public ResponseEntity<String> registerUser(Registerform registerForm) throws JsonProcessingException{
 
-		logger.info("Initiaitng API call to register user- "+ registerForm.getMobile());
+		logger.info("Initiating API call to register user- "+ registerForm.getMobile());
 		final String url = env.getProperty(CommonConstants.URL_SERVICE_PROFILE) + "/publicenv/registerUser";
 		ObjectMapper mapper = new ObjectMapper();
 		RestTemplate restTemplate = new RestTemplate();
