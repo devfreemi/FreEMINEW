@@ -1,7 +1,6 @@
 package com.freemi.entity.investment;
 
 import java.io.Serializable;
-import java.sql.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -74,6 +73,9 @@ public class BseMFSelectedFunds implements Serializable {
 	
 	@Column(name="")
 	private String rtaAgent="";
+	
+	@Column(name="FUND_ISIN")
+	private String isin="";
 	
 	@Transient
 //	@Column(name="NAV_DATE")
@@ -233,6 +235,14 @@ public class BseMFSelectedFunds implements Serializable {
 
 	public void setRtaAgent(String rtaAgent) {
 		this.rtaAgent = rtaAgent;
+	}
+
+	public String getIsin() {
+		return isin;
+	}
+
+	public void setIsin(String isin) {
+		this.isin = isin;
 	}
 	
 	

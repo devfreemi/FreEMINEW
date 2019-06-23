@@ -55,6 +55,9 @@ public class BseBeansMapper {
 			clientFregirationForm.setClientDob(bseFormatDob);
 		} catch (ParseException e) {
 			logger.error("InvestmentFormToBseBeans(): failed to convert date: ",e);
+			logger.info("For exception, Setting the DOB as received format..");
+			clientFregirationForm.setClientDob(registrationForm.getInvDOB());
+			
 		}
 		
 		System.out.println("After format DOB- "+ clientFregirationForm.getClientDob());

@@ -23,7 +23,7 @@ public interface ProfileRestClientService {
 	
 	public ResponseEntity<String> registerUser(Registerform registerForm) throws JsonProcessingException;
 	
-	public ResponseEntity<String> otpLogin(Login loginForm) throws JsonProcessingException;
+	public ResponseEntity<String> otpLogin(Login loginForm, String ip) throws JsonProcessingException;
 	
 	public ResponseEntity<String> contactUs(ContactUsForm contactUsData) throws JsonProcessingException;
 	

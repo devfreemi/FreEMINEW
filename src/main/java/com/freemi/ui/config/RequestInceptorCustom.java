@@ -99,8 +99,8 @@ public class RequestInceptorCustom  extends HandlerInterceptorAdapter {
 	  ModelAndView modelAndView) throws Exception {
 	    try{
 	    	
-		String logged = request.getAttribute("LOGGED").toString(); 
-		if(logged== "FALSE"){
+		String logged = request.getAttribute("LOGGED")!=null?request.getAttribute("LOGGED").toString():"NULL"; 
+		if(logged!=null && logged.equalsIgnoreCase("FALSE")){
 			modelAndView.setViewName("redirect:/login");
 		}
 		if(modelAndView!=null){

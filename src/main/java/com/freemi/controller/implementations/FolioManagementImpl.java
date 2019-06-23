@@ -17,7 +17,6 @@ import com.freemi.common.util.UIMessages;
 import com.freemi.controller.interfaces.FolioManagementContoller;
 import com.freemi.controller.interfaces.InvestmentConnectorInterfaces;
 import com.freemi.database.service.DatabaseEntryManager;
-import com.freemi.database.service.FreemiServiceInterface;
 import com.freemi.entity.birla.SavePostPurchaseMultiRequestOutput;
 import com.freemi.entity.birla.SavePostSIPMultipleSchemesOutput;
 import com.freemi.entity.birla.ValidateAadhaarOTPOutput;
@@ -29,7 +28,6 @@ import com.freemi.entity.investment.FolioCreationStatus;
 import com.freemi.entity.investment.MFInvestForm;
 import com.freemi.entity.investment.PanValidationStatus;
 import com.freemi.services.partners.Impl.BirlaConnectorsImpl;
-import com.freemi.services.partners.Impl.BirlaConnectorsImplTest;
 
 @Service
 public class FolioManagementImpl implements FolioManagementContoller {
@@ -53,7 +51,7 @@ public class FolioManagementImpl implements FolioManagementContoller {
 
 		List<PanValidationStatus> panStatusList = null;
 
-		if(env.getProperty(CommonConstants.ENV_INVESTMENT_ENABLED).equalsIgnoreCase("Y"))
+		if(env.getProperty(CommonConstants.ENV_BIRLA_INVESTMENT_ENABLED).equalsIgnoreCase("Y"))
 		{
 			try{
 				logger.info("Checking local record for PAN status received from vendors from earlier check- "+ pan);
@@ -128,7 +126,7 @@ public class FolioManagementImpl implements FolioManagementContoller {
 
 		FolioCreationStatus status = new FolioCreationStatus();
 
-		if(env.getProperty(CommonConstants.ENV_INVESTMENT_ENABLED).equalsIgnoreCase("Y"))
+		if(env.getProperty(CommonConstants.ENV_BIRLA_INVESTMENT_ENABLED).equalsIgnoreCase("Y"))
 		{
 			try{
 

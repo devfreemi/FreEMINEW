@@ -21,6 +21,7 @@ import com.freemi.entity.investment.BsemfTransactionHistory;
 import com.freemi.entity.investment.MFCamsFolio;
 import com.freemi.entity.investment.MFCamsValueByCategroy;
 import com.freemi.entity.investment.MFFatcaDeclareForm;
+import com.freemi.entity.investment.MFKarvyFundsView;
 import com.freemi.entity.investment.MFKarvyValueByCategory;
 import com.freemi.entity.investment.SelectMFFund;
 import com.freemi.entity.investment.TransactionStatus;
@@ -74,7 +75,8 @@ public interface BseEntryManager {
 	public List<BseMFTop15lsSip> getTopFunds();
 	public List<BseMFSelectedFunds> getAllSelectedFunds();
 	public List<BseMFSelectedFunds> getFundsByCategory(String category);
-	public BseMFSelectedFunds getFundsByCode(String rtacode);
+	public BseMFSelectedFunds getFundsByCode(String rtacode, String isin);
+	
 	
 	public long getCurrentDayNextTransCount(Date date);
 	
@@ -85,7 +87,7 @@ public interface BseEntryManager {
 	public List<MFKarvyValueByCategory> getCustomersKarvyInvByCategory(String mobile, String pan);
 	
 	public MFCamsFolio getCamsFundsDetailsForRedeem(String code, String mobile, String folioNumber);
-	
+	public MFKarvyValueByCategory getKarvyFundsDetailsForRedeem(String code, String mobile, String folioNumber);
 	
 	
 	public Page<BseFundsScheme> getpaginatedFundsList(Pageable p);

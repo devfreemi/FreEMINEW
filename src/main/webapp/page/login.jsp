@@ -135,15 +135,6 @@
 					<form:hidden path="returnUrl"/>
 					<form:hidden path="otpSubmit" id="otpsubmitstat"/>
 
-					<%-- <div class="custom-control custom-checkbox">
-						<!-- <i class="fas fa-sms prefix"></i> -->
-						<form:checkbox path="otpLogin" class="custom-control-input"
-							id="otplogin"></form:checkbox>
-						<label class="custom-control-label" for="otplogin">Login
-							by OTP</label>
-
-					</div> --%>
-
 					<div class="row">
 						<div class="col-md-12 col-lg-12">
 							<a class="password_reset"

@@ -16,4 +16,5 @@ public interface BseSelectedCategoryFundsRepository extends JpaRepository<BseMFS
 	public List<BseMFSelectedFunds> getAllByFundCatergory(String fundCategory);
 	
 	public BseMFSelectedFunds findOneByRtaCode(String rtaCode);
+	public BseMFSelectedFunds findOneByRtaCodeAndIsin(String rtaCode, String isin);
 }

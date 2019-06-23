@@ -33,8 +33,8 @@ public class CommonConstants {
 	public static final String EMAIL_SEND_ENABLED ="mail.enabled";
 	
 	
-	public static final String ENV_INVESTMENT_ENABLED="INVESTMENT_ENABLED";
-	public static final String INVESTMENT_ENABLED="Y";
+	public static final String ENV_BIRLA_INVESTMENT_ENABLED="investment.api.birla.enabaled";
+//	public static final String INVESTMENT_ENABLED="Y";
 	
 	
 	
@@ -79,7 +79,7 @@ public class CommonConstants {
 	public static final String BSE_XIP="X";
 	public static final String BSE_ISP="I";
 	
-	public static final String BSE_CALL_TEST_ENABLED = "N";
+	public static final String BSE_CALL_TEST_ENABLED = "investment.bse.testphase.enabled";
 	public static final String BSE_SAVE_TRANSACTION = "Y";
 	
 	public static final String BSE_OTP_ENABLED = "Y";

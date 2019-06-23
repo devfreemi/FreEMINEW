@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -37,60 +37,89 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-md-6 col-lg-6 form_div"
-				style="margin: auto;">
+			<div class="col-md-6 col-lg-6 form_div" style="margin: auto;">
 				<div class="row">
-					<c:choose>
-						<c:when test="${not empty success }">
-							<div class="col-md-12 col-lg-12 alert alert-primary" role="alert"
-								style="text-align: center;">
-								<span>${success}</span>
-							</div>
-						</c:when>
-						<c:when test="${not empty error }">
-							<div class="col-md-12 col-lg-12 alert alert-danger" role="alert"
-								style="text-align: center;">
-								<span>${error}</span>
-							</div>
-						</c:when>
-						<c:otherwise>
-							<span></span>
-						</c:otherwise>
-					</c:choose>
+					<div class="col-12">
+
+						<c:choose>
+							<c:when test="${not empty success }">
+								<div class="alert alert-primary" role="alert">
+									<span>${success}</span>
+								</div>
+							</c:when>
+							<c:when test="${not empty error }">
+								<div class="alert alert-danger" role="alert" >
+									<span>${error}</span>
+								</div>
+							</c:when>
+							<c:otherwise>
+								<span></span>
+							</c:otherwise>
+						</c:choose>
+					</div>
+
 					<!--  -->
 
 				</div>
-				<form:form method="POST"
-					action="${pageContext.request.contextPath}/forgotPassword.do"
-					commandName="forgotPasswordForm">
+				<div style="padding: 5px; font-size: 12px; color: red;">
+					<span id="jsmsg"></span>
+					<form:form method="POST"
+						action="${pageContext.request.contextPath}/forgotPassword.do"
+						commandName="forgotPasswordForm"
+						onsubmit="return validateForm(event)">
 
-					<div class="md-form">
-					<i class="fas fa-mobile-alt prefix"></i>
-						<form:input path="usermobile" type="text" id="form1" pattern="[0-9]{10}" maxlength="10" class="form-control form-control-sm" placeholder="10 digit mobile number"></form:input> 
-					</div>
-					<div style="margin-bottom: 20px;">
-						<div class="g-recaptcha"
-							data-sitekey="6LdvUoQUAAAAADk77XVS_YlkPTluN9EYCawk1xo6"></div>
-					</div>
+						<div class="md-form">
+							<i class="fas fa-mobile-alt prefix"></i>
+							<form:input path="usermobile" type="text" id="form1"
+								pattern="[0-9]{10}" maxlength="10"
+								class="form-control form-control-sm"
+								placeholder="10 digit mobile number"></form:input>
+						</div>
+						<div style="margin-bottom: 20px;">
+							<div class="g-recaptcha"
+								data-sitekey="6LdvUoQUAAAAADk77XVS_YlkPTluN9EYCawk1xo6"></div>
+						</div>
 
-					<button type="submit" class="btn btn-block btn-sm peach-gradient">
-						<!-- <i *ngIf="spinner" class="fa fa-spinner login_spin" aria-hidden="true"></i> -->
-						Reset Password
-					</button>
-					<a href="${pageContext.request.contextPath}/login"
-						style="text-decoration: none; margin-top: 10px;">
-						<button type="button" class="btn btn-block btn-sm purple-gradient white-text">
-							<span> <i class="fas fa-backward"></i> Back
-							</span>
+						<button type="submit" class="btn btn-block btn-sm peach-gradient">
+							<!-- <i *ngIf="spinner" class="fa fa-spinner login_spin" aria-hidden="true"></i> -->
+							Reset Password
 						</button>
-					</a>
-				</form:form>
+						<a href="${pageContext.request.contextPath}/login"
+							style="text-decoration: none; margin-top: 10px;"> <form:button
+								class="btn btn-block btn-sm purple-gradient white-text">
+								<span> <i class="fas fa-backward"></i> Back
+								</span>
+							</form:button>
+						</a>
+					</form:form>
+				</div>
+				<!-- <div class="col-md-6 col-lg-6"></div> -->
 			</div>
-			<!-- <div class="col-md-6 col-lg-6"></div> -->
-		</div>
 
+		</div>
 	</div>
 	<jsp:include page="include/footer.jsp"></jsp:include>
+
+	<script type="text/javascript">
+		function validateForm(e) {
+			//e.preventDefault();
+			$("#jsmsg").text("");
+			var response = grecaptcha.getResponse();
+			//recaptcha failed validation
+			var data = document.forms["forgotPasswordForm"]["usermobile"].value;
+			if (data.length != 10) {
+				$("#jsmsg").text("Valid mobile no required to be submitted");
+				return false;
+			}
+
+			if (response.length == 0) {
+				$("#jsmsg").text("Check the Google secutiry box!");
+				return false;
+			}
+
+			return true;
+		}
+	</script>
 	<script src='https://www.google.com/recaptcha/api.js'></script>
 </body>
 </html>

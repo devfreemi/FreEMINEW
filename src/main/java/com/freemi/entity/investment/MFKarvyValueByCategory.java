@@ -4,8 +4,6 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -13,7 +11,7 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Proxy;
 
 @Entity
-@Table(name="mailback_data_karvy_view")
+@Table(name="mailback_transactions_karvy_r201_view")
 @Proxy(lazy=false)
 public class MFKarvyValueByCategory implements Serializable {
 
@@ -23,9 +21,8 @@ public class MFKarvyValueByCategory implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="SL_NO")
-	private Long serial;
+	@Column(name="Transaction_ID")
+	private String serial;
 	
 	@Column(name="AMC_SHORT")
 	private String amcShort;
@@ -36,35 +33,53 @@ public class MFKarvyValueByCategory implements Serializable {
 	@Column(name="AMC_NAME")
 	private String fundName;
 	
-	@Column(name="Fund_Description")
+//	@Transient
+	@Column(name="KARVY_PRODUCT_CODE")
+	private String rtaSchemeCode;
+	
+	@Column(name="BSEMF_FUND_NAME")
 	private String fundDescription;
 	
-	@Column(name="Fund")
+//	@Transient
+	@Column(name="Scheme_Code")		//This does not represent the rta code. 
 	private String rtaCode;
 	
-	@Column(name="Transaction_Type")
+	@Column(name="Transaction_Flag")
 	private String trasanctionType;
 	
-	@Column(name="PAN")
+	@Column(name="PAN1")
 	private String pan;
 	
-	@Column(name="AUM")
+	@Column(name="INVESTMENT_AMOUNT")
 	private Double invAmount;
 	
-	@Column(name="NAV")
+	@Column(name="BALANCE_UNITS")
+	private Double units;
+	
+	@Transient
+//	@Column(name="NAV")
 	private Double nav;
 	
-	@Column(name="productCode")
+	@Column(name="BSEMF_SCHEME_CODE")
 	private String schemeCode;
+	
+	@Column(name="RTA_AGENT")
+	private String rtaAgent;
+	
+	@Column(name="ISIN")
+	private String isin;
 	
 	@Column(name="ICONS")
 	private String amcicon;
+	
+	@Column(name="Investor_Name")
+	private String investorName;
 
-	public Long getSerial() {
+	public String getSerial() {
 		return serial;
 	}
 
-	public void setSerial(Long serial) {
+	public void setSerial(String serial) {
 		this.serial = serial;
 	}
 
@@ -158,6 +173,46 @@ public class MFKarvyValueByCategory implements Serializable {
 
 	public void setFundDescription(String fundDescription) {
 		this.fundDescription = fundDescription;
+	}
+
+	public String getRtaAgent() {
+		return rtaAgent;
+	}
+
+	public void setRtaAgent(String rtaAgent) {
+		this.rtaAgent = rtaAgent;
+	}
+
+	public String getRtaSchemeCode() {
+		return rtaSchemeCode;
+	}
+
+	public void setRtaSchemeCode(String rtaSchemeCode) {
+		this.rtaSchemeCode = rtaSchemeCode;
+	}
+
+	public String getInvestorName() {
+		return investorName;
+	}
+
+	public void setInvestorName(String investorName) {
+		this.investorName = investorName;
+	}
+
+	public Double getUnits() {
+		return units;
+	}
+
+	public void setUnits(Double units) {
+		this.units = units;
+	}
+
+	public String getIsin() {
+		return isin;
+	}
+
+	public void setIsin(String isin) {
+		this.isin = isin;
 	}
 	
 	

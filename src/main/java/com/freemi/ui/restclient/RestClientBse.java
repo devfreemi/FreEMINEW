@@ -31,26 +31,17 @@ public class RestClientBse implements BseRestClientService {
 	
 	@Autowired
 	Environment env;
+	
 
 	private static final Logger logger = LogManager.getLogger(RestClientBse.class);
 
-	//	private final String SERVICE_URL1 = "https://ec2-35-154-76-43.ap-south-1.compute.amazonaws.com/freemibackend";
-	//	private final String SERVICE_URL1 = "http://ec2-35-154-76-43.ap-south-1.compute.amazonaws.com:8080/freemibackend";
-	//	private final String SERVICE_URL1 = "http://localhost:8090/freemibackend";
-	//	private final String SERVICE_URL1 = "http://localhost:8080/freemibackend";
-//	private static final String SERVICE_URL1 = "http://dev.freemi.in:8090/bsemfservice";
-	private static String SERVICE_URL1 = "";
-	
-	/*public RestClientBse(){
-		env.getProperty("investment.bse.serviceurl") = env.getProperty("investment.bse.serviceurl").toString();
-	}*/
 
 	@Override
 	public String otpGeneration(String userid){
-		logger.info("Beginning process to send reuest to bse service for OTP..");
+		logger.info("Beginning process to send generate OTP for Login to Portal..");
 
 		final String url = env.getProperty("investment.bse.serviceurl") + "/generateotp";
-		ObjectMapper mapper = new ObjectMapper();
+//		ObjectMapper mapper = new ObjectMapper();
 		RestTemplate restTemplate = new RestTemplate();
 		String formdata = null;
 		ResponseEntity<?> response = null;
@@ -74,7 +65,6 @@ public class RestClientBse implements BseRestClientService {
 		}else{
 			returnRes = "OTP=123456";
 		}
-//		returnRes = "OTP=123456";
 		return returnRes;
 	}
 	@Override
@@ -82,7 +72,7 @@ public class RestClientBse implements BseRestClientService {
 		logger.info("Beginning process to send reuest to bse service for OTP.. "+ userid);
 
 		final String url = env.getProperty("investment.bse.serviceurl") + "/validateotp";
-		ObjectMapper mapper = new ObjectMapper();
+//		ObjectMapper mapper = new ObjectMapper();
 		RestTemplate restTemplate = new RestTemplate();
 		String formdata = null;
 		ResponseEntity<?> response = null;
@@ -112,7 +102,7 @@ public class RestClientBse implements BseRestClientService {
 	
 	@Override
 	public String registerUser(BseRegistrationMFD form){
-		logger.info("Beginning process to send reuest to bse service for registration..");
+		logger.info("Beginning process to send request to bse service for registration..");
 
 		final String url = env.getProperty("investment.bse.serviceurl") + "/createuser";
 		ObjectMapper mapper = new ObjectMapper();
@@ -125,20 +115,24 @@ public class RestClientBse implements BseRestClientService {
 		} catch (JsonProcessingException e) {
 			logger.error("registerUser(): Failed to write form data", e);
 		}
-		logger.info(formdata);
+		logger.info("REGISTER USER BSE:-" +formdata);
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
 		HttpEntity<String> entity = new HttpEntity<String>(formdata,headers);
 
-		if(CommonConstants.BSE_CALL_TEST_ENABLED.equalsIgnoreCase("N")){
+		if(env.getProperty(CommonConstants.BSE_CALL_TEST_ENABLED).equalsIgnoreCase("N")){
 			response= restTemplate.postForEntity(url, entity,  String.class);
 			returnRes=response.getBody().toString();
-			logger.info("Response- "+ response.getBody().toString());
+			logger.info("Register Request Response- "+ response.getBody().toString());
 			if(returnRes.equalsIgnoreCase("100|RECORD INSERTED SUCCESSFULLY")){
 				returnRes = "SUCCESS";
 			}
 		}else{
-			returnRes = "SUCCESS";
+//			returnRes = "SUCCESS";
+			if(form.getClientDob()!="")
+				returnRes = "101|FAILED: INVALID DATE OF BIRTH OF INDIVIDUAL";
+			else
+				returnRes = "101|FAILED: DOB MANDATORY";
 		}
 
 		return returnRes;
@@ -161,7 +155,7 @@ public class RestClientBse implements BseRestClientService {
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
 		HttpEntity<String> entity = new HttpEntity<String>(formdata,headers);
-		if(CommonConstants.BSE_CALL_TEST_ENABLED.equalsIgnoreCase("N")){
+		if(env.getProperty(CommonConstants.BSE_CALL_TEST_ENABLED).equalsIgnoreCase("N")){
 			ResponseEntity<?> response= restTemplate.postForEntity(url, entity,  String.class);
 			returnRes=response.getBody().toString();
 			logger.info("Response for lumpsum purchase- "+ response.getBody().toString());
@@ -191,7 +185,7 @@ public class RestClientBse implements BseRestClientService {
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
 		HttpEntity<String> entity = new HttpEntity<String>(formdata,headers);
-		if(CommonConstants.BSE_CALL_TEST_ENABLED.equalsIgnoreCase("N")){
+		if(env.getProperty(CommonConstants.BSE_CALL_TEST_ENABLED).equalsIgnoreCase("N")){
 			ResponseEntity<?> response= restTemplate.postForEntity(url, entity,  String.class);
 			returnRes=response.getBody().toString();
 			logger.info("Response for SIP purchase- "+ response.getBody().toString());
@@ -220,7 +214,7 @@ public class RestClientBse implements BseRestClientService {
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
 		HttpEntity<String> entity = new HttpEntity<String>(formdata,headers);
-		if(CommonConstants.BSE_CALL_TEST_ENABLED.equalsIgnoreCase("N")){
+		if(env.getProperty(CommonConstants.BSE_CALL_TEST_ENABLED).equalsIgnoreCase("N")){
 			ResponseEntity<?> response= restTemplate.postForEntity(url, entity,  String.class);
 			returnRes=response.getBody().toString();
 			logger.info("Response for X-SIP I-SIP purchase- "+ response.getBody().toString());
@@ -250,7 +244,7 @@ public class RestClientBse implements BseRestClientService {
 		headers.set("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
 		HttpEntity<String> entity = new HttpEntity<String>(formdata,headers);
 
-		if(CommonConstants.BSE_CALL_TEST_ENABLED.equalsIgnoreCase("N")){
+		if(env.getProperty(CommonConstants.BSE_CALL_TEST_ENABLED).equalsIgnoreCase("N")){
 			ResponseEntity<?> response= restTemplate.postForEntity(url, entity,  String.class);
 			returnRes=response.getBody().toString();
 			logger.info("Response for order payment- "+ response.getBody().toString());
@@ -277,7 +271,7 @@ public class RestClientBse implements BseRestClientService {
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
 		HttpEntity<String> entity = new HttpEntity<String>(formdata,headers);
-		if(CommonConstants.BSE_CALL_TEST_ENABLED.equalsIgnoreCase("N")){
+		if(env.getProperty(CommonConstants.BSE_CALL_TEST_ENABLED).equalsIgnoreCase("N")){
 			ResponseEntity<?> response= restTemplate.postForEntity(url, entity,  String.class);
 			returnRes=response.getBody().toString();
 			logger.info("Response for order payment- "+ response.getBody().toString());
@@ -305,7 +299,7 @@ public class RestClientBse implements BseRestClientService {
 		headers.set("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
 		HttpEntity<String> entity = new HttpEntity<String>(formdata,headers);
 
-		if(CommonConstants.BSE_CALL_TEST_ENABLED.equalsIgnoreCase("N")){
+		if(env.getProperty(CommonConstants.BSE_CALL_TEST_ENABLED).equalsIgnoreCase("N")){
 			ResponseEntity<?> response= restTemplate.postForEntity(url, entity,  String.class);
 			returnRes=response.getBody().toString();
 			logger.info("Response for mandate registration- "+ response.getBody().toString());
@@ -337,7 +331,7 @@ public class RestClientBse implements BseRestClientService {
 		headers.set("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
 		HttpEntity<String> entity = new HttpEntity<String>(formdata,headers);
 
-		if(CommonConstants.BSE_CALL_TEST_ENABLED.equalsIgnoreCase("N")){
+		if(env.getProperty(CommonConstants.BSE_CALL_TEST_ENABLED).equalsIgnoreCase("N")){
 			ResponseEntity<?> response= restTemplate.postForEntity(url, entity,  String.class);
 			returnRes=response.getBody().toString();
 			logger.info("Response for fatca registration- "+ response.getBody().toString());
@@ -367,7 +361,7 @@ public class RestClientBse implements BseRestClientService {
 		headers.set("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
 		HttpEntity<String> entity = new HttpEntity<String>(parametersMap.toString(),headers);
 
-		if(CommonConstants.BSE_CALL_TEST_ENABLED.equalsIgnoreCase("N")){
+		if(env.getProperty(CommonConstants.BSE_CALL_TEST_ENABLED).equalsIgnoreCase("N")){
 			ResponseEntity<?> response= restTemplate.postForEntity(url, entity,  String.class);
 			returnRes=response.getBody().toString();
 			logger.info("Response for pan status check- "+ response.getBody().toString());
@@ -396,7 +390,7 @@ public class RestClientBse implements BseRestClientService {
 		headers.set("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
 		HttpEntity<String> entity = new HttpEntity<String>(formdata,headers);
 
-		if(CommonConstants.BSE_CALL_TEST_ENABLED.equalsIgnoreCase("N")){
+		if(env.getProperty(CommonConstants.BSE_CALL_TEST_ENABLED).equalsIgnoreCase("N")){
 			ResponseEntity<?> response= restTemplate.postForEntity(url, entity,  String.class);
 			returnRes=response.getBody().toString();
 			logger.info("Response for AOF upload- "+ response.getBody().toString());

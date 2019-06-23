@@ -177,6 +177,12 @@ function submitLogin(e){
 		
 
 	}else{
+		var otpv = document.forms["login"]["otpVal"].value;
+		if(otpv=="" || otpv.length!=6){
+			$("#loginmsg").text("Invalid OTP!");
+			return false;
+		}
+		
 		$.ajaxSetup({
 			headers:
 			{ 'X-CSRF-TOKEN': token }
@@ -247,7 +253,7 @@ function submitLogin(e){
 
 function countDownTimer(){
 	//var countDownDate = new Date("Jun 13, 2018 15:37:25").getTime();
-	console.log("Timer started")
+//	console.log("Timer started");
 	var x = setInterval(function() {
 
 		// Get todays date and time

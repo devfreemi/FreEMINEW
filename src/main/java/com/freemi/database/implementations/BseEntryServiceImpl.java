@@ -54,6 +54,7 @@ import com.freemi.entity.investment.BseOrderEntryResponse;
 import com.freemi.entity.investment.BsemfTransactionHistory;
 import com.freemi.entity.investment.MFCamsFolio;
 import com.freemi.entity.investment.MFCamsValueByCategroy;
+import com.freemi.entity.investment.MFKarvyFundsView;
 import com.freemi.entity.investment.MFKarvyValueByCategory;
 import com.freemi.entity.investment.MFNominationForm;
 import com.freemi.entity.investment.SelectMFFund;
@@ -140,7 +141,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 
 		if(bseCustomerCrudRespository.existsByPan1(customerForm.getPan1())){
 			logger.info("Account already exist with given primary PAN number");
-			//			Check account registered at BSE end. IF status is no, only try to push exiiting customer details to BSE
+			//			Check account registered at BSE end. IF status is no, only try to push existing customer details to BSE
 			String bseRegisterStatus = bseCustomerCrudRespository.getBseRegistrationStatus(customerForm.getPan1());
 			if(bseRegisterStatus.equals("Y")){
 				logger.info("Customer already registered both at FREEMI and BSE");
@@ -174,16 +175,19 @@ public class BseEntryServiceImpl implements BseEntryManager {
 			customerForm.getNominee().setClientID(customerid);
 			customerForm.getFatcaDetails().setClientID(customerid);
 			customerForm.setRegistrationTime(new Date());
-			logger.info("Transaction started to save BSE customer registrastion data");
+			logger.info("Transaction started to save BSE customer registration data");
 			
 			BseMFInvestForm customerCopy = customerForm;
 //			Convert date to db format
+			logger.info("saveCustomerDetails(): Convert DOB Format: "+ customerCopy.getInvDOB());
 			try {
 				Date date1 = simpleDateFormat2.parse(customerCopy.getInvDOB());
 				String bseFormatDob = simpleDateFormat1.format(date1);
+				logger.info("DOB field converted to DB format- "+ bseFormatDob);
 				customerCopy.setInvDOB(bseFormatDob);
 			} catch (ParseException e) {
-				logger.error("saveCustomerDetails(): failed to convert date: ",e);
+				logger.error("saveCustomerDetails(): failed to convert date. Leaving date to default format. ",e);
+				
 			}
 			
 			bseCustomerCrudRespository.save(customerCopy);
@@ -555,7 +559,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	
 
 	@Override
-	public MFCamsFolio getCamsFundsDetailsForRedeem(String code, String mobile, String folioNumber) {
+	public MFCamsFolio getCamsFundsDetailsForRedeem(String rtaCode, String mobile, String folioNumber) {
 		
 //		CAMS funds details redemption
 //		MFCamsFolio folio = 
@@ -563,7 +567,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 //		for CAMS, need to map rta code to scheme code
 		String schemeCode="";
 		MFCamsFolio folio = null;
-		List<BseFundsScheme> schemCodes = bseFundsExplorerRepository.findAllByRtaCode(code);
+		List<BseFundsScheme> schemCodes = bseFundsExplorerRepository.findAllByRtaCode(rtaCode);
 		logger.info("Total schemecode found for RTA code- "+ schemCodes.size());
 		for(int i =0;i<schemCodes.size();i++){
 			if(!schemCodes.get(i).getSettlementType().equalsIgnoreCase("L1")){
@@ -573,7 +577,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		}
 		logger.info("Scheme code for redemption of the fund - "+schemeCode);
 		
-		folio = mfCamsFolioCrudRepository.findOneByFolioNumberAndRtaCode(folioNumber,code);
+		folio = mfCamsFolioCrudRepository.findOneByFolioNumberAndRtaCode(folioNumber,rtaCode);
 		if(folio!=null){
 			folio.setSchemeCode(schemeCode);
 		}else{
@@ -583,6 +587,25 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		
 	}
 	
+	@Override
+	public MFKarvyValueByCategory getKarvyFundsDetailsForRedeem(String karvyProductCode, String mobile, String folioNumber){
+		
+		String schemeCode="";
+		MFKarvyValueByCategory folio = null;
+		/*List<BseFundsScheme> schemCodes = bseFundsExplorerRepository.findAllByRtaCode(karvyProductCode);
+		logger.info("Total schemecode found for RTA code- "+ schemCodes.size());
+		for(int i =0;i<schemCodes.size();i++){
+			if(!schemCodes.get(i).getSettlementType().equalsIgnoreCase("L1")){
+				schemeCode = schemCodes.get(i).getSchemeCode();
+				break;
+			}
+		}*/
+		
+		folio = bseKarvyByCategoryRepository.getOneByRtaSchemeCodeAndFolioNumber(karvyProductCode, folioNumber);
+		logger.info("Scheme code for redemption of the fund - "+schemeCode);
+
+		return folio;
+	}
 	
 
 	@Override
@@ -866,12 +889,15 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	
 
 	@Override
-	public BseMFSelectedFunds getFundsByCode(String rtacode) {
+	public BseMFSelectedFunds getFundsByCode(String rtacode, String isin) {
 		logger.info("Querying to Fund details by RTA code from view- ");
 		BseMFSelectedFunds fundDetails = null;
 		try{
-
-			fundDetails = bseSelectedCategoryFundsRepository.findOneByRtaCode(rtacode);
+			if(isin == null){
+				fundDetails = bseSelectedCategoryFundsRepository.findOneByRtaCode(rtacode);
+			}else{
+				fundDetails = bseSelectedCategoryFundsRepository.findOneByRtaCodeAndIsin(rtacode,isin);
+			}
 
 		}catch(Exception e){
 			logger.error("Failed to query database to fetch selected fund details by RTA code",e);
@@ -1012,7 +1038,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	@Override
 	public List<MFKarvyValueByCategory> getCustomersKarvyInvByCategory(String mobile, String pan) {
 		List<MFKarvyValueByCategory> folios=null;
-		logger.info("Request received to fetch customer Karvy folio details by category for client ID- "+ mobile + " :PAN NO: "+ pan);
+		logger.info("getCustomersKarvyInvByCategory(): Request received to fetch customer Karvy folio details by category for client ID- "+ mobile + " :PAN NO: "+ pan);
 		try{
 		if(bseCustomerCrudRespository.existsByMobileAndAccountActive(mobile,"Y")){
 			pan = bseCustomerCrudRespository.getCustomerPanNumberFromMobile(mobile);

@@ -151,7 +151,7 @@
 												<label class="custom-control-label" for="growthCategory">Growth</label>
 											</div>
 
-											<c:if test="${not empty selectedFund.reinvSchemeCode}">
+											<c:if test="${selectedFund.reinvSchemeCode != ''}">
 												<div
 													class="custom-control custom-radio custom-control-inline">
 													<form:radiobutton path="fundCategory" value="Y"

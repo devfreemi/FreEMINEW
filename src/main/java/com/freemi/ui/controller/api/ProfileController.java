@@ -1,4 +1,4 @@
-package com.freemi.api;
+package com.freemi.ui.controller.api;
 
 import java.io.IOException;
 
@@ -21,7 +21,6 @@ import com.freemi.entity.general.Login;
 import com.freemi.entity.general.LoginResponse;
 import com.freemi.entity.general.Registerform;
 import com.freemi.entity.general.UserProfile;
-import com.freemi.ui.restclient.RestClient;
 
 @RestController
 @CrossOrigin(origins="*")

@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -70,16 +71,16 @@ public class HomeController {
 
 	@Autowired
 	MailSenderHandler mailSenderHandler;
-	
+
 	@Autowired
 	BseRestClientService bseRestClientService;
-	
+
 	@Autowired
 	ProfileRestClientService profileRestClientService;
 
 	@Autowired
 	SmsSenderInterface smsSenderInterface;
-	
+
 	@Autowired
 	private Environment env;
 
@@ -87,7 +88,7 @@ public class HomeController {
 	public String home(Model map) {
 		//logger.info("@@@@ Inside Login..");
 		logger.info("@@@@ HomeController @@@@");
-//		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
+		//		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 		/*return "index";*/
 		return "redirect:/mutual-funds/funds-explorer";
 	}
@@ -222,7 +223,7 @@ public class HomeController {
 		logger.info(referer);
 		returnUrl = redirectUrlAfterLogin(referer,request);
 
-//		RestClient client = new RestClient();
+		//		RestClient client = new RestClient();
 		ResponseEntity<String> response = null;
 
 
@@ -324,11 +325,11 @@ public class HomeController {
 
 	@RequestMapping(value = "/login2.do", method = RequestMethod.POST)
 	@ResponseBody
-	public String loginwithJqueryAttemptPost(@ModelAttribute("login") @Valid Login login,ModelMap model, BindingResult bindingResult,HttpServletRequest request,HttpServletResponse response, HttpSession session) {
+	public String loginwithJqueryAttemptPost2(@ModelAttribute("login") @Valid Login login,ModelMap model, BindingResult bindingResult,HttpServletRequest request,HttpServletResponse response, HttpSession session) {
 		logger.info("@@@@ Inside Login do..");	
 		//		logger.info("Referer- "+ request.getHeader("Referer"));
 		//		String referer = request.getHeader("Referer");
-		logger.info("Sessuion id during login- "+ session.getId());
+		logger.info("Session id during login- "+ session.getId());
 		logger.debug("Recpcha form resuest- "+ request.getParameter("g-recaptcha-response"));
 
 		logger.debug("Fetching after login url- "+ login.getReturnUrl() + " OTPMIT - "+ login.isOtpSubmit());
@@ -361,7 +362,7 @@ public class HomeController {
 		logger.debug("login2.do referer- "+ referer);
 		//		returnUrl = redirectUrlAfterLogin(referer);
 
-//		RestClient client = new RestClient();
+		//		RestClient client = new RestClient();
 		ResponseEntity<String> responseEntity = null;
 
 
@@ -387,7 +388,7 @@ public class HomeController {
 								try {
 									mailSenderHandler.loginOTPMail(login.getUsermobile(), resultotp.split("=")[1], userStatus[1], "5");
 									smsSenderInterface.sendOtp(login.getUsermobile(), resultotp.split("=")[1], "5", null);
-//									returnUrl="OTP_SENT";
+									//									returnUrl="OTP_SENT";
 								} catch (InterruptedException e) {
 									logger.error("Failed to send mail for OTP- ",e);
 								}
@@ -426,7 +427,7 @@ public class HomeController {
 					responseEntity= profileRestClientService.login(login.getUsermobile(), login.getUserpassword(), ip);
 					//			model.addAttribute("token",response.getHeaders().get("Authorization").get(0));
 					//			model.addAttribute("loggedInUser",response.getHeaders().get("fname").get(0).split(" ")[0]);
-					logger.info("Sessuion id during login- "+ session.getId());
+					logger.info("Session id during login- "+ session.getId());
 					session.setAttribute("loggedSession", responseEntity.getHeaders().get("fname").get(0).split(" ")[0]);
 					session.setAttribute("token", responseEntity.getHeaders().get("Authorization").get(0));
 					session.setAttribute("userid", responseEntity.getHeaders().get("userid").get(0));
@@ -443,16 +444,16 @@ public class HomeController {
 					servletContext.setAttribute("email",response.getHeaders().get("email").get(0));*/
 
 						logger.info("Setting session in cookie for customer- "+ responseEntity.getHeaders().get("userid").get(0));	
-						
-						
+
+
 						response.addCookie(setSessionCookie("loggedSession", responseEntity.getHeaders().get("fname").get(0).split(" ")[0]));
-//						response.addCookie(setSessionCookie("token", URLEncoder.encode(responseEntity.getHeaders().get("Authorization").get(0), "UTF-8")));
+						//						response.addCookie(setSessionCookie("token", URLEncoder.encode(responseEntity.getHeaders().get("Authorization").get(0), "UTF-8")));
 						response.addCookie(setSessionCookie("userid", responseEntity.getHeaders().get("userid").get(0)));
 						response.addCookie(setSessionCookie("email",responseEntity.getHeaders().get("email").get(0)));
 
 						logger.info("Setting session in cookie for customer is complete.");
 					}catch(Exception e){
-//						System.out.println("Error setting cookie in session..");
+						//						System.out.println("Error setting cookie in session..");
 						logger.error("Error setting cookie in session..",e);
 					}
 
@@ -479,10 +480,7 @@ public class HomeController {
 		}else{
 			//			OTP process verification
 
-			logger.info("Process OTP submit verfication for mobile number- "+ login.getUsermobile());
 
-			String resultotp2="OTP_INVALID";
-			resultotp2= bseRestClientService.otpverify(login.getUsermobile(), login.getOtpVal());
 			/*String otpFromSession = (String) session.getAttribute("OTP");
 			if(otpFromSession!=null){
 				if(session.getAttribute("OTP").toString().equalsIgnoreCase(login.getOtpVal())){
@@ -494,64 +492,85 @@ public class HomeController {
 				resultotp2="OTP_INVALIDATED";
 			}*/
 
-			logger.info("OTP validation respond- "+ resultotp2);
-			if(resultotp2.equalsIgnoreCase("Entered Otp is valid")){
-				//				Generate login session
+			//			Verify OTP verification
 
-				try {
-					responseEntity= profileRestClientService.otpLogin(login);
-					if(responseEntity.getBody().toString().equalsIgnoreCase("SUCCESS")){
-						session.setAttribute("loggedSession", responseEntity.getHeaders().get("fname").get(0).split(" ")[0]);
-//						response.addCookie(setSessionCookie("token", URLEncoder.encode(responseEntity.getHeaders().get("Authorization").get(0), "UTF-8")));
-						session.setAttribute("token", responseEntity.getHeaders().get("Authorization").get(0));
-						session.setAttribute("userid", responseEntity.getHeaders().get("userid").get(0));
-						session.setAttribute("email",responseEntity.getHeaders().get("email").get(0));
+			String resultotp2="OTP_INVALID";
 
-						logger.info(responseEntity.getHeaders().get("Authorization").get(0));
+			try{
+				if(!login.getUsermobile().isEmpty() && !login.getOtpVal().isEmpty()){
 
 
-						try{
-							/*ServletContext servletContext =request.getSession().getServletContext().getContext("/{applicationContextRoot}");
+					logger.info("Process OTP submit verfication for mobile number- "+ login.getUsermobile());
+					resultotp2= bseRestClientService.otpverify(login.getUsermobile(), login.getOtpVal());
+
+
+					logger.info("OTP validation respond- "+ resultotp2);
+					if(resultotp2.equalsIgnoreCase("Entered Otp is valid")){
+						//				Generate login session
+
+						try {
+							responseEntity= profileRestClientService.otpLogin(login,ip);
+							if(responseEntity.getBody().toString().equalsIgnoreCase("SUCCESS")){
+								session.setAttribute("loggedSession", responseEntity.getHeaders().get("fname").get(0).split(" ")[0]);
+								//						response.addCookie(setSessionCookie("token", URLEncoder.encode(responseEntity.getHeaders().get("Authorization").get(0), "UTF-8")));
+								session.setAttribute("token", responseEntity.getHeaders().get("Authorization").get(0));
+								session.setAttribute("userid", responseEntity.getHeaders().get("userid").get(0));
+								session.setAttribute("email",responseEntity.getHeaders().get("email").get(0));
+
+								logger.info(responseEntity.getHeaders().get("Authorization").get(0));
+
+
+								try{
+									/*ServletContext servletContext =request.getSession().getServletContext().getContext("/{applicationContextRoot}");
 							servletContext.setAttribute("loggedSession", response.getHeaders().get("fname").get(0).split(" ")[0]);
 							servletContext.setAttribute("token", response.getHeaders().get("Authorization").get(0));
 							servletContext.setAttribute("userid", response.getHeaders().get("userid").get(0));
 							servletContext.setAttribute("email",response.getHeaders().get("email").get(0));*/
 
-							logger.info("Setting session in cookie for customer after OTP validation- "+ responseEntity.getHeaders().get("userid").get(0));	
-							Cookie ssokCookie = new Cookie("loggedSession", responseEntity.getHeaders().get("fname").get(0).split(" ")[0]);
-							ssokCookie.setPath("/");
-							// adding the cookie to the HttpResponse
-							response.addCookie(setSessionCookie("loggedSession", responseEntity.getHeaders().get("fname").get(0).split(" ")[0]));
-//							response.addCookie(setSessionCookie("token", responseEntity.getHeaders().get("Authorization").get(0)));
-							response.addCookie(setSessionCookie("userid", responseEntity.getHeaders().get("userid").get(0)));
-							response.addCookie(setSessionCookie("email",responseEntity.getHeaders().get("email").get(0)));
-							
-							logger.info("Setting session in cookie for customer is complete after OTP validaation.");
+									logger.info("Setting session in cookie for customer after OTP validation- "+ responseEntity.getHeaders().get("userid").get(0));	
+									Cookie ssokCookie = new Cookie("loggedSession", responseEntity.getHeaders().get("fname").get(0).split(" ")[0]);
+									ssokCookie.setPath("/");
+									// adding the cookie to the HttpResponse
+									response.addCookie(setSessionCookie("loggedSession", responseEntity.getHeaders().get("fname").get(0).split(" ")[0]));
+									//							response.addCookie(setSessionCookie("token", responseEntity.getHeaders().get("Authorization").get(0)));
+									response.addCookie(setSessionCookie("userid", responseEntity.getHeaders().get("userid").get(0)));
+									response.addCookie(setSessionCookie("email",responseEntity.getHeaders().get("email").get(0)));
+
+									logger.info("Setting session in cookie for customer is complete after OTP validation.");
+								}catch(Exception e){
+									logger.error("Error setting cookie in session..",e);
+								}
+
+								returnUrl="SUCCESS";
+							}else{
+								returnUrl="OTP_LOGIN_FAIL";
+							}
+						} catch (JsonProcessingException e) {
+							logger.error("Failed to parse data",e);
+							returnUrl="OTP_VALID_FAIL";
 						}catch(Exception e){
-							logger.error("Error setting cookie in session..",e);
+							returnUrl="OTP_VALID_FAIL";
+							logger.error("Failed to process OTP login",e);
 						}
+						//			model.addAttribute("token",response.getHeaders().get("Authorization").get(0));
+						//			model.addAttribute("loggedInUser",response.getHeaders().get("fname").get(0).split(" ")[0]);
 
-						returnUrl="SUCCESS";
+
+
 					}else{
-						returnUrl="OTP_LOGIN_FAIL";
+						returnUrl="OTP_INVALID";
 					}
-				} catch (JsonProcessingException e) {
-					logger.error("Failed to parse data",e);
-					returnUrl="OTP_VALID_FAIL";
-				}catch(Exception e){
-					returnUrl="OTP_VALID_FAIL";
-					logger.error("Failed to process OTP login",e);
+				}else{
+					returnUrl="Missing reqiored data!";
 				}
-				//			model.addAttribute("token",response.getHeaders().get("Authorization").get(0));
-				//			model.addAttribute("loggedInUser",response.getHeaders().get("fname").get(0).split(" ")[0]);
-
-
-
-			}else{
-				returnUrl="OTP_INVALID";
+			}catch(HttpServerErrorException e){
+				logger.error("loginwithJqueryAttemptPost(): Error processing OTP verification prorcess: ", e.getStatusCode(),e);
+			}
+			catch(Exception e){
+				logger.error("loginwithJqueryAttemptPost(): Error with OTP verification.",e);
 			}
 
-			//			returnUrl="SUCCESS";
+
 		}
 
 		model.addAttribute("error", "1st Attempt..");
@@ -592,19 +611,19 @@ public class HomeController {
 		}
 
 		//		logger.info("Beginning attemptAuthentication() from IP- "+ request.getRemoteHost()+ "/"+request.getHeader("X-Forwarded-for"));
-		System.out.println("OTP login check- "+ login.isOtpLogin());
+		logger.info("OTP login check- "+ login.isOtpLogin());
 
 		String returnUrl="";
 		String referer = (String) session.getAttribute("returnSite");
-		logger.info(referer);
+		logger.info("Login2 referrer- "+ referer);
 		returnUrl = redirectUrlAfterLogin(referer,request);
 
-//		RestClient client = new RestClient();
+		//		RestClient client = new RestClient();
 		ResponseEntity<String> response = null;
 
 
 		try{
-			response= profileRestClientService.otpLogin(login);
+			response= profileRestClientService.otpLogin(login,CommonTask.getClientSystemIp(request));
 			//			model.addAttribute("token",response.getHeaders().get("Authorization").get(0));
 			//			model.addAttribute("loggedInUser",response.getHeaders().get("fname").get(0).split(" ")[0]);
 			if(response.getBody().equalsIgnoreCase("SUCCESS")){
@@ -654,12 +673,12 @@ public class HomeController {
 			ssokCookie.setMaxAge(0);
 			ssokCookie.setPath("/");
 			response.addCookie(ssokCookie);
-			
+
 			ssokCookie = new Cookie("email", "");
 			ssokCookie.setMaxAge(0);
 			ssokCookie.setPath("/");
 			response.addCookie(ssokCookie);
-			
+
 			ssokCookie = new Cookie("userid", "");
 			ssokCookie.setMaxAge(0);
 			ssokCookie.setPath("/");
@@ -704,7 +723,7 @@ public class HomeController {
 
 	@RequestMapping(value = "/forgotPassword.do", method = RequestMethod.POST)
 	public String forgotPasswordSubmit(@ModelAttribute("forgotPasswordForm") @Valid ForgotPassword forgotPasswordForm, BindingResult bindingResult, Model model, HttpServletRequest request, HttpServletResponse resp) {
-		logger.info("@@@@ Forgot password request submit..");
+		logger.info("@@@@ Forgot password request submit POSTController..");
 
 		if(bindingResult.hasErrors()){
 			logger.info("Error in forgot form- "+ bindingResult.getFieldError());
@@ -723,19 +742,22 @@ public class HomeController {
 			}
 		}
 
-//		RestClient client = new RestClient();
+		//		RestClient client = new RestClient();
 		ResponseEntity<String> response = null;
 		try {
+			logger.info("Beginning process to request password change process...");
 			response = profileRestClientService.forgotPassword(forgotPasswordForm);
-			logger.info(response.getBody());
+			logger.info("Forgot password change response- "+ response.getBody());
 			//			logger.info(response.getHeaders());
 			model.addAttribute("success", "Password reset mail sent on registered email id.");
 		}catch(HttpStatusCodeException  e){
-			logger.info("test failure - " + e.getStatusCode());
+			logger.error("Forgot password httpexception - ",e.getStatusCode(),e);
 			model.addAttribute("error", "Unable to process request curretnly");
 		} catch (JsonProcessingException e) {
+			logger.error("Forgot password JSONProcessing exception - ",e);
 			model.addAttribute("error","Invalid form data");
 		}catch(Exception e){
+			logger.error("Forgot password handling exception - ",e);
 			model.addAttribute("error","Error processing request");
 		}
 
@@ -768,7 +790,7 @@ public class HomeController {
 	public String contactRequestSubmit(@ModelAttribute("contactForm") ContactUsForm contactForm,Model model) {
 		//logger.info("@@@@ Inside Login..");
 		logger.info("@@@@ ContactDoController @@@@");
-//		RestClient client = new RestClient();
+		//		RestClient client = new RestClient();
 		ResponseEntity<String> response = null;
 		try {
 			response = profileRestClientService.contactUs(contactForm);
@@ -841,7 +863,7 @@ public class HomeController {
 
 
 				// CAll to send mail from rest api
-//				RestClient client = new RestClient();
+				//				RestClient client = new RestClient();
 				ResponseEntity<String> response = null;
 				try {
 					response = profileRestClientService.campaignSingUp(campaign);
@@ -876,25 +898,25 @@ public class HomeController {
 			servletContext.removeAttribute("token");
 			servletContext.removeAttribute("userid");
 			servletContext.removeAttribute("email");*/
-			
+
 			Cookie ssokCookie = new Cookie("loggedSession", "");
 			ssokCookie.setMaxAge(0);
 			ssokCookie.setPath("/");
 			response.addCookie(ssokCookie);
-			
+
 			ssokCookie = new Cookie("email", "");
 			ssokCookie.setMaxAge(0);
 			ssokCookie.setPath("/");
 			response.addCookie(ssokCookie);
-			
+
 			ssokCookie = new Cookie("userid", "");
 			ssokCookie.setMaxAge(0);
 			ssokCookie.setPath("/");
-			
-			
+
+
 
 			response.addCookie(ssokCookie);
-			
+
 
 
 		}catch(Exception e){
@@ -945,8 +967,8 @@ public class HomeController {
 		// return a view which will be resolved by an excel view resolver
 		return new ModelAndView("pdfView", "folioList", folioList);
 	}
-	
-	
+
+
 	@RequestMapping(value = "/mailer/unsubscribe", method = RequestMethod.GET)
 	public ModelAndView unsubscribeUserFormMailer(@Param("id") String emailid,@Param("c") String mailer_categorym,HttpServletRequest request, HttpServletResponse response) {
 		// create some sample data
@@ -956,7 +978,7 @@ public class HomeController {
 		// return a view which will be resolved by an excel view resolver
 		return new ModelAndView("email-unsubscribe", "unsubscribeform", unsubscribeform);
 	}
-	
+
 	@RequestMapping(value = "/mailer/unsubscribe.do", method = RequestMethod.POST)
 	public String unsubscribeUserFormMailerDo(@ModelAttribute("unsubscribeform") EmailUnsubscribeForm form, HttpServletRequest request, HttpServletResponse response, RedirectAttributes attrs) {
 		// create some sample data
@@ -965,12 +987,12 @@ public class HomeController {
 		attrs.addAttribute("emailid", form.getEmail());
 		return "redirect:/mailer/unsubscribe-complete";
 	}
-	
+
 	@RequestMapping(value = "/mailer/unsubscribe-complete", method = RequestMethod.GET)
 	public String unsubscribeUserFormMailerDo(@ModelAttribute("emailid") String emailid, Model map, HttpServletRequest request, HttpServletResponse response) {
 		// create some sample data
 		logger.info("Unsubscribe user from mailer request complete for - "+ emailid);
-		
+
 		map.addAttribute("emailid", emailid);
 		return "email-unsubscribe-complete";
 	}
@@ -979,14 +1001,14 @@ public class HomeController {
 		logger.info("Setting session cookie- "+ cookieName);
 		Cookie ssoCookie = new Cookie(cookieName,cookieValue);
 		ssoCookie.setPath("/");
-//		String httpOnly = env.getProperty("server.session.cookie.http-only");
-//		System.out.println(httpOnly.equalsIgnoreCase("true")?"HTTPONLY": "NOT HTTPO");
+		//		String httpOnly = env.getProperty("server.session.cookie.http-only");
+		//		System.out.println(httpOnly.equalsIgnoreCase("true")?"HTTPONLY": "NOT HTTPO");
 		// adding the cookie to the HttpResponse
-//		System.out.println(env.getProperty("server.session.cookie.http-only"));
+		//		System.out.println(env.getProperty("server.session.cookie.http-only"));
 		ssoCookie.setMaxAge(Integer.valueOf(env.getProperty("server.session.cookie.max-age")));
 		ssoCookie.setSecure(env.getProperty("server.session.cookie.secure").equalsIgnoreCase("true")?true:false);
 		ssoCookie.setHttpOnly(env.getProperty("server.session.cookie.http-only").equalsIgnoreCase("true")?true:false);
-//		ssoCookie.setDomain(env.getProperty("server.session.cookie.domain"));
+		//		ssoCookie.setDomain(env.getProperty("server.session.cookie.domain"));
 		return ssoCookie;
 	}
 

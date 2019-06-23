@@ -123,7 +123,7 @@ public class RestClient implements ProfileRestClientService {
 	}
 
 	@Override
-	public ResponseEntity<String> otpLogin(Login loginForm) throws JsonProcessingException{
+	public ResponseEntity<String> otpLogin(Login loginForm, String ip) throws JsonProcessingException{
 
 		logger.info("Initiating API call to login user by OTP- "+ loginForm.getUsermobile());
 		final String url = env.getProperty(CommonConstants.URL_SERVICE_PROFILE) + "/publicenv/otplogin";
@@ -139,7 +139,7 @@ public class RestClient implements ProfileRestClientService {
 		JsonObject form = new  JsonObject();
 		form.addProperty("username", loginForm.getUsermobile());
 		form.addProperty("password", "NA");
-		form.addProperty("systemip", "NA");
+		form.addProperty("systemip", ip);
 		form.addProperty("loginProcess", "OTP");
 		
 //		ResponseEntity<String> response = null;

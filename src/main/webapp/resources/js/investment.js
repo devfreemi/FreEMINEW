@@ -1,4 +1,4 @@
-function AdditionalPurchase(folio,code,type){
+function AdditionalPurchase(folio,code,type,rtaAgent,productCode){
 	/*console.log(x);
 	var encrypted = CryptoJS.AES.encrypt(x, "axsd");
 	console.log(encrypted.toString());
@@ -10,11 +10,11 @@ function AdditionalPurchase(folio,code,type){
 	if(folio == 'NEW'){
 		alert("You cannot make additional purhcase until portfolio is assigned!");
 	}else{
-		window.location.assign(window.location.href+"/additional-purchase?p="+btoa(folio+"|"+code+"|"+type));
+		window.location.assign(window.location.href+"/additional-purchase?p="+btoa(folio+"|"+code+"|"+type+"|"+rtaAgent+"|"+productCode));
 	}
 }
 
-function MFRedeem(folio,code,type){
+function MFRedeem(folio,code,type,rtaAgent,productCode){
 	/*console.log(x);
 	var encrypted = CryptoJS.AES.encrypt(x, "axsd");
 	console.log(encrypted.toString());
@@ -27,7 +27,7 @@ function MFRedeem(folio,code,type){
 	if(folio == 'NEW'){
 		alert("No portfolio number to redeem your investment! Please wait for portfolio number.");
 	}else{
-	window.location.assign(window.location.href+"/funds-redeem?r="+btoa(folio+"|"+code+"|"+type));
+	window.location.assign(window.location.href+"/funds-redeem?r="+btoa(folio+"|"+code+"|"+type+"|"+rtaAgent+"|"+productCode));
 	}
 //	window.location.assign(window.location.href+"/funds-redeem?r="+btoa(folio+"|"+code+"|"+type));
 }

@@ -28,12 +28,13 @@ public class GoogleSecurity {
 
 			ResponseEntity<String> response = null;
 			try{
-			System.out.println(urlBuilder.toUriString());
+			logger.info("Google security callurl- "+urlBuilder.toUriString());
 			response = restTemplate.exchange(urlBuilder.toUriString(), HttpMethod.POST, null, String.class);
-			logger.debug("Response from google security api for mobile number - "+ response.getBody());
+			logger.info("Response from google security api for mobile number - "+ response.getBody());
 			
 				JsonObject jsonObj = (JsonObject) new JsonParser().parse(response.getBody());
 				if(!jsonObj.get("success").getAsBoolean()){
+					logger.info("Google security check failed for url- "+ requestingUrl);
 					flag=false;
 				}
 			}catch(Exception e){

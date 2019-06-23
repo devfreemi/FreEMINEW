@@ -41,6 +41,7 @@ import com.freemi.common.util.InvestFormConstants;
 import com.freemi.controller.interfaces.ProfileRestClientService;
 import com.freemi.database.service.BseEntryManager;
 import com.freemi.entity.bse.BseFileUpload;
+import com.freemi.entity.general.MfCollatedFundsView;
 //import com.freemi.database.service.BseEntryManager;
 import com.freemi.entity.general.ProfilePasswordChangeForm;
 import com.freemi.entity.general.ResetPassword;
@@ -380,96 +381,149 @@ public class ProfileManageController{
 				returnurl="redirect:/login";
 			}
 		}else{
-			returnurl = "my-dashboard";
+			returnurl = "my-dashboard2";
 			// Get user's MF order history
 			//This code is for new design. COmment out until deployed in prod
+			
+
+			//ADding- 30-05-2019
+			List<MfCollatedFundsView> listFunds = new ArrayList<MfCollatedFundsView>();
+			
 			try{
 				//			List<BseAllTransactionsView> fundsOrder= bseEntryManager.getCustomerAllTransactionRecords(null,session.getAttribute("userid").toString(),null);
 
-				List<MFKarvyValueByCategory> karvyFunds= null;
-				List<MFKarvyValueByCategory> categorykarvyFunds= new ArrayList<MFKarvyValueByCategory>();
+				
 				List<MFCamsFolio> fundsOrder = null;
-				List<MFKarvyFundsView> karvyview = new ArrayList<MFKarvyFundsView>();
+				
 				List<MFCamsValueByCategroy> camscategoryFunds = bseEntryManager.getCustomersCamsInvByCategory(session.getAttribute("userid").toString(), null);
 
+				
 				if(camscategoryFunds!= null && camscategoryFunds.size()>=1){
 					//			fundsOrder = bseEntryManager.getCamsPortfolio(session.getAttribute("userid").toString(), "");
 					fundsOrder = bseEntryManager.getCamsPortfolio(session.getAttribute("userid").toString(), "");
-
+					
+					
 					for(int i=0;i<camscategoryFunds.size();i++){
+						
+						MfCollatedFundsView currentFund = new MfCollatedFundsView();
+						
+						currentFund.setAmcicon(camscategoryFunds.get(i).getAmcicon());
+						currentFund.setAmcShort(camscategoryFunds.get(i).getAmcShort());
+						currentFund.setCollaboratedAmount(camscategoryFunds.get(i).getCollaboratedAmount());
+						currentFund.setFolioNumber(camscategoryFunds.get(i).getFolioNumber());
+						currentFund.setRtaAgent(camscategoryFunds.get(i).getRtaAgent());
+						currentFund.setFundName(camscategoryFunds.get(i).getFundName());
+						
 						List<MFCamsFolio> fundsOrderCategory = new ArrayList<MFCamsFolio>();
 						//				totalAsset+=fundsOrder.get(i).getSchemeInvestment();
 						totalAsset+=camscategoryFunds.get(i).getCollaboratedAmount();
 						for(int j=0;j<fundsOrder.size();j++){
 							if(camscategoryFunds.get(i).getFundName().equalsIgnoreCase(fundsOrder.get(j).getFundName())){
 								fundsOrderCategory.add(fundsOrder.get(j));
+								
 							}
+							
 						}
+						currentFund.setCamsFolioLists(fundsOrderCategory);
 						camscategoryFunds.get(i).setCamsFolioLists(fundsOrderCategory);
+//						currentFund.setCamsFolioLists(fundsOrderCategory);
+						listFunds.add(currentFund);
 					}
 
-					/*KARVY*/
-
-					try{
-						logger.info("Search for KARVY related folios for customer.");
-						List<String> fundShort = new ArrayList<String>();
-
-						karvyFunds = bseEntryManager.getCustomersKarvyInvByCategory(session.getAttribute("userid").toString(), null);
-						if(karvyFunds !=null){
-							logger.info("Total karvy Folio found of customer - " + karvyFunds.size());
-							for(int j=0;j<karvyFunds.size();j++){
-								fundShort.add(karvyFunds.get(j).getAmcShort());
-
-								totalAsset+=karvyFunds.get(j).getInvAmount();
-							}
-
-							Set<String> uniqueAmcs = new HashSet<>(fundShort);
-							fundShort = new ArrayList<String>(uniqueAmcs);
-							logger.info("Unique funds from karvy house - "+ fundShort);
-
-							for(int x=0;x<fundShort.size();x++){
-								MFKarvyFundsView selectedKarvy = new MFKarvyFundsView();
-								Double calcKarvyVal=0.0;
-								for(int y=0;y<karvyFunds.size();y++){
-									if(fundShort.get(x).equals(karvyFunds.get(y).getAmcShort())){
-										calcKarvyVal+=karvyFunds.get(y).getInvAmount();
-
-										if(selectedKarvy.getAmcicon()==null){
-											selectedKarvy.setAmcicon(karvyFunds.get(y).getAmcicon());
-										}
-										if(selectedKarvy.getFunName()==null){
-											selectedKarvy.setFunName(karvyFunds.get(y).getFundName());;
-										}
-
-										categorykarvyFunds.add(karvyFunds.get(y));
+					
 
 
-									}
-									selectedKarvy.setTotalInvestment(calcKarvyVal);
-									selectedKarvy.setCategorizedFund(categorykarvyFunds);
-								}
-
-								karvyview.add(selectedKarvy);
-							}
-
-							logger.info("karvy funds by category- " + karvyview.size());
-						}
-
-					}catch(Exception e){
-						logger.error("Error handling Karvy folio query from controller",e);
-					}
-
-
-					map.addAttribute("camsorderhistory", camscategoryFunds);
-					map.addAttribute("karvyorderhistory", karvyview);
-					map.addAttribute("ORDERHISTORY", "SUCCESS");
+//					map.addAttribute("camsorderhistory", camscategoryFunds);
+					
+//					map.addAttribute("ORDERHISTORY", "SUCCESS");
 				}else{
-					map.addAttribute("ORDERHISTORY", "EMPTY");
+//					map.addAttribute("ORDERHISTORY", "EMPTY");
 				}
 			}catch(Exception ex){
 				map.addAttribute("ORDERHISTORY", "ERROR");
 				logger.error("Failed to fetch cutomer Registry details \n", ex);
 			}
+			
+			/*KARVY*/
+
+			try{
+				List<MFKarvyValueByCategory> karvyFunds= null;
+//				List<MFKarvyValueByCategory> categorykarvyFunds= new ArrayList<MFKarvyValueByCategory>();
+				List<MFKarvyValueByCategory> categorykarvyFunds= null;
+				List<MFKarvyFundsView> karvyview = new ArrayList<MFKarvyFundsView>();
+				logger.info("Search for KARVY related folios for customer.");
+				List<String> fundShort = new ArrayList<String>();
+
+				karvyFunds = bseEntryManager.getCustomersKarvyInvByCategory(session.getAttribute("userid").toString(), null);
+				if(karvyFunds !=null){
+					logger.info("Total karvy Folio found of customer - " + karvyFunds.size());
+					for(int j=0;j<karvyFunds.size();j++){
+						
+						fundShort.add(karvyFunds.get(j).getAmcShort());
+
+						totalAsset+=karvyFunds.get(j).getInvAmount();
+					}
+
+					Set<String> uniqueAmcs = new HashSet<>(fundShort);
+					fundShort = new ArrayList<String>(uniqueAmcs);
+					logger.debug("Unique funds from karvy house - "+ fundShort);
+
+					for(int x=0;x<fundShort.size();x++){
+						MFKarvyFundsView selectedKarvy = new MFKarvyFundsView();
+						MfCollatedFundsView currentFund = new MfCollatedFundsView();
+						categorykarvyFunds= new ArrayList<MFKarvyValueByCategory>();
+						Double calcKarvyVal=0.0;
+						for(int y=0;y<karvyFunds.size();y++){
+							logger.debug(fundShort.get(x) + " -> "+ karvyFunds.get(y).getAmcShort());
+							if(fundShort.get(x).equals(karvyFunds.get(y).getAmcShort())){
+								
+								if(currentFund.getAmcicon()==null){
+									currentFund.setAmcicon(karvyFunds.get(y).getAmcicon());
+								}
+								if(currentFund.getAmcShort() ==null){
+									currentFund.setAmcShort(karvyFunds.get(y).getAmcShort());
+								}if(currentFund.getFolioNumber()==null){
+									currentFund.setFolioNumber(karvyFunds.get(y).getFolioNumber());
+								}
+								if(currentFund.getRtaAgent()==null){
+									currentFund.setRtaAgent(karvyFunds.get(y).getRtaAgent());
+								}
+								if(currentFund.getFundName()==null){
+									currentFund.setFundName(karvyFunds.get(y).getFundName());
+								}
+								
+								calcKarvyVal+=karvyFunds.get(y).getInvAmount();
+
+								if(selectedKarvy.getAmcicon()==null){
+									selectedKarvy.setAmcicon(karvyFunds.get(y).getAmcicon());
+								}
+								if(selectedKarvy.getFunName()==null){
+									selectedKarvy.setFunName(karvyFunds.get(y).getFundName());;
+								}
+									
+								categorykarvyFunds.add(karvyFunds.get(y));
+
+
+							}
+							selectedKarvy.setTotalInvestment(calcKarvyVal);
+							selectedKarvy.setCategorizedFund(categorykarvyFunds);
+							currentFund.setCollaboratedAmount(calcKarvyVal);
+							currentFund.setKarvyFolioList(categorykarvyFunds);
+						}
+
+						karvyview.add(selectedKarvy);
+						listFunds.add(currentFund);
+					}
+
+					logger.info("karvy funds by category- " + karvyview.size());
+				}
+				
+//				map.addAttribute("karvyorderhistory", karvyview);
+
+			}catch(Exception e){
+				logger.error("Error handling Karvy folio query from controller",e);
+			}
+			
 			fileform.setFilecategory("AOF");
 			fileform.setFileowner(session.getAttribute("userid").toString());
 
@@ -479,10 +533,14 @@ public class ProfileManageController{
 			map.addAttribute("PROFILE_STATUS", aofstatus);
 			//			map.addAttribute("PROFILE_STATUS", "NOT_FOUND");
 
+			if(listFunds.size()>0){
+				map.addAttribute("ORDERHISTORY", "SUCCESS");
+				map.addAttribute("allfundsview", listFunds);
+			}else{
+				map.addAttribute("ORDERHISTORY", "EMPTY");
+			}
 		}
-
-
-
+		
 		map.addAttribute("totalasset", totalAsset);
 		map.addAttribute("contextcdn", environment.getProperty(CommonConstants.CDN_URL));
 		logger.info("@@@@ DashboardController @@@@");
@@ -508,8 +566,7 @@ public class ProfileManageController{
 
 			try {
 				responseEntity = profileRestClientService.validateResetPasswordToken(user, token, CommonTask.getClientSystemIp(request));
-				logger.info("Token validations status received");
-				logger.info("Validataion status for token of user - "+user +" --> "+responseEntity.getBody());
+				logger.info("resetPasswordValidator(): Token validations status received of user - "+user +" --> "+responseEntity.getBody());
 				//				logger.info(profile.getMobile());
 
 				if(!responseEntity.getBody().equalsIgnoreCase("VALID")){
@@ -524,7 +581,7 @@ public class ProfileManageController{
 					session.setAttribute("token", token);*/
 				}
 			}catch(HttpStatusCodeException  e){
-				logger.info("Connection failure to reset password token validation link - " + e.getStatusCode());
+				logger.error("resetPasswordValidator(): Connection failure to reset password token validation link - " + e.getStatusCode());
 				map.addAttribute("STATUS", "N");
 				if( e.getStatusCode().value() == 401){
 					map.addAttribute("error", "Token valiation failed. Please check if it exprired.");
@@ -532,15 +589,19 @@ public class ProfileManageController{
 					map.addAttribute("error", "Unable to process request curretnly");
 				}
 			} catch (JsonProcessingException e) {
+				logger.error("resetPasswordValidator(): JsonParseException " ,e);
 				map.addAttribute("STATUS", "N");
 				map.addAttribute("error","Invalid form data");
 			}catch(Exception e){
-				logger.error("Error proceeing reset password token validation \n " + e.getMessage());
-				e.printStackTrace();
+				logger.error("resetPasswordValidator(): Error proceeing reset password token validation \n " ,e);
 				map.addAttribute("STATUS", "N");
 				map.addAttribute("error","Error processing request");
 			}	
-			map.addAttribute("resetPassword", new ResetPassword());
+			
+			ResetPassword passform = new ResetPassword();
+			passform.setUser(user);
+			passform.setToken(token);
+			map.addAttribute("resetPassword", passform);
 			map.addAttribute("userid", user);
 
 			map.addAttribute("contextcdn", environment.getProperty(CommonConstants.CDN_URL));
@@ -568,67 +629,78 @@ public class ProfileManageController{
 	@RequestMapping(value = "/resetPassword.do", method = RequestMethod.POST)
 	public String ForgotPasswordResetSubmit(@ModelAttribute("resetPassword")ResetPassword resetPassForm,BindingResult bindingResult,Model model,HttpServletRequest request,HttpServletResponse response, HttpSession session) {
 		//logger.info("@@@@ Inside Login..");
-		logger.info("@@@@ ForgotPasswordresetController @@@@");
-		System.out.println(request.getQueryString());
+		logger.info("@@@@ ForgotPasswordresetController @@@@- "+ request.getQueryString());
+//		logger.info(request.getQueryString());
 		String returnurl="";
 		//		RestClient client = new RestClient();
 
 		ResponseEntity<String> responseEntity = null;
-
+		
 		if(!resetPassForm.getNewpassword().equalsIgnoreCase(resetPassForm.getConfirmpassword())){
 			model.addAttribute("STATUS", "N");
 			model.addAttribute("error", "Confirm password do not match");
 			return "reset-password";
 		}
 		if(bindingResult.hasErrors()){
-			logger.info("Error in login form");
+			logger.info("ForgotPasswordresetController(): Error in reset password form");
 			//			model.addAttribute("error", "Invalid form data");
 			model.addAttribute("STATUS", "N");
 			model.addAttribute("error", bindingResult.getFieldError().getDefaultMessage());
 			return "reset-password";
 		}
 		if(request.getParameter("g-recaptcha-response")==""){
-			logger.info("Security token not checked");
+			logger.info("ForgotPasswordresetController(): Security token not checked");
 			model.addAttribute("STATUS", "N");
 			model.addAttribute("error", "Please check the security verification");
 			return "reset-password";
 		}
 		else{
 			if(!GoogleSecurity.verifyRecaptcha(request.getParameter("g-recaptcha-response"), "Y", CommonTask.getClientSystemIp(request), request.getRequestURL().toString())){
-				logger.warn("Security token validation failed");
+				logger.warn("ForgotPasswordResetSubmit(): Security token validation failed");
 				model.addAttribute("STATUS", "N");
 				model.addAttribute("error", "Security token validation failed!");
 				return "reset-password";
 			}
 		}
 
-		if(session.getAttribute("token") == null){
+		/*if(session.getAttribute("token") == null){
+			logger.info("Reset password cannot be processed as the request token is not found!");
 			returnurl="redirect:/login";
-		}else{
+		}else{*/
+		
+			model.addAttribute("userid", resetPassForm.getUser());
 			returnurl="reset-password";
 			try {
-				responseEntity = profileRestClientService.forgotPasswordUpdate(resetPassForm,session.getAttribute("user").toString(), session.getAttribute("token").toString(),CommonTask.getClientSystemDetails(request).getClientIpv4Address());
+				responseEntity = profileRestClientService.forgotPasswordUpdate(resetPassForm,resetPassForm.getUser(), resetPassForm.getToken(),CommonTask.getClientSystemDetails(request).getClientIpv4Address());
 				//				System.err.println(response.getBody());
-				logger.info(responseEntity.getBody());
+				logger.info("ForgotPasswordResetSubmit(): Rsponse from resetting forgot password: "+ responseEntity.getBody());
 				if(responseEntity.getBody().equals("SUCCESS")){
 					model.addAttribute("STATUS", "Y");
 					model.addAttribute("PWDCHANGE", "S");
 					model.addAttribute("success", "Your account password updated successfully");
 					model.addAttribute("resetPassword", new ResetPassword());
+				}else if(responseEntity.getBody().equals("INTERNAL_ERROR")){
+					model.addAttribute("STATUS", "N");
+					model.addAttribute("error", "Internal error. Kindly try again.");
+				}else{
+					model.addAttribute("STATUS", "N");
+					model.addAttribute("error", "Internal error. Kindly contact admin if issue persist.");
 				}
 
 			}catch(HttpStatusCodeException  e){
-				logger.info("test failure - " + e.getStatusCode());
-
+				logger.info("ForgotPasswordResetSubmit() HttpStatusCodeException: - ",e);
+				model.addAttribute("STATUS", "N");
 				model.addAttribute("error", "Unable to process request curretnly");
 			} catch (JsonProcessingException e) {
+				logger.info("ForgotPasswordResetSubmit() JsonProcessingException: - ",e);
 				model.addAttribute("STATUS", "N");
 				model.addAttribute("error","Invalid form data");
 			}catch(Exception e){
+				logger.info("ForgotPasswordResetSubmit() Exception processing: - ",e);
 				model.addAttribute("STATUS", "N");
 				model.addAttribute("error","Error processing request");
 			}
-		}
+//		}
 
 		return returnurl;
 	}
