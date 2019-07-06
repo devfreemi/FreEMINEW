@@ -77,7 +77,7 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 		String result = "";
 		BseOrderEntryResponse bseOrderResp= new BseOrderEntryResponse();
 
-		logger.info("Trnsaction details processing to BSE platform begins of category- "+ selectedFund.getTransactionType() + " for customer: "+ selectedFund.getClientID());
+		logger.info("Transaction details processing to BSE platform begins of category- "+ selectedFund.getTransactionType() + " for customer: "+ selectedFund.getClientID());
 		if(env.getProperty(CommonConstants.BSE_ENABLED).equalsIgnoreCase("Y")){
 
 			if(selectedFund.getTransactionType().equals("REDEEM")){

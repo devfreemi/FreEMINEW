@@ -1,12 +1,4 @@
 function AdditionalPurchase(folio,code,type,rtaAgent,productCode){
-	/*console.log(x);
-	var encrypted = CryptoJS.AES.encrypt(x, "axsd");
-	console.log(encrypted.toString());
-	var decrypted = CryptoJS.AES.decrypt(encrypted, "axsd");
-	console.log(decrypted.toString(CryptoJS.enc.Utf8));*/
-//	var base64 = btoa(x);
-//	console.log(base64);
-//	console.log(window.location.href);
 	if(folio == 'NEW'){
 		alert("You cannot make additional purhcase until portfolio is assigned!");
 	}else{
@@ -15,15 +7,6 @@ function AdditionalPurchase(folio,code,type,rtaAgent,productCode){
 }
 
 function MFRedeem(folio,code,type,rtaAgent,productCode){
-	/*console.log(x);
-	var encrypted = CryptoJS.AES.encrypt(x, "axsd");
-	console.log(encrypted.toString());
-	var decrypted = CryptoJS.AES.decrypt(encrypted, "axsd");
-	console.log(decrypted.toString(CryptoJS.enc.Utf8));*/
-//	var base64 = btoa(x);
-//	console.log(base64);
-//	console.log(window.location.href);
-	
 	if(folio == 'NEW'){
 		alert("No portfolio number to redeem your investment! Please wait for portfolio number.");
 	}else{

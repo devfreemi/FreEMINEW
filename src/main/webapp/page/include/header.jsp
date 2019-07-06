@@ -12,7 +12,7 @@ background: linear-gradient(to left, #1CB5E0, #000046); /* W3C, IE 10+/ Edge, Fi
 <nav class="mb-1 navbar navbar-expand-lg navbar-dark new-header">
 <div class="container-fluid">
   <a class="navbar-brand" href="/" style="padding: 0px;"><img
-			src="<c:url value="${contextcdn}/resources/images/freemi.png"/>" style="height: 55px;"
+			src="<c:url value="${contextcdn}/resources/images/freemi.png"/>"
 			class="img-fluid" alt="FreEMI logo" > <span class="beta-styling">
 		</span></a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-4"

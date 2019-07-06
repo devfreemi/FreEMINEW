@@ -6,10 +6,11 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
-import org.springframework.mobile.device.Device;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -24,6 +25,7 @@ import com.freemi.entity.general.TaxCalculatorForm;
 @Controller
 @Scope("session")
 public class Calculators {
+	private static final Logger logger = LogManager.getLogger(Calculators.class);
 	
 	@Autowired
 	private Environment environment;
@@ -41,7 +43,7 @@ public class Calculators {
 	
 	@RequestMapping(value = "/registry-mutual-funds/home-loan", method = RequestMethod.GET)
     public String HomeLoan(ModelMap model) {
-		//logger.info("@@@@ Inside Login..");
+		logger.info("/registry-mutual-funds/home-loan");
 		model.addAttribute("homeLoanForm", new HomeLoanForm());
        System.out.println("@@@@ HomeLoanController @@@@");
        return "home-loan";

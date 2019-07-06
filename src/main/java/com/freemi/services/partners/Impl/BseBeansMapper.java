@@ -118,7 +118,7 @@ public class BseBeansMapper {
 			logger.error("InvestmentFormToBseFATCABeans(): failed to convert date: Setting default format.",e.getMessage());
 			fatcaForm.setDOB(registrationForm.getInvDOB());
 		}
-		System.out.println("DOB for fatca- "+ fatcaForm.getDOB());
+		logger.info("DOB for fatca- "+ fatcaForm.getDOB());
 //		fatcaForm.setDOB(registrationForm.getInvDOB());
 
 		fatcaForm.setFR_NAME(registrationForm.getFatcaDetails().getFatherName());
@@ -258,9 +258,20 @@ public class BseBeansMapper {
 		bseOrderForm.setTransNo(requestNumber);
 
 		bseOrderForm.setDPTxn("P");
-		bseOrderForm.setOrderVal(fundDetails.getRedeemAmount());	//to do for all redeem 
-		bseOrderForm.setQty("");
-		bseOrderForm.setAllRedeem("N");		// to do
+		 
+		
+		
+		if(fundDetails.getRedeemAll().equals("N")){
+			bseOrderForm.setAllRedeem("N");
+			bseOrderForm.setOrderVal(fundDetails.getRedeemAmount());	//to do for all redeem
+			bseOrderForm.setQty("");
+		}else{
+
+			bseOrderForm.setAllRedeem("Y");
+			bseOrderForm.setOrderVal(0);	//to do for all redeem
+			bseOrderForm.setQty("");
+		}
+		
 		bseOrderForm.setFolioNo(fundDetails.getPortfolio());
 
 		bseOrderForm.setKYCStatus("Y");

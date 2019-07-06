@@ -68,7 +68,9 @@
 								method="POST" commandName="mfRedeemForm">
 
 								<div class="tab">
-									<h4 class="text-md-center" style="color: #f16927; font-weight: 500;border-bottom: 1px solid;">1. Scheme Details</h4>
+									<h4 class="text-md-center"
+										style="color: #f16927; font-weight: 500; border-bottom: 1px solid;">1.
+										Scheme Details</h4>
 									<div class="row">
 										<div class="col-md-12 col-lg-12" style="text-align: left;">
 											<div>
@@ -98,6 +100,16 @@
 														class="form-control form-control-sm form-control-plaintext" />
 												</div>
 											</div>
+											
+											<div class="form-group row">
+												<label for="fundname"
+													class="col-6 col-md-4 col-lg-4 col-form-label col-form-label-sm">BSE Scheme
+													Code:</label>
+												<div class="col-6 col-md-8 col-lg-8">
+													<form:input readonly="true" path="schemeCode" id="bseschemeCode"
+														class="form-control form-control-sm form-control-plaintext" />
+												</div>
+											</div>
 
 											<div class="form-group row">
 												<label for="investtype"
@@ -121,13 +133,27 @@
 														class="form-control form-control-sm form-control-plaintext" />
 												</div>
 											</div>
+											
+											<div class="form-group row mb-1">
+												<label for="redeemAllCheckBox"
+													class="col-6 col-md-4 col-lg-4 col-form-label col-form-label-sm">Redeem
+													All ?</label>
+												<div class="col-6 col-md-8 col-lg-8">
+													<div class="custom-control custom-checkbox">
+													
+														<form:checkbox path="redeemAll" class="custom-control-input" id="redeemAllCheckBox"/>
+														<label
+															class="custom-control-label" for="redeemAllCheckBox">Yes</label>
+													</div>
+												</div>
+											</div>
 
-											<div class="form-group row">
+											<div class="form-group row" id="redeemamntbox">
 												<label for="redeemamount"
 													class="col-6 col-md-4 col-lg-4 col-form-label col-form-label-sm">Redeem
 													Amount:</label>
 												<div class="col-6 col-md-8 col-lg-8">
-													<form:input path="redeemAmounts" id="redeemamount"
+													<form:input path="redeemAmounts" id="redeemamount" maxlength="10"
 														class="form-control form-control-sm" />
 													<span id="invalidamnt" style="font-size: 11px; color: red;"></span>
 												</div>
@@ -141,7 +167,9 @@
 								<div class="tab">
 									<div class="row">
 										<div class="col-md-12 col-lg-12">
-											<h4 class="text-md-center" style="color: #f16927; font-weight: 500;border-bottom: 1px solid;">2. Confirm Details</h4>
+											<h4 class="text-md-center"
+												style="color: #f16927; font-weight: 500; border-bottom: 1px solid;">2.
+												Confirm Details</h4>
 											<div class="form-group row mb-1">
 												<label for="folioconf"
 													class="col-6 col-md-4 col-lg-4 col-form-label col-form-label-sm">Folio
@@ -178,6 +206,8 @@
 													<label class="confirm-label" id="availablefundconf">${mfRedeemForm.totalValue}</label>
 												</div>
 											</div>
+
+											
 
 											<div class="form-group row mb-1">
 												<label for="redeemamountconf"
@@ -218,12 +248,15 @@
 											</div>
 											<div>
 												<form:hidden path="redeemTransId" />
-												<form:hidden path="schemeCode" />
+												<%-- <form:hidden path="schemeCode" /> --%>
 											</div>
 
 										</div>
 									</div>
 								</div>
+								
+								<jsp:include page="transaction-in-progress-icon.jsp"></jsp:include>
+								
 
 								<div style="overflow: auto;">
 									<div style="float: right;">
@@ -242,7 +275,7 @@
 									<span class="step"></span> <span class="step"></span>
 								</div>
 
-								
+
 							</form:form>
 						</c:when>
 						<c:when test="${FUNDAVAILABLE == 'N' }">
@@ -296,8 +329,18 @@
 		if (n == (x.length - 1)) {
 			document.getElementById("nextBtn").innerHTML = "Submit";
 
-			$("#redeemamountconf").text($("#redeemamount").val());
+			
 			$("#paymodeconf").text($("#input[name='pay']:checked").val());
+			
+			var redeemallflag = $("input[name='redeemAll']:checked").val();
+			
+			if(redeemallflag ){
+				$("#redeemamountconf").text("Redeem All");
+			}else{
+				$("#redeemamountconf").text( Number($("#redeemamount").val()).toFixed(2));
+				
+			}
+			
 		} else {
 			document.getElementById("nextBtn").innerHTML = "Next";
 		}
@@ -306,11 +349,26 @@
 	}
 
 	function nextPrev(n) {
+		//console.log("Current tab- "+currentTab  + " n-"+ n);
 		// This function will figure out which tab to display
 		var x = document.getElementsByClassName("tab");
 		// Exit the function if any field in the current tab is invalid:
-		if (n == 1 && !validateForm())
+			
+		if (n == 1 && currentTab == 1) {
+//		console.log("Display progress");
+		$("#display_progress").css({
+			"display" : "block"
+		});
+		
+		$("#prevBtn").attr("disabled", "disabled");
+		$("#nextBtn").attr("disabled", "disabled");
+		
+	}
+		
+		if (n == 1 && !validateForm()){
+			console.log("Validation failed.");
 			return false;
+		}
 		// Hide the current tab:
 		x[currentTab].style.display = "none";
 		// Increase or decrease the current tab by 1:
@@ -318,6 +376,7 @@
 		// if you have reached the end of the form... :
 		if (currentTab >= x.length) {
 			//...the form gets submitted:
+			//console.log("Submit form");
 			document.getElementById("regForm").submit();
 			return false;
 		}
@@ -331,9 +390,11 @@
 		x = document.getElementsByClassName("tab");
 		y = x[currentTab].getElementsByTagName("input");
 		// A loop that checks every input field in the current tab:
+		
 		for (i = 0; i < y.length; i++) {
 			// If a field is empty...
 			if (y[i].value == "") {
+				console.log(y[i]);
 				// add an "invalid" class to the field:
 				y[i].className += " invalid";
 				// and set the current valid status to false:
@@ -361,18 +422,22 @@
 			'keyup',
 			function() {
 				//Verify amount is less than available amount
-				var availamount = $("#availableFund").val();
-				var redeemamount = $("#redeemamount").val();
+
+				var availamount = Number($("#availableFund").val());
+				var redeemamount = Number($("#redeemamount").val());
 				//console.log("Remeem amount- "+ redeemamount);
 				if (!isNaN(redeemamount)) {
 					$("#invalidamnt").text("");
 					//$("#nextBtn").removeAttr("disabled");
-					if (redeemamount > availamount || redeemamount < 1) {
+					if (redeemamount > availamount) {
 						//  console.log("Invalid")
-						$("#invalidamnt").text(
-								"Entered amount above available amount!");
+						$("#invalidamnt").text("Entered amount above available amount!");
 						$("#nextBtn").attr("disabled", "disabled");
-					} else {
+					}else if(redeemamount <=0 ){
+						$("#invalidamnt").text("Invalid withdrwal amount");
+						$("#nextBtn").attr("disabled", "disabled");
+					}else {
+					
 						//console.log("valid")
 						$("#invalidamnt").text("");
 						$("#nextBtn").removeAttr("disabled");
@@ -381,8 +446,33 @@
 					$("#invalidamnt").text("Invalid number");
 					$("#nextBtn").attr("disabled", "disabled");
 				}
+				
 
 			});
+	
+	
+	$( document ).ready(function() {
+		var f = $("input[name='redeemAll']:checked").val();
+		 //console.log("On load- "+  f);
+		 if(f== undefined){
+			 $("#redeemamntbox").show();
+		 }
+		 if(f){
+			 $("#redeemamntbox").hide();
+		 }
+	});
+	
+	$("#redeemAllCheckBox").change(function(){
+		var f = $("input[name='redeemAll']:checked").val();
+		 //console.log("The text has been changed - "+  f);
+		 if(f== undefined){
+			 $("#redeemamntbox").show();
+		 }
+		 if(f){
+			 $("#redeemamntbox").hide();
+		 }
+		 
+	});
 </script>
 
 </html>

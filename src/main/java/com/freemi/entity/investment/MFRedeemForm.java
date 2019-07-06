@@ -20,6 +20,7 @@ public class MFRedeemForm implements Serializable{
 	private String investType="";
 	private double availableAmount=0.0;
 	private String redeemByUnits="";
+	private boolean redeemAll;
 	private String redeemByAmounts="";
 	private double redeemUnits=0.0;
 	private double redeemAmounts=0.0;
@@ -149,6 +150,12 @@ public class MFRedeemForm implements Serializable{
 	}
 	public void setCancelOrderTransId(String cancelOrderTransId) {
 		this.cancelOrderTransId = cancelOrderTransId;
+	}
+	public boolean isRedeemAll() {
+		return redeemAll;
+	}
+	public void setRedeemAll(boolean redeemAll) {
+		this.redeemAll = redeemAll;
 	}
 	
 	

@@ -71,6 +71,9 @@ public class SelectMFFund implements Serializable {
 	@Transient
 	private double redeemAmount;
 	
+	@Column(name="REDEEM_ALL")
+	private String redeemAll="N";
+	
 	@Column(name="PAYMENT_METHOD")
 	private String paymentMethod;
 	
@@ -336,6 +339,12 @@ public class SelectMFFund implements Serializable {
 	}
 	public void setRtaAgent(String rtaAgent) {
 		this.rtaAgent = rtaAgent;
+	}
+	public String getRedeemAll() {
+		return redeemAll;
+	}
+	public void setRedeemAll(String redeemAll) {
+		this.redeemAll = redeemAll;
 	}
     
 }

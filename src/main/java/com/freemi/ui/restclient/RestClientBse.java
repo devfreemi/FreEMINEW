@@ -140,7 +140,9 @@ public class RestClientBse implements BseRestClientService {
 
 	@Override
 	public String purchaseRequestProcess(BseOrderEntry form){
-
+		
+		logger.info("purchaseRequestProcess(): Process to send transaction request...");
+		
 		final String url = env.getProperty("investment.bse.serviceurl") + "/orderlumpsum";
 		ObjectMapper mapper = new ObjectMapper();
 		RestTemplate restTemplate = new RestTemplate();
@@ -158,7 +160,7 @@ public class RestClientBse implements BseRestClientService {
 		if(env.getProperty(CommonConstants.BSE_CALL_TEST_ENABLED).equalsIgnoreCase("N")){
 			ResponseEntity<?> response= restTemplate.postForEntity(url, entity,  String.class);
 			returnRes=response.getBody().toString();
-			logger.info("Response for lumpsum purchase- "+ response.getBody().toString());
+			logger.info("Response for lumpsum purchase/cancellation/redemption/additional- "+ response.getBody().toString());
 		}else{
 			returnRes = "NEW|201902212627300013|1466093|SUMANTA1|26273|DEBA593C|ORD CONF: Your Request for FRESH PURCHASE 5000.000  in SCHEME: ID289-DR THRO : PHYSICAL is confirmed for CLIENT : DEBASISH SARKAR (Code: DEBA593C)  CONFIRMATION TIME: Feb 21 2019  9:28PM ENTRY BY:  ORDER NO: 1466093 OFFLINE ORDER WILL BE TRIGGERED  ON NEXT WORKING DAY|0";
 //			returnRes = "NEW|201902122627300002|0|SUMANTA1|26273|DEBA593C|FAILED: ORDER ENTRY NOT ALLOWED IN THE SCHEME|1";

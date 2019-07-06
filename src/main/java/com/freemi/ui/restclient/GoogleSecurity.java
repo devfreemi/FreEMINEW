@@ -42,7 +42,7 @@ public class GoogleSecurity {
 				flag=false;
 			}
 		}else{
-			logger.info("Google secutiry is tunrned off. Skipping validation.");
+			logger.info("Google security is tunrned off. Skipping validation.");
 		}
 
 		return  flag;

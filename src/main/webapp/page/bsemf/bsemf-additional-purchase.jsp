@@ -303,6 +303,8 @@
 								</div>
 							</div>
 						</div>
+						
+						<jsp:include page="transaction-in-progress-icon.jsp"></jsp:include>
 
 						<div style="overflow: auto;">
 							<div style="float: right;">
@@ -344,7 +346,7 @@
 	showTabAdditional(currentTab); // Display the current tab
 
 	function showTabAdditional(n) {
-		console.log("Show current tab.")
+		//console.log("Show current tab.")
 		// This function will display the specified tab of the form ...
 		var x = document.getElementsByClassName("tab");
 		x[n].style.display = "block";
@@ -356,7 +358,7 @@
 		}
 		if (n == (x.length - 1)) {
 			document.getElementById("nextBtn").innerHTML = "Submit";
-			console.log("Additional purhase- " + $("#purchaseamount").val())
+			//console.log("Additional purhase- " + $("#purchaseamount").val())
 			$("#purchaseamountconf").text($("#purchaseamount").val());
 			/* $("#paymodeconf").text($("#input[name='pay']:checked").val()); */
 		} else {
@@ -368,12 +370,24 @@
 
 	function nextPrevAdditional(n) {
 		// This function will figure out which tab to display
-		console.log("Next page...");
+		//console.log("Next page...");
 		var x = document.getElementsByClassName("tab");
 		// Exit the function if any field in the current tab is invalid:
-		console.log("n- " + n)
+		//console.log("n- " + n)
+		
+		if (n == 1 && currentTab == 1) {
+//		console.log("Display progress");
+		$("#display_progress").css({
+			"display" : "block"
+		});
+		
+		$("#prevBtn").attr("disabled", "disabled");
+		$("#nextBtn").attr("disabled", "disabled");
+		
+	}
+		
 		if (n == 2) {
-			console.log("Return false");
+			//console.log("Return false");
 			return false;
 		}
 		// Hide the current tab:
@@ -387,13 +401,13 @@
 			return false;
 		}
 		// Otherwise, display the correct tab:
-		console.log("SHow tab- " + currentTab);
+		//console.log("SHow tab- " + currentTab);
 		showTabAdditional(currentTab);
 	}
 
 	function validateForm() {
 		// This function deals with validation of the form fields
-		console.log("Validate additional purchase");
+		//console.log("Validate additional purchase");
 		var x, y, i, valid = true;
 		x = document.getElementsByClassName("tab");
 		y = x[currentTab].getElementsByTagName("input");

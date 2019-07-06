@@ -6,7 +6,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -54,7 +53,6 @@ import com.freemi.entity.general.RegistryWish;
 import com.freemi.entity.investment.MFInvestForm;
 import com.freemi.entity.investment.MFInvestmentDates;
 import com.freemi.entity.investment.RegistryFunds;
-import com.freemi.ui.restclient.RestClient;
 
 @Controller
 @Scope("session")
@@ -79,10 +77,10 @@ public class Products {
 	@RequestMapping(value = "/register", method = RequestMethod.GET)
 	public String registerUser(Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 		//logger.info("@@@@ Inside Login..");
-		
+		logger.info("@@@@ Register page @@@@");
 		if(session.getAttribute("token") == null){
 		map.addAttribute("registerForm", new Registerform());
-		logger.info("@@@@ RegisterController @@@@");
+		
 		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 		return "register";
 		}else{
@@ -130,7 +128,7 @@ public class Products {
 		}
 
 		model.addAttribute("registerForm", new Registerform());
-		logger.info("@@@@ RegisterController @@@@");
+//		logger.info("@@@@ RegisterController @@@@");
 		return "register";
 	}
 
@@ -151,7 +149,9 @@ public class Products {
 		return "redirect:/fsecure-insurance";
 	}
 
-	@RequestMapping(value = "/registry-mutual-funds", method = RequestMethod.GET)
+	
+//	Temporary down
+	/*@RequestMapping(value = "/registry-mutual-funds", method = RequestMethod.GET)
 	public String registryMutualReplaced(ModelMap model, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 		return "redirect:/registry-mutual-funds/";
 	}
@@ -159,7 +159,7 @@ public class Products {
 
 	@RequestMapping(value = "/registry-mutual-funds/", method = RequestMethod.GET)
 	public String registryDisplay(Model map) {
-		logger.info("@@@@ RegistryController @@@@");
+		logger.info("@@@@ Registry mutual funds @@@@");
 
 		try{
 			List<ProductSchemeDetail> productlist = productSchemeDetailService.findForRegistryBirthDay();
@@ -197,11 +197,15 @@ public class Products {
 			map.addAttribute("error", "Failed to get funds. Please try again");
 		}
 		
-		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 		logger.info("@@@@ RegistryController Data Load Comleted @@@@");
 
 		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 		return "registry3";
+	}*/
+	
+	@RequestMapping(value = {"/registry-mutual-funds","/registry-mutual-funds/"}, method = RequestMethod.GET)
+	public String registryMutualReplaced(ModelMap model, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+		return "redirect:/mutual-funds/funds-explorer";
 	}
 
 

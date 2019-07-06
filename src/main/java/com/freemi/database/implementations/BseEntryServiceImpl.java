@@ -284,9 +284,13 @@ public class BseEntryServiceImpl implements BseEntryManager {
 
 				if(CommonConstants.BSE_SAVE_TRANSACTION.equalsIgnoreCase("Y")){
 					logger.info("Transaction is successful. Saving transaction request to Database");
-					selectedMFFund = bseTransCrudRepository.saveAndFlush(selectedMFFund);
-					logger.info("Save transaction response from BSE to database");
-					bseOrderEntryResponseRepository.saveAndFlush(bseResult);
+					try{
+						selectedMFFund = bseTransCrudRepository.saveAndFlush(selectedMFFund);
+						logger.info("Save transaction response from BSE to database");
+						bseOrderEntryResponseRepository.saveAndFlush(bseResult);
+					}catch(Exception e){
+						logger.error("BSE transaction is successful but failed to save data to dabtabase for transaction ID: "+ selectedMFFund.getTransactionID(),e);
+					}
 					
 				}else{
 					logger.info("BSE_SAVE_TRANSACTION is disabled. Trsansaction not saved  to databse..");
@@ -403,7 +407,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		
 		List<String> portfolios = null;
 		if(rtaAgent.equalsIgnoreCase("CAMS")){
-			logger.info("Querying CAMS feedback DB for list of potfolio for customer: "+ clientId);
+			logger.info("Querying CAMS feedback DB for list of portfolio for customer: "+ clientId);
 		portfolios= bseCamsByCategoryRepository.getSelectedPortFolio(amcCode, clientId);
 		}else{
 			logger.info("Querying KARVY feedback for portfolio list...");
@@ -575,7 +579,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		String schemeCode="";
 		MFCamsFolio folio = null;
 		List<BseFundsScheme> schemCodes = bseFundsExplorerRepository.findAllByRtaCode(rtaCode);
-		logger.info("Total schemecode found for RTA code- "+ schemCodes.size());
+		logger.info("Total schemecode found for CAMS RTA code- "+ schemCodes.size());
 		for(int i =0;i<schemCodes.size();i++){
 			if(!schemCodes.get(i).getSettlementType().equalsIgnoreCase("L1")){
 				schemeCode = schemCodes.get(i).getSchemeCode();
@@ -608,8 +612,12 @@ public class BseEntryServiceImpl implements BseEntryManager {
 			}
 		}*/
 		
+		try{
+		logger.info("getKarvyFundsDetailsForRedeem(): Searching Karvy folio details by [karvyProductCode:folioNumber:PAN] - "+schemeCode + ":"+folioNumber);
 		folio = bseKarvyByCategoryRepository.getOneByRtaSchemeCodeAndFolioNumber(karvyProductCode, folioNumber);
-		logger.info("Scheme code for redemption of the fund - "+schemeCode);
+		}catch(Exception e){
+			logger.error("getKarvyFundsDetailsForRedeem(): Error querying database. ",e);
+		}
 
 		return folio;
 	}
@@ -897,7 +905,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 
 	@Override
 	public BseMFSelectedFunds getFundsByCode(String rtacode, String isin) {
-		logger.info("Querying to Fund details by RTA code from view- ");
+		logger.info("Querying to get BSE Fund details by RTA code from view for  "+ rtacode + " : "+isin );
 		BseMFSelectedFunds fundDetails = null;
 		try{
 			if(isin == null){

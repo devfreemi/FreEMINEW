@@ -26,7 +26,6 @@ import javax.validation.Valid;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.aspectj.weaver.CustomMungerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
@@ -1060,7 +1059,7 @@ public class BsemfController {
 	@RequestMapping(value = "/mutual-funds/purchase", method = RequestMethod.GET)
 	public String purchaseBseMfAfterLogin(Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session,RedirectAttributes redirectAttrs) {
 
-		logger.info("BSE MF STAR Purhcase Get controller");
+		logger.info("BSE MF STAR Purchase Get controller");
 		String returnUrl = "bsemf/bse-mf-purchase";
 
 		List<BseMFInvestForm> customerData = null;	
@@ -1437,7 +1436,7 @@ public class BsemfController {
 	@RequestMapping(value = "/my-dashboard/additional-purchase", method = RequestMethod.GET)
 	public String bsemfAdditionalFundsPurchaseModeGet(@RequestParam("p") String purchasedata,@ModelAttribute("TRANS_ID") String transId,Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 
-		logger.info("@@ BSE MF STAR purchase confirm controller @@");
+		logger.info("bsemfAdditionalFundsPurchaseModeGet() - Additional purchase request");
 		String returnUrl = "bsemf/bsemf-additional-purchase";
 
 		List<String> decodedString= Arrays.asList(Base64Coder.decodeString(purchasedata).toString().split("\\|"));
@@ -1458,7 +1457,7 @@ public class BsemfController {
 					String productCode = decodedString.get(4)!=null?decodedString.get(4):"BLANK";
 					BseMFSelectedFunds selectedCodeFundDetails = null;
 					//					BseAllTransactionsView bseSeletedFundDetails= bseEntryManager.getFundDetailsForAdditionalPurchase(portfolio, schemeCode,investType, session.getAttribute("userid").toString());
-
+					logger.info("bsemfAdditionalFundsPurchaseModeGet(): Details of request for additional purchase:[portfolio:rtacode:rtaAgent:productCode:investType]"+ portfolio+ ":"+rtaCode+ ":"+rtaAgent+ ":"+productCode+ ":"+investType);
 					if(rtaAgent.equals("CAMS")){
 						folioDetails =  bseEntryManager.getCamsFundsDetailsForRedeem(rtaCode, session.getAttribute("userid").toString(), portfolio);
 						selectedCodeFundDetails = bseEntryManager.getFundsByCode(rtaCode,null);
@@ -1477,7 +1476,7 @@ public class BsemfController {
 					}
 
 					if(selectedCodeFundDetails==null){
-						logger.info("Failed to find related scheme details with scheme code / RTA code- "+ rtaCode);
+						logger.info("Failed to find related BSE scheme details with scheme code / RTA code- "+ rtaCode);
 						purchaseForm.setGrowthSchemeCode(karvyFund.getSchemeCode());
 					}else{
 						purchaseForm.setGrowthSchemeCode(selectedCodeFundDetails.getGrowthSchemeCode());
@@ -1556,7 +1555,7 @@ public class BsemfController {
 			fundTransaction.setSchemeCode(purchaseForm.getGrowthSchemeCode());
 			fundTransaction.setReinvSchemeCode(purchaseForm.getReinvSchemeCode());
 			fundTransaction.setInvCategory(purchaseForm.getFundCategory());
-
+			fundTransaction.setSchemeName(purchaseForm.getFundName());
 			fundTransaction.setTransactionID(purchaseForm.getPurchaseTransid());
 			fundTransaction.setInvestype(purchaseForm.getInvestType());
 			fundTransaction.setTransactionType("PURCHASE");
@@ -1646,16 +1645,20 @@ public class BsemfController {
 
 			String rtaAgent = decodedString.get(3)!=null?decodedString.get(3):"BLANK";
 			String productCode = decodedString.get(4)!=null?decodedString.get(4):"BLANK";
-			BseMFSelectedFunds selectedCodeFundDetails = null;
+//			BseMFSelectedFunds selectedCodeFundDetails = null;
 
+			logger.info("bsemfAdditionalFundsPurchaseModeGet(): Details of request for additional purchase:[portfolio:rtacode:rtaAgent:productCode:investType]"+ portfolio+ ":"+rtaCode+ ":"+rtaAgent+ ":"+productCode+ ":"+investType);
 			//			BseAllTransactionsView bseSeletedFundDetails= bseEntryManager.getFundDetailsForRedemption(portfolio, schemeCode,investType, session.getAttribute("userid").toString());
 			//			MFCamsFolio folioDetails =  bseEntryManager.getCamsFundsDetailsForRedeem(schemeCode, session.getAttribute("userid").toString(), portfolio);
-
+			
+			logger.info("Details requested for redeem- "+ portfolio + " : "+ rtaCode + " : "+ rtaAgent + " : "+ productCode);
+			
 			if(rtaAgent.equals("CAMS")){
 				folioDetails =  bseEntryManager.getCamsFundsDetailsForRedeem(rtaCode, session.getAttribute("userid").toString(), portfolio);
-				selectedCodeFundDetails = bseEntryManager.getFundsByCode(rtaCode,null);
+//				selectedCodeFundDetails = bseEntryManager.getFundsByCode(rtaCode,null);
 
 				if(folioDetails == null){
+					logger.info("No CAMS funds found to process for redeem for portfolio: "+ portfolio);
 					map.addAttribute("FUNDAVAILABLE", "N");
 					map.addAttribute("error", "No fund value to redeem. Please select appropriate fund for redemption.");
 				}else{
@@ -1667,15 +1670,19 @@ public class BsemfController {
 
 					redeemForm.setInvestType(folioDetails.getTrasanctionType()!=null?folioDetails.getTrasanctionType():"NA");
 					redeemForm.setTotalValue(folioDetails.getInvAmount());
+					
+					redeemForm.setSchemeCode(folioDetails.getSchemeCode());
 				}
 			}else{
-				karvyFund = bseEntryManager.getKarvyFundsDetailsForRedeem(rtaCode, session.getAttribute("userid").toString(), portfolio);
-
+//				karvyFund = bseEntryManager.getKarvyFundsDetailsForRedeem(rtaCode, session.getAttribute("userid").toString(), portfolio);
+				karvyFund = bseEntryManager.getKarvyFundsDetailsForRedeem(productCode, session.getAttribute("userid").toString(), portfolio);
+				
 				if(karvyFund == null){
+					logger.info("No KARVY related funds found to process for portfolio: "+ portfolio);
 					map.addAttribute("FUNDAVAILABLE", "N");
 					map.addAttribute("error", "No fund value to redeem. Please select appropriate fund for redemption.");
 				}else{
-					selectedCodeFundDetails = bseEntryManager.getFundsByCode(productCode,karvyFund.getIsin());
+//					selectedCodeFundDetails = bseEntryManager.getFundsByCode(productCode,karvyFund.getIsin());
 					map.addAttribute("FUNDAVAILABLE", "Y");
 					redeemForm.setPortfolio(karvyFund.getFolioNumber());
 					redeemForm.setFundName(karvyFund.getFundName());
@@ -1684,11 +1691,13 @@ public class BsemfController {
 
 					redeemForm.setInvestType(karvyFund.getTrasanctionType()!=null?karvyFund.getTrasanctionType():"NA");
 					redeemForm.setTotalValue(karvyFund.getInvAmount());
+					
+					redeemForm.setSchemeCode(karvyFund.getSchemeCode());
 
 				}
 			}
-
-
+			
+		
 			/*if(folioDetails == null){
 				map.addAttribute("FUNDAVAILABLE", "N");
 				map.addAttribute("error", "No fund value to redeem. Please select appropriate fund for redemption.");
@@ -1730,8 +1739,12 @@ public class BsemfController {
 
 	@RequestMapping(value = "/mutual-funds/mfInvestRedeem.do", method = RequestMethod.POST)
 	public String bseRedeemMfFundsPost(@ModelAttribute("mfRedeemForm") MFRedeemForm redeemForm,Model map, HttpServletRequest request, HttpServletResponse response, final RedirectAttributes redirectAttrs, HttpSession session) {
+		
+		logger.info("bseRedeemMfFundsPost(): REDEEM REQUEST POST CONTROLLER");
+		
 		String returnUrl="redirect:/mutual-funds/bse-transaction-status";
 		TransactionStatus transReport = new TransactionStatus();
+		
 		if(session.getAttribute("token")==null){
 			try {
 				returnUrl="redirect:/login?ref="+ URLEncoder.encode(request.getRequestURL().toString(), StandardCharsets.UTF_8.toString());
@@ -1751,11 +1764,16 @@ public class BsemfController {
 				fundTransaction.setTransactionID(redeemForm.getRedeemTransId());
 				fundTransaction.setInvestype(redeemForm.getInvestType());
 				fundTransaction.setTransactionType("REDEEM");
-				logger.info("Redemption amount selected- "+ redeemForm.getRedeemAmounts()* (-1));
+				fundTransaction.setSchemeName(redeemForm.getFundName());
 				fundTransaction.setInvestAmount(redeemForm.getRedeemAmounts()* (-1));
 				fundTransaction.setRedeemAmount(redeemForm.getRedeemAmounts());
+				logger.info("Redemption amount selected- "+ (redeemForm.isRedeemAll()?"REDEEM ALL": redeemForm.getRedeemAmounts()* (-1)));
+				
+				fundTransaction.setRedeemAll(redeemForm.isRedeemAll()?"Y":"N");
+				
+//				Begin Redeem process
 				transReport= bseEntryManager.savetransactionDetails(fundTransaction,"");
-
+				
 				logger.info("Customer redeem transaction status- "+ transReport.getSuccessFlag());
 
 				if(transReport.getSuccessFlag().equalsIgnoreCase("S")){
