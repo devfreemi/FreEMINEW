@@ -428,16 +428,10 @@ public class HomeController {
 					//			model.addAttribute("token",response.getHeaders().get("Authorization").get(0));
 					//			model.addAttribute("loggedInUser",response.getHeaders().get("fname").get(0).split(" ")[0]);
 					logger.info("Session id during login- "+ session.getId());
-					
-					if(responseEntity.getHeaders().get("fname")!=null){
-						session.setAttribute("loggedSession", responseEntity.getHeaders().get("fname").get(0).split(" ")[0]);
-					}
+					session.setAttribute("loggedSession", responseEntity.getHeaders().get("fname").get(0).split(" ")[0]);
 					session.setAttribute("token", responseEntity.getHeaders().get("Authorization").get(0));
 					session.setAttribute("userid", responseEntity.getHeaders().get("userid").get(0));
-					
-					if(responseEntity.getHeaders().get("email")!=null){
-						session.setAttribute("email",responseEntity.getHeaders().get("email")!=null?responseEntity.getHeaders().get("email").get(0):"");
-					}
+					session.setAttribute("email",responseEntity.getHeaders().get("email").get(0));
 
 					//					Set session for other applciations
 					//					RestClientApps.setAllAppSession( response.getHeaders().get("userid").get(0), response.getHeaders().get("email").get(0), response.getHeaders().get("fname").get(0).split(" ")[0], response.getHeaders().get("Authorization").get(0));
@@ -455,10 +449,7 @@ public class HomeController {
 						response.addCookie(setSessionCookie("loggedSession", responseEntity.getHeaders().get("fname").get(0).split(" ")[0]));
 						//						response.addCookie(setSessionCookie("token", URLEncoder.encode(responseEntity.getHeaders().get("Authorization").get(0), "UTF-8")));
 						response.addCookie(setSessionCookie("userid", responseEntity.getHeaders().get("userid").get(0)));
-						
-						if(responseEntity.getHeaders().get("email")!=null){
-							response.addCookie(setSessionCookie("email", responseEntity.getHeaders().get("email").get(0)));
-						}
+						response.addCookie(setSessionCookie("email",responseEntity.getHeaders().get("email").get(0)));
 
 						logger.info("Setting session in cookie for customer is complete.");
 					}catch(Exception e){
@@ -480,7 +471,7 @@ public class HomeController {
 
 					//				returnUrl = Integer.toString(e.getRawStatusCode());
 				}catch(Exception e){
-					logger.error("Error while trying to set cookie after login",e);
+					logger.error("Error while trying to login",e);
 					model.addAttribute("error", "Unable to process request currently");
 					returnUrl="Internal error. Kindly contact admin";
 				}
@@ -636,18 +627,10 @@ public class HomeController {
 			//			model.addAttribute("token",response.getHeaders().get("Authorization").get(0));
 			//			model.addAttribute("loggedInUser",response.getHeaders().get("fname").get(0).split(" ")[0]);
 			if(response.getBody().equalsIgnoreCase("SUCCESS")){
-				
-				if(response.getHeaders().get("fname")!=null){
-					session.setAttribute("loggedSession", response.getHeaders().get("fname").get(0).split(" ")[0]);
-				}
-				
+				session.setAttribute("loggedSession", response.getHeaders().get("fname").get(0).split(" ")[0]);
 				session.setAttribute("token", response.getHeaders().get("Authorization").get(0));
-				
 				session.setAttribute("userid", response.getHeaders().get("userid").get(0));
-				
-				if(response.getHeaders().get("email")!=null){
-					session.setAttribute("email",response.getHeaders().get("email").get(0));
-				}
+				session.setAttribute("email",response.getHeaders().get("email").get(0));
 			}else{
 
 			}

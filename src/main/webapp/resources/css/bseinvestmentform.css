@@ -671,16 +671,3 @@ background: linear-gradient(to right, #1CB5E0, #000046); W3C, IE 10+/ Edge, Fire
 	/* box-shadow: 0px -1px 10px 0px #c1b6b6; */
 	border-top: 1px solid #dadbdcad;
 }
-
-.navDateStyle{
-	font-size: 9px;
-	color: #989e9c;
-}
-
-.table_sp_4{
-	padding-right: 4rem;
-}
-
-.table_sp_10{
-	padding-right: 10rem;
-}

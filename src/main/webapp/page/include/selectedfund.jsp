@@ -8,9 +8,7 @@
 		<!-- Modal content-->
 		<div class="modal-content">
 			<div class="modal-header  mf-modal-title-custom">
-				<span class="modal-title" style="padding: 0px 5px;font-weight: 400;">
-				<img class="img-fluid" id="amcicondisplay" style="height: 1.7rem;float:left; padding: 2px;" src="" alt="AMC Icon"  >
-				<span
+				<span class="modal-title" style="margin: auto; padding: 0px 5px;font-weight: 400;"><span
 					id="schemeNameTitle"></span></span>
 				<button type="button" class="close" data-dismiss="modal">
 					<i class="far fa-times-circle"></i>

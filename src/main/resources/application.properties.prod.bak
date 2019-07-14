@@ -77,7 +77,7 @@ investment.bse.mail.support.account=support@freemi.in
 ######### PROD ##################
 
 #Acceess by internal private IP. VPC peering is enabled for lilghtsail environment
-investment.bse.serviceurl=https://service.freemi.in/bsemfservice
+investment.bse.serviceurl=http://172.26.2.56:8090/bsemfservice
 investment.bse.aoffolder=/apps/AOF/
 investment.bse.aoffile.logo=/apps/AOF/freemi.png
 
@@ -93,7 +93,7 @@ investment.bse.aoffile.logo=/apps/AOF/freemi.png
 #url.service.profile=http://localhost:8090/freemibackend
 
 ######### PROD ##################
-url.service.profile=https://service.freemi.in/freemibackend
+url.service.profile=http://172.26.2.56:8080/freemibackend
 
 ###################################################################################################################
 ####################################   SMS SERVICE    ##################################

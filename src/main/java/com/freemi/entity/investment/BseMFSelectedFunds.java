@@ -30,9 +30,6 @@ public class BseMFSelectedFunds implements Serializable {
 	@Column(name="GROWTH_SCHEME_CODE")
 	private String growthSchemeCode;
 	
-	@Column(name="ICONS")
-	private String amcicon;
-	
 	@Column(name="REINV_SCHEME_CODE")
 	private String reinvSchemeCode;
 	
@@ -80,11 +77,9 @@ public class BseMFSelectedFunds implements Serializable {
 	@Column(name="FUND_ISIN")
 	private String isin="";
 	
-	@Column(name="NAV_DATE_G")
-	private String gNavDate;
-	
-	@Column(name="NAV_DATE_DR")
-	private String rNavDate;
+	@Transient
+//	@Column(name="NAV_DATE")
+	private String lastnavDate;
 
 	public String getSchemeName() {
 		return schemeName;
@@ -207,11 +202,11 @@ public class BseMFSelectedFunds implements Serializable {
 	}
 
 	public String getLastnavDate() {
-		return gNavDate;
+		return lastnavDate;
 	}
 
 	public void setLastnavDate(String lastnavDate) {
-		this.gNavDate = lastnavDate;
+		this.lastnavDate = lastnavDate;
 	}
 
 	public static long getSerialversionuid() {
@@ -248,30 +243,6 @@ public class BseMFSelectedFunds implements Serializable {
 
 	public void setIsin(String isin) {
 		this.isin = isin;
-	}
-
-	public String getgNavDate() {
-		return gNavDate;
-	}
-
-	public void setgNavDate(String gNavDate) {
-		this.gNavDate = gNavDate;
-	}
-
-	public String getrNavDate() {
-		return rNavDate;
-	}
-
-	public void setrNavDate(String rNavDate) {
-		this.rNavDate = rNavDate;
-	}
-
-	public String getAmcicon() {
-		return amcicon;
-	}
-
-	public void setAmcicon(String amcicon) {
-		this.amcicon = amcicon;
 	}
 	
 	

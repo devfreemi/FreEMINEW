@@ -430,14 +430,6 @@ function validateFundForm(){
 		}else{
 			$("#selectmsg").text("");
 		}*/
-		
-		var minval = $("#minvalreq").text();
-		if(Number(minval) == 0){
-			$("#selectmsg").text("Investment not available for current category. Please select another.");
-			return false;
-		}
-		
-		
 		var sipdate = $("#sipOtherDates :selected").text();
 //		console.log("SIp Date- "+ sipdate)
 		if(typeof sipdate === 'undefined'){
@@ -489,7 +481,7 @@ function validateFundForm(){
 
 
 
-function bseinvest(mfCode,reinvCode, mfName, lumpsumMinimum, amcCode, sipMin,sipDates,rtaAgent,amcicon) {
+function bseinvest(mfCode,reinvCode, mfName, lumpsumMinimum, amcCode, sipMin,sipDates,rtaAgent) {
 //	console.log("Reached- " + mfCode + " " + mfName);
 	var radioValue = $("input[name='investype']:checked").val();
 //	console.log("Selected- " + radioValue);
@@ -502,13 +494,7 @@ function bseinvest(mfCode,reinvCode, mfName, lumpsumMinimum, amcCode, sipMin,sip
 	$("#rtaAgent").val(rtaAgent);
 	var dtarray = sipDates.split(",");
 	
-	if(amcicon != ''){
-		document.getElementById("amcicondisplay").src = "https://resources.freemi.in/products/resources/images/partnerlogo/mf/"+amcicon;
-		$("amcicondisplay").css("background","white");
-	}else{
-		document.getElementById("amcicondisplay").src = "http://localhost:8080/products/resources/images/partnerlogo/mf/default-amc.png";
-		$("amcicondisplay").css("background","white");
-	}
+	
 	
 	var x = document.getElementById("sipOtherDates");
 	$("#sipOtherDates").empty();

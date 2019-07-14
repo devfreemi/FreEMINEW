@@ -2082,7 +2082,7 @@ public class BsemfController {
 				logger.info("Pending order callback url- " + orderCallUrl);
 				//			logger.info("Pending order callback base64- " + Base64.encodeBase64String(orderCallUrl.getBytes()));
 				//			orderUrl.setLogOutURL(Base64.encodeBase64String(orderCallUrl.getBytes()));
-				orderUrl.setLogOutURL(orderCallUrl.replace("http://", "https://"));
+				orderUrl.setLogOutURL(orderCallUrl);
 				BseOrderPaymentResponse orderUrlReponse= investmentConnectorBseInterface.getPaymentUrl(orderUrl);
 				logger.info("Pending payments response code- "+ orderUrlReponse.getStatusCode());
 
