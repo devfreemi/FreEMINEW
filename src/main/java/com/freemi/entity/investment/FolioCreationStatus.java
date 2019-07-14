@@ -1,5 +1,6 @@
 package com.freemi.entity.investment;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -15,7 +16,12 @@ import org.hibernate.annotations.Proxy;
 @Entity
 @Table(name="registry_purchase_records")
 @Proxy(lazy=false)
-public class FolioCreationStatus {
+public class FolioCreationStatus implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -297,6 +303,9 @@ public class FolioCreationStatus {
 	}
 	public void setPayTrxnRefNo(String payTrxnRefNo) {
 		this.payTrxnRefNo = payTrxnRefNo;
+	}
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 	
 

@@ -9,14 +9,18 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.config.ResourceNotFoundException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.freemi.common.util.CommonConstants;
 import com.freemi.entity.general.HomeLoanForm;
@@ -57,4 +61,11 @@ public class Calculators {
 	      taxpayerType.put("SSC", "Super Senior Citizen (Above 80 years)");	
 	      return taxpayerType;
 	   }
+	
+	/*@ExceptionHandler(ResourceNotFoundException.class)
+	@ResponseStatus(value=HttpStatus.NOT_FOUND)
+	public String pageNotFound(HttpServletRequest request, Exception ex){
+		logger.info("Controlleradvice- page not found"+ request.getRequestURI());
+		return "pagenotfound";
+	}*/
 }

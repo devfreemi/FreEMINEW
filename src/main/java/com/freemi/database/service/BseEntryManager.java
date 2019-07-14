@@ -23,6 +23,7 @@ import com.freemi.entity.investment.MFCamsValueByCategroy;
 import com.freemi.entity.investment.MFFatcaDeclareForm;
 import com.freemi.entity.investment.MFKarvyFundsView;
 import com.freemi.entity.investment.MFKarvyValueByCategory;
+import com.freemi.entity.investment.MfNavData;
 import com.freemi.entity.investment.SelectMFFund;
 import com.freemi.entity.investment.TransactionStatus;
 
@@ -91,4 +92,8 @@ public interface BseEntryManager {
 	
 	
 	public Page<BseFundsScheme> getpaginatedFundsList(Pageable p);
+	
+	
+//	NAV
+	public List<MfNavData> getnavdataByISIN(String isin);
 }

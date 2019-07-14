@@ -45,18 +45,6 @@ table.dataTable tbody th, table.dataTable tbody td {
     padding: 2px 2px;
 }
 
-/* .dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
-    color: white !important;
-    border: 1px solid #979797;
-    background-color: white;
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fff), color-stop(100%, #dcdcdc));
-    background: -webkit-linear-gradient(top, #007bff 0%, #007bff 100%);
-    background: -moz-linear-gradient(top, #007bff 0%, #007bff 100%);
-    background: -ms-linear-gradient(top, #007bff 0%, #007bff 100%);
-    background: -o-linear-gradient(top, #007bff 0%, #007bff 100%);
-   background: linear-gradient(to bottom, #007bff 0%, #007bff 100%);
-} */
-
 table.dataTable thead th, table.dataTable thead td {
     padding: 2px 18px;
     border-bottom: 1px solid #6f6d6d;
@@ -74,16 +62,16 @@ table.dataTable thead th, table.dataTable thead td {
 			<div class="col-md-12 col-lg-12"
 				style="margin: auto; margin-top: 30px;">
 				<h3><span style="color: #fb7736; font-weight: 400;border-bottom: 2px solid #c1c1c1;padding-right: 2rem;">Equity Large Cap</span></h3>
-				<div class="table-responsive dataTables_wrapper dt-bootstrap4 animated fadeIn"
+				<div class="table-responive dataTables_wrapper dt-bootstrap4 animated fadeIn"
 							style="margin-top: 30px;">
 							<!-- <table class="table table-striped table-sm" id="dtBasicExample1"> -->
 							<table class="table table-striped table-sm">
 								<%-- <caption>Funds Explorer</caption> --%>
 								<thead style="background-color: #fb3f36c7; color: white;">
 									<tr>
-										<th scope="col">Fund Name</th>
+										<th scope="col" style="padding-right: 10rem;">Fund Name</th>
 										<th scope="col">Scheme Type</th>
-										<th scope="col">NAV</th>
+										<th scope="col" style="padding-right: 4rem;">NAV</th>
 										<!--<th scope="col">Dividend Nav</th>-->
 										<th scope="col">Minimum Lumpsum (&#8377;)</th>
 										<th scope="col">Minimum SIP (&#8377;)</th>
@@ -98,13 +86,15 @@ table.dataTable thead th, table.dataTable thead td {
 										<tr>
 											<td><strong>${listVar.schemeName }</strong></td>
 											<td>${listVar.schemeType }</td>
-											<td>${listVar.nav } <strong>(G)</strong></td>
+											<td>${listVar.nav }<strong>(G)</strong>
+											<p class="navDateStyle mb-1">(As on ${listVar.gNavDate })</p>
+											</td>
 											<!--<td>${listVar.reinvNav }</td>-->
 											<td>${listVar.lumpsumminPurchaseAmt }</td>
 											<td>${listVar.sipMinInstallAmnt }</td>
 											<td >
 												<button type="button" class="btn btn-primary btn-sm" style="margin: 0;padding: 5px 10px;width: 5.5rem;"
-									onclick="bseinvest('${listVar.growthSchemeCode }','${listVar.reinvSchemeCode }','${listVar.schemeName }', '${listVar.lumpsumminPurchaseAmt }','${listVar.amcCode }','${listVar.sipMinInstallAmnt }','${listVar.sipDates }','${listVar.rtaAgent }');">
+									onclick="bseinvest('${listVar.growthSchemeCode }','${listVar.reinvSchemeCode }','${listVar.schemeName }', '${listVar.lumpsumminPurchaseAmt }','${listVar.amcCode }','${listVar.sipMinInstallAmnt }','${listVar.sipDates }','${listVar.rtaAgent }','${listVar.amcicon}');">
 									INVEST <i class="fas fa-shopping-cart"></i></button>
 
 											</td>
@@ -133,9 +123,9 @@ table.dataTable thead th, table.dataTable thead td {
 								<%-- <caption>Funds Explorer</caption> --%>
 								<thead class="success-color-dark #007E33 text-white">
 									<tr>
-										<th scope="col">Fund Name</th>
+										<th scope="col" style="padding-right: 10rem;">Fund Name</th>
 										<th scope="col">Scheme Type</th>
-										<th scope="col">NAV</th>
+										<th scope="col" style="padding-right: 4rem;">NAV</th>
 										<!--<th scope="col">Dividend Nav</th>-->
 										<th scope="col">Minimum Lumpsum (&#8377;)</th>
 										<th scope="col">Minimum SIP (&#8377;)</th>
@@ -150,13 +140,13 @@ table.dataTable thead th, table.dataTable thead td {
 										<tr>
 											<td><strong>${listVar.schemeName }</strong></td>
 											<td>${listVar.schemeType }</td>
-											<td>${listVar.nav } <strong>(G)</strong></td>
+											<td>${listVar.nav } <strong>(G)</strong><p class="navDateStyle mb-1">(As on ${listVar.gNavDate })</p></td>
 											<!--<td>${listVar.reinvNav }</td>-->
 											<td>${listVar.lumpsumminPurchaseAmt }</td>
 											<td>${listVar.sipMinInstallAmnt }</td>
 											<td >
 												<button type="button" class="btn btn-primary btn-sm" style="margin: 0;padding: 5px 10px;width: 5.5rem;"
-									onclick="bseinvest('${listVar.growthSchemeCode }','${listVar.reinvSchemeCode }','${listVar.schemeName }', '${listVar.lumpsumminPurchaseAmt }','${listVar.amcCode }','${listVar.sipMinInstallAmnt }','${listVar.sipDates }','${listVar.rtaAgent }');">
+									onclick="bseinvest('${listVar.growthSchemeCode }','${listVar.reinvSchemeCode }','${listVar.schemeName }', '${listVar.lumpsumminPurchaseAmt }','${listVar.amcCode }','${listVar.sipMinInstallAmnt }','${listVar.sipDates }','${listVar.rtaAgent }','${listVar.amcicon}');">
 									INVEST <i class="fas fa-shopping-cart"></i></button>
 
 											</td>
@@ -185,9 +175,9 @@ table.dataTable thead th, table.dataTable thead td {
 								<%-- <caption>Funds Explorer</caption> --%>
 								<thead class="primary-color-dark #0d47a1 text-white">
 									<tr>
-										<th scope="col">Fund Name</th>
+										<th scope="col" style="padding-right: 10rem;">Fund Name</th>
 										<th scope="col">Scheme Type</th>
-										<th scope="col">NAV</th>
+										<th scope="col" style="padding-right: 4rem;">NAV</th>
 										<!--<th scope="col">Dividend Nav</th>-->
 										<th scope="col">Minimum Lumpsum (&#8377;)</th>
 										<th scope="col">Minimum SIP (&#8377;)</th>
@@ -202,13 +192,13 @@ table.dataTable thead th, table.dataTable thead td {
 										<tr>
 											<td><strong>${listVar.schemeName }</strong></td>
 											<td>${listVar.schemeType }</td>
-											<td>${listVar.nav } <strong>(G)</strong></td>
+											<td>${listVar.nav } <strong>(G)</strong><p class="navDateStyle mb-1">(As on ${listVar.gNavDate })</p></td>
 											<!--<td>${listVar.reinvNav }</td>-->
 											<td>${listVar.lumpsumminPurchaseAmt }</td>
 											<td>${listVar.sipMinInstallAmnt }</td>
 											<td >
 												<button type="button" class="btn btn-primary btn-sm" style="margin: 0;padding: 5px 10px;width: 5.5rem;"
-									onclick="bseinvest('${listVar.growthSchemeCode }','${listVar.reinvSchemeCode }','${listVar.schemeName }', '${listVar.lumpsumminPurchaseAmt }','${listVar.amcCode }','${listVar.sipMinInstallAmnt }','${listVar.sipDates }','${listVar.rtaAgent }');">
+									onclick="bseinvest('${listVar.growthSchemeCode }','${listVar.reinvSchemeCode }','${listVar.schemeName }', '${listVar.lumpsumminPurchaseAmt }','${listVar.amcCode }','${listVar.sipMinInstallAmnt }','${listVar.sipDates }','${listVar.rtaAgent }','${listVar.amcicon}');">
 									INVEST <i class="fas fa-shopping-cart"></i></button>
 
 											</td>
@@ -237,9 +227,9 @@ table.dataTable thead th, table.dataTable thead td {
 								<%-- <caption>Funds Explorer</caption> --%>
 								<thead class="#e53935 red darken-1 text-white">
 									<tr>
-										<th scope="col">Fund Name</th>
+										<th scope="col" style="padding-right: 10rem;">Fund Name</th>
 										<th scope="col">Scheme Type</th>
-										<th scope="col">NAV</th>
+										<th scope="col" style="padding-right: 4rem;">NAV</th>
 										<!--<th scope="col">Dividend Nav</th>-->
 										<th scope="col">Minimum Lumpsum (&#8377;)</th>
 										<th scope="col">Minimum SIP (&#8377;)</th>
@@ -254,13 +244,13 @@ table.dataTable thead th, table.dataTable thead td {
 										<tr>
 											<td><strong>${listVar.schemeName }</strong></td>
 											<td>${listVar.schemeType }</td>
-											<td>${listVar.nav } <strong>(G)</strong></td>
+											<td>${listVar.nav } <strong>(G)</strong><p class="navDateStyle mb-1">(As on ${listVar.gNavDate })</p></td>
 											<!--<td>${listVar.reinvNav }</td>-->
 											<td>${listVar.lumpsumminPurchaseAmt }</td>
 											<td>${listVar.sipMinInstallAmnt }</td>
 											<td >
 												<button type="button" class="btn btn-primary btn-sm" style="margin: 0;padding: 5px 10px;width: 5.5rem;"
-									onclick="bseinvest('${listVar.growthSchemeCode }','${listVar.reinvSchemeCode }','${listVar.schemeName }', '${listVar.lumpsumminPurchaseAmt }','${listVar.amcCode }','${listVar.sipMinInstallAmnt }','${listVar.sipDates }','${listVar.rtaAgent }');">
+									onclick="bseinvest('${listVar.growthSchemeCode }','${listVar.reinvSchemeCode }','${listVar.schemeName }', '${listVar.lumpsumminPurchaseAmt }','${listVar.amcCode }','${listVar.sipMinInstallAmnt }','${listVar.sipDates }','${listVar.rtaAgent }','${listVar.amcicon}');">
 									INVEST <i class="fas fa-shopping-cart"></i></button>
 
 											</td>
@@ -289,9 +279,9 @@ table.dataTable thead th, table.dataTable thead td {
 								<%-- <caption>Funds Explorer</caption> --%>
 								<thead class="#1565c0 blue darken-3 text-white">
 									<tr>
-										<th scope="col">Fund Name</th>
+										<th scope="col" style="padding-right: 10rem;">Fund Name</th>
 										<th scope="col">Scheme Type</th>
-										<th scope="col">NAV</th>
+										<th scope="col" style="padding-right: 4rem;">NAV</th>
 										<!--<th scope="col">Dividend Nav</th>-->
 										<th scope="col">Minimum Lumpsum (&#8377;)</th>
 										<th scope="col">Minimum SIP (&#8377;)</th>
@@ -306,13 +296,13 @@ table.dataTable thead th, table.dataTable thead td {
 										<tr>
 											<td><strong>${listVar.schemeName }</strong></td>
 											<td>${listVar.schemeType }</td>
-											<td>${listVar.nav } <strong>(G)</strong></td>
+											<td>${listVar.nav } <strong>(G)</strong><p class="navDateStyle mb-1">(As on ${listVar.gNavDate })</p></td>
 											<!--<td>${listVar.reinvNav }</td>-->
 											<td>${listVar.lumpsumminPurchaseAmt }</td>
 											<td>${listVar.sipMinInstallAmnt }</td>
 											<td >
 												<button type="button" class="btn btn-primary btn-sm" style="margin: 0;padding: 5px 10px;width: 5.5rem;"
-									onclick="bseinvest('${listVar.growthSchemeCode }','${listVar.reinvSchemeCode }','${listVar.schemeName }', '${listVar.lumpsumminPurchaseAmt }','${listVar.amcCode }','${listVar.sipMinInstallAmnt }','${listVar.sipDates }','${listVar.rtaAgent }');">
+									onclick="bseinvest('${listVar.growthSchemeCode }','${listVar.reinvSchemeCode }','${listVar.schemeName }', '${listVar.lumpsumminPurchaseAmt }','${listVar.amcCode }','${listVar.sipMinInstallAmnt }','${listVar.sipDates }','${listVar.rtaAgent }','${listVar.amcicon}');">
 									INVEST <i class="fas fa-shopping-cart"></i></button>
 
 											</td>
@@ -341,9 +331,9 @@ table.dataTable thead th, table.dataTable thead td {
 								<%-- <caption>Funds Explorer</caption> --%>
 								<thead class="#f4511e deep-orange darken-1 text-white">
 									<tr>
-										<th scope="col">Fund Name</th>
+										<th scope="col" style="padding-right: 10rem;">Fund Name</th>
 										<th scope="col">Scheme Type</th>
-										<th scope="col">NAV</th>
+										<th scope="col" style="padding-right: 4rem;">NAV</th>
 										<!--<th scope="col">Dividend Nav</th>-->
 										<th scope="col">Minimum Lumpsum (&#8377;)</th>
 										<th scope="col">Minimum SIP (&#8377;)</th>
@@ -358,13 +348,13 @@ table.dataTable thead th, table.dataTable thead td {
 										<tr>
 											<td><strong>${listVar.schemeName }</strong></td>
 											<td>${listVar.schemeType }</td>
-											<td>${listVar.nav } <strong>(G)</strong></td>
+											<td>${listVar.nav } <strong>(G)</strong><p class="navDateStyle mb-1">(As on ${listVar.gNavDate })</p></td>
 											<!--<td>${listVar.reinvNav }</td>-->
 											<td>${listVar.lumpsumminPurchaseAmt }</td>
 											<td>${listVar.sipMinInstallAmnt }</td>
 											<td >
 												<button type="button" class="btn btn-primary btn-sm" style="margin: 0;padding: 5px 10px;width: 5.5rem;"
-									onclick="bseinvest('${listVar.growthSchemeCode }','${listVar.reinvSchemeCode }','${listVar.schemeName }', '${listVar.lumpsumminPurchaseAmt }','${listVar.amcCode }','${listVar.sipMinInstallAmnt }','${listVar.sipDates }','${listVar.rtaAgent }');">
+									onclick="bseinvest('${listVar.growthSchemeCode }','${listVar.reinvSchemeCode }','${listVar.schemeName }', '${listVar.lumpsumminPurchaseAmt }','${listVar.amcCode }','${listVar.sipMinInstallAmnt }','${listVar.sipDates }','${listVar.rtaAgent }','${listVar.amcicon}');">
 									INVEST <i class="fas fa-shopping-cart"></i></button>
 
 											</td>
@@ -393,9 +383,9 @@ table.dataTable thead th, table.dataTable thead td {
 								<%-- <caption>Funds Explorer</caption> --%>
 								<thead class="#2e3951 mdb-color darken-2 text-white">
 									<tr>
-										<th scope="col">Fund Name</th>
+										<th scope="col" style="padding-right: 10rem;">Fund Name</th>
 										<th scope="col">Scheme Type</th>
-										<th scope="col">NAV</th>
+										<th scope="col" style="padding-right: 4rem;">NAV</th>
 										<!--<th scope="col">Dividend Nav</th>-->
 										<th scope="col">Minimum Lumpsum (&#8377;)</th>
 										<th scope="col">Minimum SIP (&#8377;)</th>
@@ -410,13 +400,13 @@ table.dataTable thead th, table.dataTable thead td {
 										<tr>
 											<td><strong>${listVar.schemeName }</strong></td>
 											<td>${listVar.schemeType }</td>
-											<td>${listVar.nav } <strong>(G)</strong></td>
+											<td>${listVar.nav } <strong>(G)</strong><p class="navDateStyle mb-1">(As on ${listVar.gNavDate })</p></td>
 											<!--<td>${listVar.reinvNav }</td>-->
 											<td>${listVar.lumpsumminPurchaseAmt }</td>
 											<td>${listVar.sipMinInstallAmnt }</td>
 											<td >
 												<button type="button" class="btn btn-primary btn-sm" style="margin: 0;padding: 5px 10px;width: 5.5rem;"
-									onclick="bseinvest('${listVar.growthSchemeCode }','${listVar.reinvSchemeCode }','${listVar.schemeName }', '${listVar.lumpsumminPurchaseAmt }','${listVar.amcCode }','${listVar.sipMinInstallAmnt }','${listVar.sipDates }','${listVar.rtaAgent }');">
+									onclick="bseinvest('${listVar.growthSchemeCode }','${listVar.reinvSchemeCode }','${listVar.schemeName }', '${listVar.lumpsumminPurchaseAmt }','${listVar.amcCode }','${listVar.sipMinInstallAmnt }','${listVar.sipDates }','${listVar.rtaAgent }','${listVar.amcicon}');">
 									INVEST <i class="fas fa-shopping-cart"></i></button>
 
 											</td>
@@ -445,9 +435,9 @@ table.dataTable thead th, table.dataTable thead td {
 								<%-- <caption>Funds Explorer</caption> --%>
 								<thead class="rgba(233, 30, 99, 0.7) rgba-pink-strong text-white">
 									<tr>
-										<th scope="col">Fund Name</th>
+										<th scope="col" style="padding-right: 10rem;">Fund Name</th>
 										<th scope="col">Scheme Type</th>
-										<th scope="col">NAV</th>
+										<th scope="col" style="padding-right: 4rem;">NAV</th>
 										<!--<th scope="col">Dividend Nav</th>-->
 										<th scope="col">Minimum Lumpsum (&#8377;)</th>
 										<th scope="col">Minimum SIP (&#8377;)</th>
@@ -462,13 +452,13 @@ table.dataTable thead th, table.dataTable thead td {
 										<tr>
 											<td><strong>${listVar.schemeName }</strong></td>
 											<td>${listVar.schemeType }</td>
-											<td>${listVar.nav } <strong>(G)</strong></td>
+											<td>${listVar.nav } <strong>(G)</strong><p class="navDateStyle mb-1">(As on ${listVar.gNavDate })</p></td>
 											<!--<td>${listVar.reinvNav }</td>-->
 											<td>${listVar.lumpsumminPurchaseAmt }</td>
 											<td>${listVar.sipMinInstallAmnt }</td>
 											<td >
 												<button type="button" class="btn btn-primary btn-sm" style="margin: 0;padding: 5px 10px;width: 5.5rem;"
-									onclick="bseinvest('${listVar.growthSchemeCode }','${listVar.reinvSchemeCode }','${listVar.schemeName }', '${listVar.lumpsumminPurchaseAmt }','${listVar.amcCode }','${listVar.sipMinInstallAmnt }','${listVar.sipDates }','${listVar.rtaAgent }');">
+									onclick="bseinvest('${listVar.growthSchemeCode }','${listVar.reinvSchemeCode }','${listVar.schemeName }', '${listVar.lumpsumminPurchaseAmt }','${listVar.amcCode }','${listVar.sipMinInstallAmnt }','${listVar.sipDates }','${listVar.rtaAgent }','${listVar.amcicon}');">
 									INVEST <i class="fas fa-shopping-cart"></i></button>
 
 											</td>
@@ -497,9 +487,9 @@ table.dataTable thead th, table.dataTable thead td {
 								<%-- <caption>Funds Explorer</caption> --%>
 								<thead class="#43a047 green darken-1 text-white">
 									<tr>
-										<th scope="col">Fund Name</th>
+										<th scope="col" style="padding-right: 10rem;">Fund Name</th>
 										<th scope="col">Scheme Type</th>
-										<th scope="col">NAV</th>
+										<th scope="col" style="padding-right: 4rem;">NAV</th>
 										<!--<th scope="col">Dividend Nav</th>-->
 										<th scope="col">Minimum Lumpsum (&#8377;)</th>
 										<th scope="col">Minimum SIP (&#8377;)</th>
@@ -514,13 +504,13 @@ table.dataTable thead th, table.dataTable thead td {
 										<tr>
 											<td><strong>${listVar.schemeName }</strong></td>
 											<td>${listVar.schemeType }</td>
-											<td>${listVar.nav } <strong>(G)</strong></td>
+											<td>${listVar.nav } <strong>(G)</strong><p class="navDateStyle mb-1">(As on ${listVar.gNavDate })</p></td>
 											<!--<td>${listVar.reinvNav }</td>-->
 											<td>${listVar.lumpsumminPurchaseAmt }</td>
 											<td>${listVar.sipMinInstallAmnt }</td>
 											<td >
 												<button type="button" class="btn btn-primary btn-sm" style="margin: 0;padding: 5px 10px;width: 5.5rem;"
-									onclick="bseinvest('${listVar.growthSchemeCode }','${listVar.reinvSchemeCode }','${listVar.schemeName }', '${listVar.lumpsumminPurchaseAmt }','${listVar.amcCode }','${listVar.sipMinInstallAmnt }','${listVar.sipDates }','${listVar.rtaAgent }');">
+									onclick="bseinvest('${listVar.growthSchemeCode }','${listVar.reinvSchemeCode }','${listVar.schemeName }', '${listVar.lumpsumminPurchaseAmt }','${listVar.amcCode }','${listVar.sipMinInstallAmnt }','${listVar.sipDates }','${listVar.rtaAgent }','${listVar.amcicon}');">
 									INVEST <i class="fas fa-shopping-cart"></i></button>
 
 											</td>
@@ -549,9 +539,9 @@ table.dataTable thead th, table.dataTable thead td {
 								<%-- <caption>Funds Explorer</caption> --%>
 								<thead class="#00796b teal darken-2 text-white">
 									<tr>
-										<th scope="col">Fund Name</th>
+										<th scope="col" style="padding-right: 10rem;">Fund Name</th>
 										<th scope="col">Scheme Type</th>
-										<th scope="col">NAV</th>
+										<th scope="col" style="padding-right: 4rem;">NAV</th>
 										<!--<th scope="col">Dividend Nav</th>-->
 										<th scope="col">Minimum Lumpsum (&#8377;)</th>
 										<th scope="col">Minimum SIP (&#8377;)</th>
@@ -566,13 +556,13 @@ table.dataTable thead th, table.dataTable thead td {
 										<tr>
 											<td><strong>${listVar.schemeName }</strong></td>
 											<td>${listVar.schemeType }</td>
-											<td>${listVar.nav } <strong>(G)</strong></td>
+											<td>${listVar.nav } <strong>(G)</strong><p class="navDateStyle mb-1">(As on ${listVar.gNavDate })</p></td>
 											<!--<td>${listVar.reinvNav }</td>-->
 											<td>${listVar.lumpsumminPurchaseAmt }</td>
 											<td>${listVar.sipMinInstallAmnt }</td>
 											<td >
 												<button type="button" class="btn btn-primary btn-sm" style="margin: 0;padding: 5px 10px;width: 5.5rem;"
-									onclick="bseinvest('${listVar.growthSchemeCode }','${listVar.reinvSchemeCode }','${listVar.schemeName }', '${listVar.lumpsumminPurchaseAmt }','${listVar.amcCode }','${listVar.sipMinInstallAmnt }','${listVar.sipDates }','${listVar.rtaAgent }');">
+									onclick="bseinvest('${listVar.growthSchemeCode }','${listVar.reinvSchemeCode }','${listVar.schemeName }', '${listVar.lumpsumminPurchaseAmt }','${listVar.amcCode }','${listVar.sipMinInstallAmnt }','${listVar.sipDates }','${listVar.rtaAgent }','${listVar.amcicon}');">
 									INVEST <i class="fas fa-shopping-cart"></i></button>
 
 											</td>
@@ -602,9 +592,9 @@ table.dataTable thead th, table.dataTable thead td {
 								<%-- <caption>Funds Explorer</caption> --%>
 								<thead class="#e53935 red darken-1 text-white">
 									<tr>
-										<th scope="col">Fund Name</th>
+										<th scope="col" style="padding-right: 10rem;">Fund Name</th>
 										<th scope="col">Scheme Type</th>
-										<th scope="col">NAV</th>
+										<th scope="col" style="padding-right: 4rem;">NAV</th>
 										<!--<th scope="col">Dividend Nav</th>-->
 										<th scope="col">Minimum Lumpsum (&#8377;)</th>
 										<th scope="col">Minimum SIP (&#8377;)</th>
@@ -619,13 +609,13 @@ table.dataTable thead th, table.dataTable thead td {
 										<tr>
 											<td><strong>${listVar.schemeName }</strong></td>
 											<td>${listVar.schemeType }</td>
-											<td>${listVar.nav } <strong>(G)</strong></td>
+											<td>${listVar.nav } <strong>(G)</strong><p class="navDateStyle mb-1">(As on ${listVar.gNavDate })</p></td>
 											<!--<td>${listVar.reinvNav }</td>-->
 											<td>${listVar.lumpsumminPurchaseAmt }</td>
 											<td>${listVar.sipMinInstallAmnt }</td>
 											<td >
 												<button type="button" class="btn btn-primary btn-sm" style="margin: 0;padding: 5px 10px;width: 5.5rem;"
-									onclick="bseinvest('${listVar.growthSchemeCode }','${listVar.reinvSchemeCode }','${listVar.schemeName }', '${listVar.lumpsumminPurchaseAmt }','${listVar.amcCode }','${listVar.sipMinInstallAmnt }','${listVar.sipDates }','${listVar.rtaAgent }');">
+									onclick="bseinvest('${listVar.growthSchemeCode }','${listVar.reinvSchemeCode }','${listVar.schemeName }', '${listVar.lumpsumminPurchaseAmt }','${listVar.amcCode }','${listVar.sipMinInstallAmnt }','${listVar.sipDates }','${listVar.rtaAgent }','${listVar.amcicon}');">
 									INVEST <i class="fas fa-shopping-cart"></i></button>
 
 											</td>
@@ -654,9 +644,9 @@ table.dataTable thead th, table.dataTable thead td {
 								<%-- <caption>Funds Explorer</caption> --%>
 								<thead class="#1976d2 blue darken-2 text-white">
 									<tr>
-										<th scope="col">Fund Name</th>
+										<th scope="col" style="padding-right: 10rem;">Fund Name</th>
 										<th scope="col">Scheme Type</th>
-										<th scope="col">NAV</th>
+										<th scope="col" style="padding-right: 4rem;">NAV</th>
 										<!--<th scope="col">Dividend Nav</th>-->
 										<th scope="col">Minimum Lumpsum (&#8377;)</th>
 										<th scope="col">Minimum SIP (&#8377;)</th>
@@ -671,13 +661,13 @@ table.dataTable thead th, table.dataTable thead td {
 										<tr>
 											<td><strong>${listVar.schemeName }</strong></td>
 											<td>${listVar.schemeType }</td>
-											<td>${listVar.nav } <strong>(G)</strong></td>
+											<td>${listVar.nav } <strong>(G)</strong><p class="navDateStyle mb-1">(As on ${listVar.gNavDate })</p></td>
 											<!--<td>${listVar.reinvNav }</td>-->
 											<td>${listVar.lumpsumminPurchaseAmt }</td>
 											<td>${listVar.sipMinInstallAmnt }</td>
 											<td >
 												<button type="button" class="btn btn-primary btn-sm" style="margin: 0;padding: 5px 10px;width: 5.5rem;"
-									onclick="bseinvest('${listVar.growthSchemeCode }','${listVar.reinvSchemeCode }','${listVar.schemeName }', '${listVar.lumpsumminPurchaseAmt }','${listVar.amcCode }','${listVar.sipMinInstallAmnt }','${listVar.sipDates }','${listVar.rtaAgent }');">
+									onclick="bseinvest('${listVar.growthSchemeCode }','${listVar.reinvSchemeCode }','${listVar.schemeName }', '${listVar.lumpsumminPurchaseAmt }','${listVar.amcCode }','${listVar.sipMinInstallAmnt }','${listVar.sipDates }','${listVar.rtaAgent }','${listVar.amcicon}');">
 									INVEST <i class="fas fa-shopping-cart"></i></button>
 
 											</td>
@@ -706,9 +696,9 @@ table.dataTable thead th, table.dataTable thead td {
 								<%-- <caption>Funds Explorer</caption> --%>
 								<thead class="#00838f cyan darken-3 text-white">
 									<tr>
-										<th scope="col">Fund Name</th>
+										<th scope="col" style="padding-right: 10rem;">Fund Name</th>
 										<th scope="col">Scheme Type</th>
-										<th scope="col">NAV</th>
+										<th scope="col" style="padding-right: 4rem;">NAV</th>
 										<!--<th scope="col">Dividend Nav</th>-->
 										<th scope="col">Minimum Lumpsum (&#8377;)</th>
 										<th scope="col">Minimum SIP (&#8377;)</th>
@@ -723,13 +713,13 @@ table.dataTable thead th, table.dataTable thead td {
 										<tr>
 											<td><strong>${listVar.schemeName }</strong></td>
 											<td>${listVar.schemeType }</td>
-											<td>${listVar.nav } <strong>(G)</strong></td>
+											<td>${listVar.nav } <strong>(G)</strong><p class="navDateStyle mb-1">(As on ${listVar.gNavDate })</p></td>
 											<!--<td>${listVar.reinvNav }</td>-->
 											<td>${listVar.lumpsumminPurchaseAmt }</td>
 											<td>${listVar.sipMinInstallAmnt }</td>
 											<td >
 												<button type="button" class="btn btn-primary btn-sm" style="margin: 0;padding: 5px 10px;width: 5.5rem;"
-									onclick="bseinvest('${listVar.growthSchemeCode }','${listVar.reinvSchemeCode }','${listVar.schemeName }', '${listVar.lumpsumminPurchaseAmt }','${listVar.amcCode }','${listVar.sipMinInstallAmnt }','${listVar.sipDates }','${listVar.rtaAgent }');">
+									onclick="bseinvest('${listVar.growthSchemeCode }','${listVar.reinvSchemeCode }','${listVar.schemeName }', '${listVar.lumpsumminPurchaseAmt }','${listVar.amcCode }','${listVar.sipMinInstallAmnt }','${listVar.sipDates }','${listVar.rtaAgent }','${listVar.amcicon}');">
 									INVEST <i class="fas fa-shopping-cart"></i></button>
 
 											</td>
@@ -758,9 +748,9 @@ table.dataTable thead th, table.dataTable thead td {
 								<%-- <caption>Funds Explorer</caption> --%>
 								<thead class="#f57c00 orange darken-2 text-white">
 									<tr>
-										<th scope="col">Fund Name</th>
+										<th scope="col" style="padding-right: 10rem;">Fund Name</th>
 										<th scope="col">Scheme Type</th>
-										<th scope="col">NAV</th>
+										<th scope="col" style="padding-right: 4rem;">NAV</th>
 										<!--<th scope="col">Dividend Nav</th>-->
 										<th scope="col">Minimum Lumpsum (&#8377;)</th>
 										<th scope="col">Minimum SIP (&#8377;)</th>
@@ -775,13 +765,13 @@ table.dataTable thead th, table.dataTable thead td {
 										<tr>
 											<td><strong>${listVar.schemeName }</strong></td>
 											<td>${listVar.schemeType }</td>
-											<td>${listVar.nav } <strong>(G)</strong></td>
+											<td>${listVar.nav } <strong>(G)</strong><p class="navDateStyle mb-1">(As on ${listVar.gNavDate })</p></td>
 											<!--<td>${listVar.reinvNav }</td>-->
 											<td>${listVar.lumpsumminPurchaseAmt }</td>
 											<td>${listVar.sipMinInstallAmnt }</td>
 											<td >
 												<button type="button" class="btn btn-primary btn-sm" style="margin: 0;padding: 5px 10px;width: 5.5rem;"
-									onclick="bseinvest('${listVar.growthSchemeCode }','${listVar.reinvSchemeCode }','${listVar.schemeName }', '${listVar.lumpsumminPurchaseAmt }','${listVar.amcCode }','${listVar.sipMinInstallAmnt }','${listVar.sipDates }','${listVar.rtaAgent }');">
+									onclick="bseinvest('${listVar.growthSchemeCode }','${listVar.reinvSchemeCode }','${listVar.schemeName }', '${listVar.lumpsumminPurchaseAmt }','${listVar.amcCode }','${listVar.sipMinInstallAmnt }','${listVar.sipDates }','${listVar.rtaAgent }','${listVar.amcicon}');">
 									INVEST <i class="fas fa-shopping-cart"></i></button>
 
 											</td>
@@ -840,37 +830,6 @@ table.dataTable thead th, table.dataTable thead td {
 	});
 	
 	
-	//}
-
-	function getbseOrderPaymentStatus(clientId, orderNo) {
-		console.log("Order staus for id- " + clientId + " : " + orderNo);
-		$.get("/products/mutual-funds/orderpaymentStatus", {
-			client : clientId,
-			order : orderNo
-		}, function(data, status) {
-
-			console.log(data);
-			$('#exampleModal1').modal('hide');
-			if (data == 'NO_SESSIION') {
-
-				alert("Invalid request");
-
-			} else if (data == 'REQUEST_DENIED') {
-				alert("Session not found!")
-			} else {
-				alert("Status of order no: "+orderNo+"\n"+ data);
-			}
-
-		}).fail(function(response) {
-			/* $('#exampleModal1').modal('hide');
-			$("#signuploadstatus")
-					.text(
-							"Failed to submit your signature. Please try again."); */
-			/* alert(response); */
-			alert("Failed to get status for order- "+ orderNo);
-		});
-
-	}
 </script>
 <script src="<c:url value="${contextPath}/resources/js/bseinvest.js" />"></script>
 </html>

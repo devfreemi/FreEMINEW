@@ -1,5 +1,6 @@
 package com.freemi.entity.investment;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -17,7 +18,12 @@ import org.hibernate.annotations.Proxy;
 @Entity
 @Table(name="customer_ekyc_status")
 @Proxy(lazy=false)
-public class PanValidationStatus {
+public class PanValidationStatus implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -143,6 +149,9 @@ public class PanValidationStatus {
 	}
 	public void setVerificationDate(Date verificationDate) {
 		this.verificationDate = verificationDate;
+	}
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 	
 	

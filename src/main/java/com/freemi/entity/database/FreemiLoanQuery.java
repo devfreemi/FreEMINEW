@@ -1,5 +1,6 @@
 package com.freemi.entity.database;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -14,7 +15,12 @@ import org.hibernate.annotations.Proxy;
 @Entity
 @Table(name="freemi_loan_query")
 @Proxy(lazy=false)
-public class FreemiLoanQuery {
+public class FreemiLoanQuery implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="REQUEST_NO")
@@ -127,6 +133,9 @@ public class FreemiLoanQuery {
 	}
 	public void setAgentCode(String agentCode) {
 		this.agentCode = agentCode;
+	}
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 	
 

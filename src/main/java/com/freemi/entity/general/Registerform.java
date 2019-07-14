@@ -2,6 +2,12 @@ package com.freemi.entity.general;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -12,9 +18,16 @@ public class Registerform implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	@NotNull @NotEmpty @Size(min=4,max=128,message="Name should be 4-128 characters") @Pattern(regexp="[a-zA-Z .]*", message="Name should not contain special characters")
 	private String fullName;
+	
+	@NotNull @NotEmpty @Size(min=8,max=24,message="password length should be 8-24 characters")
 	private String password;
+	
+	@Email(message="Email format invalid")
 	private String email;
+	
+	@NotNull @NotEmpty @Size(min=10,max=10) @Pattern(regexp="[6-9][0-9]{9}", message="Mobile nunmber format invalid")
 	private String mobile;
 	private String customerID;
 	private String registrationref="DEFAULT";

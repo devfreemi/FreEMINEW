@@ -1,13 +1,19 @@
 package com.freemi.entity.general;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-@Entity
-@Table(name="blog_content")
-public class BlogContent {
+/*@Entity
+@Table(name="blog_content")*/
+public class BlogContent implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	@Id
 	private int id;
 	private String blog_topic;
@@ -74,6 +80,9 @@ public class BlogContent {
 	}
 	public void setDislikes(int dislikes) {
 		this.dislikes = dislikes;
+	}
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 	
 	

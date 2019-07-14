@@ -1,5 +1,7 @@
 package com.freemi.entity.general;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -13,8 +15,13 @@ import org.hibernate.validator.constraints.NotEmpty;
 //@PropertySource("classpath:connection.properties")
 @Entity
 @Table(name="customers")
-public class X_Registerform {
+public class X_Registerform implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Size(min=3, max=10)
 	@NotEmpty(message="cannot be empty")
 	private String userName;
@@ -117,6 +124,9 @@ public class X_Registerform {
 	}
 	public void setMobile(String mobile) {
 		this.mobile = mobile;
+	}
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 	
 		

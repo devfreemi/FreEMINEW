@@ -1,13 +1,19 @@
 package com.freemi.entity.general;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
 @Table(name="portalusers")
-public class PortalUsers {
+public class PortalUsers implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	@Id
 	private String id;
 	private String email;
@@ -65,6 +71,9 @@ public class PortalUsers {
 	public String toString() {
 		return "PortalUsers [id=" + id + ", email=" + email + ", fname=" + fname + ", lname=" + lname + ", mobile="
 				+ mobile + ", uid=" + uid + "]";
+	}
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 	
 	

@@ -100,6 +100,8 @@ public class Products {
 
 		if(bindingResult.hasErrors()){
 			logger.info("Error in register form");
+			
+			model.addAttribute("error", bindingResult.getFieldError().getDefaultMessage());
 			return "register";
 		}
 //		RestClient client = new RestClient();

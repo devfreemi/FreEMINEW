@@ -1,5 +1,6 @@
 package com.freemi.entity.database;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -14,7 +15,12 @@ import org.hibernate.annotations.Proxy;
 @Entity
 @Table(name="campaign_signup")
 @Proxy(lazy=false)
-public class CampaignSignupForm {
+public class CampaignSignupForm implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -91,6 +97,9 @@ public class CampaignSignupForm {
 	}
 	public void setAgree(String agree) {
 		this.agree = agree;
+	}
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 	
 }

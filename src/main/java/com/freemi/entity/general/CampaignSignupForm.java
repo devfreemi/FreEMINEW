@@ -1,5 +1,6 @@
 package com.freemi.entity.general;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -11,7 +12,12 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="campaign_signup")
-public class CampaignSignupForm {
+public class CampaignSignupForm implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -68,6 +74,9 @@ public class CampaignSignupForm {
 	}
 	public void setTimeStamp(Date timeStamp) {
 		this.timeStamp = timeStamp;
+	}
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 	
 	

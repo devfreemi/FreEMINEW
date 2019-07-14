@@ -1,5 +1,6 @@
 package com.freemi.entity.general;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -8,9 +9,13 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="login_report")
-public class LoginReport {
+public class LoginReport implements Serializable {
 	
-	 public LoginReport(String ipAddress, String userId, Date timestamp, String status, String message) {
+	 /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	public LoginReport(String ipAddress, String userId, Date timestamp, String status, String message) {
 //		 this.serial=serial;
 		 this.address=ipAddress;
 		 this.user=userId;
@@ -63,6 +68,9 @@ public class LoginReport {
 	}
 	public void setMessage(String message) {
 		this.message = message;
+	}
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 	
 	
