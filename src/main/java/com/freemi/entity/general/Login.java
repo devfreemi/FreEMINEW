@@ -15,7 +15,7 @@ public class Login {
 	@NotNull @NotEmpty @Size(min=10,max=10) @Pattern(regexp="[6-9][0-9]{9}", message="Mobile nunmber format invalid")
 	private String usermobile;
 	
-//	@NotNull @NotEmpty @Size(min=8,max=24, message="Password minimum length requirement not met")
+	@NotNull @NotEmpty @Size(min=8,max=24, message="Password minimum length requirement not met")
 	private String userpassword;
 	
 	@JsonIgnore

@@ -35,6 +35,7 @@ import com.freemi.database.interfaces.BseTransCrudRepository;
 import com.freemi.database.interfaces.BseTransHistoryViewCrudRepository;
 import com.freemi.database.interfaces.BseTransactionsView;
 import com.freemi.database.interfaces.MfCamsFolioCrudRepository;
+import com.freemi.database.interfaces.MfNavDataCrudRepository;
 import com.freemi.database.interfaces.PortfolioCrudRepository;
 import com.freemi.database.interfaces.TopFundsRepository;
 import com.freemi.database.service.BseEntryManager;
@@ -57,6 +58,7 @@ import com.freemi.entity.investment.MFCamsValueByCategroy;
 import com.freemi.entity.investment.MFKarvyFundsView;
 import com.freemi.entity.investment.MFKarvyValueByCategory;
 import com.freemi.entity.investment.MFNominationForm;
+import com.freemi.entity.investment.MfNavData;
 import com.freemi.entity.investment.SelectMFFund;
 import com.freemi.entity.investment.TransactionStatus;
 
@@ -122,6 +124,9 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	
 	@Autowired
 	BseKarvyByCategoryRepository bseKarvyByCategoryRepository;
+	
+	@Autowired
+	MfNavDataCrudRepository mfNavDataCrudRepository;
 
 	/*@Autowired
 	MailSenderHandler mailSenderHandler;*/
@@ -1142,6 +1147,21 @@ public class BseEntryServiceImpl implements BseEntryManager {
 //		toupdateForm.setPan1KycVerified(customerForm);
 		toupdateForm.setLastModifiedDate(new Date());
 		return toupdateForm;
+	}
+
+	@Override
+	public List<MfNavData> getnavdataByISIN(String isin) {
+		logger.info("get NAV history of ISIN- "+ isin);
+		List<MfNavData> navdata = new ArrayList<MfNavData>();
+		
+		try{
+			navdata= mfNavDataCrudRepository.getAllNavOfIsin(isin);
+			 
+		}catch(Exception e){
+			logger.info("Failed to fecth NAV hsitory.",e);
+		}
+		
+		return navdata;
 	}
 
 

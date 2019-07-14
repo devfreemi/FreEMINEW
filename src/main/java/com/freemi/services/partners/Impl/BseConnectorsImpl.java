@@ -150,7 +150,7 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 				response = bseRestClientService.purchasePaymentLink(request);
 				BseBeansMapper.bseOrderPayemtResultMapper(orderResponse, response);
 			}catch(Exception e){
-				logger.error("Failed during proceesing of BSE SIP registration details to BSE platform",e);
+				logger.error("Failed to request pending payments url",e);
 				//			result="BSE_CONN_FAIL";
 				orderResponse.setStatusCode("101");
 			}
