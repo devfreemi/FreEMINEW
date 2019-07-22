@@ -13,7 +13,7 @@
 <meta name="title" content="A Comprehensive Approach for Personal Loan" />
 <meta name="description"
 	content="Details of Personal Loan. Personal Loan bridges the gap between what we have and what we need. Personal Loan is an unsecured loan." />
-<meta name="robots" content="index,follow" />
+<meta name="robots" content="noindex, nofollow">
 
 <title>FreEMI Loans</title>
 

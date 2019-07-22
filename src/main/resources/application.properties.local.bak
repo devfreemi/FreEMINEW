@@ -31,15 +31,15 @@ logging.level.org.hibernate.type.descriptor.sql.BasicBinder=INFO
 ###########   AWS - DEV    ###########
 
 spring.datasource.url=jdbc:mysql://freemidev.cqgtaf6eblxc.ap-south-1.rds.amazonaws.com:3306/freemi
-spring.datasource.username=freemiadmin
-spring.datasource.password=1cba0e4a9ef0b9759cdd069def50fe9c4778746a1b793815f2c8599b12f8c1d6
+spring.datasource.username=productacc
+spring.datasource.password=f598ce958f780a53c8668be58a37a112fa19b57252bc52562c83439e57128d28
 
 
 #############  AWS - PROD   ###########
 
 #spring.datasource.url=jdbc:mysql://freemiprodenv.crhrqcw50cwq.ap-south-1.rds.amazonaws.com:3306/products
-#spring.datasource.username=freemiadmin
-#spring.datasource.password=1cba0e4a9ef0b9759cdd069def50fe9c4778746a1b793815f2c8599b12f8c1d6
+#spring.datasource.username=serviceaccpdt
+#spring.datasource.password=9b4b2b7115d6e1185ca05fec274c8753ac22bbafc17a637485616545ebb39507405c3cf4c9cae8088a03fe320722ef2e
 
 #################################################################################################################
 ################################## AWS SES MAIL SERVER ##########################################################
@@ -92,7 +92,7 @@ investment.bse.aoffile.logo=E:/BITBUCKET REPOSITORY/freemi/src/main/webapp/resou
 #DEV
 #url.service.profile=http://13.232.249.130:8080/freemibackend
 #LOCAL
-url.service.profile=http://localhost:8090/freemibackend
+url.service.profile=http://localhost:8070/freemibackend
 
 ######### PROD ##################
 #url.service.profile=http://172.26.13.88:8080/freemibackend

@@ -96,4 +96,5 @@ public interface BseEntryManager {
 	
 //	NAV
 	public List<MfNavData> getnavdataByISIN(String isin);
+	
 }

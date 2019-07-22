@@ -45,7 +45,6 @@ public class FreemiApplication {
 		dataSource.setUsername(env.getProperty("spring.datasource.username"));
 //		dataSource.setPassword(env.getProperty("spring.datasource.password"));
 		dataSource.setPassword(decryptPassword(env.getProperty("spring.datasource.password")));
-
 		return dataSource;
 	}
 

@@ -835,134 +835,10 @@ public class BsemfController {
 
 
 
-
-	/*
-	@RequestMapping(value = "/mutual-funds/view-order-history", method = RequestMethod.GET)
-	public String viewOrderHistory( Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
-
-		logger.info("MF Funds view purchase history");
-		String returnUrl = "bsemf/order-history";
-		if(session.getAttribute("token")!=null){
-		String clientId= bseEntryManager.getClientIdfromMobile(session.getAttribute("userid").toString());
-		List<SelectMFFund> orderHistory = bseEntryManager.getMFOrderHistory(clientId);
-
-		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
-
-		}else{
-			returnUrl="redirect:/login";
-		}
-
-		return returnUrl;
-
-	}
-	 */
-
-	@RequestMapping(value = "/mutual-funds/purchase.do", method = RequestMethod.GET)
-	public String purchasemfbseGet(@RequestParam("schemeCode")String schemeCode,@RequestParam("schemeName")String schemeName,@RequestParam("amcCode")String amcCode,@RequestParam("investype")String investype,@RequestParam(name="sipDate",required=false)String sipDate, @RequestParam("investAmount")String investAmount,@RequestParam("mobile")String mobile,@RequestParam("pan")String pan, Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session,RedirectAttributes redirectAttrs) {
-
-		logger.info("BSE MF STAR Purchse.do post controller");
-		String returnUrl = "redirect:/mutual-funds/funds-explorer";
-
-		SelectMFFund selectedFund = new SelectMFFund();
-		/*if(bindResult.hasErrors()){
-			map.addAttribute("error", bindResult.getFieldError().getDefaultMessage());
-			return "bsemf/bse-form-new-customer";
-		}*/
-
-		selectedFund.setAmcCode(amcCode);
-		selectedFund.setSchemeCode(schemeCode);
-		selectedFund.setSchemeName(schemeName);
-		selectedFund.setInvestype(investype);
-		selectedFund.setInvestAmount(Double.valueOf(investAmount));
-		selectedFund.setMobile(mobile);
-		selectedFund.setPan(pan);
-
-
-		try{
-			//Check if existing BSE registered customer or not
-			boolean flag = bseEntryManager.isExisitngCustomer(pan, mobile);
-			logger.info("Is existing MF customer ? - "+ pan+ " : "+ flag);
-			session.removeAttribute("selectFund");
-			session.setAttribute("selectFund", selectedFund);
-			if(flag && session.getAttribute("token")==null){
-
-				session.setAttribute("NEXT_URL", "/mutual-funds/purchase");
-				redirectAttrs.addAttribute("ref", URLEncoder.encode(request.getRequestURL().toString(), StandardCharsets.UTF_8.toString()));
-				returnUrl="redirect:/login?mf=00";		//Already existing customer, just login and fetch customer details
-			}else if((flag && session.getAttribute("token")!=null)){
-
-				//					If logged in account PAN and mobile do not match with provided PAN. Revert back to page which should pick up correct details from session now overriding 
-
-				pan = bseEntryManager.getCustomerPanfromMobile(session.getAttribute("userid").toString());
-
-				if(!session.getAttribute("userid").toString().equalsIgnoreCase(selectedFund.getMobile()) && ! pan.equalsIgnoreCase(selectedFund.getPan())){
-					logger.warn("Customer logged in with another mobile than provided during form fillup. Also the PAN number is different. Redirecting back to fund selection page and override information with current details");
-					logger.warn("Data provided during form fillup:[ "+ selectedFund.getPan() + " : "+ selectedFund.getMobile() + "] Data from session user:["+pan+ " : "+session.getAttribute("userid").toString()+"]");
-
-					redirectAttrs.addFlashAttribute("USERINFO", "01");
-					returnUrl = "redirect:/mutual-funds/funds-explorer";
-				}else{
-					returnUrl="redirect:/mutual-funds/purchase";
-				}
-
-			}else{
-				//					Check if he is registered customer form LDAP. If already registered customer, then only need to register for MF, else create profile password as well
-
-				//				RestClient client = new RestClient();
-				ResponseEntity<String> responseProfile = null;
-				try {
-					responseProfile = profileRestClientService.isUserExisitng(selectedFund.getMobile());
-					logger.info("Response for user existing check- "+ responseProfile.getBody());
-
-				}catch(HttpStatusCodeException  e){
-					logger.info("Failed to check user exisitng status - " + e.getStatusCode());
-				} catch (JsonProcessingException e) {
-				}catch(Exception e){
-				}
-				if(responseProfile.getBody().equalsIgnoreCase("Y")){
-
-					if(session.getAttribute("token")!=null){
-						returnUrl="redirect:/mutual-funds/register?mf=01";
-					}else{
-						returnUrl="redirect:/login?mf=01";		// User exist, so just need to register MF profile, do not create profile
-					}
-
-				}else if(responseProfile.getBody().equalsIgnoreCase("N")){
-					returnUrl="redirect:/mutual-funds/register?mf=02";	// Complete fresh customer. Create both profile and register for MF
-					session.setAttribute("PURCHASE_TYPE", "NEW_CUSTOMER");
-				}else{
-					logger.warn("Failed to get cutomer status from LDAP");
-					returnUrl="redirect:/mutual-funds/register?mf=03";
-
-				}
-				redirectAttrs.addFlashAttribute("selectedFund", selectedFund);
-				//					returnUrl="redirect:/mutual-funds/register";
-			}
-		}catch(Exception e){
-			logger.error("Failed to check customer in databases",e);
-
-		}
-		/*try{
-		boolean flag = bseEntryManager.savetransactionDetails(selectedFund);
-		logger.info("Customer purchase transaction status- "+ flag);
-		}catch(Exception e){
-			logger.error("Unable to save customer transaction request",e.getMessage());
-		}*/
-
-		return returnUrl;
-
-		/*redirectAttrs.addFlashAttribute("selectedFund", selectedFund);
-		returnUrl="redirect:/mutual-funds/register";
-		return returnUrl;*/
-
-
-	}
-
-
-	@RequestMapping(value = "/mutual-funds/purchase.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/mutual-funds/purchase.do", method = { RequestMethod.GET, RequestMethod.POST })
 	public String purchasemfbsePost(@ModelAttribute("selectFund") SelectMFFund selectedFund,BindingResult bindResult, Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session,RedirectAttributes redirectAttrs) {
 
-		logger.info("BSE MF STAR Purchse.do post controller");
+		logger.info("BSE MF STAR Purchse.do controller from url - "+ request.getRequestURL() + " : Request type - "+  request.getMethod());
 		String returnUrl = "redirect:/mutual-funds/funds-explorer";
 		System.out.println("Re-invest code- "+ selectedFund.getReinvSchemeCode());
 
@@ -1061,7 +937,8 @@ public class BsemfController {
 
 		logger.info("BSE MF STAR Purchase Get controller");
 		String returnUrl = "bsemf/bse-mf-purchase";
-
+		
+		
 		List<BseMFInvestForm> customerData = null;	
 		SelectMFFund selectedFund = null;
 		List<String> customerPortfolios = new ArrayList<String>();

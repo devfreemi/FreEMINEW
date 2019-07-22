@@ -230,6 +230,10 @@
     	<artifactId>jai-imageio-core</artifactId>
     	<version>1.4.0</version>
     </dependency>
+    <dependency>
+    	<groupId>org.yaml</groupId>
+    	<artifactId>snakeyaml</artifactId>
+    </dependency>
 	</dependencies>
 
 	 <build>

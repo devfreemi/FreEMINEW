@@ -506,7 +506,7 @@ function bseinvest(mfCode,reinvCode, mfName, lumpsumMinimum, amcCode, sipMin,sip
 		document.getElementById("amcicondisplay").src = "https://resources.freemi.in/products/resources/images/partnerlogo/mf/"+amcicon;
 		$("amcicondisplay").css("background","white");
 	}else{
-		document.getElementById("amcicondisplay").src = "http://localhost:8080/products/resources/images/partnerlogo/mf/default-amc.png";
+		document.getElementById("amcicondisplay").src = "https://resources.freemi.in/products/resources/images/partnerlogo/mf/default-amc.png";
 		$("amcicondisplay").css("background","white");
 	}
 	

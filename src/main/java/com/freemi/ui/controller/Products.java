@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -208,6 +209,8 @@ public class Products {
 	@RequestMapping(value = {"/registry-mutual-funds","/registry-mutual-funds/"}, method = RequestMethod.GET)
 	public String registryMutualReplaced(ModelMap model, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 		return "redirect:/mutual-funds/funds-explorer";
+		
+//		return "registry3";
 	}
 
 

@@ -19,7 +19,7 @@
 			</div>
 			<form:form method="POST"
 				action="${pageContext.request.contextPath}/mutual-funds/purchase.do"
-				commandName="selectFund" onsubmit="return validateFundForm();">
+				modelAttribute="selectFund" onsubmit="return validateFundForm();">
 				<div class="modal-body">
 					<div>
 						<div>

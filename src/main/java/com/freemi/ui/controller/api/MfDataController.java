@@ -58,4 +58,6 @@ public class MfDataController {
 		
 		return navhistorydata;
 	}
+	
+	
 }
