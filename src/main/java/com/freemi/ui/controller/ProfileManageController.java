@@ -38,6 +38,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freemi.common.util.CommonConstants;
 import com.freemi.common.util.CommonTask;
 import com.freemi.common.util.InvestFormConstants;
+import com.freemi.common.util.MfBalanceCalculator;
 import com.freemi.controller.interfaces.ProfileRestClientService;
 import com.freemi.database.service.BseEntryManager;
 import com.freemi.entity.bse.BseFileUpload;
@@ -51,6 +52,7 @@ import com.freemi.entity.investment.MFCamsFolio;
 import com.freemi.entity.investment.MFCamsValueByCategroy;
 import com.freemi.entity.investment.MFKarvyFundsView;
 import com.freemi.entity.investment.MFKarvyValueByCategory;
+import com.freemi.entity.investment.MFKarvyValueByCategory2;
 //import com.freemi.entity.investment.BseAllTransactionsView;
 import com.freemi.ui.restclient.GoogleSecurity;
 
@@ -448,21 +450,24 @@ public class ProfileManageController{
 
 			try{
 				List<MFKarvyValueByCategory> karvyFunds= null;
+				List<MFKarvyValueByCategory2> karvyFunds2= null;
 //				List<MFKarvyValueByCategory> categorykarvyFunds= new ArrayList<MFKarvyValueByCategory>();
 				List<MFKarvyValueByCategory> categorykarvyFunds= null;
 				List<MFKarvyFundsView> karvyview = new ArrayList<MFKarvyFundsView>();
 				logger.info("Search for KARVY related folios for customer.");
 				List<String> fundShort = new ArrayList<String>();
-
 				karvyFunds = bseEntryManager.getCustomersKarvyInvByCategory(session.getAttribute("userid").toString(), null);
+				karvyFunds2 = bseEntryManager.getCustomersKarvyInvByCategory2(session.getAttribute("userid").toString(), null);
+				
+				if(karvyFunds2!=null) {
+					logger.info("Calculate total Karvy balance for user "+ session.getAttribute("userid").toString());
+//					Calculate Fund new - 24-07-2019. 
+					MfBalanceCalculator.karvyBalanceCalculator(karvyFunds2);
+				}
+				
 				if(karvyFunds !=null){
 					logger.info("Total karvy Folio found of customer - " + karvyFunds.size());
-					for(int j=0;j<karvyFunds.size();j++){
-						
-						fundShort.add(karvyFunds.get(j).getAmcShort());
-
-						totalAsset+=karvyFunds.get(j).getInvAmount();
-					}
+					
 
 					Set<String> uniqueAmcs = new HashSet<>(fundShort);
 					fundShort = new ArrayList<String>(uniqueAmcs);
@@ -509,6 +514,8 @@ public class ProfileManageController{
 							selectedKarvy.setCategorizedFund(categorykarvyFunds);
 							currentFund.setCollaboratedAmount(calcKarvyVal);
 							currentFund.setKarvyFolioList(categorykarvyFunds);
+							
+							
 						}
 
 						karvyview.add(selectedKarvy);

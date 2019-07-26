@@ -11,4 +11,6 @@ public interface BseKarvyByCategoryRepository extends JpaRepository<MFKarvyValue
 	public List<MFKarvyValueByCategory> getAllByPan(String pan);
 	
 	public MFKarvyValueByCategory getOneByRtaSchemeCodeAndFolioNumber(String productCode, String folioNumber);
+	
+	
 }

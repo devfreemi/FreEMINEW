@@ -26,6 +26,7 @@ import com.freemi.database.interfaces.BseCustomerFATCACrudRepository;
 import com.freemi.database.interfaces.BseCustomerNomineeCrudRepository;
 import com.freemi.database.interfaces.BseFundsExplorerRepository;
 import com.freemi.database.interfaces.BseKarvyByCategoryRepository;
+import com.freemi.database.interfaces.BseKarvyByCategoryRepository2;
 import com.freemi.database.interfaces.BseMandateCrudRepository;
 import com.freemi.database.interfaces.BseOrderEntryResponseRepository;
 import com.freemi.database.interfaces.BseSelectedCategoryFundsRepository;
@@ -57,6 +58,7 @@ import com.freemi.entity.investment.MFCamsFolio;
 import com.freemi.entity.investment.MFCamsValueByCategroy;
 import com.freemi.entity.investment.MFKarvyFundsView;
 import com.freemi.entity.investment.MFKarvyValueByCategory;
+import com.freemi.entity.investment.MFKarvyValueByCategory2;
 import com.freemi.entity.investment.MFNominationForm;
 import com.freemi.entity.investment.MfNavData;
 import com.freemi.entity.investment.SelectMFFund;
@@ -124,6 +126,9 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	
 	@Autowired
 	BseKarvyByCategoryRepository bseKarvyByCategoryRepository;
+	
+	@Autowired
+	BseKarvyByCategoryRepository2 bseKarvyByCategoryRepository2;
 	
 	@Autowired
 	MfNavDataCrudRepository mfNavDataCrudRepository;
@@ -1059,6 +1064,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	public List<MFKarvyValueByCategory> getCustomersKarvyInvByCategory(String mobile, String pan) {
 		List<MFKarvyValueByCategory> folios=null;
 		logger.info("getCustomersKarvyInvByCategory(): Request received to fetch customer Karvy folio details by category for client ID- "+ mobile + " :PAN NO: "+ pan);
+		
 		try{
 		if(bseCustomerCrudRespository.existsByMobileAndAccountActive(mobile,"Y")){
 			pan = bseCustomerCrudRespository.getCustomerPanNumberFromMobile(mobile);
@@ -1070,6 +1076,27 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		}
 		}catch(Exception e){
 			logger.error("Failed to query database to fetch exising customer karvy folio. ",e);
+		}
+		
+		return folios;
+	}
+	
+	@Override
+	public List<MFKarvyValueByCategory2> getCustomersKarvyInvByCategory2(String mobile, String pan) {
+		List<MFKarvyValueByCategory2> folios=null;
+		logger.info("getCustomersKarvyInvByCategory2(): Request received to fetch customer Karvy folio details by category from UNION view for client ID- "+ mobile + " :PAN NO: "+ pan);
+		
+		try{
+		if(bseCustomerCrudRespository.existsByMobileAndAccountActive(mobile,"Y")){
+			pan = bseCustomerCrudRespository.getCustomerPanNumberFromMobile(mobile);
+			
+			folios =bseKarvyByCategoryRepository2.getAllByPan(pan);
+			
+			logger.info("getCustomersKarvyInvByCategory2(): Karvy Folio details by category look up complete");
+
+		}
+		}catch(Exception e){
+			logger.error("getCustomersKarvyInvByCategory2(): Failed to query database to fetch exising customer karvy folio. ",e);
 		}
 		
 		return folios;
