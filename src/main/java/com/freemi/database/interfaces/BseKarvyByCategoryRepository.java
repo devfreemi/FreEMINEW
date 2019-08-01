@@ -6,11 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.freemi.entity.investment.MFKarvyValueByCategory;
 
-public interface BseKarvyByCategoryRepository extends JpaRepository<MFKarvyValueByCategory,String>{
+public interface BseKarvyByCategoryRepository extends JpaRepository<MFKarvyValueByCategory,Integer>{
 	
 	public List<MFKarvyValueByCategory> getAllByPan(String pan);
 	
-	public MFKarvyValueByCategory getOneByRtaSchemeCodeAndFolioNumber(String productCode, String folioNumber);
+	public MFKarvyValueByCategory getOneByKarvyProductCodeAndFolioNumber(String productCode, String folioNumber);
 	
 	
 }

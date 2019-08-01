@@ -624,7 +624,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		
 		try{
 		logger.info("getKarvyFundsDetailsForRedeem(): Searching Karvy folio details by [karvyProductCode:folioNumber:PAN] - "+schemeCode + ":"+folioNumber);
-		folio = bseKarvyByCategoryRepository.getOneByRtaSchemeCodeAndFolioNumber(karvyProductCode, folioNumber);
+		folio = bseKarvyByCategoryRepository.getOneByKarvyProductCodeAndFolioNumber(karvyProductCode, folioNumber);
 		}catch(Exception e){
 			logger.error("getKarvyFundsDetailsForRedeem(): Error querying database. ",e);
 		}

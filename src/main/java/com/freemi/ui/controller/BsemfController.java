@@ -1347,7 +1347,7 @@ public class BsemfController {
 						selectedCodeFundDetails = bseEntryManager.getFundsByCode(rtaCode,karvyFund.getIsin());
 
 						purchaseForm.setPortfolio(karvyFund.getFolioNumber());
-						purchaseForm.setFundName(karvyFund.getFundName());
+						purchaseForm.setFundName(karvyFund.getFundDescription());
 						purchaseForm.setTotalAvailableAmount(karvyFund.getInvAmount());
 						purchaseForm.setUnitHolderName(karvyFund.getInvestorName());
 					}
@@ -1562,7 +1562,7 @@ public class BsemfController {
 //					selectedCodeFundDetails = bseEntryManager.getFundsByCode(productCode,karvyFund.getIsin());
 					map.addAttribute("FUNDAVAILABLE", "Y");
 					redeemForm.setPortfolio(karvyFund.getFolioNumber());
-					redeemForm.setFundName(karvyFund.getFundName());
+					redeemForm.setFundName(karvyFund.getFundDescription());
 					redeemForm.setRedeemAmounts(karvyFund.getInvAmount());
 					redeemForm.setUnitHolderName(karvyFund.getInvestorName());
 

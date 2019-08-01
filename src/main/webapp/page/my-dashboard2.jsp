@@ -565,6 +565,7 @@ table th {
 																						<th scope="col" valign="middle">Invested Value</th>
 																						<th scope="col" valign="middle">Bal. Units</th>
 																						<th scope="col" valign="middle">Appreciation</th>
+																						<th scope="col" valign="middle">Action</th>
 																					</tr>
 																				</thead>
 																				<tbody>
@@ -580,6 +581,7 @@ table th {
 																							</td>
 																							<td valign="middle">${folioList.invAmount }</td>
 																							<td valign="middle">${folioList.units }</td>
+																							<td valign="middle"></td>
 																							<td valign="middle">
 																								<div class="btn-group">
 																									<button type="button"
@@ -618,6 +620,7 @@ table th {
 																							</td>
 																							<td valign="middle">${folioList.invAmount }</td>
 																							<td valign="middle">${folioList.units }</td>
+																							<td valign="middle">${folioList.marketValue }</td>
 																							<td valign="middle">
 																								<div class="btn-group">
 																									<button type="button"
@@ -628,14 +631,14 @@ table th {
 																									<div class="dropdown-menu dropdown-menu-right">
 																										<button class="dropdown-item" type="button"
 																											style="font-size: 12px; color: #238019; font-weight: 600;"
-																											onclick="AdditionalPurchase('${folioList.folioNumber}','${folioList.rtaCode }','${folioList.trasanctionType }','${listVar.rtaAgent }','${folioList.rtaSchemeCode }')">
+																											onclick="AdditionalPurchase('${folioList.folioNumber}','${folioList.schemeCode }','${folioList.trasanctionType }','${listVar.rtaAgent }','${folioList.karvyProductCode }')">
 																											Invest More <i class="fas fa-arrow-left"></i>
 																										</button>
 
 																										<c:if test="${folioList.invAmount > 0 }">
 																											<button class="dropdown-item" type="button"
 																												style="font-size: 12px; color: #da2323; font-weight: 600;"
-																												onclick="MFRedeem('${folioList.folioNumber}','${folioList.rtaCode }','${folioList.trasanctionType }','${listVar.rtaAgent }','${folioList.rtaSchemeCode }')">
+																												onclick="MFRedeem('${folioList.folioNumber}','${folioList.schemeCode }','${folioList.trasanctionType }','${listVar.rtaAgent }','${folioList.karvyProductCode }')">
 																												Redeem <i class="fas fa-arrow-right"></i>
 																											</button>
 																										</c:if>

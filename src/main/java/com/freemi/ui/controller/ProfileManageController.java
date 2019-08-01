@@ -372,7 +372,8 @@ public class ProfileManageController{
 
 	@RequestMapping(value = "/my-dashboard", method = RequestMethod.GET)
 	public String myDashboardGet(@ModelAttribute("fileform") BseFileUpload fileform,Model map,HttpServletRequest request, HttpServletResponse response, HttpSession session) {
-		//logger.info("@@@@ Inside Login..");
+		logger.info("@@@@ GetMyDashboardController @@@@");
+		
 		String returnurl = "";
 		double totalAsset= 0.0;
 		if(session.getAttribute("token") == null){
@@ -391,60 +392,50 @@ public class ProfileManageController{
 			//ADding- 30-05-2019
 			List<MfCollatedFundsView> listFunds = new ArrayList<MfCollatedFundsView>();
 			
-			try{
-				//			List<BseAllTransactionsView> fundsOrder= bseEntryManager.getCustomerAllTransactionRecords(null,session.getAttribute("userid").toString(),null);
-
-				
-				List<MFCamsFolio> fundsOrder = null;
-				
-				List<MFCamsValueByCategroy> camscategoryFunds = bseEntryManager.getCustomersCamsInvByCategory(session.getAttribute("userid").toString(), null);
-
-				
-				if(camscategoryFunds!= null && camscategoryFunds.size()>=1){
-					//			fundsOrder = bseEntryManager.getCamsPortfolio(session.getAttribute("userid").toString(), "");
-					fundsOrder = bseEntryManager.getCamsPortfolio(session.getAttribute("userid").toString(), "");
-					
-					
-					for(int i=0;i<camscategoryFunds.size();i++){
-						
-						MfCollatedFundsView currentFund = new MfCollatedFundsView();
-						
-						currentFund.setAmcicon(camscategoryFunds.get(i).getAmcicon());
-						currentFund.setAmcShort(camscategoryFunds.get(i).getAmcShort());
-						currentFund.setCollaboratedAmount(camscategoryFunds.get(i).getCollaboratedAmount());
-						currentFund.setFolioNumber(camscategoryFunds.get(i).getFolioNumber());
-						currentFund.setRtaAgent(camscategoryFunds.get(i).getRtaAgent());
-						currentFund.setFundName(camscategoryFunds.get(i).getFundName());
-						
-						List<MFCamsFolio> fundsOrderCategory = new ArrayList<MFCamsFolio>();
-						//				totalAsset+=fundsOrder.get(i).getSchemeInvestment();
-						totalAsset+=camscategoryFunds.get(i).getCollaboratedAmount();
-						for(int j=0;j<fundsOrder.size();j++){
-							if(camscategoryFunds.get(i).getFundName().equalsIgnoreCase(fundsOrder.get(j).getFundName())){
-								fundsOrderCategory.add(fundsOrder.get(j));
-								
-							}
-							
-						}
-						currentFund.setCamsFolioLists(fundsOrderCategory);
-						camscategoryFunds.get(i).setCamsFolioLists(fundsOrderCategory);
-//						currentFund.setCamsFolioLists(fundsOrderCategory);
-						listFunds.add(currentFund);
-					}
-
-					
-
-
-//					map.addAttribute("camsorderhistory", camscategoryFunds);
-					
-//					map.addAttribute("ORDERHISTORY", "SUCCESS");
-				}else{
-//					map.addAttribute("ORDERHISTORY", "EMPTY");
-				}
-			}catch(Exception ex){
-				map.addAttribute("ORDERHISTORY", "ERROR");
-				logger.error("Failed to fetch cutomer Registry details \n", ex);
-			}
+			/*
+			 * try{ List<MFCamsFolio> fundsOrder = null; List<MFCamsValueByCategroy>
+			 * camscategoryFunds =
+			 * bseEntryManager.getCustomersCamsInvByCategory(session.getAttribute("userid").
+			 * toString(), null); if(camscategoryFunds!= null &&
+			 * camscategoryFunds.size()>=1){ fundsOrder =
+			 * bseEntryManager.getCamsPortfolio(session.getAttribute("userid").toString(),
+			 * ""); for(int i=0;i<camscategoryFunds.size();i++){
+			 * 
+			 * MfCollatedFundsView currentFund = new MfCollatedFundsView();
+			 * 
+			 * currentFund.setAmcicon(camscategoryFunds.get(i).getAmcicon());
+			 * currentFund.setAmcShort(camscategoryFunds.get(i).getAmcShort());
+			 * currentFund.setCollaboratedAmount(camscategoryFunds.get(i).
+			 * getCollaboratedAmount());
+			 * currentFund.setFolioNumber(camscategoryFunds.get(i).getFolioNumber());
+			 * currentFund.setRtaAgent(camscategoryFunds.get(i).getRtaAgent());
+			 * currentFund.setFundName(camscategoryFunds.get(i).getFundName());
+			 * 
+			 * List<MFCamsFolio> fundsOrderCategory = new ArrayList<MFCamsFolio>(); //
+			 * totalAsset+=fundsOrder.get(i).getSchemeInvestment();
+			 * totalAsset+=camscategoryFunds.get(i).getCollaboratedAmount(); for(int
+			 * j=0;j<fundsOrder.size();j++){
+			 * if(camscategoryFunds.get(i).getFundName().equalsIgnoreCase(fundsOrder.get(j).
+			 * getFundName())){ fundsOrderCategory.add(fundsOrder.get(j));
+			 * 
+			 * }
+			 * 
+			 * } currentFund.setCamsFolioLists(fundsOrderCategory);
+			 * camscategoryFunds.get(i).setCamsFolioLists(fundsOrderCategory);
+			 * listFunds.add(currentFund);
+			 * 
+			 * }
+			 * 
+			 * logger.info("Total Amount under CAMS fund- "+ totalAsset);
+			 * 
+			 * 
+			 * 
+			 * //map.addAttribute("ORDERHISTORY", "SUCCESS"); }else{
+			 * //map.addAttribute("ORDERHISTORY", "EMPTY"); } }catch(Exception ex){
+			 * map.addAttribute("ORDERHISTORY", "ERROR");
+			 * logger.error("Failed to fetch cutomer Registry details \n", ex); }
+			 */
+			
 			
 			/*KARVY*/
 
@@ -457,21 +448,29 @@ public class ProfileManageController{
 				logger.info("Search for KARVY related folios for customer.");
 				List<String> fundShort = new ArrayList<String>();
 				karvyFunds = bseEntryManager.getCustomersKarvyInvByCategory(session.getAttribute("userid").toString(), null);
-				karvyFunds2 = bseEntryManager.getCustomersKarvyInvByCategory2(session.getAttribute("userid").toString(), null);
+//				karvyFunds2 = bseEntryManager.getCustomersKarvyInvByCategory2(session.getAttribute("userid").toString(), null);
 				
-				if(karvyFunds2!=null) {
-					logger.info("Calculate total Karvy balance for user "+ session.getAttribute("userid").toString());
-//					Calculate Fund new - 24-07-2019. 
-					MfBalanceCalculator.karvyBalanceCalculator(karvyFunds2);
+				/*
+				 * if(karvyFunds!=null) { logger.info("Calculate total Karvy balance for user "+
+				 * session.getAttribute("userid").toString()); // Calculate Fund new -
+				 * 24-07-2019. MfBalanceCalculator.karvyBalanceCalculator(karvyFunds2); }
+				 */
+				
+				for(int j=0;j<karvyFunds.size();j++){
+					
+					fundShort.add(karvyFunds.get(j).getAmcShort());
+
+					totalAsset+=karvyFunds.get(j).getInvAmount();
 				}
+				
+				logger.info("Total asset after Karvy calculatio- "+ totalAsset);
 				
 				if(karvyFunds !=null){
 					logger.info("Total karvy Folio found of customer - " + karvyFunds.size());
-					
 
 					Set<String> uniqueAmcs = new HashSet<>(fundShort);
 					fundShort = new ArrayList<String>(uniqueAmcs);
-					logger.debug("Unique funds from karvy house - "+ fundShort);
+					logger.info("Unique funds from karvy house - "+ fundShort);
 
 					for(int x=0;x<fundShort.size();x++){
 						MFKarvyFundsView selectedKarvy = new MFKarvyFundsView();
@@ -494,7 +493,8 @@ public class ProfileManageController{
 									currentFund.setRtaAgent(karvyFunds.get(y).getRtaAgent());
 								}
 								if(currentFund.getFundName()==null){
-									currentFund.setFundName(karvyFunds.get(y).getFundName());
+									currentFund.setFundName(karvyFunds.get(y).getAmcName());
+									logger.info("Set common KARVY fund name- "+ karvyFunds.get(y).getAmcName());
 								}
 								
 								calcKarvyVal+=karvyFunds.get(y).getInvAmount();
@@ -503,8 +503,9 @@ public class ProfileManageController{
 									selectedKarvy.setAmcicon(karvyFunds.get(y).getAmcicon());
 								}
 								if(selectedKarvy.getFunName()==null){
-									selectedKarvy.setFunName(karvyFunds.get(y).getFundName());;
+									selectedKarvy.setFunName(karvyFunds.get(y).getFundDescription());;
 								}
+								
 									
 								categorykarvyFunds.add(karvyFunds.get(y));
 
@@ -515,11 +516,12 @@ public class ProfileManageController{
 							currentFund.setCollaboratedAmount(calcKarvyVal);
 							currentFund.setKarvyFolioList(categorykarvyFunds);
 							
-							
 						}
-
+						
 						karvyview.add(selectedKarvy);
 						listFunds.add(currentFund);
+						
+//						logger.info("Total amounts under KARVY- "+ currentFund.getCollaboratedAmount());
 					}
 
 					logger.info("karvy funds by category- " + karvyview.size());
@@ -550,7 +552,7 @@ public class ProfileManageController{
 		
 		map.addAttribute("totalasset", totalAsset);
 		map.addAttribute("contextcdn", environment.getProperty(CommonConstants.CDN_URL));
-		logger.info("@@@@ DashboardController @@@@");
+		
 		return returnurl;
 		//		return "my-dashboard";
 	}

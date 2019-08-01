@@ -11,7 +11,9 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Proxy;
 
 @Entity
-@Table(name="mailback_transactions_karvy_r201_view")
+//@Table(name="mailback_transactions_karvy_r201_view")
+@Table(name = "investors_balance_view_karvy")
+
 @Proxy(lazy=false)
 public class MFKarvyValueByCategory implements Serializable {
 
@@ -21,201 +23,238 @@ public class MFKarvyValueByCategory implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
-	@Column(name="Transaction_ID")
-	private String serial;
+	@Column(name="SL_NO")
+	private Integer serial;
 	
-	@Column(name="AMC_SHORT")
-	private String amcShort;
+	@Column(name="RTA_AGENT")
+	private String rtaAgent;
 	
-	@Column(name="Folio_number")
+	@Column(name="PAN")
+	private String pan;
+	
+	@Column(name="FOLIO_NO")
 	private String folioNumber;
 	
-	@Column(name="AMC_NAME")
-	private String fundName;
+	@Column(name="INVESTOR_NAME")
+	private String investorName;
 	
 //	@Transient
 	@Column(name="KARVY_PRODUCT_CODE")
-	private String rtaSchemeCode;
-	
-	@Column(name="BSEMF_FUND_NAME")
-	private String fundDescription;
-	
-//	@Transient
-	@Column(name="Scheme_Code")		//This does not represent the rta code. 
-	private String rtaCode;
-	
-	@Column(name="Transaction_Flag")
-	private String trasanctionType;
-	
-	@Column(name="PAN1")
-	private String pan;
-	
+	private String karvyProductCode;
+	 
 	@Column(name="INVESTMENT_AMOUNT")
 	private Double invAmount;
 	
 	@Column(name="BALANCE_UNITS")
 	private Double units;
+
+	@Column(name="ISIN")
+	private String isin;
 	
-	@Transient
-//	@Column(name="NAV")
-	private Double nav;
+	/*
+	 * @Column(name="SCHEME_NAME") private String schemeName;
+	 */
+	
+	@Column(name="BSEMF_FUND_NAME")
+	private String fundDescription;
 	
 	@Column(name="BSEMF_SCHEME_CODE")
 	private String schemeCode;
+
+	@Column(name="AMC_NAME")
+	private String amcName;
 	
-	@Column(name="RTA_AGENT")
-	private String rtaAgent;
+	@Column(name="AMC_SHORT")
+	private String amcShort;
 	
-	@Column(name="ISIN")
-	private String isin;
 	
 	@Column(name="ICONS")
 	private String amcicon;
 	
-	@Column(name="Investor_Name")
-	private String investorName;
+	
+	@Column(name="NAV")
+	private String nav;
 
-	public String getSerial() {
+	@Transient
+	private String trasanctionType;
+	
+	@Column(name = "MARKET_VALUE")
+	private String marketValue;
+	
+	public Integer getSerial() {
 		return serial;
 	}
 
-	public void setSerial(String serial) {
+
+	public void setSerial(Integer serial) {
 		this.serial = serial;
 	}
 
-	public String getFolioNumber() {
-		return folioNumber;
-	}
-
-	public void setFolioNumber(String folioNumber) {
-		this.folioNumber = folioNumber;
-	}
-
-	public String getFundName() {
-		return fundName;
-	}
-
-	public void setFundName(String fundName) {
-		this.fundName = fundName;
-	}
-
-	public String getRtaCode() {
-		return rtaCode;
-	}
-
-	public void setRtaCode(String rtaCode) {
-		this.rtaCode = rtaCode;
-	}
-
-	public String getTrasanctionType() {
-		return trasanctionType;
-	}
-
-	public void setTrasanctionType(String trasanctionType) {
-		this.trasanctionType = trasanctionType;
-	}
-
-	public String getPan() {
-		return pan;
-	}
-
-	public void setPan(String pan) {
-		this.pan = pan;
-	}
-
-	public Double getInvAmount() {
-		return invAmount;
-	}
-
-	public void setInvAmount(Double invAmount) {
-		this.invAmount = invAmount;
-	}
-
-	public Double getNav() {
-		return nav;
-	}
-
-	public void setNav(Double nav) {
-		this.nav = nav;
-	}
-
-	public String getSchemeCode() {
-		return schemeCode;
-	}
-
-	public void setSchemeCode(String schemeCode) {
-		this.schemeCode = schemeCode;
-	}
-
-	public String getAmcicon() {
-		return amcicon;
-	}
-
-	public void setAmcicon(String amcicon) {
-		this.amcicon = amcicon;
-	}
-
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
-	public String getAmcShort() {
-		return amcShort;
-	}
-
-	public void setAmcShort(String amcShort) {
-		this.amcShort = amcShort;
-	}
-
-	public String getFundDescription() {
-		return fundDescription;
-	}
-
-	public void setFundDescription(String fundDescription) {
-		this.fundDescription = fundDescription;
-	}
 
 	public String getRtaAgent() {
 		return rtaAgent;
 	}
 
+
 	public void setRtaAgent(String rtaAgent) {
 		this.rtaAgent = rtaAgent;
 	}
 
-	public String getRtaSchemeCode() {
-		return rtaSchemeCode;
+
+	public String getPan() {
+		return pan;
 	}
 
-	public void setRtaSchemeCode(String rtaSchemeCode) {
-		this.rtaSchemeCode = rtaSchemeCode;
+
+	public void setPan(String pan) {
+		this.pan = pan;
 	}
+
+
+	public String getFolioNumber() {
+		return folioNumber;
+	}
+
+
+	public void setFolioNumber(String folioNumber) {
+		this.folioNumber = folioNumber;
+	}
+
 
 	public String getInvestorName() {
 		return investorName;
 	}
 
+
 	public void setInvestorName(String investorName) {
 		this.investorName = investorName;
 	}
+
+
+	public String getKarvyProductCode() {
+		return karvyProductCode;
+	}
+
+
+	public void setKarvyProductCode(String karvyProductCode) {
+		this.karvyProductCode = karvyProductCode;
+	}
+
+
+	public Double getInvAmount() {
+		return invAmount;
+	}
+
+
+	public void setInvAmount(Double invAmount) {
+		this.invAmount = invAmount;
+	}
+
 
 	public Double getUnits() {
 		return units;
 	}
 
+
 	public void setUnits(Double units) {
 		this.units = units;
 	}
+
 
 	public String getIsin() {
 		return isin;
 	}
 
+
 	public void setIsin(String isin) {
 		this.isin = isin;
 	}
+
+
+	public String getFundDescription() {
+		return fundDescription;
+	}
+
+
+	public void setFundDescription(String fundDescription) {
+		this.fundDescription = fundDescription;
+	}
+
+
+	public String getSchemeCode() {
+		return schemeCode;
+	}
+
+
+	public void setSchemeCode(String schemeCode) {
+		this.schemeCode = schemeCode;
+	}
+
+
+	public String getAmcShort() {
+		return amcShort;
+	}
+
+
+	public void setAmcShort(String amcShort) {
+		this.amcShort = amcShort;
+	}
+
+
+	public String getAmcicon() {
+		return amcicon;
+	}
+
+
+	public void setAmcicon(String amcicon) {
+		this.amcicon = amcicon;
+	}
+
+	public String getNav() {
+		return nav;
+	}
+
+
+	public void setNav(String nav) {
+		this.nav = nav;
+	}
+
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+
+	public String getTrasanctionType() {
+		return trasanctionType;
+	}
+
+
+	public void setTrasanctionType(String trasanctionType) {
+		this.trasanctionType = trasanctionType;
+	}
+
+
+	public String getAmcName() {
+		return amcName;
+	}
+
+
+	public void setAmcName(String amcName) {
+		this.amcName = amcName;
+	}
+
+
+	public String getMarketValue() {
+		return marketValue;
+	}
+
+
+	public void setMarketValue(String marketValue) {
+		this.marketValue = marketValue;
+	}
 	
 	
-	
+
 	
 }
