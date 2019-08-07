@@ -1,10 +1,14 @@
 package com.freemi.ui;
 
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.boot.web.support.ErrorPageFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +19,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.crypto.encrypt.Encryptors;
 import org.springframework.security.crypto.encrypt.TextEncryptor;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.WebApplicationInitializer;
 
 import com.freemi.common.util.CommonConstants;
 
@@ -25,7 +30,7 @@ import com.freemi.common.util.CommonConstants;
 @EnableAsync
 @EnableJpaRepositories(basePackages = "com.freemi")
 @EntityScan(basePackages = {"com.freemi.entity.database","com.freemi.entity.investment"})
-public class FreemiApplication {
+public class FreemiApplication implements WebApplicationInitializer {
 	@Autowired
 	private Environment env;
 	public static void main(String[] args) {
@@ -55,6 +60,25 @@ public class FreemiApplication {
 //		System.out.println(t.decrypt(encryptedText));
 		return(t.decrypt(encryptedText));
 	}
+
+	@Override
+	public void onStartup(ServletContext servletContext) throws ServletException {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Bean
+    public ErrorPageFilter errorPageFilter() {
+        return new ErrorPageFilter();
+    }
+
+    @Bean
+    public FilterRegistrationBean disableSpringBootErrorFilter(ErrorPageFilter filter) {
+        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
+        filterRegistrationBean.setFilter(filter);
+        filterRegistrationBean.setEnabled(false);
+        return filterRegistrationBean;
+    }
 	
 	
 	

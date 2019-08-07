@@ -1336,13 +1336,14 @@ public class BsemfController {
 					//					BseAllTransactionsView bseSeletedFundDetails= bseEntryManager.getFundDetailsForAdditionalPurchase(portfolio, schemeCode,investType, session.getAttribute("userid").toString());
 					logger.info("bsemfAdditionalFundsPurchaseModeGet(): Details of request for additional purchase:[portfolio:rtacode:rtaAgent:productCode:investType]"+ portfolio+ ":"+rtaCode+ ":"+rtaAgent+ ":"+productCode+ ":"+investType);
 					if(rtaAgent.equals("CAMS")){
-						folioDetails =  bseEntryManager.getCamsFundsDetailsForRedeem(rtaCode, session.getAttribute("userid").toString(), portfolio);
-						selectedCodeFundDetails = bseEntryManager.getFundsByCode(rtaCode,null);
+						folioDetails =  bseEntryManager.getCamsFundsDetailsForRedeem(productCode, session.getAttribute("userid").toString(), portfolio);
+						selectedCodeFundDetails = bseEntryManager.getFundsByCode(productCode,null);
+						
 						purchaseForm.setPortfolio(folioDetails.getFolioNumber());
 						purchaseForm.setFundName(folioDetails.getFundName());
 						purchaseForm.setTotalAvailableAmount(folioDetails.getInvAmount());
 						purchaseForm.setUnitHolderName(folioDetails.getInvestorName());
-					}else{
+					}else if(rtaAgent.equals("KARVY")){
 						karvyFund = bseEntryManager.getKarvyFundsDetailsForRedeem(productCode, session.getAttribute("userid").toString(), portfolio);
 						selectedCodeFundDetails = bseEntryManager.getFundsByCode(rtaCode,karvyFund.getIsin());
 
@@ -1350,6 +1351,8 @@ public class BsemfController {
 						purchaseForm.setFundName(karvyFund.getFundDescription());
 						purchaseForm.setTotalAvailableAmount(karvyFund.getInvAmount());
 						purchaseForm.setUnitHolderName(karvyFund.getInvestorName());
+					}else {
+						logger.info("Provided RTA AGENT not supported : " + rtaAgent);
 					}
 
 					if(selectedCodeFundDetails==null){

@@ -580,7 +580,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	
 
 	@Override
-	public MFCamsFolio getCamsFundsDetailsForRedeem(String rtaCode, String mobile, String folioNumber) {
+	public MFCamsFolio getCamsFundsDetailsForRedeem(String camsProductCode, String mobile, String folioNumber) {
 		
 //		CAMS funds details redemption
 //		MFCamsFolio folio = 
@@ -588,7 +588,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 //		for CAMS, need to map rta code to scheme code
 		String schemeCode="";
 		MFCamsFolio folio = null;
-		List<BseFundsScheme> schemCodes = bseFundsExplorerRepository.findAllByRtaCode(rtaCode);
+		List<BseFundsScheme> schemCodes = bseFundsExplorerRepository.findAllByRtaCode(camsProductCode);
 		logger.info("Total schemecode found for CAMS RTA code- "+ schemCodes.size());
 		for(int i =0;i<schemCodes.size();i++){
 			if(!schemCodes.get(i).getSettlementType().equalsIgnoreCase("L1")){
@@ -598,7 +598,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		}
 		logger.info("Scheme code for redemption of the fund - "+schemeCode);
 		
-		folio = mfCamsFolioCrudRepository.findOneByFolioNumberAndRtaCode(folioNumber,rtaCode);
+		folio = mfCamsFolioCrudRepository.findOneByFolioNumberAndRtaCode(folioNumber,camsProductCode);
 		if(folio!=null){
 			folio.setSchemeCode(schemeCode);
 		}else{
@@ -1071,7 +1071,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 			
 			folios =bseKarvyByCategoryRepository.getAllByPan(pan);
 			
-			logger.info("Karvy Folio details by category look up complete");
+			logger.info("Karvy Folio details by category look up complete. Total- "+ folios.size());
 
 		}
 		}catch(Exception e){

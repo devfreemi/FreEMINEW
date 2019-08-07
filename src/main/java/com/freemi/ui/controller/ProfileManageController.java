@@ -384,7 +384,7 @@ public class ProfileManageController{
 				returnurl="redirect:/login";
 			}
 		}else{
-			returnurl = "my-dashboard2";
+			returnurl = "my-dashboard3";
 			// Get user's MF order history
 			//This code is for new design. COmment out until deployed in prod
 			
@@ -440,14 +440,14 @@ public class ProfileManageController{
 			/*KARVY*/
 
 			try{
-				List<MFKarvyValueByCategory> karvyFunds= null;
+				List<MFKarvyValueByCategory> allMFFunds= null;
 				List<MFKarvyValueByCategory2> karvyFunds2= null;
 //				List<MFKarvyValueByCategory> categorykarvyFunds= new ArrayList<MFKarvyValueByCategory>();
 				List<MFKarvyValueByCategory> categorykarvyFunds= null;
 				List<MFKarvyFundsView> karvyview = new ArrayList<MFKarvyFundsView>();
 				logger.info("Search for KARVY related folios for customer.");
-				List<String> fundShort = new ArrayList<String>();
-				karvyFunds = bseEntryManager.getCustomersKarvyInvByCategory(session.getAttribute("userid").toString(), null);
+				List<String> uniquefundShort = new ArrayList<String>();
+				allMFFunds = bseEntryManager.getCustomersKarvyInvByCategory(session.getAttribute("userid").toString(), null);
 //				karvyFunds2 = bseEntryManager.getCustomersKarvyInvByCategory2(session.getAttribute("userid").toString(), null);
 				
 				/*
@@ -456,58 +456,58 @@ public class ProfileManageController{
 				 * 24-07-2019. MfBalanceCalculator.karvyBalanceCalculator(karvyFunds2); }
 				 */
 				
-				for(int j=0;j<karvyFunds.size();j++){
+				for(int j=0;j<allMFFunds.size();j++){
 					
-					fundShort.add(karvyFunds.get(j).getAmcShort());
+					uniquefundShort.add(allMFFunds.get(j).getAmcShort());
 
-					totalAsset+=karvyFunds.get(j).getInvAmount();
+					totalAsset+=allMFFunds.get(j).getInvAmount();
 				}
 				
 				logger.info("Total asset after Karvy calculatio- "+ totalAsset);
 				
-				if(karvyFunds !=null){
-					logger.info("Total karvy Folio found of customer - " + karvyFunds.size());
+				if(allMFFunds !=null){
+					logger.info("Total karvy Folio found of customer - " + allMFFunds.size());
 
-					Set<String> uniqueAmcs = new HashSet<>(fundShort);
-					fundShort = new ArrayList<String>(uniqueAmcs);
-					logger.info("Unique funds from karvy house - "+ fundShort);
+					Set<String> uniqueAmcs = new HashSet<>(uniquefundShort);
+					uniquefundShort = new ArrayList<String>(uniqueAmcs);
+					logger.info("Unique funds from karvy house - "+ uniquefundShort);
 
-					for(int x=0;x<fundShort.size();x++){
+					for(int x=0;x<uniquefundShort.size();x++){
 						MFKarvyFundsView selectedKarvy = new MFKarvyFundsView();
 						MfCollatedFundsView currentFund = new MfCollatedFundsView();
 						categorykarvyFunds= new ArrayList<MFKarvyValueByCategory>();
 						Double calcKarvyVal=0.0;
-						for(int y=0;y<karvyFunds.size();y++){
-							logger.debug(fundShort.get(x) + " -> "+ karvyFunds.get(y).getAmcShort());
-							if(fundShort.get(x).equals(karvyFunds.get(y).getAmcShort())){
+						for(int y=0;y<allMFFunds.size();y++){
+							logger.info(uniquefundShort.get(x) + " -> "+ allMFFunds.get(y).getAmcShort());
+							if(uniquefundShort.get(x).equals(allMFFunds.get(y).getAmcShort())){
 								
 								if(currentFund.getAmcicon()==null){
-									currentFund.setAmcicon(karvyFunds.get(y).getAmcicon());
+									currentFund.setAmcicon(allMFFunds.get(y).getAmcicon());
 								}
 								if(currentFund.getAmcShort() ==null){
-									currentFund.setAmcShort(karvyFunds.get(y).getAmcShort());
+									currentFund.setAmcShort(allMFFunds.get(y).getAmcShort());
 								}if(currentFund.getFolioNumber()==null){
-									currentFund.setFolioNumber(karvyFunds.get(y).getFolioNumber());
+									currentFund.setFolioNumber(allMFFunds.get(y).getFolioNumber());
 								}
 								if(currentFund.getRtaAgent()==null){
-									currentFund.setRtaAgent(karvyFunds.get(y).getRtaAgent());
+									currentFund.setRtaAgent(allMFFunds.get(y).getRtaAgent());
 								}
 								if(currentFund.getFundName()==null){
-									currentFund.setFundName(karvyFunds.get(y).getAmcName());
-									logger.info("Set common KARVY fund name- "+ karvyFunds.get(y).getAmcName());
+									currentFund.setFundName(allMFFunds.get(y).getAmcName());
+									logger.info("Set common KARVY fund name- "+ allMFFunds.get(y).getAmcName());
 								}
 								
-								calcKarvyVal+=karvyFunds.get(y).getInvAmount();
+								calcKarvyVal+=allMFFunds.get(y).getInvAmount();
 
 								if(selectedKarvy.getAmcicon()==null){
-									selectedKarvy.setAmcicon(karvyFunds.get(y).getAmcicon());
+									selectedKarvy.setAmcicon(allMFFunds.get(y).getAmcicon());
 								}
 								if(selectedKarvy.getFunName()==null){
-									selectedKarvy.setFunName(karvyFunds.get(y).getFundDescription());;
+									selectedKarvy.setFunName(allMFFunds.get(y).getFundDescription());;
 								}
 								
 									
-								categorykarvyFunds.add(karvyFunds.get(y));
+								categorykarvyFunds.add(allMFFunds.get(y));
 
 
 							}

@@ -12,7 +12,7 @@ import org.hibernate.annotations.Proxy;
 
 @Entity
 //@Table(name="mailback_transactions_karvy_r201_view")
-@Table(name = "investors_balance_view_karvy")
+@Table(name = "investors_balance_view_all")
 
 @Proxy(lazy=false)
 public class MFKarvyValueByCategory implements Serializable {
