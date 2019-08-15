@@ -10,14 +10,14 @@
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Home loan calculator</title>
 <link
-	href="<c:url value="${contextPath}/resources/css/registry.form6.component.css"/>"
+	href="<c:url value="${contextcdn}/resources/css/registry.form6.component.css"/>"
 	rel="stylesheet">
-<link href="<c:url value="${contextPath}/resources/css/styles.css"/>"
+<link href="<c:url value="${contextcdn}/resources/css/styles.css"/>"
 	rel="stylesheet">
 	<!--Load the AJAX API-->
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script
-	src="<c:url value="${contextPath}/resources/js/home-loan.js" />"></script>
+	src="<c:url value="${contextcdn}/resources/js/home-loan.js" />"></script>
 <jsp:include page="include/bootstrap.jsp"></jsp:include>
 </head>
 <script type="text/javascript">

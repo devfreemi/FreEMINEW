@@ -19,9 +19,9 @@
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
 <script
-	src="<c:url value="${contextPath}/resources/js/investment.js" />"></script>
+	src="<c:url value="${contextcdn}/resources/js/investment.js" />"></script>
 <script
-	src="<c:url value="${contextPath}/resources/js/signaturepanel.js" />"></script>
+	src="<c:url value="${contextcdn}/resources/js/signaturepanel.js" />"></script>
 <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script> -->
 
 <link
@@ -61,6 +61,8 @@ table th {
 
 <body class="back_set">
 	<jsp:include page="include/header.jsp"></jsp:include>
+	<fmt:setLocale value="en_IN" />
+
 	<div class="container" style="margin-bottom: 5rem;">
 		<div style="color: #FF5722;">
 			<!-- class="dashboard_header" -->
@@ -92,7 +94,7 @@ table th {
 							<div class="row">
 								<div class="col-8">We will be available soon!</div>
 							</div>
-							
+
 						</div>
 						<div class="footer_link">
 							<!-- <span>VIEW DETAILS</span> -->
@@ -117,10 +119,29 @@ table th {
 								<div class="col-6">
 									<h5>
 										<i class="fas fa-rupee-sign"> </i>
-										<fmt:formatNumber value="${totalasset }" type="number" />
+										<fmt:formatNumber type="number" pattern="##,###.00"
+											minFractionDigits="1" minIntegerDigits="1"
+											maxFractionDigits="2" groupingUsed="true"
+											value="${totalasset }" />
 									</h5>
 								</div>
 							</div>
+							
+							<div class="row">
+								<div class="col-6">
+									<h6>MARKET VALUE</h6>
+								</div>
+								<div class="col-6">
+									<h5>
+										<i class="fas fa-rupee-sign"> </i>
+										<fmt:formatNumber type="number" pattern="##,###.00"
+											minFractionDigits="1" minIntegerDigits="1"
+											maxFractionDigits="2" groupingUsed="true"
+											value="${totalmarketval }" />
+									</h5>
+								</div>
+							</div>
+							
 						</div>
 						<div class="footer_link">
 							<a href="/products/mutual-funds/view-purchase-history"
@@ -146,7 +167,7 @@ table th {
 								<div class="col-6">Plans Activated</div>
 								<div class="col-6">0</div>
 							</div> -->
-							
+
 							<div class="row">
 								<div class="col-8">We will be available soon!</div>
 							</div>
@@ -330,8 +351,8 @@ table th {
 								<c:choose>
 									<c:when test="${FILE_UPLOAD == 'S'}">
 										<div id="aofuploadbutton">
-											<button class="btn btn-sm btn-primary" id="aofuploadbtn" 
-											onclick="initiateAOFUpload(<%=session.getAttribute("userid").toString()%>);">
+											<button class="btn btn-sm btn-primary" id="aofuploadbtn"
+												onclick="initiateAOFUpload(<%=session.getAttribute("userid").toString()%>);">
 												UPLOAD YOUR AOF <i class="fas fa-upload"></i>
 											</button>
 										</div>
@@ -349,7 +370,7 @@ table th {
 										</div>
 									</c:otherwise>
 								</c:choose>
-								
+
 								<!-- End of modal  -->
 								<div>
 									<span id="signuploadstatus" style="font-size: 11px;"></span>
@@ -357,7 +378,7 @@ table th {
 
 								<div id="aofuploadbutton">
 									<button class="btn btn-sm btn-primary" id="aofuploadbtn"
-										hidden="hidden" 
+										hidden="hidden"
 										onclick="initiateAOFUpload(<%=session.getAttribute("userid").toString()%>);">
 										UPLOAD YOUR AOF <i class="fas fa-upload"></i>
 									</button>
@@ -487,9 +508,9 @@ table th {
 							</div>
 
 						</div>
-						
+
 						<%-- <%int counter =1;%> --%>
-						
+
 						<div class="tab-pane fade custom-tab" id="registry"
 							role="tabpanel" aria-labelledby="contact-tab">
 
@@ -507,10 +528,11 @@ table th {
 													<thead class="#3949ab indigo darken-1 white-text">
 														<tr>
 															<th scope="col" valign="middle">Mutual Fund</th>
-															<th scope="col" valign="middle">Invested Amount (Rs.)</th>
+															<th scope="col" valign="middle">Invested Amount
+																(Rs.)</th>
 															<th scope="col" valign="middle">XIRR</th>
-															<th scope="col" valign="middle">Weighted</th>
-															<th scope="col" valign="middle">NAV</th>
+															<!-- <th scope="col" valign="middle">Weighted</th>
+															<th scope="col" valign="middle">NAV</th> -->
 															<th scope="col" valign="middle">Market Value (Rs.)</th>
 															<th scope="col" valign="middle">VIEW</th>
 															<!-- <th scope="col">XIRR</th>
@@ -527,32 +549,62 @@ table th {
 															<tr>
 																<td style="width: 14rem;" valign="middle"><img
 																	src="<c:url value="${contextcdn}/resources/images/partnerlogo/mf/${listVar.amcicon }"/>"
-																	class="img-fluid" style="width: 3rem;">
+																	class="img-fluid" style="width: 3rem; float: left;">
 																	${listVar.fundName }</td>
-																<td valign="middle">${listVar.collaboratedAmount }</td>
-																<td valign="middle"><%-- ${loop.index} --%></td>
-																<%-- <td valign="middle"><%=counter%></td> --%>
-																<td valign="middle"></td>
-																<td valign="middle"></td>
-																<td style="font-weight: 600;" valign="middle">
-																	<%-- <fmt:formatNumber
-																	value="${listVar.invAmount }" type="number"
-																	maxFractionDigits="3" /> --%>
+																<td valign="middle"><fmt:formatNumber type="number"
+																		pattern="#,##,##,##,###.0000" minFractionDigits="1"
+																		minIntegerDigits="1" maxFractionDigits="4"
+																		value="${listVar.collaboratedAmount }" /></td>
+																<td valign="middle">
+																	<%-- ${loop.index} --%>
 																</td>
+																<%-- <td valign="middle"><%=counter%></td> --%>
+																<!-- <td valign="middle"></td>
+																<td valign="middle"></td> -->
+
+																<c:choose>
+																	<c:when
+																		test="${listVar.collaboratedMarketValue > listVar.collaboratedAmount}">
+																		<td valign="middle"><span style="color: #30c51e;">
+																				<fmt:formatNumber type="number"
+																					pattern="#,##,##,##,###.00" minFractionDigits="1"
+																					minIntegerDigits="1" maxFractionDigits="2"
+																					value="${listVar.collaboratedMarketValue }" />
+																		</span></td>
+																	</c:when>
+																	<c:when
+																		test="${listVar.collaboratedMarketValue < listVar.collaboratedAmount}">
+																		<td valign="middle"><span style="color: red;"><fmt:formatNumber
+																					type="number" pattern="#,##,##,##,###.00"
+																					minFractionDigits="1" minIntegerDigits="1"
+																					maxFractionDigits="2"
+																					value="${listVar.collaboratedMarketValue }" /></span></td>
+																	</c:when>
+																	<c:otherwise>
+																		<td valign="middle"><span style="color: grey;"><fmt:formatNumber
+																					type="number" pattern="#,##,##,##,###.00"
+																					minFractionDigits="1" minIntegerDigits="1"
+																					maxFractionDigits="2"
+																					value="${listVar.collaboratedMarketValue }" /></span></td>
+																	</c:otherwise>
+																</c:choose>
+
 																<td style="text-align: center;"><a class=""
 																	data-toggle="collapse" href="#collapse${loop.index}"
 																	<%-- data-toggle="collapse" href="#collapse<%=counter%>" --%>
-																	role="button" aria-expanded="false"
+																	role="button"
+																	aria-expanded="false"
 																	aria-controls="collapse${loop.index}"> <span
-																	<%-- aria-controls="collapse<%=counter%>">  <span --%>
-																		class="fas fa-chevron-right" id="rotate"></span>
+																		<%-- aria-controls="collapse<%=counter%>">  <span --%>
+																		class="fas fa-chevron-right"
+																		id="rotate"></span>
 																</a></td>
 
 															</tr>
 															<tr>
 																<td colspan="7" style="padding: 0px;">
 																	<div class="collapse" id="collapse${loop.index}"
-																	<%-- <div class="collapse" id="collapse<%=counter%>" --%>
+																		<%-- <div class="collapse" id="collapse<%=counter%>" --%>
 																		style="margin: .2rem;">
 																		<div class="card card-body" style="padding: 0;">
 																			<table class="table table-sm">
@@ -562,24 +614,67 @@ table th {
 																							valign="middle">Folio <br> Scheme
 																							Code/Name
 																						</th>
-																						<th scope="col" valign="middle">Invested Value</th>
+																						<th scope="col" valign="middle">Invested
+																							Value (Rs.)</th>
 																						<th scope="col" valign="middle">Bal. Units</th>
-																						<th scope="col" valign="middle">Appreciation</th>
+																						<th scope="col" valign="middle">NAV</th>
+																						<th scope="col" valign="middle">Current Value
+																							(Rs.)</th>
 																						<th scope="col" valign="middle">Action</th>
 																					</tr>
 																				</thead>
 																				<tbody>
-																				
+
 																					<c:forEach var="folioList"
 																						items="${listVar.karvyFolioList}"
 																						varStatus="innerloop">
 																						<tr>
 																							<td valign="middle">${folioList.folioNumber }<br>${folioList.fundDescription }
-																								/ ${folioList.schemeCode }
+																								/ ${folioList.bsemfschemeCode }
 																							</td>
-																							<td valign="middle">${folioList.invAmount }</td>
-																							<td valign="middle">${folioList.units }</td>
-																							<td valign="middle">${folioList.marketValue }</td>
+																							<td valign="middle"><fmt:formatNumber
+																									type="currency" pattern="#,##,##,##,###.0000"
+																									minFractionDigits="1" minIntegerDigits="1"
+																									maxFractionDigits="4"
+																									value="${folioList.invAmount }" /></td>
+																							<td valign="middle"><fmt:formatNumber
+																									type="number" pattern="#,##,##,##,###.0000"
+																									minFractionDigits="1" minIntegerDigits="1"
+																									maxFractionDigits="4"
+																									value="${folioList.units }" /></td>
+																							<td valign="middle">${folioList.nav }</td>
+																							<c:choose>
+																								<c:when
+																									test="${folioList.marketValue > folioList.invAmount}">
+																									<td valign="middle"><span
+																										style="color: #30c51e;"> <fmt:formatNumber
+																												type="currency"
+																												pattern="#,##,##,##,###.0000"
+																												minFractionDigits="1" minIntegerDigits="1"
+																												maxFractionDigits="4"
+																												value="${folioList.marketValue }" /></span></td>
+																								</c:when>
+																								<c:when
+																									test="${folioList.marketValue < folioList.invAmount}">
+																									<td valign="middle"><span
+																										style="color: red;"><fmt:formatNumber
+																												type="currency"
+																												pattern="#,##,##,##,###.0000"
+																												minFractionDigits="1" minIntegerDigits="1"
+																												maxFractionDigits="4"
+																												value="${folioList.marketValue }" /></span></td>
+																								</c:when>
+																								<c:otherwise>
+																									<td valign="middle"><span
+																										style="color: grey;"><fmt:formatNumber
+																												type="currency"
+																												pattern="#,##,##,##,###.0000"
+																												minFractionDigits="1" minIntegerDigits="1"
+																												maxFractionDigits="4"
+																												value="${folioList.marketValue }" /></span></td>
+																								</c:otherwise>
+																							</c:choose>
+
 																							<td valign="middle">
 																								<div class="btn-group">
 																									<button type="button"
@@ -590,14 +685,14 @@ table th {
 																									<div class="dropdown-menu dropdown-menu-right">
 																										<button class="dropdown-item" type="button"
 																											style="font-size: 12px; color: #238019; font-weight: 600;"
-																											onclick="AdditionalPurchase('${folioList.folioNumber}','${folioList.schemeCode }','${folioList.trasanctionType }','${listVar.rtaAgent }','${folioList.karvyProductCode }')">
+																											onclick="AdditionalPurchase('${folioList.folioNumber}','${folioList.bsemfschemeCode }','${folioList.trasanctionType }','${listVar.rtaAgent }','${folioList.channelProductCode }')">
 																											Invest More <i class="fas fa-arrow-left"></i>
 																										</button>
 
 																										<c:if test="${folioList.invAmount > 0 }">
 																											<button class="dropdown-item" type="button"
 																												style="font-size: 12px; color: #da2323; font-weight: 600;"
-																												onclick="MFRedeem('${folioList.folioNumber}','${folioList.schemeCode }','${folioList.trasanctionType }','${listVar.rtaAgent }','${folioList.karvyProductCode }')">
+																												onclick="MFRedeem('${folioList.folioNumber}','${folioList.bsemfschemeCode }','${folioList.trasanctionType }','${listVar.rtaAgent }','${folioList.channelProductCode }')">
 																												Redeem <i class="fas fa-arrow-right"></i>
 																											</button>
 																										</c:if>
@@ -606,25 +701,31 @@ table th {
 																							</td>
 																						</tr>
 																					</c:forEach>
-																				
-																					
+
+
 																				</tbody>
 																			</table>
 																		</div>
 																	</div>
 
 																</td>
-																
+
 
 															</tr>
-															
-														<%-- 	<%=counter+=1 %> --%>
+
+															<%-- 	<%=counter+=1 %> --%>
 														</c:forEach>
-														
-														
+
+
 													</tbody>
 
 												</table>
+
+												<p style="font-size: 11px;">
+													**Please contact admin at <a
+														href="mailto:support@freemi.in?Subject=MF%20fund%20balance%20incorrect">support@freemi.in</a>
+													if the data is incorrect or not updated.
+												</p>
 											</div>
 										</c:when>
 										<c:when test="${ORDERHISTORY == 'ERROR' }">
@@ -633,10 +734,11 @@ table th {
 										</c:when>
 										<c:when test="${ORDERHISTORY == 'EMPTY' }">
 											<span>You have not yet purchased any funds.</span>
-											<a href="/products/mutual-funds/funds-explorer">Start investing</a>
+											<a href="/products/mutual-funds/funds-explorer">Start
+												investing</a>
 										</c:when>
 										<c:otherwise>
-										<span>Something went wrong. Kindly contact admin.</span>
+											<span>Something went wrong. Kindly contact admin.</span>
 										</c:otherwise>
 									</c:choose>
 									<div style="overflow-x: auto;"></div>

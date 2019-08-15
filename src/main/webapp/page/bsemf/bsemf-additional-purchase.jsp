@@ -139,7 +139,7 @@
 										</div>
 									</div>
 
-									<div class="form-group row">
+									<%-- <div class="form-group row">
 										<label for="invCategory" class="col-sm-4 col-form-label">Category
 										</label>
 										<div class="col-6 col-md-8 col-lg-8">
@@ -162,7 +162,7 @@
 												</div>
 											</c:if>
 										</div>
-									</div>
+									</div> --%>
 
 									<div class="form-group row">
 										<label for="redeemamount"
@@ -438,7 +438,6 @@
 		x[n].className += " active";
 	}
 </script>
-<script src="<c:url value="${contextcdn}/resources/js/bseinvest.js" />"
-	async="async"></script>
+<script src="<c:url value="${contextcdn}/resources/js/bseinvest.js" />" async="true"></script>
 </html>
 

@@ -213,5 +213,5 @@ table.dataTable thead th, table.dataTable thead td {
 </script>
 
 <script
-	src="<c:url value="${contextPath}/resources/js/investment.js" />"></script>
+	src="<c:url value="${contextcdn}/resources/js/investment.js" />"></script>
 </html>

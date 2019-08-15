@@ -30,30 +30,30 @@ public class MfDataController {
 	BseEntryManager bseEntryManager;
 	
 	@PostMapping(value="/api/navdata/{isin}")
-	@CrossOrigin(origins="*")
+//	@CrossOrigin(origins="www.freemi.in")
 	@ResponseBody
 	public List<MfNavData> getNavDataForIsisn(@RequestBody String navData,@PathVariable(name="isin") String isin, BindingResult result, HttpServletRequest request, HttpServletResponse httpResponse){
 		logger.info("Request received to process Form data");
 //		String response ="SUCCESS";
 		List<MfNavData> navhistorydata = null;
-		List<String> data = null;
+//		List<String> data = null;
 		try{
 			if(!isin.isEmpty()){
 				
 				JSONObject obj = new JSONObject(navData);
 //		        String pageName = obj.getJSONObject("pageInfo").getString("pageName");
-		        String pageName = obj.getString("isin");
-		        System.out.println(pageName);
+		        isin = obj.getString("isin");
+//		        System.out.println(pageName);
 		        
 		        navhistorydata=  bseEntryManager.getnavdataByISIN(isin);
-				System.out.println(navhistorydata);
+//				System.out.println(navhistorydata);
 				
 			}else{
-				logger.info("No isin");
+				logger.info("No isin in api call- " + isin);
 			}
 			
 		}catch(Exception e){
-			logger.error("Error reading data..",e);
+			logger.error("Error reading ISIN nav data..",e);
 		}
 		
 		return navhistorydata;

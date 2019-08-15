@@ -168,5 +168,5 @@ table.dataTable thead th, table.dataTable thead td {
 
 	}
 </script>
-<script src="<c:url value="${contextPath}/resources/js/bseinvest.js" />"></script>
+<script src="<c:url value="${contextcdn}/resources/js/bseinvest.js" />"></script>
 </html>

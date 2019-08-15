@@ -18,7 +18,7 @@ public class RazorpayImpl implements RazorpayPayment {
 	
 	public static final String KEY_ID="rzp_test_EoKq4RCiyXYAgT";
 	public static final String KEY_PASS="l9CRWNhUEKZw5hTv8NDaP3HX";
-	private static final Logger logger = LogManager.getLogger(BirlaConnectorsImplTest.class);
+	private static final Logger logger = LogManager.getLogger(RazorpayImpl.class);
 	
 	@Override
 	public boolean captureInitiatedPayment(String payId, int amount, String PAN) {

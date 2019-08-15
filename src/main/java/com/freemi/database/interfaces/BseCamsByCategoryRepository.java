@@ -15,4 +15,6 @@ public interface BseCamsByCategoryRepository extends JpaRepository<MFCamsValueBy
 	@Query("select p.folioNumber from MFCamsValueByCategroy p where p.amcShort= :amcShortName and p.pan= :panNo")
 	public List<String> getSelectedPortFolio(@Param("amcShortName") String amcShortCode, @Param("panNo") String pan);
 	
+	
+	
 }

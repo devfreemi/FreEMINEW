@@ -10,12 +10,12 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Proxy;
 
+
 @Entity
 //@Table(name="mailback_transactions_karvy_r201_view")
 @Table(name = "investors_balance_view_all")
-
 @Proxy(lazy=false)
-public class MFKarvyValueByCategory implements Serializable {
+public class MfAllInvestorValueByCategory implements Serializable {
 
 	/**
 	 * 
@@ -39,8 +39,8 @@ public class MFKarvyValueByCategory implements Serializable {
 	private String investorName;
 	
 //	@Transient
-	@Column(name="KARVY_PRODUCT_CODE")
-	private String karvyProductCode;
+	@Column(name="CHANNEL_PRODUCT_CODE")
+	private String channelProductCode;
 	 
 	@Column(name="INVESTMENT_AMOUNT")
 	private Double invAmount;
@@ -59,7 +59,7 @@ public class MFKarvyValueByCategory implements Serializable {
 	private String fundDescription;
 	
 	@Column(name="BSEMF_SCHEME_CODE")
-	private String schemeCode;
+	private String bsemfschemeCode;
 
 	@Column(name="AMC_NAME")
 	private String amcName;
@@ -80,131 +80,114 @@ public class MFKarvyValueByCategory implements Serializable {
 	
 	@Column(name = "MARKET_VALUE")
 	private String marketValue;
-	
+
 	public Integer getSerial() {
 		return serial;
 	}
-
 
 	public void setSerial(Integer serial) {
 		this.serial = serial;
 	}
 
-
 	public String getRtaAgent() {
 		return rtaAgent;
 	}
-
 
 	public void setRtaAgent(String rtaAgent) {
 		this.rtaAgent = rtaAgent;
 	}
 
-
 	public String getPan() {
 		return pan;
 	}
-
 
 	public void setPan(String pan) {
 		this.pan = pan;
 	}
 
-
 	public String getFolioNumber() {
 		return folioNumber;
 	}
-
 
 	public void setFolioNumber(String folioNumber) {
 		this.folioNumber = folioNumber;
 	}
 
-
 	public String getInvestorName() {
 		return investorName;
 	}
-
 
 	public void setInvestorName(String investorName) {
 		this.investorName = investorName;
 	}
 
-
-	public String getKarvyProductCode() {
-		return karvyProductCode;
+	public String getChannelProductCode() {
+		return channelProductCode;
 	}
 
-
-	public void setKarvyProductCode(String karvyProductCode) {
-		this.karvyProductCode = karvyProductCode;
+	public void setChannelProductCode(String channelProductCode) {
+		this.channelProductCode = channelProductCode;
 	}
-
 
 	public Double getInvAmount() {
 		return invAmount;
 	}
 
-
 	public void setInvAmount(Double invAmount) {
 		this.invAmount = invAmount;
 	}
-
 
 	public Double getUnits() {
 		return units;
 	}
 
-
 	public void setUnits(Double units) {
 		this.units = units;
 	}
-
 
 	public String getIsin() {
 		return isin;
 	}
 
-
 	public void setIsin(String isin) {
 		this.isin = isin;
 	}
-
 
 	public String getFundDescription() {
 		return fundDescription;
 	}
 
-
 	public void setFundDescription(String fundDescription) {
 		this.fundDescription = fundDescription;
 	}
 
-
-	public String getSchemeCode() {
-		return schemeCode;
+	public String getBsemfschemeCode() {
+		return bsemfschemeCode;
 	}
 
-
-	public void setSchemeCode(String schemeCode) {
-		this.schemeCode = schemeCode;
+	public void setBsemfschemeCode(String bsemfschemeCode) {
+		this.bsemfschemeCode = bsemfschemeCode;
 	}
 
+	public String getAmcName() {
+		return amcName;
+	}
+
+	public void setAmcName(String amcName) {
+		this.amcName = amcName;
+	}
 
 	public String getAmcShort() {
 		return amcShort;
 	}
 
-
 	public void setAmcShort(String amcShort) {
 		this.amcShort = amcShort;
 	}
 
-
 	public String getAmcicon() {
 		return amcicon;
 	}
-
 
 	public void setAmcicon(String amcicon) {
 		this.amcicon = amcicon;
@@ -214,47 +197,29 @@ public class MFKarvyValueByCategory implements Serializable {
 		return nav;
 	}
 
-
 	public void setNav(String nav) {
 		this.nav = nav;
 	}
-
-
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
 
 	public String getTrasanctionType() {
 		return trasanctionType;
 	}
 
-
 	public void setTrasanctionType(String trasanctionType) {
 		this.trasanctionType = trasanctionType;
 	}
-
-
-	public String getAmcName() {
-		return amcName;
-	}
-
-
-	public void setAmcName(String amcName) {
-		this.amcName = amcName;
-	}
-
 
 	public String getMarketValue() {
 		return marketValue;
 	}
 
-
 	public void setMarketValue(String marketValue) {
 		this.marketValue = marketValue;
 	}
-	
-	
 
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+	
 	
 }

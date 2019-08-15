@@ -7,16 +7,16 @@
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>FreEMI privacy policy</title>
 <link
-	href="<c:url value="${contextPath}/resources/css/privacy-policy.component.css"/>"
+	href="<c:url value="${contextcdn}/resources/css/privacy-policy.component.css"/>"
 	rel="stylesheet">
-<link href="<c:url value="${contextPath}/resources/css/styles.css"/>"
+<link href="<c:url value="${contextcdn}/resources/css/styles.css"/>"
 	rel="stylesheet">
-<link href="<c:url value="${contextPath}/resources/css/homePage.css"/>"
+<link href="<c:url value="${contextcdn}/resources/css/homePage.css"/>"
 	rel="stylesheet">
-<link href="<c:url value="${contextPath}/resources/css/animate.css"/>"
+<link href="<c:url value="${contextcdn}/resources/css/animate.css"/>"
 	type="text/css" rel="stylesheet">
 <jsp:include page="include/bootstrap.jsp"></jsp:include>
-<script src="<c:url value="${contextPath}/resources/js/common.js" />"></script>
+<script src="<c:url value="${contextcdn}/resources/js/common.js" />"></script>
 </head>
 <body class="back_set"
 	>

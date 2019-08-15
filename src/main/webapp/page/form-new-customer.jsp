@@ -18,17 +18,17 @@
 
 <!-- <link href="https://fonts.googleapis.com/css?family=Raleway"
 	rel="stylesheet"> -->
-<link href="<c:url value="${contextPath}/resources/css/animate.css"/>"
+<link href="<c:url value="${contextcdn}/resources/css/animate.css"/>"
 	type="text/css" rel="stylesheet">
-<link href="<c:url value="${contextPath}/resources/css/styles.css"/>"
+<link href="<c:url value="${contextcdn}/resources/css/styles.css"/>"
 	rel="stylesheet">
 <link
-	href="<c:url value="${contextPath}/resources/css/investmentform.css"/>"
+	href="<c:url value="${contextcdn}/resources/css/investmentform.css"/>"
 	rel="stylesheet">
 <link
-	href="<c:url value="${contextPath}/resources/css/pace-theme.css"/>"
+	href="<c:url value="${contextcdn}/resources/css/pace-theme.css"/>"
 	rel="stylesheet">
-<script src="<c:url value="${contextPath}/resources/js/pace.min.js" />"></script>
+<script src="<c:url value="${contextcdn}/resources/js/pace.min.js" />"></script>
 
 <jsp:include page="include/bootstrap.jsp"></jsp:include>
 

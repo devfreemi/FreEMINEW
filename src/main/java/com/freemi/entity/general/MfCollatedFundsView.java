@@ -3,7 +3,7 @@ package com.freemi.entity.general;
 import java.util.List;
 
 import com.freemi.entity.investment.MFCamsFolio;
-import com.freemi.entity.investment.MFKarvyValueByCategory;
+import com.freemi.entity.investment.MfAllInvestorValueByCategory;
 
 public class MfCollatedFundsView {
 	
@@ -14,12 +14,13 @@ public class MfCollatedFundsView {
 	private String pan;
 	private String mobile;
 	private Double collaboratedAmount;
+	private Double collaboratedMarketValue;
 	private String amcicon;
 	private String amcShort;
 	private String rtaAgent;
 	
 	List<MFCamsFolio> camsFolioLists;
-	List<MFKarvyValueByCategory> karvyFolioList;
+	List<MfAllInvestorValueByCategory> karvyFolioList;
 
 	public String getFundName() {
 		return fundName;
@@ -93,13 +94,23 @@ public class MfCollatedFundsView {
 		this.camsFolioLists = camsFolioLists;
 	}
 
-	public List<MFKarvyValueByCategory> getKarvyFolioList() {
+	public List<MfAllInvestorValueByCategory> getKarvyFolioList() {
 		return karvyFolioList;
 	}
 
-	public void setKarvyFolioList(List<MFKarvyValueByCategory> karvyFolioList) {
+	public void setKarvyFolioList(List<MfAllInvestorValueByCategory> karvyFolioList) {
 		this.karvyFolioList = karvyFolioList;
 	}
+
+	public Double getCollaboratedMarketValue() {
+		return collaboratedMarketValue;
+	}
+
+	public void setCollaboratedMarketValue(Double collaboratedMarketValue) {
+		this.collaboratedMarketValue = collaboratedMarketValue;
+	}
+
+
 	
 	
 

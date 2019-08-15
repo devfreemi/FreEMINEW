@@ -17,12 +17,12 @@
 
 <jsp:include page="../include/bootstrap.jsp"></jsp:include>
 <link
-	href="<c:url value="${contextPath}/resources/css/bseinvestmentform.css"/>"
+	href="<c:url value="${contextcdn}/resources/css/bseinvestmentform.css"/>"
 	rel="stylesheet">
 <link
-	href="<c:url value="${contextPath}/resources/css/pace-theme.css"/>"
+	href="<c:url value="${contextcdn}/resources/css/pace-theme.css"/>"
 	rel="stylesheet">
-<script src="<c:url value="${contextPath}/resources/js/pace.min.js" />"></script>
+<script src="<c:url value="${contextcdn}/resources/js/pace.min.js" />"></script>
 <!-- <script
 	src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script> -->
 	<!-- <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -116,10 +116,10 @@
 		
 	}); */
 </script>
-<script src="<c:url value="${contextPath}/resources/js/bseinvest.js" />"
+<script src="<c:url value="${contextcdn}/resources/js/bseinvest.js" />"
 	defer="defer"></script>
 <script
-	src="<c:url value="${contextPath}/resources/js/investment.js" />"
+	src="<c:url value="${contextcdn}/resources/js/investment.js" />"
 	defer="defer"></script>
 
 </html>

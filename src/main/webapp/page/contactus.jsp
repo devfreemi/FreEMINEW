@@ -24,7 +24,7 @@
 		<div class="col-md-12 col-lg-12" style="text-align: center">
 			<h3 class="contact_heading">Feedback / Enquiry </h3>
 			<div>
-				<img src="<c:url value="${contextPath}/resources/images/contact_us.png"/>" alt="Contact Us" class="img-fluid" style="width: 160px;">
+				<img src="<c:url value="${contextcdn}/resources/images/contact_us.png"/>" alt="Contact Us" class="img-fluid" style="width: 160px;">
 			</div>
 		</div>
 	</div>

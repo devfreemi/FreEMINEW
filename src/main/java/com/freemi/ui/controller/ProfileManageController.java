@@ -51,7 +51,7 @@ import com.freemi.entity.general.UserProfileLdap;
 import com.freemi.entity.investment.MFCamsFolio;
 import com.freemi.entity.investment.MFCamsValueByCategroy;
 import com.freemi.entity.investment.MFKarvyFundsView;
-import com.freemi.entity.investment.MFKarvyValueByCategory;
+import com.freemi.entity.investment.MfAllInvestorValueByCategory;
 import com.freemi.entity.investment.MFKarvyValueByCategory2;
 //import com.freemi.entity.investment.BseAllTransactionsView;
 import com.freemi.ui.restclient.GoogleSecurity;
@@ -376,6 +376,7 @@ public class ProfileManageController{
 		
 		String returnurl = "";
 		double totalAsset= 0.0;
+		double totalmarketVal= 0.0;
 		if(session.getAttribute("token") == null){
 			try {
 				returnurl="redirect:/login?ref="+ URLEncoder.encode(request.getRequestURL().toString(), StandardCharsets.UTF_8.toString());
@@ -385,69 +386,17 @@ public class ProfileManageController{
 			}
 		}else{
 			returnurl = "my-dashboard3";
-			// Get user's MF order history
-			//This code is for new design. COmment out until deployed in prod
-			
-
-			//ADding- 30-05-2019
 			List<MfCollatedFundsView> listFunds = new ArrayList<MfCollatedFundsView>();
-			
-			/*
-			 * try{ List<MFCamsFolio> fundsOrder = null; List<MFCamsValueByCategroy>
-			 * camscategoryFunds =
-			 * bseEntryManager.getCustomersCamsInvByCategory(session.getAttribute("userid").
-			 * toString(), null); if(camscategoryFunds!= null &&
-			 * camscategoryFunds.size()>=1){ fundsOrder =
-			 * bseEntryManager.getCamsPortfolio(session.getAttribute("userid").toString(),
-			 * ""); for(int i=0;i<camscategoryFunds.size();i++){
-			 * 
-			 * MfCollatedFundsView currentFund = new MfCollatedFundsView();
-			 * 
-			 * currentFund.setAmcicon(camscategoryFunds.get(i).getAmcicon());
-			 * currentFund.setAmcShort(camscategoryFunds.get(i).getAmcShort());
-			 * currentFund.setCollaboratedAmount(camscategoryFunds.get(i).
-			 * getCollaboratedAmount());
-			 * currentFund.setFolioNumber(camscategoryFunds.get(i).getFolioNumber());
-			 * currentFund.setRtaAgent(camscategoryFunds.get(i).getRtaAgent());
-			 * currentFund.setFundName(camscategoryFunds.get(i).getFundName());
-			 * 
-			 * List<MFCamsFolio> fundsOrderCategory = new ArrayList<MFCamsFolio>(); //
-			 * totalAsset+=fundsOrder.get(i).getSchemeInvestment();
-			 * totalAsset+=camscategoryFunds.get(i).getCollaboratedAmount(); for(int
-			 * j=0;j<fundsOrder.size();j++){
-			 * if(camscategoryFunds.get(i).getFundName().equalsIgnoreCase(fundsOrder.get(j).
-			 * getFundName())){ fundsOrderCategory.add(fundsOrder.get(j));
-			 * 
-			 * }
-			 * 
-			 * } currentFund.setCamsFolioLists(fundsOrderCategory);
-			 * camscategoryFunds.get(i).setCamsFolioLists(fundsOrderCategory);
-			 * listFunds.add(currentFund);
-			 * 
-			 * }
-			 * 
-			 * logger.info("Total Amount under CAMS fund- "+ totalAsset);
-			 * 
-			 * 
-			 * 
-			 * //map.addAttribute("ORDERHISTORY", "SUCCESS"); }else{
-			 * //map.addAttribute("ORDERHISTORY", "EMPTY"); } }catch(Exception ex){
-			 * map.addAttribute("ORDERHISTORY", "ERROR");
-			 * logger.error("Failed to fetch cutomer Registry details \n", ex); }
-			 */
-			
-			
-			/*KARVY*/
 
 			try{
-				List<MFKarvyValueByCategory> allMFFunds= null;
-				List<MFKarvyValueByCategory2> karvyFunds2= null;
+				List<MfAllInvestorValueByCategory> allMFFunds= null;
+//				List<MFKarvyValueByCategory2> karvyFunds2= null;
 //				List<MFKarvyValueByCategory> categorykarvyFunds= new ArrayList<MFKarvyValueByCategory>();
-				List<MFKarvyValueByCategory> categorykarvyFunds= null;
+				List<MfAllInvestorValueByCategory> categorykarvyFunds= null;
 				List<MFKarvyFundsView> karvyview = new ArrayList<MFKarvyFundsView>();
-				logger.info("Search for KARVY related folios for customer.");
+				logger.info("Search for ALL related folios for customer.");
 				List<String> uniquefundShort = new ArrayList<String>();
-				allMFFunds = bseEntryManager.getCustomersKarvyInvByCategory(session.getAttribute("userid").toString(), null);
+				allMFFunds = bseEntryManager.getCustomersAllFoliosByCategory(session.getAttribute("userid").toString(), null);
 //				karvyFunds2 = bseEntryManager.getCustomersKarvyInvByCategory2(session.getAttribute("userid").toString(), null);
 				
 				/*
@@ -461,9 +410,15 @@ public class ProfileManageController{
 					uniquefundShort.add(allMFFunds.get(j).getAmcShort());
 
 					totalAsset+=allMFFunds.get(j).getInvAmount();
+					
+					try {
+						totalmarketVal+=Double.valueOf(allMFFunds.get(j).getMarketValue());
+					}catch(Exception e) {
+						logger.error("Error adding market value -  "+ allMFFunds.get(j).getMarketValue());
+					}
 				}
 				
-				logger.info("Total asset after Karvy calculatio- "+ totalAsset);
+				logger.info("Total asset after ALL MF calculation- "+ totalAsset);
 				
 				if(allMFFunds !=null){
 					logger.info("Total karvy Folio found of customer - " + allMFFunds.size());
@@ -473,10 +428,11 @@ public class ProfileManageController{
 					logger.info("Unique funds from karvy house - "+ uniquefundShort);
 
 					for(int x=0;x<uniquefundShort.size();x++){
-						MFKarvyFundsView selectedKarvy = new MFKarvyFundsView();
+						MFKarvyFundsView selectedAMC = new MFKarvyFundsView();
 						MfCollatedFundsView currentFund = new MfCollatedFundsView();
-						categorykarvyFunds= new ArrayList<MFKarvyValueByCategory>();
-						Double calcKarvyVal=0.0;
+						categorykarvyFunds= new ArrayList<MfAllInvestorValueByCategory>();
+						Double totalAMCInvestedVal=0.0;
+						Double amcMarketValue=0.0;
 						for(int y=0;y<allMFFunds.size();y++){
 							logger.info(uniquefundShort.get(x) + " -> "+ allMFFunds.get(y).getAmcShort());
 							if(uniquefundShort.get(x).equals(allMFFunds.get(y).getAmcShort())){
@@ -497,13 +453,20 @@ public class ProfileManageController{
 									logger.info("Set common KARVY fund name- "+ allMFFunds.get(y).getAmcName());
 								}
 								
-								calcKarvyVal+=allMFFunds.get(y).getInvAmount();
-
-								if(selectedKarvy.getAmcicon()==null){
-									selectedKarvy.setAmcicon(allMFFunds.get(y).getAmcicon());
+//								Calculate AMC total invested value and its current market value
+								totalAMCInvestedVal+=allMFFunds.get(y).getInvAmount();
+								try {
+									amcMarketValue+=Double.valueOf(allMFFunds.get(y).getMarketValue());
+								}catch(Exception e) {
+									logger.error("unable to calculate market value. Adding 0 to add",e);
+									amcMarketValue+=0;
 								}
-								if(selectedKarvy.getFunName()==null){
-									selectedKarvy.setFunName(allMFFunds.get(y).getFundDescription());;
+								
+								if(selectedAMC.getAmcicon()==null){
+									selectedAMC.setAmcicon(allMFFunds.get(y).getAmcicon());
+								}
+								if(selectedAMC.getFunName()==null){
+									selectedAMC.setFunName(allMFFunds.get(y).getFundDescription());;
 								}
 								
 									
@@ -511,14 +474,17 @@ public class ProfileManageController{
 
 
 							}
-							selectedKarvy.setTotalInvestment(calcKarvyVal);
-							selectedKarvy.setCategorizedFund(categorykarvyFunds);
-							currentFund.setCollaboratedAmount(calcKarvyVal);
+							selectedAMC.setTotalInvestment(totalAMCInvestedVal);
+							selectedAMC.setTotalMarketValue(amcMarketValue);
+							selectedAMC.setCategorizedFund(categorykarvyFunds);
+							
+							currentFund.setCollaboratedAmount(totalAMCInvestedVal);
+							currentFund.setCollaboratedMarketValue(amcMarketValue);
 							currentFund.setKarvyFolioList(categorykarvyFunds);
 							
 						}
 						
-						karvyview.add(selectedKarvy);
+						karvyview.add(selectedAMC);
 						listFunds.add(currentFund);
 						
 //						logger.info("Total amounts under KARVY- "+ currentFund.getCollaboratedAmount());
@@ -551,6 +517,7 @@ public class ProfileManageController{
 		}
 		
 		map.addAttribute("totalasset", totalAsset);
+		map.addAttribute("totalmarketval", totalmarketVal);
 		map.addAttribute("contextcdn", environment.getProperty(CommonConstants.CDN_URL));
 		
 		return returnurl;

@@ -8,12 +8,12 @@
 <html>
 <head>
 <link
-	href="<c:url value="${contextPath}/resources/css/user-profile.component.css"/>"
+	href="<c:url value="${contextcdn}/resources/css/user-profile.component.css"/>"
 	rel="stylesheet">
-<link href="<c:url value="${contextPath}/resources/css/styles.css"/>"
+<link href="<c:url value="${contextcdn}/resources/css/styles.css"/>"
 	rel="stylesheet">
 <jsp:include page="include/bootstrap.jsp"></jsp:include>
-<script src="<c:url value="${contextPath}/resources/js/profile.js" />"></script>
+<script src="<c:url value="${contextcdn}/resources/js/profile.js" />"></script>
 </head>
 <body class="back_set" onload="formOnLoad();">
 	<jsp:include page="include/header.jsp"></jsp:include>

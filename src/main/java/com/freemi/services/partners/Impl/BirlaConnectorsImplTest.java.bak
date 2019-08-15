@@ -29,7 +29,6 @@ import com.freemi.controller.interfaces.InvestmentConnectorInterfaces;
 import com.freemi.entity.birla.GetFPurchaseBanksInput;
 import com.freemi.entity.birla.GetFPurchaseBanksOutput;
 import com.freemi.entity.birla.GetFPurchaseBranchInput;
-import com.freemi.entity.birla.GetFPurchaseBranchOutput;
 import com.freemi.entity.birla.GetIRDetailsForFolioInput;
 import com.freemi.entity.birla.GetIRDetailsForFolioOutput;
 import com.freemi.entity.birla.GetProductDetailsInput;

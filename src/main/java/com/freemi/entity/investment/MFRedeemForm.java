@@ -18,20 +18,23 @@ public class MFRedeemForm implements Serializable{
 	private Date redemptionTime;
 	private String fundName="";
 	private String investType="";
-	private double availableAmount=0.0;
+	private Double availableAmount=0.0;
 	private String redeemByUnits="";
 	private boolean redeemAll;
 	private String redeemByAmounts="";
-	private double redeemUnits=0.0;
-	private double redeemAmounts=0.0;
-	private double totalUnits=0.0;
-	private double totalValue=0.0;
+	private Double redeemUnits=0.0;
+	private Double redeemAmounts=0.0;
+	private Double totalUnits=0.0;
+	private Double totalValue=0.0;
+	private String currentnav;
+	private String navDate;
+	private Double marketValue;
+	
 	private String registeredBank="";
 	private boolean agreePolicy;
 	private String requestorSystemIp="";
 	private String requestorSystem="";
 	private String cancelOrderTransId="";
-	
 	public String getRedeemTransId() {
 		return redeemTransId;
 	}
@@ -50,11 +53,35 @@ public class MFRedeemForm implements Serializable{
 	public void setPortfolio(String portfolio) {
 		this.portfolio = portfolio;
 	}
+	public String getUnitHolderName() {
+		return unitHolderName;
+	}
+	public void setUnitHolderName(String unitHolderName) {
+		this.unitHolderName = unitHolderName;
+	}
+	public Date getRedemptionTime() {
+		return redemptionTime;
+	}
+	public void setRedemptionTime(Date redemptionTime) {
+		this.redemptionTime = redemptionTime;
+	}
 	public String getFundName() {
 		return fundName;
 	}
 	public void setFundName(String fundName) {
 		this.fundName = fundName;
+	}
+	public String getInvestType() {
+		return investType;
+	}
+	public void setInvestType(String investType) {
+		this.investType = investType;
+	}
+	public Double getAvailableAmount() {
+		return availableAmount;
+	}
+	public void setAvailableAmount(Double availableAmount) {
+		this.availableAmount = availableAmount;
 	}
 	public String getRedeemByUnits() {
 		return redeemByUnits;
@@ -62,36 +89,59 @@ public class MFRedeemForm implements Serializable{
 	public void setRedeemByUnits(String redeemByUnits) {
 		this.redeemByUnits = redeemByUnits;
 	}
+	public boolean isRedeemAll() {
+		return redeemAll;
+	}
+	public void setRedeemAll(boolean redeemAll) {
+		this.redeemAll = redeemAll;
+	}
 	public String getRedeemByAmounts() {
 		return redeemByAmounts;
 	}
 	public void setRedeemByAmounts(String redeemByAmounts) {
 		this.redeemByAmounts = redeemByAmounts;
 	}
-	
-	public double getRedeemUnits() {
+	public Double getRedeemUnits() {
 		return redeemUnits;
 	}
-	public void setRedeemUnits(double redeemUnits) {
+	public void setRedeemUnits(Double redeemUnits) {
 		this.redeemUnits = redeemUnits;
 	}
-	public double getRedeemAmounts() {
+	public Double getRedeemAmounts() {
 		return redeemAmounts;
 	}
-	public void setRedeemAmounts(double redeemAmounts) {
+	public void setRedeemAmounts(Double redeemAmounts) {
 		this.redeemAmounts = redeemAmounts;
 	}
-	public double getTotalUnits() {
+	public Double getTotalUnits() {
 		return totalUnits;
 	}
-	public void setTotalUnits(double totalUnits) {
+	public void setTotalUnits(Double totalUnits) {
 		this.totalUnits = totalUnits;
 	}
-	public double getTotalValue() {
+	public Double getTotalValue() {
 		return totalValue;
 	}
-	public void setTotalValue(double totalValue) {
+	public void setTotalValue(Double totalValue) {
 		this.totalValue = totalValue;
+	}
+	public String getCurrentnav() {
+		return currentnav;
+	}
+	public void setCurrentnav(String currentnav) {
+		this.currentnav = currentnav;
+	}
+	public String getNavDate() {
+		return navDate;
+	}
+	public void setNavDate(String navDate) {
+		this.navDate = navDate;
+	}
+	public Double getMarketValue() {
+		return marketValue;
+	}
+	public void setMarketValue(Double marketValue) {
+		this.marketValue = marketValue;
 	}
 	public String getRegisteredBank() {
 		return registeredBank;
@@ -99,7 +149,6 @@ public class MFRedeemForm implements Serializable{
 	public void setRegisteredBank(String registeredBank) {
 		this.registeredBank = registeredBank;
 	}
-	
 	public boolean isAgreePolicy() {
 		return agreePolicy;
 	}
@@ -118,45 +167,15 @@ public class MFRedeemForm implements Serializable{
 	public void setRequestorSystem(String requestorSystem) {
 		this.requestorSystem = requestorSystem;
 	}
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-	public String getUnitHolderName() {
-		return unitHolderName;
-	}
-	public void setUnitHolderName(String unitHolderName) {
-		this.unitHolderName = unitHolderName;
-	}
-	public Date getRedemptionTime() {
-		return redemptionTime;
-	}
-	public void setRedemptionTime(Date redemptionTime) {
-		this.redemptionTime = redemptionTime;
-	}
-	public String getInvestType() {
-		return investType;
-	}
-	public void setInvestType(String investType) {
-		this.investType = investType;
-	}
-	public double getAvailableAmount() {
-		return availableAmount;
-	}
-	public void setAvailableAmount(double availableAmount) {
-		this.availableAmount = availableAmount;
-	}
 	public String getCancelOrderTransId() {
 		return cancelOrderTransId;
 	}
 	public void setCancelOrderTransId(String cancelOrderTransId) {
 		this.cancelOrderTransId = cancelOrderTransId;
 	}
-	public boolean isRedeemAll() {
-		return redeemAll;
-	}
-	public void setRedeemAll(boolean redeemAll) {
-		this.redeemAll = redeemAll;
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 	
-	
+		
 }

@@ -14,13 +14,13 @@
 <meta name="author" content="https://www.freemi.in" />
 <jsp:include page="../include/bootstrap.jsp"></jsp:include>
 <link
-	href="<c:url value="${contextPath}/resources/css/bseinvestmentform.css"/>"
+	href="<c:url value="${contextcdn}/resources/css/bseinvestmentform.css"/>"
 	rel="stylesheet">
 <link
-	href="<c:url value="${contextPath}/resources/css/pace-theme.css"/>"
+	href="<c:url value="${contextcdn}/resources/css/pace-theme.css"/>"
 	rel="stylesheet">
-<script src="<c:url value="${contextPath}/resources/js/pace.min.js" />"></script>
-<script src="<c:url value="${contextPath}/resources/js/bseinvest.js" />"></script>
+<script src="<c:url value="${contextcdn}/resources/js/pace.min.js" />"></script>
+<script src="<c:url value="${contextcdn}/resources/js/bseinvest.js" />"></script>
 </head>
 <body>
 	<jsp:include page="../include/GoogleBodyTag.jsp"></jsp:include>

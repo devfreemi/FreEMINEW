@@ -23,7 +23,7 @@
 	rel="stylesheet">
 <script src="<c:url value="${contextcdn}/resources/js/pace.min.js" />"></script>
 <script
-	src="<c:url value="${contextPath}/resources/js/investment.js" />"></script>
+	src="<c:url value="${contextcdn}/resources/js/investment.js" />"></script>
 
 <jsp:include page="../include/bootstrap.jsp"></jsp:include>
 </head>

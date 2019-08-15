@@ -10,12 +10,12 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Tax Calculator</title>
 <link
-	href="<c:url value="${contextPath}/resources/css/registry.tax-calculator.css"/>"
+	href="<c:url value="${contextcdn}/resources/css/registry.tax-calculator.css"/>"
 	rel="stylesheet">
-<link href="<c:url value="${contextPath}/resources/css/styles.css"/>"
+<link href="<c:url value="${contextcdn}/resources/css/styles.css"/>"
 	rel="stylesheet">
 <script
-	src="<c:url value="${contextPath}/resources/js/taxCalculator.js" />"></script>
+	src="<c:url value="${contextcdn}/resources/js/taxCalculator.js" />"></script>
 <jsp:include page="include/bootstrap.jsp"></jsp:include>
 </head>
 

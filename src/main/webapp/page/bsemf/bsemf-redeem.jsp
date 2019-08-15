@@ -111,7 +111,7 @@
 												</div>
 											</div>
 
-											<div class="form-group row">
+											<%-- <div class="form-group row">
 												<label for="investtype"
 													class="col-6 col-md-4 col-lg-4 col-form-label col-form-label-sm">Investment
 													Type:</label>
@@ -120,15 +120,25 @@
 														readonly="true"
 														class="form-control form-control-sm form-control-plaintext" />
 												</div>
-											</div>
+											</div> --%>
 
 
 											<div class="form-group row">
 												<label for="availableFund"
-													class="col-6 col-md-4 col-lg-4 col-form-label col-form-label-sm">Available
+													class="col-6 col-md-4 col-lg-4 col-form-label col-form-label-sm">Invested
 													Amount:</label>
 												<div class="col-6 col-md-8 col-lg-8">
 													<form:input path="totalValue" id="availableFund"
+														readonly="true"
+														class="form-control form-control-sm form-control-plaintext" />
+												</div>
+											</div>
+											
+											<div class="form-group row">
+												<label for="availableFund"
+													class="col-6 col-md-4 col-lg-4 col-form-label col-form-label-sm">Current value:</label>
+												<div class="col-6 col-md-8 col-lg-8">
+													<form:input path="marketValue" id="marketVal"
 														readonly="true"
 														class="form-control form-control-sm form-control-plaintext" />
 												</div>
@@ -423,7 +433,7 @@
 			function() {
 				//Verify amount is less than available amount
 
-				var availamount = Number($("#availableFund").val());
+				var availamount = Number($("#marketVal").val());
 				var redeemamount = Number($("#redeemamount").val());
 				//console.log("Remeem amount- "+ redeemamount);
 				if (!isNaN(redeemamount)) {

@@ -16,11 +16,11 @@
 
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Freemi Product</title>
-<link href="<c:url value="${contextPath}/resources/css/freeEmi.css"/>"
+<link href="<c:url value="${contextcdn}/resources/css/freeEmi.css"/>"
 	rel="stylesheet">
-<link href="<c:url value="${contextPath}/resources/css/styles.css"/>"
+<link href="<c:url value="${contextcdn}/resources/css/styles.css"/>"
 	rel="stylesheet">
-<script src="<c:url value="${contextPath}/resources/js/freemi.js" />"></script>
+<script src="<c:url value="${contextcdn}/resources/js/freemi.js" />"></script>
 <jsp:include page="include/bootstrap.jsp"></jsp:include>
 </head>
 
@@ -32,7 +32,7 @@
 		<div class="topic_spacing">
 			<div style="padding-left: 2px;">
 				<img
-					src="<c:url value="${contextPath}/resources/images/freemi_icon1.png"/>"
+					src="<c:url value="${contextcdn}/resources/images/freemi_icon1.png"/>"
 					class="img-fluid" style="width: 50px;">
 			</div>
 			<div style="margin-left: 15px;">
@@ -89,7 +89,7 @@
 
 		<div style="text-align: center;">
 			<a href="${contextPath}/register" style="text-decoration: none"><img
-				src="<c:url value="${contextPath}/resources/images/signup.png"/>"
+				src="<c:url value="${contextcdn}/resources/images/signup.png"/>"
 				class="img-fluid" style="height: 60px;"></a>
 		</div>
 
@@ -102,7 +102,7 @@
 
 				<div class="background">
 					<img id="change_img"
-						src="<c:url value="${contextPath}/resources/images/loan1.png"/>"
+						src="<c:url value="${contextcdn}/resources/images/loan1.png"/>"
 						class="img-fluid">
 				</div>
 			</div>

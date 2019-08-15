@@ -81,7 +81,7 @@ import com.freemi.entity.investment.BseMandateDetails;
 import com.freemi.entity.investment.BsemfTransactionHistory;
 import com.freemi.entity.investment.MFAdditionalPurchaseForm;
 import com.freemi.entity.investment.MFCamsFolio;
-import com.freemi.entity.investment.MFKarvyValueByCategory;
+import com.freemi.entity.investment.MfAllInvestorValueByCategory;
 import com.freemi.entity.investment.MFRedeemForm;
 import com.freemi.entity.investment.SelectMFFund;
 import com.freemi.entity.investment.TransactionStatus;
@@ -771,8 +771,9 @@ public class BsemfController {
 		//		System.out.println("Funds explorer- session: "+ session.getId());
 		/*PageRequest p =new PageRequest(0, 200);
 		Pageable pg = p.first();*/
-
-		List<BseMFSelectedFunds> funds=  bseEntryManager.getAllSelectedFunds();
+		List<BseMFSelectedFunds> funds=null;
+			funds=  bseEntryManager.getAllSelectedFunds();
+		
 		logger.info("Total selected funds to display- "+ (funds!=null?funds.size():"NULL returned"));
 		/*logger.info("Paginated fundss- "+ b.getSize());
 		logger.info("Total pages- "+ b.getTotalPages());
@@ -986,7 +987,8 @@ public class BsemfController {
 					}
 					
 					logger.info("Search for customer portfolio for details: "+ selectedFund.getAmcCode() + " :PAN : "+ customerData.get(0).getClientID() + " : RTA Agent: "+ selectedFund.getRtaAgent());
-					customerPortfolios = bseEntryManager.getSelectedAmcPortfolio(selectedFund.getAmcCode(), selectedFund.getPan(),selectedFund.getRtaAgent());
+					
+					customerPortfolios = bseEntryManager.getSelectedAmcPortfolio(selectedFund.getSchemeCode(), selectedFund.getPan(),selectedFund.getRtaAgent());
 
 					if(customerPortfolios!=null){
 						logger.info("Portfolio size- "+ customerPortfolios!=null? customerPortfolios.size() : "No portfolio data found..");
@@ -1320,8 +1322,8 @@ public class BsemfController {
 		logger.debug("Additional purchase -"+ decodedString);
 
 		MFAdditionalPurchaseForm purchaseForm = new MFAdditionalPurchaseForm();
-		MFKarvyValueByCategory karvyFund= null;
-		MFCamsFolio folioDetails = null;
+		MfAllInvestorValueByCategory customerFundDetails= null;
+//		MFCamsFolio folioDetails = null;
 
 		if(session.getAttribute("userid")!=null || session.getAttribute("token")!=null){
 			if(purchasedata!=null){
@@ -1332,35 +1334,45 @@ public class BsemfController {
 					String investType = decodedString.get(2)!=null?decodedString.get(2):"SIP";
 					String rtaAgent = decodedString.get(3)!=null?decodedString.get(3):"BLANK";
 					String productCode = decodedString.get(4)!=null?decodedString.get(4):"BLANK";
-					BseMFSelectedFunds selectedCodeFundDetails = null;
+//					BseMFSelectedFunds selectedCodeFundDetails = null;
 					//					BseAllTransactionsView bseSeletedFundDetails= bseEntryManager.getFundDetailsForAdditionalPurchase(portfolio, schemeCode,investType, session.getAttribute("userid").toString());
 					logger.info("bsemfAdditionalFundsPurchaseModeGet(): Details of request for additional purchase:[portfolio:rtacode:rtaAgent:productCode:investType]"+ portfolio+ ":"+rtaCode+ ":"+rtaAgent+ ":"+productCode+ ":"+investType);
 					if(rtaAgent.equals("CAMS")){
-						folioDetails =  bseEntryManager.getCamsFundsDetailsForRedeem(productCode, session.getAttribute("userid").toString(), portfolio);
-						selectedCodeFundDetails = bseEntryManager.getFundsByCode(productCode,null);
+						customerFundDetails =  bseEntryManager.getCamsFundsDetailsForRedeem(productCode, session.getAttribute("userid").toString(), portfolio);
+//						selectedCodeFundDetails = bseEntryManager.getFundsByCode(productCode,null);
 						
-						purchaseForm.setPortfolio(folioDetails.getFolioNumber());
-						purchaseForm.setFundName(folioDetails.getFundName());
-						purchaseForm.setTotalAvailableAmount(folioDetails.getInvAmount());
-						purchaseForm.setUnitHolderName(folioDetails.getInvestorName());
+						/*
+						 * purchaseForm.setPortfolio(folioDetails.getFolioNumber());
+						 * purchaseForm.setFundName(folioDetails.getFundName());
+						 * purchaseForm.setTotalAvailableAmount(folioDetails.getInvAmount());
+						 * purchaseForm.setUnitHolderName(folioDetails.getInvestorName());
+						 */
 					}else if(rtaAgent.equals("KARVY")){
-						karvyFund = bseEntryManager.getKarvyFundsDetailsForRedeem(productCode, session.getAttribute("userid").toString(), portfolio);
-						selectedCodeFundDetails = bseEntryManager.getFundsByCode(rtaCode,karvyFund.getIsin());
-
-						purchaseForm.setPortfolio(karvyFund.getFolioNumber());
-						purchaseForm.setFundName(karvyFund.getFundDescription());
-						purchaseForm.setTotalAvailableAmount(karvyFund.getInvAmount());
-						purchaseForm.setUnitHolderName(karvyFund.getInvestorName());
+						customerFundDetails = bseEntryManager.getKarvyFundsDetailsForRedeem(productCode, session.getAttribute("userid").toString(), portfolio);
+						/*
+						 * selectedCodeFundDetails =
+						 * bseEntryManager.getFundsByCode(rtaCode,customerFundDetails.getIsin());
+						 * 
+						 * purchaseForm.setPortfolio(customerFundDetails.getFolioNumber());
+						 * purchaseForm.setFundName(customerFundDetails.getFundDescription());
+						 * purchaseForm.setTotalAvailableAmount(customerFundDetails.getInvAmount());
+						 * purchaseForm.setUnitHolderName(customerFundDetails.getInvestorName());
+						 */
 					}else {
 						logger.info("Provided RTA AGENT not supported : " + rtaAgent);
 					}
 
-					if(selectedCodeFundDetails==null){
+					if(customerFundDetails==null){
 						logger.info("Failed to find related BSE scheme details with scheme code / RTA code- "+ rtaCode);
-						purchaseForm.setGrowthSchemeCode(karvyFund.getSchemeCode());
+						
 					}else{
-						purchaseForm.setGrowthSchemeCode(selectedCodeFundDetails.getGrowthSchemeCode());
-						purchaseForm.setReinvSchemeCode(selectedCodeFundDetails.getReinvSchemeCode());
+						purchaseForm.setGrowthSchemeCode(customerFundDetails.getBsemfschemeCode());
+						purchaseForm.setPortfolio(customerFundDetails.getFolioNumber());
+						purchaseForm.setFundName(customerFundDetails.getFundDescription());
+						purchaseForm.setTotalAvailableAmount(customerFundDetails.getInvAmount());
+						purchaseForm.setUnitHolderName(customerFundDetails.getInvestorName());
+//						purchaseForm.setGrowthSchemeCode(customerFundDetails.getGrowthSchemeCode());
+//						purchaseForm.setReinvSchemeCode(customerFundDetails.getReinvSchemeCode());
 					}
 
 
@@ -1509,74 +1521,93 @@ public class BsemfController {
 	public String bseRedeemMfFundsGet(@RequestParam("r") String purchasedata,@ModelAttribute("TRANS_STATUS") String transStatus,@ModelAttribute("TRANS_ID") String transId,Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 
 		logger.info("@@ BSE MF STAR MF redeem controller @@");
-		String returnUrl = "bsemf/bsemf-cancel-order";
+		String returnUrl = "bsemf/bsemf-redeem";
 
 		List<String> decodedString= Arrays.asList(Base64Coder.decodeString(purchasedata).toString().split("\\|"));
-		logger.info(decodedString);
+		logger.info("bseRedeemMfFundsGet(): Decoded string from pathparam- " + decodedString);
 
 		MFRedeemForm redeemForm = new MFRedeemForm();
-		MFKarvyValueByCategory karvyFund= null;
-		MFCamsFolio folioDetails = null;
+		MfAllInvestorValueByCategory customerFundDetails= null;
+//		MFCamsFolio folioDetails = null;
 
 		try{
 			String portfolio =decodedString.get(0)!=null?decodedString.get(0):"NA";
-			String rtaCode = decodedString.get(1)!=null?decodedString.get(1):"NA";
+			String bsemfSchemeCode = decodedString.get(1)!=null?decodedString.get(1):"NA";
 			String investType = decodedString.get(2)!=null?decodedString.get(2):"NA";
 
 			String rtaAgent = decodedString.get(3)!=null?decodedString.get(3):"BLANK";
-			String productCode = decodedString.get(4)!=null?decodedString.get(4):"BLANK";
+			String channelPartnerCode = decodedString.get(4)!=null?decodedString.get(4):"BLANK";
 //			BseMFSelectedFunds selectedCodeFundDetails = null;
 
-			logger.info("bsemfAdditionalFundsPurchaseModeGet(): Details of request for additional purchase:[portfolio:rtacode:rtaAgent:productCode:investType]"+ portfolio+ ":"+rtaCode+ ":"+rtaAgent+ ":"+productCode+ ":"+investType);
+			logger.info("bsemfAdditionalFundsPurchaseModeGet(): Details of request for additional purchase:[portfolio:rtacode:rtaAgent:productCode:investType]"+ portfolio+ ":"+bsemfSchemeCode+ ":"+rtaAgent+ ":"+channelPartnerCode+ ":"+investType);
 			//			BseAllTransactionsView bseSeletedFundDetails= bseEntryManager.getFundDetailsForRedemption(portfolio, schemeCode,investType, session.getAttribute("userid").toString());
 			//			MFCamsFolio folioDetails =  bseEntryManager.getCamsFundsDetailsForRedeem(schemeCode, session.getAttribute("userid").toString(), portfolio);
 			
-			logger.info("Details requested for redeem- "+ portfolio + " : "+ rtaCode + " : "+ rtaAgent + " : "+ productCode);
+//			logger.info("Details requested for redeem- "+ portfolio + " : "+ bsemfSchemeCode + " : "+ rtaAgent + " : "+ channelPartnerCode);
 			
 			if(rtaAgent.equals("CAMS")){
-				folioDetails =  bseEntryManager.getCamsFundsDetailsForRedeem(rtaCode, session.getAttribute("userid").toString(), portfolio);
+				logger.info("Redeeming CAMS category fund");
+				customerFundDetails =  bseEntryManager.getCamsFundsDetailsForRedeem(channelPartnerCode, session.getAttribute("userid").toString(), portfolio);
 //				selectedCodeFundDetails = bseEntryManager.getFundsByCode(rtaCode,null);
 
-				if(folioDetails == null){
-					logger.info("No CAMS funds found to process for redeem for portfolio: "+ portfolio);
-					map.addAttribute("FUNDAVAILABLE", "N");
-					map.addAttribute("error", "No fund value to redeem. Please select appropriate fund for redemption.");
-				}else{
-					map.addAttribute("FUNDAVAILABLE", "Y");
-					redeemForm.setPortfolio(folioDetails.getFolioNumber());
-					redeemForm.setFundName(folioDetails.getFundName());
-					redeemForm.setRedeemAmounts(folioDetails.getInvAmount());
-					redeemForm.setUnitHolderName(folioDetails.getInvestorName());
-
-					redeemForm.setInvestType(folioDetails.getTrasanctionType()!=null?folioDetails.getTrasanctionType():"NA");
-					redeemForm.setTotalValue(folioDetails.getInvAmount());
-					
-					redeemForm.setSchemeCode(folioDetails.getSchemeCode());
-				}
-			}else{
+				/*
+				 * if(folioDetails == null){
+				 * logger.info("No CAMS funds found to process for redeem for portfolio: "+
+				 * portfolio); map.addAttribute("FUNDAVAILABLE", "N"); map.addAttribute("error",
+				 * "No fund value to redeem. Please select appropriate fund for redemption.");
+				 * }else{ map.addAttribute("FUNDAVAILABLE", "Y");
+				 * redeemForm.setPortfolio(folioDetails.getFolioNumber());
+				 * redeemForm.setFundName(folioDetails.getFundName());
+				 * redeemForm.setRedeemAmounts(folioDetails.getInvAmount());
+				 * redeemForm.setUnitHolderName(folioDetails.getInvestorName());
+				 * 
+				 * redeemForm.setInvestType(folioDetails.getTrasanctionType()!=null?folioDetails
+				 * .getTrasanctionType():"NA");
+				 * redeemForm.setTotalValue(folioDetails.getInvAmount());
+				 * 
+				 * redeemForm.setSchemeCode(folioDetails.getSchemeCode()); }
+				 */
+			}else if(rtaAgent.equals("KARVY")){
 //				karvyFund = bseEntryManager.getKarvyFundsDetailsForRedeem(rtaCode, session.getAttribute("userid").toString(), portfolio);
-				karvyFund = bseEntryManager.getKarvyFundsDetailsForRedeem(productCode, session.getAttribute("userid").toString(), portfolio);
-				
-				if(karvyFund == null){
-					logger.info("No KARVY related funds found to process for portfolio: "+ portfolio);
-					map.addAttribute("FUNDAVAILABLE", "N");
-					map.addAttribute("error", "No fund value to redeem. Please select appropriate fund for redemption.");
-				}else{
-//					selectedCodeFundDetails = bseEntryManager.getFundsByCode(productCode,karvyFund.getIsin());
-					map.addAttribute("FUNDAVAILABLE", "Y");
-					redeemForm.setPortfolio(karvyFund.getFolioNumber());
-					redeemForm.setFundName(karvyFund.getFundDescription());
-					redeemForm.setRedeemAmounts(karvyFund.getInvAmount());
-					redeemForm.setUnitHolderName(karvyFund.getInvestorName());
-
-					redeemForm.setInvestType(karvyFund.getTrasanctionType()!=null?karvyFund.getTrasanctionType():"NA");
-					redeemForm.setTotalValue(karvyFund.getInvAmount());
-					
-					redeemForm.setSchemeCode(karvyFund.getSchemeCode());
-
-				}
+				logger.info("Redeeming KARVY category fund");
+				customerFundDetails = bseEntryManager.getKarvyFundsDetailsForRedeem(channelPartnerCode, session.getAttribute("userid").toString(), portfolio);
+			}else {
+				logger.info("bseRedeemMfFundsGet(): Invalid RTA agent. Cannot process redemption.- "+ rtaAgent);
 			}
 			
+			
+			if(customerFundDetails == null){
+				logger.info("No related funds found to process for portfolio for the customer with folio: "+ portfolio);
+				map.addAttribute("FUNDAVAILABLE", "N");
+				map.addAttribute("error", "No fund value to redeem. Please select appropriate fund for redemption.");
+			}else{
+//				selectedCodeFundDetails = bseEntryManager.getFundsByCode(productCode,karvyFund.getIsin());
+				map.addAttribute("FUNDAVAILABLE", "Y");
+				redeemForm.setPortfolio(customerFundDetails.getFolioNumber());
+				redeemForm.setFundName(customerFundDetails.getFundDescription());
+//				redeemForm.setRedeemAmounts(customerFundDetails.getInvAmount());
+				redeemForm.setUnitHolderName(customerFundDetails.getInvestorName());
+
+				redeemForm.setInvestType(customerFundDetails.getTrasanctionType()!=null?customerFundDetails.getTrasanctionType():"NA");
+				redeemForm.setTotalValue(customerFundDetails.getInvAmount());
+				
+				
+				try {
+					redeemForm.setRedeemAmounts(0.0);
+					redeemForm.setMarketValue(Double.valueOf(customerFundDetails.getMarketValue()));
+					redeemForm.setCurrentnav(customerFundDetails.getNav());
+					
+				}catch(Exception e) {
+					logger.error("bseRedeemMfFundsGet(): error setting redeem value ",e);
+				}
+				redeemForm.setTotalUnits(customerFundDetails.getUnits());
+				redeemForm.setSchemeCode(customerFundDetails.getBsemfschemeCode());
+				
+				String transactionId = generateTransId();
+				logger.info("Generated transaction ID of initiated transaction for redeem  "+ transactionId);
+				redeemForm.setRedeemTransId(transactionId);
+				
+			}
 		
 			/*if(folioDetails == null){
 				map.addAttribute("FUNDAVAILABLE", "N");
@@ -1595,10 +1626,6 @@ public class BsemfController {
 
 			}*/
 
-			String transactionId = generateTransId();
-			logger.info("Generated transaction ID of initiated transaction for redeem  "+ transactionId);
-			redeemForm.setRedeemTransId(transactionId);
-
 		}catch(Exception e){
 			logger.error("Failed to fetch selected funds's transaction details",e);
 			map.addAttribute("error", "Failed to fetch the curret investment details");
@@ -1608,7 +1635,7 @@ public class BsemfController {
 		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 		//		return returnUrl;
 
-		return "bsemf/bsemf-redeem";
+		return returnUrl;
 	}
 
 	@RequestMapping(value = "/mutual-funds/mfInvestRedeem.do", method = RequestMethod.GET)
@@ -1621,6 +1648,20 @@ public class BsemfController {
 	public String bseRedeemMfFundsPost(@ModelAttribute("mfRedeemForm") MFRedeemForm redeemForm,Model map, HttpServletRequest request, HttpServletResponse response, final RedirectAttributes redirectAttrs, HttpSession session) {
 		
 		logger.info("bseRedeemMfFundsPost(): REDEEM REQUEST POST CONTROLLER");
+		
+		if(!redeemForm.isAgreePolicy()){
+			logger.warn("Policy not agreed for redeem transaction.");
+			map.addAttribute("error", "Please agree to the policy for transaction.");
+			map.addAttribute("FUNDAVAILABLE", "Y");
+			return "bsemf/bsemf-redeem";
+		}
+		if(redeemForm.getRedeemAmounts() <500) {
+			logger.warn("Minimum redemption amount should be Rs. 500");
+			map.addAttribute("error", "Minimum redemption amount should be Rs. 500");
+			map.addAttribute("FUNDAVAILABLE", "Y");
+			return "bsemf/bsemf-redeem";
+		}
+		
 		
 		String returnUrl="redirect:/mutual-funds/bse-transaction-status";
 		TransactionStatus transReport = new TransactionStatus();
@@ -1700,7 +1741,7 @@ public class BsemfController {
 
 
 		}
-
+		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 		logger.info("Returning to url after redeem process complete- "+ returnUrl);
 		return returnUrl;
 
@@ -1852,7 +1893,7 @@ public class BsemfController {
 			map.addAttribute("error", "Failed to process your cancel request. Please try again.");
 			returnUrl="bsemf/bsemf-cancel-order";
 		}
-
+		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 		return returnUrl;
 
 	}
@@ -1901,7 +1942,7 @@ public class BsemfController {
 
 		//		map.addAttribute("TRANS_ID",transId);
 		logger.info("Checking order payment status after redirected from BSE callback url for orderid- "+ orderid);
-
+		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 		return returnUrl;
 	}
 
@@ -1942,6 +1983,8 @@ public class BsemfController {
 			map.addAttribute("FIRST_PAY", firstPayRequire);
 			map.addAttribute("TRANSACTION_REPORT", transReport);
 		}
+		
+		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 		return returnUrl;
 	}
 
@@ -1987,7 +2030,7 @@ public class BsemfController {
 			map.addAttribute("TRANS_ID",transId);*/
 		}
 
-
+		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 		return returnUrl;
 	}
 
@@ -2029,6 +2072,8 @@ public class BsemfController {
 		}catch(NullPointerException e){
 			returnUrl = "redirect:/login";
 		}
+		
+		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 		return returnUrl;
 	}
 

@@ -10,6 +10,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,7 @@ import com.freemi.database.interfaces.BseCustomerCrudRespository;
 import com.freemi.database.interfaces.BseCustomerFATCACrudRepository;
 import com.freemi.database.interfaces.BseCustomerNomineeCrudRepository;
 import com.freemi.database.interfaces.BseFundsExplorerRepository;
-import com.freemi.database.interfaces.BseKarvyByCategoryRepository;
+import com.freemi.database.interfaces.BseCustomerMfRepository;
 import com.freemi.database.interfaces.BseKarvyByCategoryRepository2;
 import com.freemi.database.interfaces.BseMandateCrudRepository;
 import com.freemi.database.interfaces.BseOrderEntryResponseRepository;
@@ -56,8 +57,8 @@ import com.freemi.entity.investment.BseOrderEntryResponse;
 import com.freemi.entity.investment.BsemfTransactionHistory;
 import com.freemi.entity.investment.MFCamsFolio;
 import com.freemi.entity.investment.MFCamsValueByCategroy;
-import com.freemi.entity.investment.MFKarvyFundsView;
-import com.freemi.entity.investment.MFKarvyValueByCategory;
+//import com.freemi.entity.investment.MFKarvyFundsView;
+import com.freemi.entity.investment.MfAllInvestorValueByCategory;
 import com.freemi.entity.investment.MFKarvyValueByCategory2;
 import com.freemi.entity.investment.MFNominationForm;
 import com.freemi.entity.investment.MfNavData;
@@ -125,13 +126,14 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	BseCamsByCategoryRepository bseCamsByCategoryRepository;
 	
 	@Autowired
-	BseKarvyByCategoryRepository bseKarvyByCategoryRepository;
+	BseCustomerMfRepository bseCustomerMfRepository;
 	
 	@Autowired
 	BseKarvyByCategoryRepository2 bseKarvyByCategoryRepository2;
 	
 	@Autowired
 	MfNavDataCrudRepository mfNavDataCrudRepository;
+	
 
 	/*@Autowired
 	MailSenderHandler mailSenderHandler;*/
@@ -408,20 +410,27 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	@Override
 	public List<BseMFInvestForm> getCustomerByPan(String pan) {
 		// TODO Auto-generated method stub
+		logger.info("getCustomerByPan(): Get customers investment profile- "+ pan);
+		
 		return bseCustomerCrudRespository.findByPan1(pan);
 	}
 
 	@Override
-	public List<String> getSelectedAmcPortfolio(String amcCode, String clientId,String rtaAgent) {
+	public List<String> getSelectedAmcPortfolio(String schemeCode, String pan,String rtaAgent) {
 		// TODO Auto-generated method stub
-		
+		logger.info("Querying to find exisitng portfolios for selected AMC for clientID- "+ pan);
 		List<String> portfolios = null;
-		if(rtaAgent.equalsIgnoreCase("CAMS")){
-			logger.info("Querying CAMS feedback DB for list of portfolio for customer: "+ clientId);
-		portfolios= bseCamsByCategoryRepository.getSelectedPortFolio(amcCode, clientId);
-		}else{
-			logger.info("Querying KARVY feedback for portfolio list...");
-		}
+		/*
+		 * if(rtaAgent.equalsIgnoreCase("CAMS")){
+		 * logger.info("Querying CAMS feedback DB for list of portfolio for customer: "+
+		 * clientId); portfolios=
+		 * bseCamsByCategoryRepository.getSelectedPortFolio(amcCode, clientId); }else{
+		 * logger.info("Querying KARVY feedback for portfolio list..."); }
+		 */
+		portfolios= bseCustomerMfRepository.getCustomerFoliosForPurchase(pan, schemeCode);
+		
+		logger.info("Total portfolios found- "+ portfolios);
+		
 		return portfolios;
 	}
 
@@ -580,12 +589,13 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	
 
 	@Override
-	public MFCamsFolio getCamsFundsDetailsForRedeem(String camsProductCode, String mobile, String folioNumber) {
+	public MfAllInvestorValueByCategory getCamsFundsDetailsForRedeem(String channelPartnerCode, String mobile, String folioNumber) {
 		
 //		CAMS funds details redemption
 //		MFCamsFolio folio = 
 		
 //		for CAMS, need to map rta code to scheme code
+		/*
 		String schemeCode="";
 		MFCamsFolio folio = null;
 		List<BseFundsScheme> schemCodes = bseFundsExplorerRepository.findAllByRtaCode(camsProductCode);
@@ -604,15 +614,27 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		}else{
 			logger.info("getCamsFundsDetailsForRedeem(): found no records agaisnt folio in database. for folio: ."+ folioNumber);
 		}
+		*/
+		
+		MfAllInvestorValueByCategory folio=null;
+		try {
+			String pan = bseCustomerCrudRespository.getCustomerPanNumberFromMobile(mobile);
+			logger.info("getCamsFundsDetailsForRedeem(): PAN of the logged in user requesting rdemption: "+ pan);
+			folio = bseCustomerMfRepository.findOneByPanAndChannelProductCodeAndRtaAgentAndFolioNumber(pan, channelPartnerCode, "CAMS", folioNumber);
+		}catch(Exception e) {
+			logger.error("getCamsFundsDetailsForRedeem(): Failed to query database",e);
+		}
+		
 		return folio;
 		
 	}
 	
 	@Override
-	public MFKarvyValueByCategory getKarvyFundsDetailsForRedeem(String karvyProductCode, String mobile, String folioNumber){
+	public MfAllInvestorValueByCategory getKarvyFundsDetailsForRedeem(String channelPartnerCode, String mobile, String folioNumber){
 		
+		logger.info("getKarvyFundsDetailsForRedeem(): Request received to fetch customer investment profile details for redeem with mobile number: "+ mobile);
 		String schemeCode="";
-		MFKarvyValueByCategory folio = null;
+		MfAllInvestorValueByCategory folio = null;
 		/*List<BseFundsScheme> schemCodes = bseFundsExplorerRepository.findAllByRtaCode(karvyProductCode);
 		logger.info("Total schemecode found for RTA code- "+ schemCodes.size());
 		for(int i =0;i<schemCodes.size();i++){
@@ -622,13 +644,24 @@ public class BseEntryServiceImpl implements BseEntryManager {
 			}
 		}*/
 		
-		try{
-		logger.info("getKarvyFundsDetailsForRedeem(): Searching Karvy folio details by [karvyProductCode:folioNumber:PAN] - "+schemeCode + ":"+folioNumber);
-		folio = bseKarvyByCategoryRepository.getOneByKarvyProductCodeAndFolioNumber(karvyProductCode, folioNumber);
-		}catch(Exception e){
-			logger.error("getKarvyFundsDetailsForRedeem(): Error querying database. ",e);
+		/*
+		 * try{ logger.
+		 * info("getKarvyFundsDetailsForRedeem(): Searching Karvy folio details by [karvyProductCode:folioNumber:PAN] - "
+		 * +schemeCode + ":"+folioNumber); folio =
+		 * bseCustomerMfRepository.getOneByChannelProductCodeAndFolioNumber(
+		 * karvyProductCode, folioNumber); }catch(Exception e){
+		 * logger.error("getKarvyFundsDetailsForRedeem(): Error querying database. ",e);
+		 * }
+		 */
+		
+		try {
+			String pan = bseCustomerCrudRespository.getCustomerPanNumberFromMobile(mobile);
+			logger.info("getCamsFundsDetailsForRedeem(): PAN of the logged in user requesting rdemption: "+ pan);
+			folio = bseCustomerMfRepository.findOneByPanAndChannelProductCodeAndRtaAgentAndFolioNumber(pan, channelPartnerCode, "KARVY", folioNumber);
+		}catch(Exception e) {
+			logger.error("getCamsFundsDetailsForRedeem(): Failed to query database",e);
 		}
-
+		
 		return folio;
 	}
 	
@@ -892,11 +925,13 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	}
 
 	@Override
+	@Cacheable(value = "mutualfundexplorerdata", unless = "#result == null")
 	public List<BseMFSelectedFunds> getAllSelectedFunds() {
 		logger.info("Querying to schemes by page wise- ");
+		
 		List<BseMFSelectedFunds> fundDetails = null;
 		try{
-
+			
 			fundDetails = bseSelectedCategoryFundsRepository.findAll();
 
 		}catch(Exception e){
@@ -1061,15 +1096,15 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	}
 
 	@Override
-	public List<MFKarvyValueByCategory> getCustomersKarvyInvByCategory(String mobile, String pan) {
-		List<MFKarvyValueByCategory> folios=null;
+	public List<MfAllInvestorValueByCategory> getCustomersAllFoliosByCategory(String mobile, String pan) {
+		List<MfAllInvestorValueByCategory> folios=null;
 		logger.info("getCustomersKarvyInvByCategory(): Request received to fetch customer Karvy folio details by category for client ID- "+ mobile + " :PAN NO: "+ pan);
 		
 		try{
 		if(bseCustomerCrudRespository.existsByMobileAndAccountActive(mobile,"Y")){
 			pan = bseCustomerCrudRespository.getCustomerPanNumberFromMobile(mobile);
 			
-			folios =bseKarvyByCategoryRepository.getAllByPan(pan);
+			folios =bseCustomerMfRepository.getAllByPan(pan);
 			
 			logger.info("Karvy Folio details by category look up complete. Total- "+ folios.size());
 

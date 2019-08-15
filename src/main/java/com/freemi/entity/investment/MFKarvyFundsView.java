@@ -6,9 +6,10 @@ public class MFKarvyFundsView {
 	
 	private String funName;
 	private Double totalInvestment=0.0;
+	private Double totalMarketValue=0.0;
 	private String amcicon;
 	private double xirr;
-	private List<MFKarvyValueByCategory> categorizedFund;
+	private List<MfAllInvestorValueByCategory> categorizedFund;
 	
 	public String getFunName() {
 		return funName;
@@ -34,11 +35,17 @@ public class MFKarvyFundsView {
 	public void setXirr(double xirr) {
 		this.xirr = xirr;
 	}
-	public List<MFKarvyValueByCategory> getCategorizedFund() {
+	public List<MfAllInvestorValueByCategory> getCategorizedFund() {
 		return categorizedFund;
 	}
-	public void setCategorizedFund(List<MFKarvyValueByCategory> categorizedFund) {
+	public void setCategorizedFund(List<MfAllInvestorValueByCategory> categorizedFund) {
 		this.categorizedFund = categorizedFund;
+	}
+	public Double getTotalMarketValue() {
+		return totalMarketValue;
+	}
+	public void setTotalMarketValue(Double totalMarketValue) {
+		this.totalMarketValue = totalMarketValue;
 	}
 	
 	

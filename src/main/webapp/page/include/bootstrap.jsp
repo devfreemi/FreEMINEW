@@ -34,7 +34,7 @@ body {
     font-weight: 400;
 }
 </style>
-
+<!-- 
 <script>
 $(window).on("unload", function(e) {
 	$.get('/products/closewindow',  // url
@@ -43,4 +43,4 @@ $(window).on("unload", function(e) {
 		    });
 });
 </script>
-
+ -->

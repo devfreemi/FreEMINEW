@@ -6,8 +6,8 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>  
 <html>
 <head>
-<link href="<c:url value="${contextPath}/resources/css/contact.component.css"/>" rel="stylesheet">
-<link href="<c:url value="${contextPath}/resources/css/styles.css"/>" rel="stylesheet">
+<link href="<c:url value="${contextcdn}/resources/css/contact.component.css"/>" rel="stylesheet">
+<link href="<c:url value="${contextcdn}/resources/css/styles.css"/>" rel="stylesheet">
 <title>Contact Us</title>
 
 <jsp:include page="include/bootstrap.jsp"></jsp:include>
@@ -19,7 +19,7 @@
 		<div class="col-md-12 col-lg-12" style="text-align: center">
 			<h3 class="contact_heading">Feedback / Enquiry </h3>
 			<div>
-				<img src="<c:url value="${contextPath}/resources/images/contact_us.png"/>" class="img-fluid" style="width: 160px;">
+				<img src="<c:url value="${contextcdn}/resources/images/contact_us.png"/>" class="img-fluid" style="width: 160px;">
 			</div>
 		</div>
 	</div>
