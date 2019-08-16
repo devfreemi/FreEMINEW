@@ -8,8 +8,8 @@
 <html lang="en">
 <head>
 <meta name="keywords" content="" />
-<meta name="Copyright" content="Copyright 2018 @ freemi.in" />
-<meta name="author" content="https://www.freemi.in" />
+
+
 <meta name="description" content="" />
 <meta name="robots" content="noindex,nofollow" />
 

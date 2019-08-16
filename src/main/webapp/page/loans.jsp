@@ -6,8 +6,8 @@
 <html lang="en">
 <head lang="en">
 <meta name="keywords" content="Credit Line, Instant Credit,Personal Loan,Home Loan, Business Loan, Instant Credit, Credit Crad, No Cost EMI,personal loan, personal loan rate" />
-<meta name="Copyright" content="Copyright 2018 @ freemi.in" />
-<meta name="author" content="https://www.freemi.in" />
+
+
 <meta name="description" content="Details of Personal Loan. Personal Loan bridges the gap between what we have and what we need. Personal Loan is an unsecured loan." />
 <meta name="robots" content="index,follow" />
 <meta property="og:url" content="https://www.freemi.in/products/loans" />

@@ -7,14 +7,9 @@
 <html lang="en">
 <head>
 <title>Mutual fund investment form for new customer</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta name="Copyright" content="Copyright 2018 @ freemi.in" />
-<meta name="author" content="https://www.freemi.in" />
-<meta name="description"
-	content="Fill up the form to complete your investment if you are an e-KYC verified customer" />
+<meta name="description" content="Fill up the form to complete your investment if you are an e-KYC verified customer" />
 <meta name="robots" content="index,nofollow" />
-
 
 <!-- <link href="https://fonts.googleapis.com/css?family=Raleway"
 	rel="stylesheet"> -->

@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -23,8 +23,8 @@
 
 <meta name="keywords"
 	content="freemi login, Sign up for free Online Mutual Fund account, Get best health insurance by signup, get Instant credit by signup" />
-<meta name="Copyright" content="Copyright 2018 @ freemi.in" />
-<meta name="author" content="https://www.freemi.in" />
+
+
 <meta name="description"
 	content="Login to your FreEMI account and view your transactions, wishes completed" />
 

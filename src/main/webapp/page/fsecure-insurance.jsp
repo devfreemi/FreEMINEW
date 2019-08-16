@@ -9,8 +9,8 @@
 <jsp:include page="include/bootstrap.jsp"></jsp:include>
 <jsp:include page="include/GoogleHeadTag.jsp"></jsp:include>
 <meta name="keywords" content="Car Insurance, Motor Insurance, health Insurance, insurance renewal, online insurance, insurance policy" />
-<meta name="Copyright" content="Copyright 2018 @ freemi.in" />
-<meta name="author" content="https://www.freemi.in" />
+
+
 <meta name="title" content="Compare & Get Best Insurance Policy online in India" />
 <meta name="description" content="Get best motor and health insurance policy comparing top insurance companies in India online in India" />
 <meta name="robots" content="follow,index" />

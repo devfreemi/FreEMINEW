@@ -1,8 +1,9 @@
 <base href="/products">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">  
 <link rel="dns-prefetch" href="https://www.freemi.in">
 <meta name="theme-color" content="#38d2ed">
-
+<meta name="Copyright" content="Copyright 2018 @ freemi.in" />
+<meta name="author" content="https://www.freemi.in" />
 <link rel="icon" type="image/x-icon" href="/products/resources/images/favicon.ico">
 
 <!-- Version for upgrade with MDB -->

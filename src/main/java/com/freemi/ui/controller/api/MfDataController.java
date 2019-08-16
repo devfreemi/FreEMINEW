@@ -33,7 +33,7 @@ public class MfDataController {
 //	@CrossOrigin(origins="www.freemi.in")
 	@ResponseBody
 	public List<MfNavData> getNavDataForIsisn(@RequestBody String navData,@PathVariable(name="isin") String isin, BindingResult result, HttpServletRequest request, HttpServletResponse httpResponse){
-		logger.info("Request received to process Form data");
+		logger.info("Request received to fetch NAV data via API..");
 //		String response ="SUCCESS";
 		List<MfNavData> navhistorydata = null;
 //		List<String> data = null;

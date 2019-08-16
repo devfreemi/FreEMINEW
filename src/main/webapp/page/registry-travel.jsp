@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <%@page import="java.io.Console"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="UTF-8"%>
@@ -8,8 +8,8 @@
 <html>
 <head>
 <meta name="keywords" content="" />
-<meta name="Copyright" content="Copyright 2018 @ freemi.in" />
-<meta name="author" content="https://www.freemi.in" />
+
+
 <meta name="title" content="Registry - Travel plan" />
 <meta name="description" content="" />
 <meta name="robots" content="index,follow" />

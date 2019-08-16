@@ -4,8 +4,11 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <html>
 <head>
+<jsp:include page="include/bootstrap.jsp"></jsp:include>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>FreEMI Terms</title>
+<title>FreEMI Terms of use - NTACTUS FINANCIAL SERVICES PVT. LTD</title>
+<link rel="canonical"
+	href=" https://www.freemi.in/products/terms-of-use" />
 <link
 	href="<c:url value="${contextcdn}/resources/css/terms-conditions.component.css"/>"
 	rel="stylesheet">
@@ -15,11 +18,11 @@
 	rel="stylesheet">
 <link href="<c:url value="${contextcdn}/resources/css/animate.css"/>"
 	type="text/css" rel="stylesheet">
-<jsp:include page="include/bootstrap.jsp"></jsp:include>
+
 <script src="<c:url value="${contextcdn}/resources/js/common.js" />"></script>
 <style type="text/css">
-h5{
-font-weight: 500;
+h5 {
+	font-weight: 500;
 }
 </style>
 
@@ -222,9 +225,7 @@ font-weight: 500;
 				party. You shall be solely liable for any damages resulting from any
 				violation of the foregoing restrictions, or any other harm resulting
 				from your posting of content to this Website.</p>
-			<h5>
-				7. Third Party Links/Offers
-			</h5>
+			<h5>7. Third Party Links/Offers</h5>
 			<p>This Website or third parties may provide links to other
 				websites or resources. Because Company has no control over such
 				sites and resources, you acknowledge and agree that Company is not
@@ -242,9 +243,7 @@ font-weight: 500;
 				or negligence of any such third parties or for any personal
 				injuries, death, property damage, or other damages or expenses
 				resulting from your interactions with the third parties.</p>
-			<h5>
-				8. Disclaimer of Warranty
-			</h5>
+			<h5>8. Disclaimer of Warranty</h5>
 			<p>You expressly understand and agree that your use of the
 				Services, ancillary services and all information, products, other
 				services and other content (including that of the third parties)
@@ -271,9 +270,7 @@ font-weight: 500;
 				or other material purchased or obtained by you through the services
 				will meet your expectations, and (v) any errors in the technology
 				will be corrected.</p>
-			<h5>
-				9. Limitation of Liability
-			</h5>
+			<h5>9. Limitation of Liability</h5>
 			<p>You expressly understand and agree that Company (including its
 				subsidiaries, affiliates, directors, officers, employees,
 				representatives and providers) shall not be liable for any direct,
@@ -302,9 +299,7 @@ font-weight: 500;
 				websites, you acknowledge and agree that under no circumstances
 				shall Company be liable for your using the services offered or
 				provided by any third party service provider.</p>
-			<h5>
-				10.Indemnity
-			</h5>
+			<h5>10.Indemnity</h5>
 			<p>You agree to indemnify and hold Company (and its affiliates,
 				officers, directors, agents and employees) harmless from any and
 				against any claims, causes of action, demands, recoveries, losses,
@@ -312,9 +307,7 @@ font-weight: 500;
 				nature, including reasonable attorneys' fees, or arising out of or
 				related to your breach of this TOU, your violation of any law or the
 				rights of a third party, or your use of the Website.</p>
-			<h5>
-				11. Additional Terms and Conditions
-			</h5>
+			<h5>11. Additional Terms and Conditions</h5>
 			<p>Company reserves the right to make changes to the Website,
 				related policies and agreements, this TOU and the Privacy Policy at
 				any time as it deems fit and proper, including but not limited to
@@ -353,9 +346,7 @@ font-weight: 500;
 				discontinue, modify, extend and suspend the Promotional Offer(s) and
 				the terms governing it, at its sole discretion.</p>
 			<!-- <p>&nbsp;</p> -->
-			<h5>
-				12. General
-			</h5>
+			<h5>12. General</h5>
 			<p>If any of these conditions are deemed invalid, void, or for
 				any reason unenforceable, the parties agree that the court should
 				endeavor to give effect to the parties intentions as reflected in

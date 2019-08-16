@@ -9,8 +9,8 @@
 <head>
 <meta name="keywords"
 	content="Expenses management, Best Mutual Fund,Equity Mutual Fund, debt mutual Fund, Balanlce fund, Small cap Fund,Mid Cap fund,Online SIP, Best SIP Online, Compare mutual Fund,SIP Calculator,Return Calculator, ICICI Prdential balance advantage fund, ICICI Pru value Discovery Fund,ICICI liquied Fund, HDFC prudence Fund, HDFC Equity Fund, Axis Long Term Equity Fund, Buy Mutual Fund" />
-<meta name="Copyright" content="Copyright 2018 @ freemi.in" />
-<meta name="author" content="https://www.freemi.in" />
+
+
 <meta name="description" content="Wish based nutual funds." />
 <meta name="robots" content="follow,index" />
 

@@ -5,8 +5,8 @@
 <head>
 <jsp:include page="include/bootstrap.jsp"></jsp:include>
 <meta name="keywords" content="Credits, mutual funds, best mutual fund, interest rate, compare interest rate, investment plans" />
-<meta name="Copyright" content="Copyright 2018 @ freemi.in" />
-<meta name="author" content="https://www.freemi.in" />
+
+
 <meta name="description" content="Get best comparison on credit interest rate and mutual fund plans online in India" />
 <link rel="canonical" href="https://www.freemi.in/" />
 <title>FreEMI - Live life digital</title>

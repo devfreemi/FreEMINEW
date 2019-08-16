@@ -4,14 +4,12 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ include file="../include/bootstrap.jsp"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
 
 <meta name="keywords"
 	content="mutual funds, investment blogs, how to invest in mutual funds, investment procedure" />
-<meta name="Copyright" content="Copyright 2018 @ freemi.in" />
-<meta name="author" content="https://www.freemi.in" />
 <meta name="title" content="Online Mutual Fund SIP Investment" />
 <meta name="description"
 	content="Online Mutual Fund SIP Investment. To create long-term financial goals, SIP is a great guide.Mutual Fund SIP Investment is an unique proposition to create long term wealth.Apart from routine investment, investors divulge into financial discipline.\n Online Mutual Fund SIP Investment. Almost all mutual fund schemes are having SIP facility to start investment. Mutual Fund SIP Investment start with minimum of Rs 500 in equity scheme. a investor can invest in liquid fund through SIP. https://www.fundsonline.in/coffee-house-engagement-discussion-share" />

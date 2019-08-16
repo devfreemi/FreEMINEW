@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
     <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -7,8 +7,8 @@
 <html>
 <head>
 <meta name="keywords" content="Expenses management, Best Mutual Fund,Equity Mutual Fund, debt mutual Fund, Balanlce fund, Small cap Fund,Mid Cap fund,Online SIP, Best SIP Online, Compare mutual Fund,SIP Calculator,Return Calculator, ICICI Prdential balance advantage fund, ICICI Pru value Discovery Fund,ICICI liquied Fund, HDFC prudence Fund, HDFC Equity Fund, Axis Long Term Equity Fund, Buy Mutual Fund" />
-<meta name="Copyright" content="Copyright 2018 @ freemi.in" />
-<meta name="author" content="https://www.freemi.in" />
+
+
 <meta name="title" content="Registry mutual fund" />
 <meta name="description" content="1. Invest in Equity Linked Savings Schemes and save tax 2. Now calculate your tax like a pro 3. Manage your good expenses by investing in Best Mutual Funds 4. Plan for next travel with FreEMi to avoid Credit Card bills  5. Invest in ICICI Prudentntial Balance Advantage Fund 6. Open a Insta fund account 7. Now redeem and get your cash in bank account instantantly- Oper Insta cash account. 8. Invest in star rate ELSS fund - Axis Long Term Equity Fund 9. Gift your spouse a memorable gift in anniversary with no pain of credit card bills, open Registry account 10. Get your Home Loan free from Interest, Invest in Right Mutual SIP now. Creat Home Loan Registry account" />
 <meta name="robots" content="follow,index" />

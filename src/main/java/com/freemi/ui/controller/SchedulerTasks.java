@@ -22,10 +22,10 @@ public class SchedulerTasks {
 	 */
 	
 //	@Scheduled(fixedRate = 15000)
-	@Scheduled(cron = "0 7 * * *")
-	@CacheEvict(value = { "mutualfundexplorerdata" })
+	@Scheduled(cron = "0 0 7 * * ?")
+	@CacheEvict(value = { "mutualfundexplorerdata","isinnavhistory" })
 	public void clearCache() {
-		logger.info("clear cache-mutualfundexplorerdata");
+		logger.info("clear cache- mutualfundexplorerdata,isinnavhistory");
 		
 	}
 }

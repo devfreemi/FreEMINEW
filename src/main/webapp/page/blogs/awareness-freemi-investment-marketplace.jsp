@@ -2,14 +2,12 @@
 	pageEncoding="ISO-8859-1"%>
 <%@ include file="../include/bootstrap.jsp"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
 
 <meta name="keywords"
 	content="mutual funds, investment blogs, how to invest in mutual funds, investment procedure" />
-<meta name="Copyright" content="Copyright 2018 @ freemi.in" />
-<meta name="author" content="https://www.freemi.in" />
 <meta name="title"
 	content="Awareness about FreEMI -an Investment Marketplace" />
 <meta name="description"

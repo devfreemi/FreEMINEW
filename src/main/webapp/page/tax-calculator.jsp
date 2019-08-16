@@ -7,16 +7,15 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <html lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Tax Calculator</title>
-<link
-	href="<c:url value="${contextcdn}/resources/css/registry.tax-calculator.css"/>"
-	rel="stylesheet">
-<link href="<c:url value="${contextcdn}/resources/css/styles.css"/>"
-	rel="stylesheet">
-<script
-	src="<c:url value="${contextcdn}/resources/js/taxCalculator.js" />"></script>
 <jsp:include page="include/bootstrap.jsp"></jsp:include>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="canonical" href=" https://www.freemi.in/products/tax-calculator/" />
+<title>Tax Calculator for basic tax calculation and check saving options</title>
+<meta name="description" content="A basic tax calculator for someone to calculate tax on their income and does not purport to give correct tax calculation in all circumstances." />
+<link href="<c:url value="${contextcdn}/resources/css/registry.tax-calculator.css"/>" rel="stylesheet">
+<link href="<c:url value="${contextcdn}/resources/css/styles.css"/>" rel="stylesheet">
+<script src="<c:url value="${contextcdn}/resources/js/taxCalculator.js" />"></script>
+
 </head>
 
 <body class="back_set"
@@ -25,9 +24,9 @@
 	<div class="container freemi_container">
 		<div style="margin-bottom: 60px;">
 			<div class="page_topic">
-				<h2>
-					<span style="color: #fdff3f;">Tax Saving </span> Registry
-				</h2>
+				<h1>
+					<span style="color: #fdff3f;font-size: 2rem;'">Tax Saving </span> Registry
+				</h1>
 				<!-- <h4>
             <span style="color: #fdff3f;">Tax Saving </span> plans
         </h4> -->

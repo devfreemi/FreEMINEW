@@ -8,10 +8,6 @@
 <jsp:include page="../include/GoogleHeadTag.jsp"></jsp:include>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Mutual funds explorer</title>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="Copyright" content="Copyright 2018 @ freemi.in" />
-<meta name="author" content="https://www.freemi.in" />
 <jsp:include page="../include/bootstrap.jsp"></jsp:include>
 <link
 	href="<c:url value="${contextcdn}/resources/css/bseinvestmentform.css"/>"

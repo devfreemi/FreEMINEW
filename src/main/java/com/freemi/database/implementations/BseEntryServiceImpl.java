@@ -1212,8 +1212,9 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	}
 
 	@Override
+	@Cacheable(value = "isinnavhistory", unless = "#result == null", key = "#isin")
 	public List<MfNavData> getnavdataByISIN(String isin) {
-		logger.info("get NAV history of ISIN- "+ isin);
+		logger.info("Query database to fetch ISIN NAV data- "+ isin);
 		List<MfNavData> navdata = new ArrayList<MfNavData>();
 		
 		try{

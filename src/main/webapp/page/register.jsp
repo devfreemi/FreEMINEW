@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -6,25 +6,19 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <html>
 <head>
-<meta name="keywords"
-	content="freemi signup, freemi register, investment portal" />
-<meta name="Copyright" content="Copyright 2018 @ freemi.in" />
-<meta name="author" content="https://www.freemi.in" />
+<meta name="keywords" content="freemi signup, freemi register, investment portal" />
+<link rel="canonical" href=" https://www.freemi.in/products/register" />
+
 <meta name="title" content="Sign up" />
 <meta name="description"
 	content="Get registered to FreEMI and invest to fill your goals" />
 <meta name="robots" content="follow,index" />
 <jsp:include page="include/bootstrap.jsp"></jsp:include>
-<link
-	href="<c:url value="${contextcdn}/resources/css/register.component.css"/>"
-	rel="stylesheet">
-<link href="<c:url value="${contextcdn}/resources/css/styles.css"/>"
-	rel="stylesheet">
-<link href="<c:url value="${contextcdn}/resources/css/animate.css"/>"
-	type="text/css" rel="stylesheet">
+<link href="<c:url value="${contextcdn}/resources/css/register.component.css"/>" rel="stylesheet">
+<link href="<c:url value="${contextcdn}/resources/css/styles.css"/>" rel="stylesheet">
+<link href="<c:url value="${contextcdn}/resources/css/animate.css"/>" type="text/css" rel="stylesheet">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Register</title>
-
+<title>New to FreEMI? Get registered today.</title>
 <script src="<c:url value="${contextcdn}/resources/js/register.js" />"></script>
 
 </head>
@@ -40,7 +34,7 @@
 				class="img-fluid" style="height: 50px;">
 		</div>
 		<div class="login_header">
-			<span>New to FreEMI?</span>
+			<h1 style="font-size: 2rem;">New to FreEMI?</h1>
 			<div style="font-size: 20px;">
 				Create your <span style="color: rgb(255, 252, 94)"> Free </span>
 				account today

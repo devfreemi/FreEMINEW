@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html">
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -8,34 +8,27 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link
-	href="<c:url value="${contextcdn}/resources/css/login.component.css"/>"
-	rel="stylesheet">
-<link href="<c:url value="${contextcdn}/resources/css/styles.css"/>"
-	rel="stylesheet">
-<link href="<c:url value="${contextcdn}/resources/css/animate.css"/>"
-	type="text/css" rel="stylesheet">
+
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>FreEMI online login</title>
+<title>Login to FreEMI portal and get access to your dash-board and transactions</title>
 <meta http-equiv="cache-control" content="max-age=0" />
 <meta http-equiv="cache-control" content="no-cache" />
 <meta http-equiv="expires" content="0" />
+<meta name="keywords" content="freemi login, Sign up for free Online Mutual Fund account, Get best health insurance by signup, get Instant credit by signup" />
 
-<meta name="keywords"
-	content="freemi login, Sign up for free Online Mutual Fund account, Get best health insurance by signup, get Instant credit by signup" />
-<meta name="Copyright" content="Copyright 2018 @ freemi.in" />
-<meta name="author" content="https://www.freemi.in" />
-<meta name="description"
-	content="Login to your FreEMI account and view your transactions, wishes completed" />
+<meta name="description" content="Login to your FreEMI account and view your transactions, wishes completed" />
 
-<!-- <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" /> -->
-<meta http-equiv="pragma" content="no-cache" />
+<meta name="robots" content="index, follow">
+<meta name="googlebot" content="index, follow" />
+<meta name="bingbot" content="index, follow" />
+
+<link rel="canonical" href=" https://www.freemi.in/products/login" />
 <jsp:include page="include/bootstrap.jsp"></jsp:include>
-<link
-	href="<c:url value="${contextcdn}/resources/css/login.component.css"/>"
-	rel="stylesheet">
-
+<link href="<c:url value="${contextcdn}/resources/css/login.component.css"/>" rel="stylesheet">
+<link href="<c:url value="${contextcdn}/resources/css/styles.css"/>" rel="stylesheet">
+<link href="<c:url value="${contextcdn}/resources/css/animate.css"/>" type="text/css" rel="stylesheet">
 <script src="<c:url value="${contextcdn}/resources/js/login.js" />" type="text/javascript" defer="defer"></script>
+
 <style>
 .timer_style {
 	text-align: center;
@@ -58,7 +51,7 @@
 		</div>
 
 		<!-- login form -->
-		<div class="login_header" id="ht">Login to your Account</div>
+		<div><h1 class="login_header" id="ht">Login to your Account</h1></div>
 
 		<div class="row">
 			<div class="col-md-6 col-lg-6 form_div animated fadeInLeft"

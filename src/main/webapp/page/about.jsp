@@ -4,8 +4,8 @@
 <html lang="en">
 <head>
 <meta name="keywords" content="freemi, about freemi" />
-<meta name="Copyright" content="Copyright 2018 @ freemi.in" />
-<meta name="author" content="https://www.freemi.in" />
+
+
 <meta name="description" content="About us." />
 <meta name="robots" content="follow,index" />
 <link
