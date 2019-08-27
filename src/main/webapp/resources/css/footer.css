@@ -2,9 +2,8 @@
 .fixed-bottom-custom {position: absolute;right: 0;bottom: 0;left: 0;z-index: 1030;text-shadow: -10px 9px 20px 10px black;padding-bottom: 20px;}
 .footer_contact {color: azure;list-style-type: none;font-size: 12px;padding-left: 20px;}
 .footer{bottom: 0;width: 100%;background-color: #061147;box-shadow: 0px 0px 82px 1px #091138 inset;}
-.footer-divider{color:#f4b018;}.footer-content{font-size: 14px;font-weight: 400;color:white;}.sub-title{font-weight:700;color:#f4b018;font-size: 14px;}
-.footer-icons,.footer-listing{list-style-type:none;}
-.footer-link-style:link,.footer-link-style:visited{color:white; font-size:13px; font-weight:400;}
+.footer-divider{color:#4ba4ec;}.footer-content{font-size: 14px;font-weight: 400;color:white;}.sub-title{font-weight:700;color:#4ba4ec;font-size: 14px;}
+.footer-icons,.footer-listing{list-style-type:none;}.footer-link-style:link,.footer-link-style:visited{color:white; font-size:13px; font-weight:400;}
 .footer-link-style:hover{color:#80be53;}.pipe-style{color:#d8de2c; font-weight:500;}
 .social-icon{ width: 40px;height: 40px;padding:9px 2px;margin: 0 6px;text-align: center;display: inline-block;border: 1px solid white;
 border-radius: 8px;-webkit-transform: rotate(45deg);-moz-transform: rotate(45deg);-o-transform: rotate(45deg);-ms-transform: rotate(45deg);transform: rotate(45deg);}

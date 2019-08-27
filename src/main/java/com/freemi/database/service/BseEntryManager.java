@@ -55,7 +55,7 @@ public interface BseEntryManager {
 	public String getEmdandateDetails(String mobile, String clientCode,String mandateType, String accNumber);
 	public BseApiResponse updateEmdandateStatus(String clientCode,String mandateType, String accNumber);
 	
-	public String upddateCustomerFormSignature(String mobile, String pan, String signatureData);
+	public String upddateCustomerFormSignature(String mobile, String pan, String signatureData1, String signatureData2);
 	public String uploadAOFFormStatus(String mobileNumber, String status);
 	
 	// Customer MF transactions

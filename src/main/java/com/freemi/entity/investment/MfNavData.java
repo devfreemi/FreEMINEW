@@ -12,12 +12,12 @@ import org.hibernate.annotations.Proxy;
 @Entity
 @Table(name="daily_nav_sumanta")
 @Proxy(lazy=false)
-public class MfNavData implements Serializable {
+public class MfNavData  {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+//	private static final long serialVersionUID = 1L;
 	
 	@Id
 	@Column(name="nav_id")
@@ -49,9 +49,9 @@ public class MfNavData implements Serializable {
 		this.navvalue = navvalue;
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
+	
+	/* public static long getSerialversionuid() { return serialVersionUID; } */
+	 
 
 	public long getSerial() {
 		return serial;

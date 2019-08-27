@@ -796,6 +796,7 @@ table.dataTable thead th, table.dataTable thead td {
 	<!-- BSE MF  -->
 		<jsp:include page="./bsestarmfpowered.jsp"></jsp:include>
 	<!-- END BSE MF  -->
+	<jsp:include page="../include/sub-footer.jsp"></jsp:include>
 	<jsp:include page="../include/footer.jsp"></jsp:include>
 	<jsp:include page="../include/selectedfund.jsp"></jsp:include>
 </body>

@@ -6,7 +6,7 @@
 <head>
 <title>BSE registration status</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
+<meta name="robots" content="noindex,nofollow" />
 
 <jsp:include page="../include/bootstrap.jsp"></jsp:include>
 <link
@@ -79,7 +79,7 @@
 							<div class="col-md-4 col-lg-4">
 								<div class="aofoption">
 									<h5>Option 1</h5>
-									<ul style="list-style: none;">
+									<ul style="list-style: none;font-size: 12px;">
 										<li>1. Download and print the form</li>
 										<li>2. Sign the form<br> Where to sign? <!-- <div style="margin-top: 5px;"> -->
 											<!-- Button trigger modal --> <!-- <button type="button" class="btn btn-outline-primary btn-sm"
@@ -116,8 +116,8 @@
 												</div>
 											</div>
 										</li>
-
-										<li>3. Upload the signed form</li>
+										<li>3. Login to account and go to your Dashboard</li>
+										<li>4. Upload the signed form and complete registration</li>
 									</ul>
 
 									<c:if test="${not empty investForm.pan1}">
@@ -139,9 +139,10 @@
 							<div class="col-md-4 col-lg-4">
 								<div class="aofoption">
 									<h5>Option 2</h5>
-									<ul style="list-style: none;">
+									<ul style="list-style: none;font-size: 12px;">
 										<li>1. Sign using platform panel</li>
-										<li>2. Verify and submit the signed form</li>
+										<li>2. In case of joint holder, applicant 2 signature is required</li>
+										<li>3. Upload signatures when complete to generate your AOF form</li>
 									</ul>
 									<div style="margin-top: 20px;">
 
@@ -152,12 +153,21 @@
 												src="<c:url value="${contextcdn}/resources/images/invest/sign1.png"/>"
 												class="img-fluid" style="height: 48px;"
 												alt="Signature panel">
-											<button type="button" class="btn btn-outline-primary btn-sm"
+											<!-- <button type="button" class="btn btn-outline-primary btn-sm"
 												style="font-size: 12px;" data-toggle="modal"
 												data-target="#exampleModal1">Applicant 1</button>
 											<button type="button" class="btn btn-outline-primary btn-sm"
 												style="font-size: 12px;" data-toggle="modal"
-												data-target="#exampleModal2">Applicant 2</button>
+												data-target="#exampleModal2">Applicant 2</button> -->
+
+											<button type="button" class="btn btn-outline-primary btn-sm"
+												style="font-size: 12px;" onclick="getmodal('sign1')">Applicant
+												1</button>
+											<button type="button" class="btn btn-outline-primary btn-sm"
+												style="font-size: 12px;" onclick="getmodal('sign2')">Applicant
+												2</button>
+
+
 
 										</div>
 
@@ -182,6 +192,9 @@
 													</div>
 													<div class="modal-body" style="text-align: center;">
 														<div class="row">
+														<span id="signmsg" style="color: red;"></span>
+														</div>
+														<div class="row">
 															<div class="col-md-12">
 																<canvas id="sig-canvas">
 		 			Browser not supported!
@@ -190,9 +203,8 @@
 														</div>
 														<div class="row">
 															<div class="col-md-12">
-																<button class="btn btn-sm btn-info" id="sig-submitBtn">
-																<span id="signtxt">Submit Signature</span>
-																<span id="signingtxt" style="display: none;">Submitting Signature <i class="fas fa-spinner fa-spin"></i></span>
+																<button class="btn btn-sm btn-info" id="set-signature" >
+																	<span id="signtxtset">Set Signature</span>
 																</button>
 																<!-- <button class="btn" id="btndownload">Download</button> -->
 																<button class="btn btn-sm btn-secondary"
@@ -212,9 +224,24 @@
 														<div class="row">
 															<div class="col-md-12">
 																<!-- <img id="sig-image" src="" alt="Signature-image" /> -->
-																<img
-																	src="<c:url value="${contextcdn}/resources/images/invest/sign1.png"/>"
-																	class="img-fluid" id="sig-image" alt="Signature Image">
+																<figure>
+																	<img
+																		src="<c:url value="${contextcdn}/resources/images/invest/sign1.png"/>"
+																		class="img-fluid" id="sig-image" alt="Signature Image">
+																	<figcaption style="color: #a09b93; font-size: 11px;">
+																		Signature : <span id="signid"></span>
+																	</figcaption>
+																</figure>
+																
+																<div style="text-align: center;">
+																<button class="btn btn-sm #00695c teal darken-2 white-text" id="sig-submitBtn" onclick="submitSign();">
+																	<span id="signtxt">Upload Signature</span> <span
+																		id="signingtxt" style="display: none;">Submitting
+																		Signature <i class="fas fa-spinner fa-spin"></i>
+																	</span>
+																</button>
+																<p>Upload signature when complete</p>
+																</div>
 															</div>
 														</div>
 													</div>
@@ -243,8 +270,10 @@
 						<div id="aofuploadbutton">
 							<button class="btn btn-sm btn-primary" id="aofuploadbtn"
 								hidden="hidden" onclick="initiateAOFUpload();">
-								<span id="uploadtxt">UPLOAD YOUR AOF <i class="fas fa-upload"></i></span>
-								<span id="uploadingtxt" style="display: none;">Uploading... <i class="fas fa-spinner fa-spin"></i></span>
+								<span id="uploadtxt">UPLOAD YOUR AOF <i
+									class="fas fa-upload"></i></span> <span id="uploadingtxt"
+									style="display: none;">Uploading... <i
+									class="fas fa-spinner fa-spin"></i></span>
 							</button>
 							<a href="/products/mutual-funds/purchase" id="purchasecon"
 								hidden="hidden">
@@ -259,7 +288,7 @@
 			</div>
 			<div></div>
 		</section>
-<!-- 
+		<!-- 
 		<section style="background-color: aliceblue; padding: 30px 0px;">
 			<div class="row" style="margin: auto; margin-top: 4rem;">
 				<div class="col-md-8 col-lg-8"
@@ -278,18 +307,56 @@
 
 		</section>
 		 -->
-		
+
 	</div>
-	
+
 	<!-- BSE MF  -->
-		<jsp:include page="./bsestarmfpowered.jsp"></jsp:include>
+	<jsp:include page="./bsestarmfpowered.jsp"></jsp:include>
 	<jsp:include page="../include/footer.jsp"></jsp:include>
 
-	
-	
+
+
 </body>
 
 <script type="text/javascript" defer="defer">
+	var signapplicant="sign1";
+	var signature1="";
+	var signature2="";
+	var sigImage = document.getElementById("sig-image");;
+	function getmodal(applicant){
+		/* clearCanvas(); */
+		/* console.log("Modal requested- "+ applicant); */
+		signapplicant = applicant;
+		var dataUrl;
+		if(signapplicant === 'sign1'){
+		dataUrl = signature1;
+		
+		}else if(signapplicant === 'sign2'){
+			dataUrl = signature2;
+		
+		}else{
+			dataUrl = "/products/resources/images/invest/sign1.png";
+			}
+
+		/* console.log("dataurl length- "+ dataUrl.length) */
+		if(dataUrl.length === 0){
+			sigImage.setAttribute("src", "/products/resources/images/invest/sign1.png");
+			$("#signid").text("Not set yet");
+		}else{
+			sigImage.setAttribute("src", dataUrl);
+			
+			if(signapplicant === 'sign1'){
+				$("#signid").text("Applicant 1");
+			}else if(signapplicant === 'sign2'){
+				$("#signid").text("Applicant 2")
+			}else{
+				$("#signid").text("Invalid");
+			}
+	}
+		$('#exampleModal1').modal('show');
+		
+		}
+
 		(function() {
 			window.requestAnimFrame = (function(callback) {
 				return window.requestAnimationFrame
@@ -411,7 +478,8 @@
 			var sigText = document.getElementById("sig-dataUrl");
 			var sigImage = document.getElementById("sig-image");
 			var clearBtn = document.getElementById("sig-clearBtn");
-			var submitBtn = document.getElementById("sig-submitBtn");
+			/* var submitBtn = document.getElementById("sig-submitBtn"); */
+			var submitBtn = document.getElementById("set-signature");
 			clearBtn.addEventListener("click", function(e) {
 				clearCanvas();
 				sigText.innerHTML = "NA";
@@ -429,10 +497,27 @@
 				sigText.innerHTML = dataUrl;
 				sigImage.setAttribute("src", dataUrl);
 
+				if(signapplicant === 'sign1'){
+				/* console.log("Set 1st applicant sign"); */
+				signature1 = dataUrl;
+				}else if(signapplicant === 'sign2'){
+					/* console.log("Set 1st applicant sign"); */
+					signature2 = dataUrl;
+				}else{
+					/* console.log("invialid signature no.") */
+					}
+				
 				/* var aofformimg = document.getElementById("aofformsignature");
 				aofformimg.setAttribute("src", dataUrl); */
 				$("#signature1").val(dataUrl);
-				submitSign();
+				/* submitSign(); */
+				if(signapplicant === 'sign1'){
+					$("#signid").text("Applicant 1");
+				}else if(signapplicant === 'sign2'){
+					$("#signid").text("Applicant 2")
+				}else{
+					$("#signid").text("Invalid");
+				}
 
 			}, false);
 
@@ -474,7 +559,19 @@
 
 		/* $("button").click(function(){ */
 		function submitSign() {
+			/* console.log("Signatuer: " + $("#sig-dataUrl").text());
+		    console.log("Signatuer length: " + $("#sig-dataUrl").text().length); */
 
+			if(signature1.length <=1594){
+				$("#signmsg").text("Applicant 1 has not signed yet.");
+				return false;
+			}
+			
+			if(signature1 === signature2 ){
+					$("#signmsg").text("Both applicant signature cannot be same!");
+					return false;
+				}
+			$("#signmsg").text("");
 			/* console.log("signature- "+ $("#sig-dataUrl").text()); */
 			/* $
 					.post(
@@ -523,8 +620,9 @@
 			method: "POST",
 			data: 
 			{
-				sign1 : $("#sig-dataUrl").text(),
-				sign2 : ""
+				sign1 : signature1,
+				sign2 : signature2,
+				savesign: signapplicant
 			},
 			async: true,
 			datatype: "json",
@@ -553,6 +651,21 @@
 				$("#signuploadstatus")
 						.text(
 								"Session lost. Kindly login to complete registration");
+
+			}
+			if (data == 'APP2_SIGN_REQUIRED') {
+				$('#exampleModal1').modal('hide');
+				$("#signuploadstatus")
+						.text(
+								"2nd applicant signature required for joint holder");
+
+			}
+
+			if (data == 'BOTH_SIGN_SAME') {
+				$('#exampleModal1').modal('hide');
+				$("#signuploadstatus")
+						.text(
+								"Both applicant signature found to be same. Please set different signature.");
 
 			}
 
@@ -758,7 +871,7 @@
 				
 		
 		
-		$('.file_upload').file_upload();
+		/* $('.file_upload').file_upload(); */
 	</script>
 
 </html>

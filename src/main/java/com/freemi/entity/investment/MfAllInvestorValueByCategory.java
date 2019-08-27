@@ -74,6 +74,9 @@ public class MfAllInvestorValueByCategory implements Serializable {
 	
 	@Column(name="NAV")
 	private String nav;
+	
+	@Column(name="LATEST_NAV_DATE")
+	private String navdate;
 
 	@Transient
 	private String trasanctionType;
@@ -199,6 +202,14 @@ public class MfAllInvestorValueByCategory implements Serializable {
 
 	public void setNav(String nav) {
 		this.nav = nav;
+	}
+	
+	public String getNavdate() {
+		return navdate;
+	}
+
+	public void setNavdate(String navdate) {
+		this.navdate = navdate;
 	}
 
 	public String getTrasanctionType() {

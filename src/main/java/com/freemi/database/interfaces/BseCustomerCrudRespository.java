@@ -44,8 +44,8 @@ public interface BseCustomerCrudRespository extends JpaRepository<BseMFInvestFor
 	
 	@Transactional
 	@Modifying
-	@Query("update BseMFInvestForm b set b.customerSignature= :sign where b.clientID= :clientId and b.pan1= :pan")
-	public int uploadCustomerSignature(@Param("clientId") String clientId,@Param("pan") String pan,@Param("sign") String signature);
+	@Query("update BseMFInvestForm b set b.customerSignature1= :sign1,b.customerSignature2= :sign2  where b.clientID= :clientId and b.pan1= :pan")
+	public int uploadCustomerSignature(@Param("clientId") String clientId,@Param("pan") String pan,@Param("sign1") String signature1, @Param("sign2") String signature2);
 	
 	@Query("select c.aofuploadComplete from BseMFInvestForm c where c.mobile= :mobile")
 	public String getAofUploadStatus(@Param("mobile") String mobile);

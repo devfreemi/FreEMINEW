@@ -528,9 +528,8 @@ table th {
 													<thead class="#3949ab indigo darken-1 white-text">
 														<tr>
 															<th scope="col" valign="middle">Mutual Fund</th>
-															<th scope="col" valign="middle">Invested Amount
-																(Rs.)</th>
-															<th scope="col" valign="middle">XIRR</th>
+															<th scope="col" valign="middle">Invested Amount (Rs.)</th>
+															<!-- <th scope="col" valign="middle">XIRR</th> -->
 															<!-- <th scope="col" valign="middle">Weighted</th>
 															<th scope="col" valign="middle">NAV</th> -->
 															<th scope="col" valign="middle">Market Value (Rs.)</th>
@@ -555,9 +554,7 @@ table th {
 																		pattern="#,##,##,##,###.0000" minFractionDigits="1"
 																		minIntegerDigits="1" maxFractionDigits="4"
 																		value="${listVar.collaboratedAmount }" /></td>
-																<td valign="middle">
-																	<%-- ${loop.index} --%>
-																</td>
+																<!-- <td valign="middle"></td> -->
 																<%-- <td valign="middle"><%=counter%></td> --%>
 																<!-- <td valign="middle"></td>
 																<td valign="middle"></td> -->
@@ -617,7 +614,7 @@ table th {
 																						<th scope="col" valign="middle">Invested
 																							Value (Rs.)</th>
 																						<th scope="col" valign="middle">Bal. Units</th>
-																						<th scope="col" valign="middle">NAV</th>
+																						<th scope="col" valign="middle">NAV (As on Date)</th>
 																						<th scope="col" valign="middle">Current Value
 																							(Rs.)</th>
 																						<th scope="col" valign="middle">Action</th>
@@ -642,7 +639,11 @@ table th {
 																									minFractionDigits="1" minIntegerDigits="1"
 																									maxFractionDigits="4"
 																									value="${folioList.units }" /></td>
-																							<td valign="middle">${folioList.nav }</td>
+																							<td valign="middle">
+																								<span>${folioList.nav }</span>
+																								<br>
+																								<span style="font-size: 9px;color: grey;">(${folioList.navdate })</span>
+																							</td>
 																							<c:choose>
 																								<c:when
 																									test="${folioList.marketValue > folioList.invAmount}">

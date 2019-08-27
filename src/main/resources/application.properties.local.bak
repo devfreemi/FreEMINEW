@@ -61,7 +61,7 @@ spring.mail.protocol=smtp
 investment.api.birla.enabaled=N
 
 investment.bse.enabled=Y
-investment.bse.testphase.enabled=Y
+investment.bse.testphase.enabled=N
 investment.bse.mail.support=N
 investment.bse.mail.support.account=support@freemi.in
 

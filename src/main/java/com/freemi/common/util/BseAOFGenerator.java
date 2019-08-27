@@ -197,8 +197,20 @@ public class BseAOFGenerator {
 
 //			DOB format
 			SimpleDateFormat baseFormat = new SimpleDateFormat("yyyy-mm-dd");
+			SimpleDateFormat baseFormat2 = new SimpleDateFormat("dd/mm/yyyy");
 			SimpleDateFormat aofDateFormat = new SimpleDateFormat("dd-mm-yyyy");
-			String dobinFormat = aofDateFormat.format(baseFormat.parse(investForm.getInvDOB()));
+			String dobinFormat ="";
+			try {
+				dobinFormat = aofDateFormat.format(baseFormat2.parse(investForm.getInvDOB()));
+			}catch(Exception e) {
+				logger.error("AOF date format issue of DOB with format dd/mm/yyyy. Try another formart- yyyy-mm-dd ", e);
+				try {
+					dobinFormat = aofDateFormat.format(baseFormat.parse(investForm.getInvDOB()));
+				}catch(Exception e2) {
+					logger.info("Issue with 2nd format too. Set as date format...",e2);
+					
+				}
+			}
 			cell11 = new PdfPCell(new Paragraph("Date of birth: "+ dobinFormat,f1));
 			table4.addCell(cell11);
 
@@ -990,13 +1002,13 @@ public class BseAOFGenerator {
 			cell11.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			cell11.setBorderColor(BaseColor.BLACK);
 			Image img1;
-			if(investForm.getCustomerSignature()!=""){
+			if(investForm.getCustomerSignature1()!=""){
 				try {
 					Base64 decoder = new Base64();
-					byte[] imageByte = decoder.decode(investForm.getCustomerSignature().split(",")[1]);
+					byte[] imageByte = decoder.decode(investForm.getCustomerSignature1().split(",")[1]);
 					img1 = Image.getInstance(imageByte);
 					//				img = Image.get
-					img1.setAlt("FREEMI AOF FORM");
+					img1.setAlt("Signature 1");
 					Chunk c21 = new Chunk(img1, 1, 1);
 					Paragraph p21 = new Paragraph();
 
@@ -1004,19 +1016,48 @@ public class BseAOFGenerator {
 					p21.add(c21);
 					cell11.addElement(p21);
 				} catch (MalformedURLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.error("Error processing ",e);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.error("Error processing AOF data ",e);
 				} 
 			}else{
 				cell11.addElement(new Paragraph("",f2));
 			}
 
-
 			table4.addCell(cell11);
-			cell11 = new PdfPCell(new Paragraph("",f1));
+			
+			
+			cell11 = new PdfPCell();
+			cell11.setHorizontalAlignment(Element.ALIGN_CENTER);
+			cell11.setPaddingLeft(10);
+			cell11.setPaddingTop(5);
+			cell11.setFixedHeight(50);
+			cell11.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell11.setBorderColor(BaseColor.BLACK);
+			if(investForm.getCustomerSignature2()!="" && ( investForm.getHoldingMode().equals("JO") ||  investForm.getHoldingMode().equals("AS"))){
+				Image img2;
+				logger.info("Cusomer holdng mode requires to set 2nd applicant signature too.");
+				try {
+					Base64 decoder = new Base64();
+					byte[] imageByte = decoder.decode(investForm.getCustomerSignature2().split(",")[1]);
+					img2 = Image.getInstance(imageByte);
+					//				img = Image.get
+					img2.setAlt("Signature 2");
+					Chunk c21 = new Chunk(img2, 1, 1);
+					Paragraph p21 = new Paragraph();
+
+					//p21.setPaddingTop(15);
+					p21.add(c21);
+					cell11.addElement(p21);
+				} catch (MalformedURLException e) {
+					logger.error("Error processing signature 2",e);
+				} catch (IOException e) {
+					logger.error("Error processing AOF data for signature 2",e);
+				} 
+			}else{
+				cell11.addElement(new Paragraph("",f2));
+			}
+//			cell11 = new PdfPCell(new Paragraph("",f1));
 			table4.addCell(cell11);
 
 			cell11 = new PdfPCell(new Paragraph("",f1));
@@ -1043,18 +1084,18 @@ public class BseAOFGenerator {
 			table4.addCell(cell11);
 
 			document.add(table4);
-
+			logger.info("AOF pdf generator complete for user- "+ investForm.getPan1());
 			// ---------------------------------------------
 		}catch(Exception e){
-			e.printStackTrace();
-			logger.error("Exception generated while crating AOF file",e);
+//			e.printStackTrace();
+			logger.error("Exception generated while crating AOF file. Unable to process...",e);
 			flag="FAIL";
 		}finally {
 			document.close();
 			writer.close();
 			logger.info("Close AOF document after writing successful");
 		}
-		logger.info("AOF pdf generator complete for user- "+ investForm.getPan1());
+		
 
 		return flag;
 
@@ -1089,14 +1130,16 @@ public class BseAOFGenerator {
 	
 	private static String getHoldingMode(String holdingMode){
 		String holding="NA";
-		System.out.println(holdingMode);
+		logger.info(holdingMode);
 		Map<String,String> holdingList = InvestFormConstants.holdingMode;
 		
-		for (String name : holdingList.keySet())  
-            System.out.println("key: " + name); 
+		/*
+		 * for (String name : holdingList.keySet()) logger.info("getHoldingMode ey: " +
+		 * name);
+		 */
 		
 		holding = holdingList.get(holdingMode);
-		System.out.println(holding);
+		System.out.println("getHoldingMode: "+ holding);
 		return holding;
 
 	}

@@ -154,8 +154,11 @@ public class BseMFInvestForm implements Serializable {
 	@Column(name="")
 	private String investmentType;
 	
-	@Column(name="SIGNATURE")
-	private String customerSignature="";
+	@Column(name="SIGNATURE_1")
+	private String customerSignature1="";
+	
+	@Column(name="SIGNATURE_2")
+	private String customerSignature2="";
 	
 	@Transient
 	@Column(name="")
@@ -197,6 +200,12 @@ public class BseMFInvestForm implements Serializable {
 	
 	@Column(name="LAST_MODIFIED_AT")
 	private Date lastModifiedDate;
+	
+	@Column(name="SYSTEM_IP")
+	private String systemip;
+	
+	@Column(name="SYSTEM_DETAILS")
+	private String systemDetails;
 	
 	@Valid
 	@OneToOne(fetch=FetchType.EAGER, mappedBy="mfForm",cascade=CascadeType.ALL)
@@ -607,13 +616,23 @@ public class BseMFInvestForm implements Serializable {
 	}
 
 
-	public String getCustomerSignature() {
-		return customerSignature;
+	public String getCustomerSignature1() {
+		return customerSignature1;
 	}
 
 
-	public void setCustomerSignature(String customerSignature) {
-		this.customerSignature = customerSignature;
+	public void setCustomerSignature1(String customerSignature1) {
+		this.customerSignature1 = customerSignature1;
+	}
+
+
+	public String getCustomerSignature2() {
+		return customerSignature2;
+	}
+
+
+	public void setCustomerSignature2(String customerSignature2) {
+		this.customerSignature2 = customerSignature2;
 	}
 
 
@@ -704,6 +723,26 @@ public class BseMFInvestForm implements Serializable {
 
 	public void setLastModifiedDate(Date lastModifiedDate) {
 		this.lastModifiedDate = lastModifiedDate;
+	}
+
+
+	public String getSystemip() {
+		return systemip;
+	}
+
+
+	public void setSystemip(String systemip) {
+		this.systemip = systemip;
+	}
+
+
+	public String getSystemDetails() {
+		return systemDetails;
+	}
+
+
+	public void setSystemDetails(String systemDetails) {
+		this.systemDetails = systemDetails;
 	}
 	
 }

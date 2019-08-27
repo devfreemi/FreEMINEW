@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.freemi.database.service.BseEntryManager;
 import com.freemi.entity.investment.MfNavData;
+import com.google.gson.Gson;
 
 @RestController
 public class MfDataController {
@@ -29,24 +31,27 @@ public class MfDataController {
 	@Autowired
 	BseEntryManager bseEntryManager;
 	
-	@PostMapping(value="/api/navdata/{isin}")
+	@PostMapping(value="/api/navdata/{isin}",produces = "application/json")
 //	@CrossOrigin(origins="www.freemi.in")
+	@CrossOrigin(origins = "*")
 	@ResponseBody
-	public List<MfNavData> getNavDataForIsisn(@RequestBody String navData,@PathVariable(name="isin") String isin, BindingResult result, HttpServletRequest request, HttpServletResponse httpResponse){
+	public String  getNavDataForIsisn(@PathVariable(name="isin") String isin,Model model, HttpServletRequest request, HttpServletResponse httpResponse){
 		logger.info("Request received to fetch NAV data via API..");
 //		String response ="SUCCESS";
 		List<MfNavData> navhistorydata = null;
 //		List<String> data = null;
+		String json = null;
 		try{
 			if(!isin.isEmpty()){
 				
-				JSONObject obj = new JSONObject(navData);
+//				JSONObject obj = new JSONObject(navData);
 //		        String pageName = obj.getJSONObject("pageInfo").getString("pageName");
-		        isin = obj.getString("isin");
+//		        isin = obj.getString("isin");
 //		        System.out.println(pageName);
 		        
 		        navhistorydata=  bseEntryManager.getnavdataByISIN(isin);
 //				System.out.println(navhistorydata);
+		        json = new Gson().toJson(navhistorydata);
 				
 			}else{
 				logger.info("No isin in api call- " + isin);
@@ -55,8 +60,9 @@ public class MfDataController {
 		}catch(Exception e){
 			logger.error("Error reading ISIN nav data..",e);
 		}
-		
-		return navhistorydata;
+		httpResponse.setContentType("application/json");
+		return json;
+//		return navhistorydata;
 	}
 	
 	

@@ -734,14 +734,14 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	}
 
 	@Override
-	public String upddateCustomerFormSignature(String mobile, String pan, String signatureData) {
+	public String upddateCustomerFormSignature(String mobile, String pan, String signatureData1, String signatureData2) {
 		logger.info("Processing to update customer signature for BSE profile- "+ mobile);
 		int result = 0;
 		String flag="SUCCESS";
 		try{
 			if(bseCustomerCrudRespository.existsByMobileAndAccountActive(mobile,"Y")){
 				String clientId = bseCustomerCrudRespository.getClientIdFromMobile(mobile);
-				result = bseCustomerCrudRespository.uploadCustomerSignature(clientId, pan, signatureData);
+				result = bseCustomerCrudRespository.uploadCustomerSignature(clientId, pan, signatureData1, signatureData2);
 				logger.info("Status for signature update- "+ result);
 			}else{
 				logger.info("Cusotmer not found to update signature- "+ mobile);

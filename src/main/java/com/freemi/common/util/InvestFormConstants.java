@@ -371,8 +371,8 @@ public class InvestFormConstants {
 
 		{
 			/*put("", "--Select--");*/
-			put("Y", "Politically exposed person");
 			put("N", "Not politically exposed person");
+			put("Y", "Politically exposed person");
 			put("R", "Relative of the politically exposed person");
 		}
 	};

@@ -9,15 +9,11 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>FreEMI MF</title>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
-
 <meta name="robots" content="index,nofollow" />
 <link
 	href="<c:url value="${contextcdn}/resources/css/bseinvestmentform.css"/>"
 	rel="stylesheet">
-<link href="<c:url value="${contextcdn}/resources/css/multistep.css"/>"
-	rel="stylesheet">
+<link href="<c:url value="${contextcdn}/resources/css/multistep.css"/>" rel="stylesheet">
 <link href="<c:url value="${contextcdn}/resources/css/pace-theme.css"/>"
 	rel="stylesheet">
 <script src="<c:url value="${contextcdn}/resources/js/pace.min.js" />"></script>

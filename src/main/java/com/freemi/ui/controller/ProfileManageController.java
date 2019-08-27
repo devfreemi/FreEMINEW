@@ -425,7 +425,7 @@ public class ProfileManageController{
 
 					Set<String> uniqueAmcs = new HashSet<>(uniquefundShort);
 					uniquefundShort = new ArrayList<String>(uniqueAmcs);
-					logger.info("Unique funds from karvy house - "+ uniquefundShort);
+					logger.info("Distinct AMC from KARVY - "+ uniquefundShort);
 
 					for(int x=0;x<uniquefundShort.size();x++){
 						MFKarvyFundsView selectedAMC = new MFKarvyFundsView();
@@ -434,7 +434,7 @@ public class ProfileManageController{
 						Double totalAMCInvestedVal=0.0;
 						Double amcMarketValue=0.0;
 						for(int y=0;y<allMFFunds.size();y++){
-							logger.info(uniquefundShort.get(x) + " -> "+ allMFFunds.get(y).getAmcShort());
+							logger.debug(uniquefundShort.get(x) + " -> "+ allMFFunds.get(y).getAmcShort());
 							if(uniquefundShort.get(x).equals(allMFFunds.get(y).getAmcShort())){
 								
 								if(currentFund.getAmcicon()==null){
@@ -450,7 +450,7 @@ public class ProfileManageController{
 								}
 								if(currentFund.getFundName()==null){
 									currentFund.setFundName(allMFFunds.get(y).getAmcName());
-									logger.info("Set common KARVY fund name- "+ allMFFunds.get(y).getAmcName());
+									logger.debug("Set common KARVY fund name- "+ allMFFunds.get(y).getAmcName());
 								}
 								
 //								Calculate AMC total invested value and its current market value
