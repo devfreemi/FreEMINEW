@@ -64,7 +64,7 @@ public class RequestInceptorCustom extends HandlerInterceptorAdapter {
 						+ URLEncoder.encode(request.getRequestURL().toString(), StandardCharsets.UTF_8.toString()));
 				return false;
 			} else {
-				logger.info("Validate session token.");
+				logger.info("preHandle(): Validate session token.");
 
 				try {
 					ResponseEntity<String> apiresponse = profileRestClientService.validateUserToken(
@@ -82,7 +82,7 @@ public class RequestInceptorCustom extends HandlerInterceptorAdapter {
 						return false;
 
 					} else {
-						logger.info("Session mismtach or invalid.. Mot allowing to access.");
+						logger.info("Session mismtach or invalid.. Not allowing to access.");
 						response.sendRedirect(request.getContextPath());
 						return false;
 					}

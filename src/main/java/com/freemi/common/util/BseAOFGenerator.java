@@ -68,11 +68,9 @@ public class BseAOFGenerator {
 				p21.add(c21);
 				cell71.addElement(p21);
 			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error("Error processing, ",e);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error("Error AOF",e);
 			} 
 
 
@@ -203,8 +201,9 @@ public class BseAOFGenerator {
 			try {
 				dobinFormat = aofDateFormat.format(baseFormat2.parse(investForm.getInvDOB()));
 			}catch(Exception e) {
-				logger.error("AOF date format issue of DOB with format dd/mm/yyyy. Try another formart- yyyy-mm-dd ", e);
+				logger.error("AOF date format issue of DOB with format dd/mm/yyyy. ", e.getMessage());
 				try {
+					logger.info("Try Database format- yyyy-mm-dd");
 					dobinFormat = aofDateFormat.format(baseFormat.parse(investForm.getInvDOB()));
 				}catch(Exception e2) {
 					logger.info("Issue with 2nd format too. Set as date format...",e2);
@@ -1091,12 +1090,16 @@ public class BseAOFGenerator {
 			logger.error("Exception generated while crating AOF file. Unable to process...",e);
 			flag="FAIL";
 		}finally {
-			document.close();
-			writer.close();
+			try {
+				document.close();
+				writer.close();
+			}catch(Exception e) {
+				logger.error("Error closing file after AOF write ..", e);
+			}
 			logger.info("Close AOF document after writing successful");
 		}
 		
-
+		logger.info("Returning AOF generation status- "+ flag);
 		return flag;
 
 	}	

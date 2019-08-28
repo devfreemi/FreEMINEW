@@ -24,7 +24,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
 </head>
 <body>
-	<jsp:include page="../include/headermdb.jsp"></jsp:include>
+	<jsp:include page="../include/header.jsp"></jsp:include>
 	<div class="container" style="min-height: 100vh;">
 		<h1 style="font-size: 26px;">FATCA DECLARATION</h1>
 

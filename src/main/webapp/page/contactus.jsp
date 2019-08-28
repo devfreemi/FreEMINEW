@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
@@ -147,6 +146,6 @@
 	 </section>
 
     </main>
-<jsp:include page="include/footer1.jsp"></jsp:include>
+<jsp:include page="include/footer.jsp"></jsp:include>
 </body>
 </html>

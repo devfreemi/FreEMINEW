@@ -338,7 +338,7 @@
 </div>
 
 </div>
-  <jsp:include page="include/footer1.jsp"></jsp:include>
+  <jsp:include page="include/footer.jsp"></jsp:include>
 
 
 </body>

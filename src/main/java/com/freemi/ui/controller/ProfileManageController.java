@@ -405,24 +405,25 @@ public class ProfileManageController{
 				 * 24-07-2019. MfBalanceCalculator.karvyBalanceCalculator(karvyFunds2); }
 				 */
 				
-				for(int j=0;j<allMFFunds.size();j++){
-					
-					uniquefundShort.add(allMFFunds.get(j).getAmcShort());
-
-					totalAsset+=allMFFunds.get(j).getInvAmount();
-					
-					try {
-						totalmarketVal+=Double.valueOf(allMFFunds.get(j).getMarketValue());
-					}catch(Exception e) {
-						logger.error("Error adding market value -  "+ allMFFunds.get(j).getMarketValue());
-					}
-				}
-				
-				logger.info("Total asset after ALL MF calculation- "+ totalAsset);
-				
 				if(allMFFunds !=null){
 					logger.info("Total karvy Folio found of customer - " + allMFFunds.size());
 
+					for(int j=0;j<allMFFunds.size();j++){
+						
+						uniquefundShort.add(allMFFunds.get(j).getAmcShort());
+
+						totalAsset+=allMFFunds.get(j).getInvAmount();
+						
+						try {
+							totalmarketVal+=Double.valueOf(allMFFunds.get(j).getMarketValue());
+						}catch(Exception e) {
+							logger.error("Error adding market value -  "+ allMFFunds.get(j).getMarketValue());
+						}
+					}
+					
+					logger.info("Total asset after ALL MF calculation- "+ totalAsset);
+					
+					
 					Set<String> uniqueAmcs = new HashSet<>(uniquefundShort);
 					uniquefundShort = new ArrayList<String>(uniqueAmcs);
 					logger.info("Distinct AMC from KARVY - "+ uniquefundShort);
@@ -450,7 +451,7 @@ public class ProfileManageController{
 								}
 								if(currentFund.getFundName()==null){
 									currentFund.setFundName(allMFFunds.get(y).getAmcName());
-									logger.debug("Set common KARVY fund name- "+ allMFFunds.get(y).getAmcName());
+									logger.debug("Set common fund name- "+ allMFFunds.get(y).getAmcName());
 								}
 								
 //								Calculate AMC total invested value and its current market value
@@ -520,6 +521,7 @@ public class ProfileManageController{
 		map.addAttribute("totalmarketval", totalmarketVal);
 		map.addAttribute("contextcdn", environment.getProperty(CommonConstants.CDN_URL));
 		
+		logger.info("Returning to page- "+ returnurl);
 		return returnurl;
 		//		return "my-dashboard";
 	}
