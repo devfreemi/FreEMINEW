@@ -150,7 +150,8 @@ border: 1px solid #8b8e90;
 		</section>
 
 	</div>
-
+	
+	<jsp:include page="../include/sub-footer.jsp"></jsp:include>
 	<jsp:include page="../include/footer.jsp"></jsp:include>
 </body>
 </html>

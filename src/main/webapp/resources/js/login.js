@@ -42,22 +42,10 @@ function validateForm(){
 	if(mobile.length>0){
 		if(digitregexp.test(mobile)){
 			flag1=true;
-			/*$("#validationCustomUsername").css({"border-bottom":"2px solid #3eb755;"});*/
-			/*$("#mobico").css({"color":"#2aa72f;"});
-		$("#msg1").text("");*/
-//			console.log("valid no");
 			mobdes.style.color="rgb(60, 177, 59)";
 
 		}else{
-//			console.log("Invalid mobile");
-			/*$("#validationCustomUsername").css({"border-bottom":"2px solid #f7445e;"});*/
-//			$("#mobico").css({"color":"#f7445e;"});
-
-
-			/*$("#msg1").text("Invalid number format!");*/
-			/*$("#ht").css("color","#f7445e;");*/
 			mobdes.style.color="#e83a3a";
-
 		}
 	}else{
 		mobdes.style.color="black";
@@ -68,12 +56,8 @@ function validateForm(){
 
 		if(pass.length>0){
 			if(pass.length >=1 && pass.length < 8){
-
-
 				passdes.style.color="#e83a3a";
-//				console.log("more")
 			}else{
-//				console.log("less")
 				passdes.style.color="rgb(60, 177, 59)";
 				flag2=true;
 			}
@@ -83,15 +67,6 @@ function validateForm(){
 	}else{
 		flag2=true;
 	}
-
-	/*if(otpsubmit ){
-		var otp = document.forms["login"]["otpVal"].value;
-		if(otp.lenth==6){
-		flag2=true;
-		}
-	}else{
-		flag2=false;
-	}*/
 
 	if(flag1 && flag2){
 		document.getElementById("loginsubmit").disabled = false;
@@ -103,19 +78,17 @@ function validateForm(){
 
 function submitLogin(e){
 	e.preventDefault();
+	$("#loginmsg").text("");
 	var digitregexp = /^[6-9]{1}[0-9]{9}$/;
 	var mobile = document.forms["login"]["usermobile"].value;
 	var pass = document.forms["login"]["userpassword"].value;
 	var returnUrl = document.forms["login"]["returnUrl"].value;
 	var otploginChosen = $("#otplogin").is(":checked");
+	var otpVal = document.forms["login"]["otpVal"].value;
 	var token =  $('input[name="_csrf"]').attr('value'); 
-//	console.log("OTP login- "+ otploginChosen);
-//	console.log(token);
-	$("#loginmsg").text("");
-	
 	
 	if(otploginChosen){
-		token.pass="OTP_LOGIN";
+		pass="OTP_LOGIN";
 	}
 	
 	if(!otpsubmit){
@@ -125,13 +98,18 @@ function submitLogin(e){
 		});
 
 		var request;
-		var str = $("#login").serialize();
-//		console.log(str);
-		
 		request = $.ajax({
 			url: "/products/login2.do",
 			method: "POST",
-			data:str,
+			data: {
+				"usermobile" : mobile,
+				"userpassword" : pass,
+				"otpVal" : otpVal,
+				"otpLogin" : otploginChosen,
+				"returnUrl" : encodeURIComponent(returnUrl),
+				"otpSubmit" : otpsubmit,
+				"_csrf" : token				
+			},
 			async: true,
 			datatype: "json",
 			beforeSend: function() {
@@ -152,7 +130,7 @@ function submitLogin(e){
 				countDownTimer();
 				
 			}else if(msg=="SUCCESS"){
-				console.log("Redirect to: " +returnUrl);
+//				console.log("Redirect to: " +returnUrl);
 				window.location.href = returnUrl;
 			}else{
 //				Error
@@ -174,8 +152,6 @@ function submitLogin(e){
 			$("#loginsubmit").prop("disabled", false);
 		});
 		
-		
-
 	}else{
 		var otpv = document.forms["login"]["otpVal"].value;
 		if(otpv=="" || otpv.length!=6){
@@ -184,18 +160,22 @@ function submitLogin(e){
 		}
 		
 		$.ajaxSetup({
-			headers:
-			{ 'X-CSRF-TOKEN': token }
+			headers: { 'X-CSRF-TOKEN': token }
 		});
 
 		var request;
-		var str = $("#login").serialize();
-//		console.log(str);
-		
 		request = $.ajax({
 			url: "/products/login2.do",
 			method: "POST",
-			data:str,
+			data: {
+				"usermobile" : mobile,
+				"userpassword" : pass,
+				"otpVal" : otpVal,
+				"otpLogin" : otploginChosen,
+				"returnUrl" : encodeURIComponent(returnUrl),
+				"otpSubmit" : otpsubmit,
+				"_csrf" : token				
+			},
 			async: true,
 			datatype: "json",
 			beforeSend: function() {
@@ -204,7 +184,7 @@ function submitLogin(e){
 		});
 
 		request.done(function(msg) {
-			console.log(msg);
+//			console.log(msg);
 			if(msg=="OTP_SENT"){
 
 				document.getElementById("passbox").style.display = 'none';
@@ -212,7 +192,7 @@ function submitLogin(e){
 				document.getElementById("otpbox").style.display = 'block';
 				
 			}else if(msg=="SUCCESS"){
-				console.log("Redirect to: " +returnUrl);
+//				console.log("Redirect to: " +returnUrl);
 				window.location.href = returnUrl;
 			}else if(msg=="OTP_INVALID"){
 				$("#loginmsg").text("Invalid OTP");
@@ -242,9 +222,6 @@ function submitLogin(e){
 				$("#loginbasic").show();
 			}
 		});
-
-
-		
 	}
 	
 	return false;
@@ -252,8 +229,6 @@ function submitLogin(e){
 }
 
 function countDownTimer(){
-	//var countDownDate = new Date("Jun 13, 2018 15:37:25").getTime();
-//	console.log("Timer started");
 	var x = setInterval(function() {
 
 		// Get todays date and time

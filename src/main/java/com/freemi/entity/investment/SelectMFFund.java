@@ -37,12 +37,13 @@ public class SelectMFFund implements Serializable {
 	@Column(name="SCHEME_CODE")
 	private String schemeCode;
 	
+	
+	
 	@Transient
 //	@NotEmpty(message="Re-inv Scheme code is missing.")
 	private String reinvSchemeCode;
 	
-	@Transient
-	@Column(name="")
+	@Column(name="SCHEME_NAME")
 	private String schemeName;
 	
 	@NotEmpty(message="Transaction ID missing. Retry transaction.")
@@ -134,6 +135,11 @@ public class SelectMFFund implements Serializable {
 	@Transient
 	private String rtaAgent="";
 	
+	@Column(name="CLIENT_IP")
+	private String clientIp;
+	
+	@Column(name="CLIENT_BROWSER")
+	private String clientBrowser;
 	
 	public long getSerialNo() {
 		return serialNo;
@@ -345,6 +351,18 @@ public class SelectMFFund implements Serializable {
 	}
 	public void setRedeemAll(String redeemAll) {
 		this.redeemAll = redeemAll;
+	}
+	public String getClientIp() {
+		return clientIp;
+	}
+	public void setClientIp(String clientIp) {
+		this.clientIp = clientIp;
+	}
+	public String getClientBrowser() {
+		return clientBrowser;
+	}
+	public void setClientBrowser(String clientBrowser) {
+		this.clientBrowser = clientBrowser;
 	}
     
 }

@@ -43,8 +43,7 @@ public class RequestInceptorCustom extends HandlerInterceptorAdapter {
 		 * response.addHeader("Cache-Control", "private");
 		 */
 
-		logger.debug(
-				"RequestInceptorCustom- preHandle(): Validating request received for url -" + request.getRequestURI());
+		logger.debug("RequestInceptorCustom- preHandle(): Validating request received for url -" + request.getRequestURI());
 
 		String reqUri = request.getRequestURI();
 		/*
@@ -60,8 +59,7 @@ public class RequestInceptorCustom extends HandlerInterceptorAdapter {
 			if (session.getAttribute("token") == null) {
 				logger.debug("pre-handle- User sesssion not found. Rejecting access");
 				logger.debug("Context path- " + request.getContextPath());
-				response.sendRedirect(request.getContextPath() + "/login?ref="
-						+ URLEncoder.encode(request.getRequestURL().toString(), StandardCharsets.UTF_8.toString()));
+				response.sendRedirect(request.getContextPath() + "/login?ref="+ URLEncoder.encode(request.getRequestURL().toString(), StandardCharsets.UTF_8.toString()));
 				return false;
 			} else {
 				logger.info("preHandle(): Validate session token.");
@@ -109,7 +107,7 @@ public class RequestInceptorCustom extends HandlerInterceptorAdapter {
 				modelAndView.setViewName("redirect:/login");
 			}
 			if (modelAndView != null) {
-				logger.info("[postHandle][" + " " + "]- " + modelAndView.getViewName());
+				logger.info("[postHandle]"  + modelAndView.getViewName());
 			} else {
 				logger.info("[postHandle][modelAndviwe is null]");
 			}

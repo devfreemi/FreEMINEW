@@ -39,6 +39,10 @@ public class BsemfTransactionHistory implements Serializable {
 	@Column(name="SCHEME_CODE")
 	private String schemeCode;
 	
+	@Column(name="SCHEME_NAME")
+	private String schemeName;
+	
+	
 	@Column(name="INVEST_AMOUNT")
 	private String investAmount;
 	
@@ -121,5 +125,12 @@ public class BsemfTransactionHistory implements Serializable {
 	public void setInvestType(String investType) {
 		this.investType = investType;
 	}
+	public String getSchemeName() {
+		return schemeName;
+	}
+	public void setSchemeName(String schemeName) {
+		this.schemeName = schemeName;
+	}
+	
 	
 }

@@ -66,7 +66,7 @@ table.dataTable thead th, table.dataTable thead td {
 </head>
 <body>
 	<jsp:include page="../include/header.jsp"></jsp:include>
-	<div class="container" style="min-height: 100vh;">
+	<div class="container-fluid" style="min-height: 100vh;margin-bottom: 5rem;">
 		<div class="row" style="margin: auto; overflow: auto;">
 			<div class="col-md-12 col-lg-12"
 				style="margin: auto; margin-top: 30px;">
@@ -110,6 +110,7 @@ table.dataTable thead th, table.dataTable thead td {
 									<tr>
 										<th scope="col">TRANSACTION REFERENCE</th>
 										<th scope="col">SCHEME CODE</th>
+										<th scope="col">SCHEME NAME</th>
 										<th scope="col">CATEGORY</th>
 										<th scope="col">INVESTMENT TYPE</th>
 										<th scope="col">SIP START DATE</th>
@@ -126,6 +127,7 @@ table.dataTable thead th, table.dataTable thead td {
 										<tr>
 											<td>${listVar.transactionId }</td>
 											<td>${listVar.schemeCode }</td>
+											<td>${listVar.schemeName }</td>
 											<td>${listVar.transctionType }</td>
 											<td>${listVar.investType }</td>
 											<td>${listVar.sipStartDate }</td>
@@ -182,6 +184,8 @@ table.dataTable thead th, table.dataTable thead td {
 		</div>
 
 	</div>
+	
+	<jsp:include page="../include/sub-footer.jsp"></jsp:include>
 	<jsp:include page="../include/footer.jsp"></jsp:include>
 
 </body>
@@ -192,6 +196,7 @@ table.dataTable thead th, table.dataTable thead td {
 			"columns": [
 			    { "orderable": false },
 			    { "orderable": false },
+			    null,
 			    null,
 			    null,
 			    null,

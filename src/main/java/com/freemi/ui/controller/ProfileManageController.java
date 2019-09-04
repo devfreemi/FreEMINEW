@@ -390,23 +390,14 @@ public class ProfileManageController{
 
 			try{
 				List<MfAllInvestorValueByCategory> allMFFunds= null;
-//				List<MFKarvyValueByCategory2> karvyFunds2= null;
-//				List<MFKarvyValueByCategory> categorykarvyFunds= new ArrayList<MFKarvyValueByCategory>();
 				List<MfAllInvestorValueByCategory> categorykarvyFunds= null;
 				List<MFKarvyFundsView> karvyview = new ArrayList<MFKarvyFundsView>();
 				logger.info("Search for ALL related folios for customer.");
 				List<String> uniquefundShort = new ArrayList<String>();
 				allMFFunds = bseEntryManager.getCustomersAllFoliosByCategory(session.getAttribute("userid").toString(), null);
-//				karvyFunds2 = bseEntryManager.getCustomersKarvyInvByCategory2(session.getAttribute("userid").toString(), null);
-				
-				/*
-				 * if(karvyFunds!=null) { logger.info("Calculate total Karvy balance for user "+
-				 * session.getAttribute("userid").toString()); // Calculate Fund new -
-				 * 24-07-2019. MfBalanceCalculator.karvyBalanceCalculator(karvyFunds2); }
-				 */
 				
 				if(allMFFunds !=null){
-					logger.info("Total karvy Folio found of customer - " + allMFFunds.size());
+					logger.info("Total Folio(s) found of customer - " +session.getAttribute("userid").toString() + " : " + allMFFunds.size());
 
 					for(int j=0;j<allMFFunds.size();j++){
 						
@@ -426,7 +417,7 @@ public class ProfileManageController{
 					
 					Set<String> uniqueAmcs = new HashSet<>(uniquefundShort);
 					uniquefundShort = new ArrayList<String>(uniqueAmcs);
-					logger.info("Distinct AMC from KARVY - "+ uniquefundShort);
+					logger.info("Distinct AMCs invested in of customer - "+ uniquefundShort);
 
 					for(int x=0;x<uniquefundShort.size();x++){
 						MFKarvyFundsView selectedAMC = new MFKarvyFundsView();
@@ -488,10 +479,12 @@ public class ProfileManageController{
 						karvyview.add(selectedAMC);
 						listFunds.add(currentFund);
 						
-//						logger.info("Total amounts under KARVY- "+ currentFund.getCollaboratedAmount());
 					}
 
 					logger.info("karvy funds by category- " + karvyview.size());
+					
+					map.addAttribute("allfundsdata", allMFFunds);
+					
 				}
 				
 //				map.addAttribute("karvyorderhistory", karvyview);

@@ -121,7 +121,7 @@ public class CommonConstants {
 			add("/products/profile");
 			add("/products/my-dashboard");
 			add("/products/mutual-funds/view-purchase-history");
-			
+			add("/products/mutual-funds/pending-payments");
 		}
 	};
 	

@@ -470,7 +470,7 @@ public class HomeController {
 					returnUrl="SUCCESS";
 				}
 				catch(HttpStatusCodeException  e){
-					logger.error("Connection failure - " ,e);
+					logger.error("Login failure - " ,e.getMessage());
 					if(e.getRawStatusCode()==401)
 						returnUrl= "Invalid userid or password";
 					if(e.getRawStatusCode() == 500)
