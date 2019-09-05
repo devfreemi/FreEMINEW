@@ -88,12 +88,7 @@ border: 1px solid #8b8e90;
 									<span>${TRANSACTION_REPORT.statusMsg }</span>
 									</div>
 								</div>
-								<%-- <div class="col-md-6 col-lg-6">Fund Name</div>
-							<div class="col-md-6 col-lg-6">${TRANSACTION_REPORT.fundName }</div> --%>
 							</div>
-
-
-							<%-- 	<h6>Transaction Reference No - ${TRANS_ID }</h6> --%>
 
 							<c:if test="${FIRST_PAY == 'Y' }">
 								<c:if test="${orderUrl.statusCode == '100' }">

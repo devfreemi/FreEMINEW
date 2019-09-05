@@ -96,11 +96,6 @@ public class BsemfController {
 	@Autowired
 	ProductSchemeDetailService productSchemeDetailService;
 
-	/*
-	 * @Autowired private DatabaseEntryManager databaseEntryManager ;//=
-	 * (DatabaseEntryManager) BeanUtil.getBean(DatabaseEntryService.class);
-	 */
-
 	@Autowired
 	ProfileRestClientService profileRestClientService;
 

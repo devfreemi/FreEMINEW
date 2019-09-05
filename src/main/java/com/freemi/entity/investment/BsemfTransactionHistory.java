@@ -132,5 +132,4 @@ public class BsemfTransactionHistory implements Serializable {
 		this.schemeName = schemeName;
 	}
 	
-	
 }

@@ -9,19 +9,7 @@ var distance = 300000;
 var tokenexpired= false;
 
 function formOnLoad(){
-	/*var digitregexp = /^[6-9]{1}[0-9]{9}$/;
-	var mobile = document.forms["login"]["usermobile"].value;
-	var flag1=false, flag2=false;
-
-
-	if(digitregexp.test(mobile)){
-		flag1=true;
-	}
-	if(flag1){
-		document.getElementById("loginsubmit").disabled = false;
-	}else{
-		document.getElementById("loginsubmit").disabled = true;
-	}*/
+	
 	validateForm();
 
 }

@@ -64,7 +64,6 @@
 						<div class="tab">
 							<h4 class="text-md-center" style="color: #f16927; font-weight: 500;border-bottom: 1px solid;">1. Scheme Details</h4>
 							<div class="row">
-								<%-- <jsp:include page="bseform-redeem.jsp"></jsp:include> --%>
 								<div class="col-md-12 col-lg-12" style="text-align: left;">
 									<div>
 										<span id="mandateField" style="color: red;"></span>
@@ -134,30 +133,6 @@
 										</div>
 									</div>
 
-									<%-- <div class="form-group row">
-										<label for="invCategory" class="col-sm-4 col-form-label">Category
-										</label>
-										<div class="col-6 col-md-8 col-lg-8">
-											<div
-												class="custom-control custom-radio custom-control-inline">
-												<form:radiobutton path="fundCategory" value="Z"
-													id="growthCategory" name="catval"
-													class="custom-control-input" />
-												<label class="custom-control-label" for="growthCategory">Growth</label>
-											</div>
-
-											<c:if test="${selectedFund.reinvSchemeCode != ''}">
-												<div
-													class="custom-control custom-radio custom-control-inline">
-													<form:radiobutton path="fundCategory" value="Y"
-														id="reinvestcategory" name="catval"
-														class="custom-control-input" />
-													<label class="custom-control-label" for="reinvestcategory">
-														Dividend Re-investment</label>
-												</div>
-											</c:if>
-										</div>
-									</div> --%>
 
 									<div class="form-group row">
 										<label for="redeemamount"
@@ -168,47 +143,6 @@
 												class="form-control form-control-sm" />
 										</div>
 									</div>
-
-									<%-- <div class="form-group row">
-										<label for="paymodet"
-											class="col-6 col-md-4 col-lg-4 col-form-label col-form-label-sm">Payment
-											Mode:</label>
-										<div class="col-6 col-md-8 col-lg-8">
-
-											<c:choose>
-												<c:when test="${purchaseForm.investType == 'SIP' }">
-													<div
-														class="custom-control custom-radio custom-control-inline">
-														<form:radiobutton path="paymentMode" id="paymode3"
-															value="BANKDEBIT" class="custom-control-input" />
-														<label class="custom-control-label" for="paymode3">BANK
-															DEBIT</label>
-													</div>
-
-												</c:when>
-
-												<c:when test="${purchaseForm.investType == 'LUMPSUM' }">
-													<div
-														class="custom-control custom-radio custom-control-inline">
-														<form:radiobutton path="paymentMode" name="pay"
-															id="paymode1" value="NETBANKING"
-															class="custom-control-input" />
-														<label class="custom-control-label" for="paymode1">NETBANKING</label>
-													</div>
-													<div
-														class="custom-control custom-radio custom-control-inline">
-														<form:radiobutton path="paymentMode" name="pay"
-															id="paymode2" value="CARD" class="custom-control-input" />
-														<label class="custom-control-label" for="paymode2">CARD</label>
-													</div>
-
-												</c:when>
-
-											</c:choose>
-
-										</div>
-									</div> --%>
-
 
 								</div>
 							</div>
@@ -259,8 +193,6 @@
 
 									<hr>
 									<div class="form-group row mb-1">
-										<!-- <label for="agreepolicyconf"
-											class="col-6 col-md-4 col-lg-4 col-form-label col-form-label-sm">Policy</label> -->
 										<div class="col-md-12 col-lg-12">
 
 											<div class="custom-control custom-checkbox">

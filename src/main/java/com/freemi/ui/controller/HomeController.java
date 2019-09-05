@@ -55,10 +55,6 @@ import com.freemi.entity.general.Folios;
 import com.freemi.entity.general.ForgotPassword;
 import com.freemi.entity.general.Login;
 import com.freemi.ui.restclient.GoogleSecurity;
-import com.freemi.ui.restclient.RestClient;
-import com.freemi.ui.restclient.RestClientBse;
-
-
 
 @Controller
 @Scope("session")

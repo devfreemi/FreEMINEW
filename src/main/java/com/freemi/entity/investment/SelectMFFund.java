@@ -19,9 +19,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 @Proxy(lazy=false)
 public class SelectMFFund implements Serializable {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	@Id
