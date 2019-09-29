@@ -76,8 +76,12 @@ public class MailSenderImpl implements com.freemi.controller.interfaces.MailSend
 		MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED, StandardCharsets.UTF_8.toString());	//True indicate we need multipart message
 		helper.setFrom(mail.getFrom());
 		helper.setTo(mail.getTo());
+		
+		if(mail.getCc()!=null) {
+			helper.setCc(mail.getCc());
+		}
 		if(bccSupport){
-			helper.setBcc(env.getProperty("investment.bse.mail.support.account"));
+			helper.setBcc(env.getProperty(CommonConstants.SUPPORT_TEAM_MAIL_ID));
 		}
 		
 		helper.setText(mail.getContent(),true);	//True flag to indicate the text included is HTML
@@ -137,7 +141,7 @@ public class MailSenderImpl implements com.freemi.controller.interfaces.MailSend
 				Mail mail = processMailAddress(address, replacementContent, userDetails.getEmail(), null, "Mutual Fund Transaction","mf-transaction.txt");
 				
 				boolean bccSupport =false;
-				if(env.getProperty("investment.bse.mail.support").equalsIgnoreCase("Y")){
+				if(env.getProperty(CommonConstants.MAIL_SUPPORT_TEAM_INVESTMENT_TRIGGER).equalsIgnoreCase("Y")){
 					bccSupport = true;
 				}
 				processMailRequest(mail,bccSupport);
@@ -179,6 +183,48 @@ public class MailSenderImpl implements com.freemi.controller.interfaces.MailSend
 		} catch (UnsupportedEncodingException e) {
 			logger.error("loginOTPMail(): Error setting Internet address.\n", e);
 		}
+		
+	}
+
+	@Override
+	@Async
+	public void sendMFRegisterNotification(String mailType, String customerName, String mobile, String mailId,
+			String bseClientID, String pan, String kycStatus) {
+		logger.info("sendMFRegisterNotification(): Trigger mail to support to notify about new BSE account registration..");
+		
+		try{
+			
+				if(env.getProperty(CommonConstants.MAIL_SUPPORT_TEAM_MF_REGISTRATION).equals("Y")) {
+				InternetAddress address = new InternetAddress(env.getProperty(CommonConstants.MAIL_ACCOUNT_ID), "FreEMI");
+
+				Map<String, Object> replacementContent= new HashMap<String,Object>();
+				String date = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
+				
+				replacementContent.put("name", customerName!=null?customerName:"NA");
+				replacementContent.put("mobile", mobile!=null?mobile:"NA");
+				replacementContent.put("pan", pan!=null?pan:"NA");
+				replacementContent.put("bseid", bseClientID!=null?bseClientID:"NA");
+
+				replacementContent.put("kycstatus", kycStatus!=null?kycStatus:"NA");
+				replacementContent.put("regdate", date);
+
+				Mail mail = processMailAddress(address, replacementContent, env.getProperty(CommonConstants.SUPPORT_TEAM_MAIL_ID), env.getProperty(CommonConstants.DEVELOPER_TEAM_MAIL_ID), "Mutual Fund Account Registration notification - "+ customerName,"mf-registration-notify.txt");
+				
+				boolean bccSupport =false;
+				processMailRequest(mail,bccSupport);
+				}else {
+					logger.info("sendMFRegisterNotification(): Mail notification is disbaled. Skipping...");
+				}
+		}catch(MessagingException exp){
+			logger.error("sendMFRegisterNotification(): MessageHelper Issue. ",exp);
+		} catch (UnsupportedEncodingException e) {
+			logger.error("sendMFRegisterNotification(): Error setting Internet address.", e);
+		}
+		catch (Exception e) {
+			logger.error("sendMFRegisterNotification(): Error", e);
+		}
+		
+		
 		
 	}
 

@@ -39,7 +39,9 @@ public interface BseEntryManager {
 	public UserProfile getCustomerProfileDetailsByMobile(String mobile);
 	public List<BseMFInvestForm> getCustomerDetails(String customerId);
 	public List<BseMFInvestForm> getCustomerByPan(String pan);
-	public boolean isExisitngCustomer(String pan, String mobile);
+	
+	public boolean isExisitngCustomer(String mobile, String activeStatus);
+	public boolean isExisitngBSECustomerByMobile(String mobile);
 	public String getCustomerPanfromMobile(String mobile);
 	public String getClientIdfromMobile(String mobile);
 	public boolean updateCustomerData(BseMFInvestForm custerProfileData);

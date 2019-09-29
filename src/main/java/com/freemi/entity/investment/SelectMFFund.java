@@ -34,7 +34,8 @@ public class SelectMFFund implements Serializable {
 	@Column(name="SCHEME_CODE")
 	private String schemeCode;
 	
-	
+	@Transient
+	private String investorName;
 	
 	@Transient
 //	@NotEmpty(message="Re-inv Scheme code is missing.")
@@ -360,6 +361,12 @@ public class SelectMFFund implements Serializable {
 	}
 	public void setClientBrowser(String clientBrowser) {
 		this.clientBrowser = clientBrowser;
+	}
+	public String getInvestorName() {
+		return investorName;
+	}
+	public void setInvestorName(String investorName) {
+		this.investorName = investorName;
 	}
     
 }

@@ -95,6 +95,8 @@ url.service.profile=http://localhost:8090/freemibackend
 ######### PROD ##################
 #url.service.profile=http://172.26.2.56:8080/freemibackend
 
+ldap.user.registration.enabled=Y
+
 ###################################################################################################################
 ####################################   SMS SERVICE    ##################################
 sms.server.send.enabled=N

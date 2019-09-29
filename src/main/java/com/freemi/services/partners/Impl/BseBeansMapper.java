@@ -216,6 +216,7 @@ public class BseBeansMapper {
 			bseOrderForm.setRemarks("Order cancel Request");
 			bseOrderForm.setOrderId(fundDetails.getOrderNo());
 			bseOrderForm.setBuySellType("FRESH");
+			bseOrderForm.setIPAdd(fundDetails.getClientIp());
 		}
 
 		bseOrderForm.setTransNo(requestNumber);

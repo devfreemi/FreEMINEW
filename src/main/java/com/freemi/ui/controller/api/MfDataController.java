@@ -4,18 +4,14 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.websocket.server.PathParam;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,8 +28,7 @@ public class MfDataController {
 	BseEntryManager bseEntryManager;
 	
 	@PostMapping(value="/api/navdata/{isin}",produces = "application/json")
-//	@CrossOrigin(origins="www.freemi.in")
-	@CrossOrigin(origins = "*")
+	@CrossOrigin(origins="https://www.freemi.in")
 	@ResponseBody
 	public String  getNavDataForIsisn(@PathVariable(name="isin") String isin,Model model, HttpServletRequest request, HttpServletResponse httpResponse){
 		logger.info("Request received to fetch NAV data via API..");

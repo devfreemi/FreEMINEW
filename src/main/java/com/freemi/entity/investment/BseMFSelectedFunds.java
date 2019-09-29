@@ -85,6 +85,9 @@ public class BseMFSelectedFunds implements Serializable {
 	
 	@Column(name="NAV_DATE_DR")
 	private String rNavDate;
+	
+	@Column(name="TOP_FUNDS_VIEW")
+	private String topFundsView;
 
 	public String getSchemeName() {
 		return schemeName;
@@ -272,6 +275,14 @@ public class BseMFSelectedFunds implements Serializable {
 
 	public void setAmcicon(String amcicon) {
 		this.amcicon = amcicon;
+	}
+
+	public String getTopFundsView() {
+		return topFundsView;
+	}
+
+	public void setTopFundsView(String topFundsView) {
+		this.topFundsView = topFundsView;
 	}
 	
 	

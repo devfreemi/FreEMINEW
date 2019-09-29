@@ -81,8 +81,8 @@
 								<label for="custName" class="col-sm-3 col-form-label">Investor
 									name</label>
 								<div class="col-sm-9">
-									<input type="text" readonly class="form-control-plaintext"
-										id="custName" value="${customerData.invName }">
+										<form:input path="investorName" class="form-control-plaintext" id="custName"
+										readonly="readonly" />
 								</div>
 								<form:hidden path="clientID" />
 								<form:hidden path="transactionID" />

@@ -50,16 +50,19 @@
 				</div>
 				<div class="row">
 					<c:choose>
+						
 						<c:when test="${not empty success }">
-							<div class="col-md-12 col-lg-12 alert alert-primary" role="alert"
-								style="text-align: center;">
+							<div class="col-md-12 col-lg-12">
+							<div class="alert alert-primary" role="alert">
 								<span> ${success}</span>
+							</div>
 							</div>
 						</c:when>
 						<c:when test="${not empty error }">
-							<div class="col-md-12 col-lg-12 alert alert-danger" role="alert"
-								style="text-align: center;">
+						<div class="col-md-12 col-lg-12">
+							<div class="alert alert-danger" role="alert">
 								<span>${error}</span>
+							</div>
 							</div>
 						</c:when>
 						<c:otherwise>

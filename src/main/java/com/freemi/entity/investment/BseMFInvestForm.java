@@ -189,6 +189,9 @@ public class BseMFInvestForm implements Serializable {
 	@Column(name="ACCOUNT_ACTIVE")
 	private String accountActive="Y";
 	
+	@Column(name="ACCOUNT_SUSPENDED")
+	private String accountSuspended="N";
+	
 	@Column(name="PAN1_VALIDITY")
 	private String pan1verified="N";
 	
@@ -743,6 +746,16 @@ public class BseMFInvestForm implements Serializable {
 
 	public void setSystemDetails(String systemDetails) {
 		this.systemDetails = systemDetails;
+	}
+
+
+	public String getAccountSuspended() {
+		return accountSuspended;
+	}
+
+
+	public void setAccountSuspended(String accountSuspended) {
+		this.accountSuspended = accountSuspended;
 	}
 	
 }

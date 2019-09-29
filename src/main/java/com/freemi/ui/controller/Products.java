@@ -97,8 +97,10 @@ public class Products {
 
 	@RequestMapping(value = "/register.do", method = RequestMethod.POST)
 	public String registerUser(@ModelAttribute("registerForm") @Valid Registerform registerForm, BindingResult bindingResult, ModelMap model) {
-		logger.info("@@@@ Inside Register do..");
-
+		logger.info("@@@@ Inside Register do registerUser()..");
+		
+		boolean registrationFlag= false;
+		
 		if(bindingResult.hasErrors()){
 			logger.info("Error in register form");
 			
@@ -111,9 +113,14 @@ public class Products {
 			response = profileRestClientService.registerUser(registerForm);
 			String status = response.getHeaders().get("STATUS").get(0);
 			if(status.equals("SUCCESS")){
+				registrationFlag =true;
 				model.addAttribute("success", "Registration successful. Login to your account");
+				model.addAttribute("registerForm", new Registerform());
 			}else if(status.equals("DUPLICATE ENTRY")){
-				model.addAttribute("error", "Account already exist.");
+				model.addAttribute("error", "Account already exist with this number.");
+				
+			}else if(status.equals("DUPLICATE EMAIL")){
+				model.addAttribute("error", "Email Id is already registered. Kindly select another email id");
 			}else if(status.equals("ERROR")){
 				model.addAttribute("error", "Registration failed. Please try again after sometime");
 			}else{
@@ -122,15 +129,22 @@ public class Products {
 			}
 
 		}catch(HttpStatusCodeException  e){
-			logger.info("Link failure - " + e.getStatusCode());
+			logger.error("registerUser(): Fregistration failed for Link failure - ", e.getStatusCode());
 			model.addAttribute("error", "Unable to process request curretnly");
 		} catch (JsonProcessingException e) {
+			logger.error("registerUser(): JsonProcessingException - ",e);
 			model.addAttribute("error","Invalid form data");
 		}catch(Exception e){
+			logger.error("registerUser(): Error register user",e);
 			model.addAttribute("error","Error processing request");
 		}
-
-		model.addAttribute("registerForm", new Registerform());
+		
+		if(registrationFlag) {
+			model.addAttribute("registerForm", new Registerform());
+		}else {
+			model.addAttribute("registerForm", registerForm);
+		}
+		
 //		logger.info("@@@@ RegisterController @@@@");
 		return "register";
 	}

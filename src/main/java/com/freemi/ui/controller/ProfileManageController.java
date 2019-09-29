@@ -164,7 +164,6 @@ public class ProfileManageController{
 				model.addAttribute("profileAddress", new UserProfile());*/
 				}
 
-			
 
 		}
 
@@ -367,22 +366,27 @@ public class ProfileManageController{
 	}
 
 	@RequestMapping(value = "/my-dashboard", method = RequestMethod.GET)
-	public String myDashboardGet(@ModelAttribute("fileform") BseFileUpload fileform,Model map,HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+	public String getMyDashboard(@ModelAttribute("fileform") BseFileUpload fileform,Model map,HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 		logger.info("@@@@ GetMyDashboardController @@@@");
 		
-		String returnurl = "";
+		String returnurl = "my-dashboard3";
 		double totalAsset= 0.0;
 		double totalmarketVal= 0.0;
+		List<MfCollatedFundsView> listFunds = new ArrayList<MfCollatedFundsView>();
+		
 		if(session.getAttribute("token") == null){
 			try {
 				returnurl="redirect:/login?ref="+ URLEncoder.encode(request.getRequestURL().toString(), StandardCharsets.UTF_8.toString());
 			} catch (UnsupportedEncodingException e) {
-				logger.error("my-dashboard(): failed to encode referrel url",e);
+				logger.error("my-dashboard(): failed to encode referrel url",e.getMessage());
 				returnurl="redirect:/login";
 			}
 		}else{
-			returnurl = "my-dashboard3";
-			List<MfCollatedFundsView> listFunds = new ArrayList<MfCollatedFundsView>();
+			
+			String aofstatus=bseEntryManager.investmentProfileStatus(session.getAttribute("userid").toString());
+			map.addAttribute("PROFILE_STATUS", aofstatus);
+			
+			if(aofstatus.equals("PROFILE_READY")) {
 
 			try{
 				List<MfAllInvestorValueByCategory> allMFFunds= null;
@@ -477,16 +481,20 @@ public class ProfileManageController{
 						
 					}
 
-					logger.info("karvy funds by category- " + karvyview.size());
+					logger.info("Total funds by category- " + karvyview.size());
 					
-					map.addAttribute("allfundsdata", allMFFunds);
+//					map.addAttribute("allfundsdata", allMFFunds);
 					
 				}
 				
-//				map.addAttribute("karvyorderhistory", karvyview);
-
 			}catch(Exception e){
 				logger.error("Error handling Karvy folio query from controller",e);
+			}
+			
+			}else {
+
+				String pan = bseEntryManager.getCustomerPanfromMobile(session.getAttribute("userid").toString());
+				map.addAttribute("pan", pan);
 			}
 			
 			fileform.setFilecategory("AOF");
@@ -494,8 +502,8 @@ public class ProfileManageController{
 
 
 			//			Get Profile AOF Status
-			String aofstatus=bseEntryManager.investmentProfileStatus(session.getAttribute("userid").toString());
-			map.addAttribute("PROFILE_STATUS", aofstatus);
+			
+			
 			//			map.addAttribute("PROFILE_STATUS", "NOT_FOUND");
 
 			if(listFunds.size()>0){
@@ -503,6 +511,8 @@ public class ProfileManageController{
 				map.addAttribute("allfundsview", listFunds);
 			}else{
 				map.addAttribute("ORDERHISTORY", "EMPTY");
+				
+				
 			}
 		}
 		

@@ -186,6 +186,11 @@ table th {
 				<div class="col-md-4 col-lg-4">
 					<div class="profile-status-left">
 						<h5 style="background: #dbdee6; padding: 3px;">Profile Status</h5>
+						
+						<div>
+								<span id="signuploadstatus" style="font-size: 11px;"></span>
+						</div>
+						<hr>
 						<c:choose>
 
 							<c:when test="${PROFILE_STATUS == 'NOT_FOUND' }">
@@ -238,7 +243,7 @@ table th {
 							</c:when>
 
 							<c:when test="${PROFILE_STATUS == 'AOF_PENDING' }">
-								<strong style="color: #d41b1b;">Sign &amp; Upload your
+								<strong style="color: #346be6;">Sign &amp; Upload your
 									AOF Form</strong>
 								<div class="progress" style="font-size: 10px;">
 									<div class="progress-bar bg-success" role="progressbar"
@@ -248,24 +253,32 @@ table th {
 									</div>
 								</div>
 								<p>You need to sign and upload your investment form before
-									you can start investing.</p>
-								<button type="button" class="btn btn-outline-primary btn-sm"
-												style="font-size: 12px;" onclick="getmodal('sign1')">Applicant
-												1</button>
-											<button type="button" class="btn btn-outline-primary btn-sm"
-												style="font-size: 12px;" onclick="getmodal('sign2')">Applicant
-												2</button>
-
+									you can start investing.
+									<c:if test="${not empty pan}">
+											<input type="hidden" id="mobdata"
+												value="${investForm.mobile}"> <a
+												href="/products/download/aof/${pan}.pdf"
+												target="_blank">
+												Download you AOF
+											</a>
+									</c:if>
+								</p>
+									
+									<div style="text-align: center;">
+										<button type="button" class="btn #59698d mdb-color lighten-1 white-text btn-sm" style="font-size: 12px;" onclick="getmodal('sign1')">Applicant 1</button>
+										<button type="button" class="btn #59698d mdb-color lighten-1 white-text btn-sm" style="font-size: 12px;" onclick="getmodal('sign2')">Applicant 2</button>
+									</div>
+									
 								<!-- Signature Modal - Applicant-->
 									<jsp:include page="bsemf/bse-mf-signature-panel.jsp"></jsp:include>
 
-
 								<hr>
-								<div style="font-size: 11px; color: #c02fc1;">
+								
+								<div class="row" >
+									<div class="col-md-12 col-lg-12">
+									<div style="font-size: 11px; color: #c02fc1;">
 									<strong>You can also upload signed form in .pdf format</strong>
 								</div>
-								<div class="row">
-									<div class="col-md-12 col-lg-12">
 										<form:form method="POST" enctype="multipart/form-data"
 											action="/products/uploadaoffile.do" commandName="fileform">
 											<div style="padding-left: 5px; margin-bottom: .1rem;">
@@ -276,7 +289,7 @@ table th {
 											</div>
 											<form:hidden path="fileowner" />
 											<form:button type="submit" class="btn btn-sm btn-info">Submit</form:button>
-
+											
 										</form:form>
 
 									</div>
@@ -307,9 +320,7 @@ table th {
 								</c:choose>
 
 								<!-- End of modal  -->
-								<div>
-									<span id="signuploadstatus" style="font-size: 11px;"></span>
-								</div>
+								
 
 								<div id="aofuploadbutton">
 									<button class="btn btn-sm btn-primary" id="aofuploadbtn"
@@ -461,6 +472,9 @@ table th {
 		</section>
 
 	</div>
+	
+	
+	<jsp:include page="include/sub-footer.jsp"></jsp:include>
 	<jsp:include page="include/footer.jsp"></jsp:include>
 	<script src="<c:url value="${contextcdn}/resources/js/signaturepanel.js" />"></script>
 </body>

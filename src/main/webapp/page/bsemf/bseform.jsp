@@ -83,7 +83,7 @@
 							</span>
 						</div>
 						<form:select class="custom-select" id="pan1kycverified"
-							path="pan1verified">
+							path="pan1KycVerified">
 							<form:option value="N">No</form:option>
 							<form:option value="Y">Yes</form:option>
 						</form:select>

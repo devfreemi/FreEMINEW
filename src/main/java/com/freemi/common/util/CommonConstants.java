@@ -35,7 +35,12 @@ public class CommonConstants {
 //	public static final String INVESTMENT_ENABLED="Y";
 	
 	
+	public static final String SUPPORT_TEAM_MAIL_ID = "mail.id.support.team";
+	public static final String MAIL_SUPPORT_TEAM_INVESTMENT_TRIGGER = "investment.bse.mail.support";
 	
+	public static final String MAIL_SUPPORT_TEAM_MF_REGISTRATION = "mfregistration.bse.mail.support";
+	
+	public static final String DEVELOPER_TEAM_MAIL_ID="mail.id.developer.team";
 	
 	public static final String BROKER_CODE = "ARN-141396";
 	public static final String EUIN_CODE = "E241233";
@@ -77,6 +82,8 @@ public class CommonConstants {
 	
 	public static final String BSE_XIP="X";
 	public static final String BSE_ISP="I";
+	
+	public static final String LDAP_USER_REGISTRATION_ENABLED = "ldap.user.registration.enabled";
 	
 	public static final String BSE_CALL_TEST_ENABLED = "investment.bse.testphase.enabled";
 	public static final String BSE_SAVE_TRANSACTION = "Y";
@@ -120,6 +127,7 @@ public class CommonConstants {
 			add("/products/my-dashboard");
 			add("/products/mutual-funds/view-purchase-history");
 			add("/products/mutual-funds/pending-payments");
+			add("/products/mutual-funds/cancelOrder.do");
 		}
 	};
 	

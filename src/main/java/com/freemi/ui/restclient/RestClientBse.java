@@ -120,16 +120,18 @@ public class RestClientBse implements BseRestClientService {
 			if(env.getProperty(CommonConstants.BSE_CALL_TEST_ENABLED).equalsIgnoreCase("N")){
 				response= restTemplate.postForEntity(url, entity,  String.class);
 				returnRes=response.getBody().toString();
-				logger.info("Register Request Response- "+ response.getBody().toString());
+				logger.info("registerUser() : Register Request Response- "+ response.getBody().toString());
 				if(returnRes.equalsIgnoreCase("100|RECORD INSERTED SUCCESSFULLY")){
 					returnRes = "SUCCESS";
 				}
 			}else{
 				//				returnRes = "SUCCESS";
-				if(form.getClientDob()!="")
-					returnRes = "101|FAILED: INVALID DATE OF BIRTH OF INDIVIDUAL";
-				else
-					returnRes = "101|FAILED: DOB MANDATORY";
+				/*
+				 * if(form.getClientDob()!="") returnRes =
+				 * "101|FAILED: INVALID DATE OF BIRTH OF INDIVIDUAL"; else returnRes =
+				 * "101|FAILED: DOB MANDATORY";
+				 */
+				returnRes = "SUCCESS";
 			}
 
 
@@ -154,14 +156,14 @@ public class RestClientBse implements BseRestClientService {
 		try {
 			formdata = mapper.writeValueAsString(form);
 
-			logger.info("Requesting lumpsum purchase with details- "+ formdata);
+			logger.info("purchaseRequestProcess(): Requesting lumpsum purchase with details- "+ form.getTransCode() + " : " +  formdata);
 			HttpHeaders headers = new HttpHeaders();
 			headers.set("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
 			HttpEntity<String> entity = new HttpEntity<String>(formdata,headers);
 			if(env.getProperty(CommonConstants.BSE_CALL_TEST_ENABLED).equalsIgnoreCase("N")){
 				ResponseEntity<?> response= restTemplate.postForEntity(url, entity,  String.class);
 				returnRes=response.getBody().toString();
-				logger.info("Response for lumpsum purchase/cancellation/redemption/additional- "+ response.getBody().toString());
+				logger.info("purchaseRequestProcess(): Response for lumpsum purchase/cancellation/redemption/additional- "+ response.getBody().toString());
 			}else{
 				returnRes = "NEW|201902212627300013|1466093|SUMANTA1|26273|DEBA593C|ORD CONF: Your Request for FRESH PURCHASE 5000.000  in SCHEME: ID289-DR THRO : PHYSICAL is confirmed for CLIENT : DEBASISH SARKAR (Code: DEBA593C)  CONFIRMATION TIME: Feb 21 2019  9:28PM ENTRY BY:  ORDER NO: 1466093 OFFLINE ORDER WILL BE TRIGGERED  ON NEXT WORKING DAY|0";
 				//				returnRes = "NEW|201902122627300002|0|SUMANTA1|26273|DEBA593C|FAILED: ORDER ENTRY NOT ALLOWED IN THE SCHEME|1";
@@ -188,14 +190,14 @@ public class RestClientBse implements BseRestClientService {
 		try {
 			formdata = mapper.writeValueAsString(form);
 
-			logger.info("Requesting  SIP purchase with details- "+ formdata);
+			logger.info("purchaseSIPRequestProcess(): Requesting  SIP purchase with details- "+ formdata);
 			HttpHeaders headers = new HttpHeaders();
 			headers.set("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
 			HttpEntity<String> entity = new HttpEntity<String>(formdata,headers);
 			if(env.getProperty(CommonConstants.BSE_CALL_TEST_ENABLED).equalsIgnoreCase("N")){
 				ResponseEntity<?> response= restTemplate.postForEntity(url, entity,  String.class);
 				returnRes=response.getBody().toString();
-				logger.info("Response for SIP purchase- "+ response.getBody().toString());
+				logger.info("purchaseSIPRequestProcess(): Response for SIP purchase- "+ response.getBody().toString());
 			}else{
 				returnRes = "NEW|201902202627300003|26273|DEBA593C|SUMANTA1|214516|SIP HAS BEEN REGISTERED, SIP REG NO IS : 214516|0";	
 			}
@@ -332,8 +334,8 @@ public class RestClientBse implements BseRestClientService {
 			}else{
 				//				returnRes = "101|FAILED: AMOUNT SHOULD NOT BE BLANK";
 				//				returnRes = "101|FAILED: INVALID CLIENT ACCOUNT NUMBER";
-				//				returnRes = "100|MANDATE REGISTRATION DONE SUCCESSFULLY|556918";
-				returnRes ="101|FAILED: AMOUNT SHOULD NOT BE 0";
+				returnRes = "100|MANDATE REGISTRATION DONE SUCCESSFULLY|556918";
+//				returnRes ="101|FAILED: AMOUNT SHOULD NOT BE 0";
 			}
 
 		} catch (JsonProcessingException e) {

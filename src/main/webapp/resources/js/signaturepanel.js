@@ -348,7 +348,13 @@
 				$('#exampleModal1').modal('hide');
 				$("#signuploadstatus").text("Both applicant signature found to be same. Please set different signature.");
 				$("#signuploadstatus").css("color", "red");	
-			}else{
+			}
+			else if (data == 'KYC_NOT_VERIFIED') {
+				$('#exampleModal1').modal('hide');
+				$("#signuploadstatus").text("Your PAN is not yet KYC verified. Kindly contact admin if already done.");
+				$("#signuploadstatus").css("color", "red");	
+			}
+			else{
 				$('#exampleModal1').modal('hide');
 				$("#signuploadstatus").text(data);
 				$("#signuploadstatus").css("color", "red");
@@ -479,7 +485,12 @@
 						.text(
 								"Session lost. Kindly login to complete registration");
 				$("#signuploadstatus").css("color", "red");
-			} else {
+			} else if (data == 'KYC_NOT_VERIFIED') {
+				$('#exampleModal1').modal('hide');
+				$("#signuploadstatus").text("Your PAN is not yet KYC verified to allow AOF upload. Kindly contact admin if already done.");
+				$("#signuploadstatus").css("color", "red");	
+			}
+			else {
 				$('#exampleModal1').modal('hide');
 				$("#signuploadstatus").text(data);
 				$("#signuploadstatus").css("color", "red");

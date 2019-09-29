@@ -25,7 +25,7 @@
 </head>
 <body>
 	<jsp:include page="../include/header.jsp"></jsp:include>
-	<div class="container-fluid">
+	<div class="container-fluid" style="margin-bottom: 10rem;">
 		<nav aria-label="breadcrumb">
 			<ol class="breadcrumb" style="margin-left: 0px;">
 
@@ -72,8 +72,13 @@
 								aria-valuemin="0" aria-valuemax="100">Upload signed form</div>
 
 						</div> -->
-
-						<h4 style="font-size: 20px; color: #da7437;">What are the
+						
+						</div>
+						
+						<c:choose>
+						<c:when test="${KYCVERIFIED == 'Y'  }">
+							
+							<h4 style="font-size: 20px; color: #da7437;">What are the
 							next steps?</h4>
 						<div class="row">
 							<div class="col-md-4 col-lg-4">
@@ -177,8 +182,8 @@
 							</div>
 
 						</div>
-					</div>
-					<div class="" style="text-align: center; margin-top: 20px;">
+						
+						<div class="" style="text-align: center; margin-top: 20px;">
 						<!-- <button type="button" class="btn btn-info">AOF Ready for upload</button> -->
 						<%-- <jsp:include page="aof-form-generation.jsp"></jsp:include>	 --%>
 						<span id="signuploadstatus"></span>
@@ -199,9 +204,27 @@
 						</div>
 
 					</div>
-				</div>
+							
+							
+						</c:when>
+						
+						<c:when test="${KYCVERIFIED == 'N'  }">
+							
+							<div>
+							<h3>Thank you getting registered with us</h3>
+							<h4>Our team will reach out to you to complete your KYC profile. Once completed, you will be able to carry out transaction.</h4>
+							
+							</div>
+							
+							
+						</c:when>
+						<c:otherwise>
+						
+						</c:otherwise>
+						</c:choose>
+						
+				</div> 
 			</div>
-			<div></div>
 		</section>
 		<!-- 
 		<section style="background-color: aliceblue; padding: 30px 0px;">
@@ -227,6 +250,7 @@
 	
 	<!-- BSE MF  -->
 	<jsp:include page="./bsestarmfpowered.jsp"></jsp:include>
+	<jsp:include page="../include/sub-footer.jsp"></jsp:include>
 	<jsp:include page="../include/footer.jsp"></jsp:include>
 
 

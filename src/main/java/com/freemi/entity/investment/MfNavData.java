@@ -1,6 +1,7 @@
 package com.freemi.entity.investment;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,7 +25,7 @@ public class MfNavData  {
 	private long serial; 
 	
 	@Column(name="nav_date")
-	private String navdate;
+	private Date navdate;
 	
 	@Column(name="nav")
 	private Double navvalue;
@@ -32,14 +33,13 @@ public class MfNavData  {
 	@Column(name="isind_no")
 	private String isin;
 
-	public String getNavdate() {
+	public Date getNavdate() {
 		return navdate;
 	}
 
-	public void setNavdate(String navdate) {
+	public void setNavdate(Date navdate) {
 		this.navdate = navdate;
 	}
-
 
 	public Double getNavvalue() {
 		return navvalue;
