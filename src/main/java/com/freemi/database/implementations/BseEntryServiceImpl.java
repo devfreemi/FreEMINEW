@@ -1122,6 +1122,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	}
 
 	@Override
+//	@Cacheable(value = "mffundhistory", unless = "#result == null", key= "#folios")
 	public List<MfAllInvestorValueByCategory> getCustomersAllFoliosByCategory(String mobile, String pan) {
 		List<MfAllInvestorValueByCategory> folios=null;
 		logger.info("getCustomersKarvyInvByCategory(): Request received to fetch customer Karvy folio details by category for client ID- "+ mobile + " :PAN NO: "+ pan);

@@ -76,7 +76,7 @@ public class Products {
 	private Environment env;
 
 	@RequestMapping(value = "/register", method = RequestMethod.GET)
-	public String registerUser(Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+	public String registerUserGet(Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 		//logger.info("@@@@ Inside Login..");
 		logger.info("@@@@ Register page @@@@");
 		if(session.getAttribute("token") == null){
@@ -91,19 +91,18 @@ public class Products {
 	}
 
 	@RequestMapping(value = "/register.do", method = RequestMethod.GET)
-	public String registerUserGet(ModelMap model) {
+	public String registerUserDoGet(ModelMap model) {
 		return "redirect:/register";
 	}
 
 	@RequestMapping(value = "/register.do", method = RequestMethod.POST)
-	public String registerUser(@ModelAttribute("registerForm") @Valid Registerform registerForm, BindingResult bindingResult, ModelMap model) {
+	public String registerUserPost(@ModelAttribute("registerForm") @Valid Registerform registerForm, BindingResult bindingResult, ModelMap model) {
 		logger.info("@@@@ Inside Register do registerUser()..");
 		
 		boolean registrationFlag= false;
 		
 		if(bindingResult.hasErrors()){
-			logger.info("Error in register form");
-			
+			logger.info("Error in register form for user-  "+ registerForm.getMobile() + " : "+ registerForm.getEmail() +" : Error -" + bindingResult.getFieldError().getDefaultMessage());
 			model.addAttribute("error", bindingResult.getFieldError().getDefaultMessage());
 			return "register";
 		}
@@ -129,13 +128,13 @@ public class Products {
 			}
 
 		}catch(HttpStatusCodeException  e){
-			logger.error("registerUser(): Fregistration failed for Link failure - ", e.getStatusCode());
+			logger.error("registerUserPost(): Fregistration failed for Link failure - ", e.getStatusCode());
 			model.addAttribute("error", "Unable to process request curretnly");
 		} catch (JsonProcessingException e) {
-			logger.error("registerUser(): JsonProcessingException - ",e);
+			logger.error("registerUserPost(): JsonProcessingException - ",e);
 			model.addAttribute("error","Invalid form data");
 		}catch(Exception e){
-			logger.error("registerUser(): Error register user",e);
+			logger.error("registerUserPost(): Error register user",e);
 			model.addAttribute("error","Error processing request");
 		}
 		

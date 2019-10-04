@@ -109,14 +109,14 @@ table.dataTable thead th, table.dataTable thead td {
 									style="background: #3db4d0; color: #fff29e; font-size: 10px;">
 									<tr>
 										<th scope="col">TRANSACTION REFERENCE</th>
-										<th scope="col">SCHEME CODE</th>
-										<th scope="col">SCHEME NAME</th>
+										<!-- <th scope="col">SCHEME CODE</th> -->
+										<th scope="col">SCHEME DETAILS</th>
 										<th scope="col">CATEGORY</th>
 										<th scope="col">INVESTMENT TYPE</th>
 										<th scope="col">SIP START DATE</th>
 										<th scope="col">SIP END DATE</th>
 										<th scope="col">INVEST AMOUNT</th>
-										<th scope="col">INVEST DATE</th>
+										<th scope="col">TRANSACTION DATE</th>
 										<th scope="col">ORDER NO</th>
 										<th scope="col">ACTION</th>
 								</thead>
@@ -126,8 +126,8 @@ table.dataTable thead th, table.dataTable thead td {
 									<c:forEach var="listVar" items="${PURCHASE_ORDERS}">
 										<tr>
 											<td>${listVar.transactionId }</td>
-											<td>${listVar.schemeCode }</td>
-											<td>${listVar.schemeName }</td>
+											<%-- <td>${listVar.schemeCode }</td> --%>
+											<td>${listVar.schemeName }<strong>/</strong>${listVar.schemeCode }</td>
 											<td>${listVar.transctionType }</td>
 											<td>${listVar.investType }</td>
 											<td>${listVar.sipStartDate }</td>
@@ -195,7 +195,7 @@ table.dataTable thead th, table.dataTable thead td {
 		$('#dtBasicExample').DataTable({
 			"columns": [
 			    { "orderable": false },
-			    { "orderable": false },
+			  /*   { "orderable": false }, */
 			    null,
 			    null,
 			    null,
@@ -205,7 +205,8 @@ table.dataTable thead th, table.dataTable thead td {
 			    null,
 			    { "orderable": false },
 			    { "orderable": false }
-			  ]
+			  ],
+			  "order": [[ 7, "desc" ]]
 		});
 		$('.dataTables_length').addClass('bs-select');
 		

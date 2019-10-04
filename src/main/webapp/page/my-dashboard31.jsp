@@ -1,40 +1,30 @@
+<%@page import="java.io.Console"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
 
+<!DOCTYPE html>
+<html >
+<head>
+<title>FreEMI Dashboard</title>
 <jsp:include page="include/bootstrap.jsp"></jsp:include>
-<link
-	href="<c:url value="${contextcdn}/resources/css/my-dashboard.component.css"/>"
-	rel="stylesheet">
-<link href="<c:url value="${contextcdn}/resources/css/styles.css"/>"
-	rel="stylesheet">
-<link rel="stylesheet"
-	href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+<link href="<c:url value="${contextcdn}/resources/css/my-dashboard.component.css"/>" rel="stylesheet">
+<link href="<c:url value="${contextcdn}/resources/css/styles.css"/>" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
 <script src="<c:url value="${contextcdn}/resources/js/investment.js" />"></script>
 
 <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script> -->
 
-<link
-	href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css"
-	rel="stylesheet">
-<script type="text/javascript"
-	src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-<script type="text/javascript"
-	src="https://cdn.datatables.net/buttons/1.5.4/js/buttons.html5.min.js"></script>
+<link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet">
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.4/js/buttons.html5.min.js"></script>
 
-<script type="text/javascript">
-	var FILE_UPLOAD = $
-	{
-		FILE_IPLOAD
-	};
+<script  type="text/javascript">
+var FILE_UPLOAD=${FILE_IPLOAD};
+
 </script>
 
 <style>
@@ -57,13 +47,24 @@ table th {
 	vertical-align: middle;
 }
 </style>
-
 </head>
-<body>
+
+<body class="back_set">
 	<jsp:include page="include/header.jsp"></jsp:include>
+	<fmt:setLocale value="en_IN" />
 
-	<div class="container">
-
+	<div class="container" style="margin-bottom: 5rem;">
+		<div style="color: #FF5722;">
+			<!-- class="dashboard_header" -->
+			<h2>
+				<span style="border-bottom: 1px solid;">DASHBOARD</span>
+			</h2>
+		</div>
+		<!-- 
+		<div class="home-view">
+			<span>HOME VIEW</span>
+		</div>
+ -->
 		<section class="top-section">
 			<div class="row">
 				<div class="col-md-4 col-lg-4 outer_box">
@@ -115,7 +116,7 @@ table th {
 									</h5>
 								</div>
 							</div>
-
+							
 							<div class="row">
 								<div class="col-6">
 									<h6>MARKET VALUE</h6>
@@ -130,7 +131,7 @@ table th {
 									</h5>
 								</div>
 							</div>
-
+							
 						</div>
 						<div class="footer_link">
 							<a href="/products/mutual-funds/view-purchase-history"
@@ -178,9 +179,9 @@ table th {
 				<div class="col-md-4 col-lg-4">
 					<div class="profile-status-left">
 						<h5 style="background: #dbdee6; padding: 3px;">Profile Status</h5>
-
+						
 						<div>
-							<span id="signuploadstatus" style="font-size: 11px;"></span>
+								<span id="signuploadstatus" style="font-size: 11px;"></span>
 						</div>
 						<hr>
 						<c:choose>
@@ -244,38 +245,33 @@ table th {
 										<span id="statusp">Details Registered</span>
 									</div>
 								</div>
-								<p>
-									You need to sign and upload your investment form before you can
-									start investing.
+								<p>You need to sign and upload your investment form before
+									you can start investing.
 									<c:if test="${not empty pan}">
-										<input type="hidden" id="mobdata" value="${investForm.mobile}">
-										<a href="/products/download/aof/${pan}.pdf" target="_blank">
-											Download you AOF </a>
+											<input type="hidden" id="mobdata"
+												value="${investForm.mobile}"> <a
+												href="/products/download/aof/${pan}.pdf"
+												target="_blank">
+												Download you AOF
+											</a>
 									</c:if>
 								</p>
-
-								<div style="text-align: center;">
-									<button type="button"
-										class="btn #59698d mdb-color lighten-1 white-text btn-sm"
-										style="font-size: 12px;" onclick="getmodal('sign1')">Applicant
-										1</button>
-									<button type="button"
-										class="btn #59698d mdb-color lighten-1 white-text btn-sm"
-										style="font-size: 12px;" onclick="getmodal('sign2')">Applicant
-										2</button>
-								</div>
-
+									
+									<div style="text-align: center;">
+										<button type="button" class="btn #59698d mdb-color lighten-1 white-text btn-sm" style="font-size: 12px;" onclick="getmodal('sign1')">Applicant 1</button>
+										<button type="button" class="btn #59698d mdb-color lighten-1 white-text btn-sm" style="font-size: 12px;" onclick="getmodal('sign2')">Applicant 2</button>
+									</div>
+									
 								<!-- Signature Modal - Applicant-->
-								<jsp:include page="bsemf/bse-mf-signature-panel.jsp"></jsp:include>
+									<jsp:include page="bsemf/bse-mf-signature-panel.jsp"></jsp:include>
 
 								<hr>
-
-								<div class="row">
+								
+								<div class="row" >
 									<div class="col-md-12 col-lg-12">
-										<div style="font-size: 11px; color: #c02fc1;">
-											<strong>You can also upload signed form in .pdf
-												format</strong>
-										</div>
+									<div style="font-size: 11px; color: #c02fc1;">
+									<strong>You can also upload signed form in .pdf format</strong>
+								</div>
 										<form:form method="POST" enctype="multipart/form-data"
 											action="/products/uploadaoffile.do" commandName="fileform">
 											<div style="padding-left: 5px; margin-bottom: .1rem;">
@@ -286,7 +282,7 @@ table th {
 											</div>
 											<form:hidden path="fileowner" />
 											<form:button type="submit" class="btn btn-sm btn-info">Submit</form:button>
-
+											
 										</form:form>
 
 									</div>
@@ -317,7 +313,7 @@ table th {
 								</c:choose>
 
 								<!-- End of modal  -->
-
+								
 
 								<div id="aofuploadbutton">
 									<button class="btn btn-sm btn-primary" id="aofuploadbtn"
@@ -458,7 +454,7 @@ table th {
 							role="tabpanel" aria-labelledby="contact-tab">
 
 							<div class="fremi-outer-shell">
-							<jsp:include page="include/my-dashboard-mf-profile.jsp"></jsp:include>
+								<jsp:include page="include/my-dashboard-mf-profile.jsp"></jsp:include>
 							</div>
 
 						</div>
@@ -468,16 +464,12 @@ table th {
 			</div>
 		</section>
 
-
 	</div>
-
-
+	
+	
 	<jsp:include page="include/sub-footer.jsp"></jsp:include>
 	<jsp:include page="include/footer.jsp"></jsp:include>
-
-
-
+	<script src="<c:url value="${contextcdn}/resources/js/signaturepanel.js" />"></script>
 </body>
-<script
-	src="<c:url value="${contextcdn}/resources/js/signaturepanel.js" />"></script>
+
 </html>

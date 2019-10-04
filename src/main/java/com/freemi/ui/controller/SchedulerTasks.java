@@ -27,4 +27,13 @@ public class SchedulerTasks {
 		logger.info("clear cache- mutualfundexplorerdata,isinnavhistory");
 		
 	}
+	
+	/*
+	 * @Scheduled(fixedDelay = 10 * 60 * 1000, initialDelay = 500)
+	 * 
+	 * @CacheEvict(value = { "mffundhistory" }) public void
+	 * clearMfDataHistoryCache() { logger.info("clear cache- mffundhistory");
+	 * 
+	 * }
+	 */
 }

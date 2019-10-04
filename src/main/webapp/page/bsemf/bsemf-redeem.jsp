@@ -4,6 +4,7 @@
 	pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -96,60 +97,62 @@
 														class="form-control form-control-sm form-control-plaintext" />
 												</div>
 											</div>
-											
+
 											<div class="form-group row">
 												<label for="fundname"
-													class="col-6 col-md-4 col-lg-4 col-form-label col-form-label-sm">BSE Scheme
-													Code:</label>
+													class="col-6 col-md-4 col-lg-4 col-form-label col-form-label-sm">BSE
+													Scheme Code:</label>
 												<div class="col-6 col-md-8 col-lg-8">
-													<form:input readonly="true" path="schemeCode" id="bseschemeCode"
+													<form:input readonly="true" path="schemeCode"
+														id="bseschemeCode"
 														class="form-control form-control-sm form-control-plaintext" />
 												</div>
 											</div>
-
-											<%-- <div class="form-group row">
-												<label for="investtype"
-													class="col-6 col-md-4 col-lg-4 col-form-label col-form-label-sm">Investment
-													Type:</label>
-												<div class="col-6 col-md-8 col-lg-8">
-													<form:input path="investType" id="investtype"
-														readonly="true"
-														class="form-control form-control-sm form-control-plaintext" />
-												</div>
-											</div> --%>
-
 
 											<div class="form-group row">
 												<label for="availableFund"
 													class="col-6 col-md-4 col-lg-4 col-form-label col-form-label-sm">Invested
 													Amount:</label>
 												<div class="col-6 col-md-8 col-lg-8">
-													<form:input path="totalValue" id="availableFund"
+													<%-- <form:input path="totalValue" id="availableFund"
 														readonly="true"
-														class="form-control form-control-sm form-control-plaintext" />
+														class="form-control form-control-sm form-control-plaintext" /> --%>
+
+													<form:hidden path="totalValue" id="availableFund" />
+													<%-- <form:input type="number" path="marketValue" id="marketVal"  readonly="true" class="form-control form-control-sm form-control-plaintext" /> --%>
+													<label
+														class="form-control form-control-sm form-control-plaintext"><fmt:formatNumber
+															type="number" pattern="##,###.00" minFractionDigits="1"
+															minIntegerDigits="1" maxFractionDigits="2"
+															groupingUsed="true" value="${mfRedeemForm.totalValue }" /></label>
 												</div>
 											</div>
-											
+
 											<div class="form-group row">
 												<label for="availableFund"
-													class="col-6 col-md-4 col-lg-4 col-form-label col-form-label-sm">Current value:</label>
+													class="col-6 col-md-4 col-lg-4 col-form-label col-form-label-sm">Current
+													value:</label>
 												<div class="col-6 col-md-8 col-lg-8">
-													<form:input path="marketValue" id="marketVal"
-														readonly="true"
-														class="form-control form-control-sm form-control-plaintext" />
+													<form:hidden path="marketValue" id="marketVal" />
+													<%-- <form:input type="number" path="marketValue" id="marketVal"  readonly="true" class="form-control form-control-sm form-control-plaintext" /> --%>
+													<label
+														class="form-control form-control-sm form-control-plaintext"><fmt:formatNumber
+															type="number" pattern="##,###.00" minFractionDigits="1"
+															minIntegerDigits="1" maxFractionDigits="2"
+															groupingUsed="true" value="${mfRedeemForm.marketValue }" /></label>
 												</div>
 											</div>
-											
+
 											<div class="form-group row mb-1">
 												<label for="redeemAllCheckBox"
 													class="col-6 col-md-4 col-lg-4 col-form-label col-form-label-sm">Redeem
 													All ?</label>
 												<div class="col-6 col-md-8 col-lg-8">
 													<div class="custom-control custom-checkbox">
-													
-														<form:checkbox path="redeemAll" class="custom-control-input" id="redeemAllCheckBox"/>
-														<label
-															class="custom-control-label" for="redeemAllCheckBox">Yes</label>
+														<form:checkbox path="redeemAll"
+															class="custom-control-input" id="redeemAllCheckBox" />
+														<label class="custom-control-label"
+															for="redeemAllCheckBox">Yes</label>
 													</div>
 												</div>
 											</div>
@@ -164,6 +167,8 @@
 													<span id="invalidamnt" style="font-size: 11px; color: red;"></span>
 												</div>
 											</div>
+
+											
 
 
 										</div>
@@ -213,7 +218,7 @@
 												</div>
 											</div>
 
-											
+
 
 											<div class="form-group row mb-1">
 												<label for="redeemamountconf"
@@ -260,9 +265,9 @@
 										</div>
 									</div>
 								</div>
-								
+
 								<jsp:include page="transaction-in-progress-icon.jsp"></jsp:include>
-								
+
 
 								<div style="overflow: auto;">
 									<div style="float: right;">
@@ -308,6 +313,8 @@
 	<!-- BSE MF  -->
 	<jsp:include page="./bsestarmfpowered.jsp"></jsp:include>
 	<!-- END BSE MF  -->
+
+	<jsp:include page="../include/sub-footer.jsp"></jsp:include>
 	<jsp:include page="../include/footer.jsp"></jsp:include>
 
 
@@ -335,18 +342,18 @@
 		if (n == (x.length - 1)) {
 			document.getElementById("nextBtn").innerHTML = "Submit";
 
-			
 			$("#paymodeconf").text($("#input[name='pay']:checked").val());
-			
+
 			var redeemallflag = $("input[name='redeemAll']:checked").val();
-			
-			if(redeemallflag ){
+
+			if (redeemallflag) {
 				$("#redeemamountconf").text("Redeem All");
-			}else{
-				$("#redeemamountconf").text( Number($("#redeemamount").val()).toFixed(2));
-				
+			} else {
+				$("#redeemamountconf").text(
+						Number($("#redeemamount").val()).toFixed(2));
+
 			}
-			
+
 		} else {
 			document.getElementById("nextBtn").innerHTML = "Next";
 		}
@@ -359,20 +366,20 @@
 		// This function will figure out which tab to display
 		var x = document.getElementsByClassName("tab");
 		// Exit the function if any field in the current tab is invalid:
-			
+
 		if (n == 1 && currentTab == 1) {
-//		console.log("Display progress");
-		$("#display_progress").css({
-			"display" : "block"
-		});
-		
-		$("#prevBtn").attr("disabled", "disabled");
-		$("#nextBtn").attr("disabled", "disabled");
-		
-	}
-		
-		if (n == 1 && !validateForm()){
-			console.log("Validation failed.");
+			//		console.log("Display progress");
+			$("#display_progress").css({
+				"display" : "block"
+			});
+
+			$("#prevBtn").attr("disabled", "disabled");
+			$("#nextBtn").attr("disabled", "disabled");
+
+		}
+
+		if (n == 1 && !validateForm()) {
+			//console.log("Validation failed.");
 			return false;
 		}
 		// Hide the current tab:
@@ -396,7 +403,7 @@
 		x = document.getElementsByClassName("tab");
 		y = x[currentTab].getElementsByTagName("input");
 		// A loop that checks every input field in the current tab:
-		
+
 		for (i = 0; i < y.length; i++) {
 			// If a field is empty...
 			if (y[i].value == "") {
@@ -437,13 +444,14 @@
 					//$("#nextBtn").removeAttr("disabled");
 					if (redeemamount > availamount) {
 						//  console.log("Invalid")
-						$("#invalidamnt").text("Entered amount above available amount!");
+						$("#invalidamnt").text(
+								"Entered amount above available amount!");
 						$("#nextBtn").attr("disabled", "disabled");
-					}else if(redeemamount <=0 ){
+					} else if (redeemamount <= 0) {
 						$("#invalidamnt").text("Invalid withdrwal amount");
 						$("#nextBtn").attr("disabled", "disabled");
-					}else {
-					
+					} else {
+
 						//console.log("valid")
 						$("#invalidamnt").text("");
 						$("#nextBtn").removeAttr("disabled");
@@ -452,32 +460,30 @@
 					$("#invalidamnt").text("Invalid number");
 					$("#nextBtn").attr("disabled", "disabled");
 				}
-				
 
 			});
-	
-	
-	$( document ).ready(function() {
+
+	$(document).ready(function() {
 		var f = $("input[name='redeemAll']:checked").val();
-		 //console.log("On load- "+  f);
-		 if(f== undefined){
-			 $("#redeemamntbox").show();
-		 }
-		 if(f){
-			 $("#redeemamntbox").hide();
-		 }
+		//console.log("On load- "+  f);
+		if (f == undefined) {
+			$("#redeemamntbox").show();
+		}
+		if (f) {
+			$("#redeemamntbox").hide();
+		}
 	});
-	
-	$("#redeemAllCheckBox").change(function(){
+
+	$("#redeemAllCheckBox").change(function() {
 		var f = $("input[name='redeemAll']:checked").val();
-		 //console.log("The text has been changed - "+  f);
-		 if(f== undefined){
-			 $("#redeemamntbox").show();
-		 }
-		 if(f){
-			 $("#redeemamntbox").hide();
-		 }
-		 
+		//console.log("The text has been changed - "+  f);
+		if (f == undefined) {
+			$("#redeemamntbox").show();
+		}
+		if (f) {
+			$("#redeemamntbox").hide();
+		}
+
 	});
 </script>
 

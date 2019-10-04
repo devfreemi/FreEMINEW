@@ -41,6 +41,7 @@ import com.freemi.common.util.InvestFormConstants;
 import com.freemi.controller.interfaces.ProfileRestClientService;
 import com.freemi.database.service.BseEntryManager;
 import com.freemi.entity.bse.BseFileUpload;
+import com.freemi.entity.general.ForceChangePassword;
 import com.freemi.entity.general.MfCollatedFundsView;
 //import com.freemi.database.service.BseEntryManager;
 import com.freemi.entity.general.ProfilePasswordChangeForm;
@@ -66,8 +67,8 @@ public class ProfileManageController{
 
 	@Autowired
 	ProfileRestClientService profileRestClientService;
-	
-	
+
+
 
 	private static final Logger logger = LogManager.getLogger(ProfileManageController.class);
 
@@ -93,76 +94,76 @@ public class ProfileManageController{
 			ResponseEntity<String> sessionValidCheck = profileRestClientService.validateUserToken(session.getAttribute("userid")!=null?session.getAttribute("userid").toString():"BLANK", session.getAttribute("token").toString(), CommonTask.getClientSystemIp(request));
 			logger.info("getProfile(): Session validation status- "+ sessionValidCheck.getBody());
 
-				returnurl="profile2";
+			returnurl="profile2";
 
-				passform.setMobile(session.getAttribute("userid").toString());
+			passform.setMobile(session.getAttribute("userid").toString());
 
-				//			User profile data collection from DB
-				try{
-					UserProfile profile = bseEntryManager.getCustomerProfileDetailsByMobile(session.getAttribute("userid").toString());
-					if(profile!=null){
-						model.addAttribute("profileBasic", profile);
-						model.addAttribute("INV_PROF","Y");
-					}else{
-						model.addAttribute("INV_PROF","N");
-					}
-				}catch(Exception e){
-					model.addAttribute("errorinv", "Unable to fetch Profiel details");
-					logger.error("Unable to fetch your investment profile details.",e);
-					error =1;
-					model.addAttribute("profileBasic", new UserProfile());
+			//			User profile data collection from DB
+			try{
+				UserProfile profile = bseEntryManager.getCustomerProfileDetailsByMobile(session.getAttribute("userid").toString());
+				if(profile!=null){
+					model.addAttribute("profileBasic", profile);
+					model.addAttribute("INV_PROF","Y");
+				}else{
+					model.addAttribute("INV_PROF","N");
 				}
+			}catch(Exception e){
+				model.addAttribute("errorinv", "Unable to fetch Profiel details");
+				logger.error("Unable to fetch your investment profile details.",e);
+				error =1;
+				model.addAttribute("profileBasic", new UserProfile());
+			}
 
-				//				START BASIC DETAILS QUERY
-				logger.info("Fetch basic details...");
-				//					Search Basic Details from LDAP
-				try {
-					response = profileRestClientService.getProfileData(session.getAttribute("userid").toString(), session.getAttribute("token").toString(), CommonTask.getClientSystemDetails(request).getClientIpv4Address());
-					//						logger.info(response.getBody());
-					//						logger.info(response.getHeaders());
-					logger.info("Get Profile details response- "+ response.getBody());
-					userDetails = new ObjectMapper().readValue(response.getBody(), UserProfileLdap.class);
-					//						logger.info(profile.getGender());
+			//				START BASIC DETAILS QUERY
+			logger.info("Fetch basic details...");
+			//					Search Basic Details from LDAP
+			try {
+				response = profileRestClientService.getProfileData(session.getAttribute("userid").toString(), session.getAttribute("token").toString(), CommonTask.getClientSystemDetails(request).getClientIpv4Address());
+				//						logger.info(response.getBody());
+				//						logger.info(response.getHeaders());
+				logger.info("Get Profile details response- "+ response.getBody());
+				userDetails = new ObjectMapper().readValue(response.getBody(), UserProfileLdap.class);
+				//						logger.info(profile.getGender());
 
-					model.addAttribute("profilefreemi", userDetails);
-					/*model.addAttribute("profileAccount", userDetails);
+				model.addAttribute("profilefreemi", userDetails);
+				/*model.addAttribute("profileAccount", userDetails);
 					model.addAttribute("profileAddress", userDetails);*/
 
-					logger.info("Profile details retrieved for customer from LDAP- "+userDetails.getMobile());
-				}catch(HttpStatusCodeException  e){
-					logger.info("Unable to fetch profile details from LDAP- " + e.getStatusCode());
-					if(e.getStatusCode().value() == 401){
-						model.addAttribute("error", "Token validation failed. Please check if it expired");
-					}else{
-						model.addAttribute("error", "Unable to process request curretnly");
-					}
-					model.addAttribute("profilefreemi", new UserProfile());
-				} catch (JsonProcessingException e) {
-					model.addAttribute("error","Invalid form data");
-					model.addAttribute("profilefreemi", new UserProfile());
-
-				}catch(Exception e){
-					//						e.printStackTrace();
-					model.addAttribute("error","Error processing request");
-					model.addAttribute("profilefreemi", new UserProfile());
+				logger.info("Profile details retrieved for customer from LDAP- "+userDetails.getMobile());
+			}catch(HttpStatusCodeException  e){
+				logger.info("Unable to fetch profile details from LDAP- " + e.getStatusCode());
+				if(e.getStatusCode().value() == 401){
+					model.addAttribute("error", "Token validation failed. Please check if it expired");
+				}else{
+					model.addAttribute("error", "Unable to process request curretnly");
 				}
+				model.addAttribute("profilefreemi", new UserProfile());
+			} catch (JsonProcessingException e) {
+				model.addAttribute("error","Invalid form data");
+				model.addAttribute("profilefreemi", new UserProfile());
+
+			}catch(Exception e){
+				//						e.printStackTrace();
+				model.addAttribute("error","Error processing request");
+				model.addAttribute("profilefreemi", new UserProfile());
+			}
 
 
-				//				----------------------
+			//				----------------------
 
 
 
-				/*	model.addAttribute("states", InvestFormConstants.states);
+			/*	model.addAttribute("states", InvestFormConstants.states);
 				model.addAttribute("bankNames", InvestFormConstants.bankNames);
 				model.addAttribute("accountTypes", InvestFormConstants.accountTypes);*/
 
 
-				if(error == 1){
-					model.addAttribute("error","Sorry. Unable to fetch your details currently.");
+			if(error == 1){
+				model.addAttribute("error","Sorry. Unable to fetch your details currently.");
 
-					/*model.addAttribute("profileAccount", new UserProfile());
+				/*model.addAttribute("profileAccount", new UserProfile());
 				model.addAttribute("profileAddress", new UserProfile());*/
-				}
+			}
 
 
 		}
@@ -368,12 +369,12 @@ public class ProfileManageController{
 	@RequestMapping(value = "/my-dashboard", method = RequestMethod.GET)
 	public String getMyDashboard(@ModelAttribute("fileform") BseFileUpload fileform,Model map,HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 		logger.info("@@@@ GetMyDashboardController @@@@");
-		
+
 		String returnurl = "my-dashboard3";
 		double totalAsset= 0.0;
 		double totalmarketVal= 0.0;
 		List<MfCollatedFundsView> listFunds = new ArrayList<MfCollatedFundsView>();
-		
+
 		if(session.getAttribute("token") == null){
 			try {
 				returnurl="redirect:/login?ref="+ URLEncoder.encode(request.getRequestURL().toString(), StandardCharsets.UTF_8.toString());
@@ -382,128 +383,128 @@ public class ProfileManageController{
 				returnurl="redirect:/login";
 			}
 		}else{
-			
+
 			String aofstatus=bseEntryManager.investmentProfileStatus(session.getAttribute("userid").toString());
 			map.addAttribute("PROFILE_STATUS", aofstatus);
-			
+
 			if(aofstatus.equals("PROFILE_READY")) {
 
-			try{
-				List<MfAllInvestorValueByCategory> allMFFunds= null;
-				List<MfAllInvestorValueByCategory> categorykarvyFunds= null;
-				List<MFKarvyFundsView> karvyview = new ArrayList<MFKarvyFundsView>();
-				logger.info("Search for ALL related folios for customer.");
-				List<String> uniquefundShort = new ArrayList<String>();
-				allMFFunds = bseEntryManager.getCustomersAllFoliosByCategory(session.getAttribute("userid").toString(), null);
-				
-				if(allMFFunds !=null){
-					logger.info("Total Folio(s) found of customer - " +session.getAttribute("userid").toString() + " : " + allMFFunds.size());
+				try{
+					List<MfAllInvestorValueByCategory> allMFFunds= null;
+					List<MfAllInvestorValueByCategory> categorykarvyFunds= null;
+					List<MFKarvyFundsView> karvyview = new ArrayList<MFKarvyFundsView>();
+					logger.info("Search for ALL related folios for customer.");
+					List<String> uniquefundShort = new ArrayList<String>();
+					allMFFunds = bseEntryManager.getCustomersAllFoliosByCategory(session.getAttribute("userid").toString(), null);
 
-					for(int j=0;j<allMFFunds.size();j++){
-						
-						uniquefundShort.add(allMFFunds.get(j).getAmcShort());
+					if(allMFFunds !=null){
+						logger.info("Total Folio(s) found of customer - " +session.getAttribute("userid").toString() + " : " + allMFFunds.size());
 
-						totalAsset+=allMFFunds.get(j).getInvAmount();
-						
-						try {
-							totalmarketVal+=Double.valueOf(allMFFunds.get(j).getMarketValue());
-						}catch(Exception e) {
-							logger.error("Error adding market value -  "+ allMFFunds.get(j).getMarketValue());
+						for(int j=0;j<allMFFunds.size();j++){
+
+							uniquefundShort.add(allMFFunds.get(j).getAmcShort());
+
+							totalAsset+=allMFFunds.get(j).getInvAmount();
+
+							try {
+								totalmarketVal+=Double.valueOf(allMFFunds.get(j).getMarketValue());
+							}catch(Exception e) {
+								logger.error("Error adding market value -  "+ allMFFunds.get(j).getMarketValue());
+							}
 						}
-					}
-					
-					logger.info("Total asset after ALL MF calculation- "+ totalAsset);
-					
-					
-					Set<String> uniqueAmcs = new HashSet<>(uniquefundShort);
-					uniquefundShort = new ArrayList<String>(uniqueAmcs);
-					logger.info("Distinct AMCs invested in of customer - "+ uniquefundShort);
 
-					for(int x=0;x<uniquefundShort.size();x++){
-						MFKarvyFundsView selectedAMC = new MFKarvyFundsView();
-						MfCollatedFundsView currentFund = new MfCollatedFundsView();
-						categorykarvyFunds= new ArrayList<MfAllInvestorValueByCategory>();
-						Double totalAMCInvestedVal=0.0;
-						Double amcMarketValue=0.0;
-						for(int y=0;y<allMFFunds.size();y++){
-							logger.debug(uniquefundShort.get(x) + " -> "+ allMFFunds.get(y).getAmcShort());
-							if(uniquefundShort.get(x).equals(allMFFunds.get(y).getAmcShort())){
-								
-								if(currentFund.getAmcicon()==null){
-									currentFund.setAmcicon(allMFFunds.get(y).getAmcicon());
-								}
-								if(currentFund.getAmcShort() ==null){
-									currentFund.setAmcShort(allMFFunds.get(y).getAmcShort());
-								}if(currentFund.getFolioNumber()==null){
-									currentFund.setFolioNumber(allMFFunds.get(y).getFolioNumber());
-								}
-								if(currentFund.getRtaAgent()==null){
-									currentFund.setRtaAgent(allMFFunds.get(y).getRtaAgent());
-								}
-								if(currentFund.getFundName()==null){
-									currentFund.setFundName(allMFFunds.get(y).getAmcName());
-									logger.debug("Set common fund name- "+ allMFFunds.get(y).getAmcName());
-								}
-								
-//								Calculate AMC total invested value and its current market value
-								totalAMCInvestedVal+=allMFFunds.get(y).getInvAmount();
-								try {
-									amcMarketValue+=Double.valueOf(allMFFunds.get(y).getMarketValue());
-								}catch(Exception e) {
-									logger.error("unable to calculate market value. Adding 0 to add",e);
-									amcMarketValue+=0;
-								}
-								
-								if(selectedAMC.getAmcicon()==null){
-									selectedAMC.setAmcicon(allMFFunds.get(y).getAmcicon());
-								}
-								if(selectedAMC.getFunName()==null){
-									selectedAMC.setFunName(allMFFunds.get(y).getFundDescription());;
-								}
-								
-									
-								categorykarvyFunds.add(allMFFunds.get(y));
+						logger.info("Total asset after ALL MF calculation- "+ totalAsset);
 
+
+						Set<String> uniqueAmcs = new HashSet<>(uniquefundShort);
+						uniquefundShort = new ArrayList<String>(uniqueAmcs);
+						logger.info("Distinct AMCs invested in of customer - "+ uniquefundShort);
+
+						for(int x=0;x<uniquefundShort.size();x++){
+							MFKarvyFundsView selectedAMC = new MFKarvyFundsView();
+							MfCollatedFundsView currentFund = new MfCollatedFundsView();
+							categorykarvyFunds= new ArrayList<MfAllInvestorValueByCategory>();
+							Double totalAMCInvestedVal=0.0;
+							Double amcMarketValue=0.0;
+							for(int y=0;y<allMFFunds.size();y++){
+								logger.debug(uniquefundShort.get(x) + " -> "+ allMFFunds.get(y).getAmcShort());
+								if(uniquefundShort.get(x).equals(allMFFunds.get(y).getAmcShort())){
+
+									if(currentFund.getAmcicon()==null){
+										currentFund.setAmcicon(allMFFunds.get(y).getAmcicon());
+									}
+									if(currentFund.getAmcShort() ==null){
+										currentFund.setAmcShort(allMFFunds.get(y).getAmcShort());
+									}if(currentFund.getFolioNumber()==null){
+										currentFund.setFolioNumber(allMFFunds.get(y).getFolioNumber());
+									}
+									if(currentFund.getRtaAgent()==null){
+										currentFund.setRtaAgent(allMFFunds.get(y).getRtaAgent());
+									}
+									if(currentFund.getFundName()==null){
+										currentFund.setFundName(allMFFunds.get(y).getAmcName());
+										logger.debug("Set common fund name- "+ allMFFunds.get(y).getAmcName());
+									}
+
+									//								Calculate AMC total invested value and its current market value
+									totalAMCInvestedVal+=allMFFunds.get(y).getInvAmount();
+									try {
+										amcMarketValue+=Double.valueOf(allMFFunds.get(y).getMarketValue());
+									}catch(Exception e) {
+										logger.error("unable to calculate market value. Adding 0 to add",e);
+										amcMarketValue+=0;
+									}
+
+									if(selectedAMC.getAmcicon()==null){
+										selectedAMC.setAmcicon(allMFFunds.get(y).getAmcicon());
+									}
+									if(selectedAMC.getFunName()==null){
+										selectedAMC.setFunName(allMFFunds.get(y).getFundDescription());;
+									}
+
+
+									categorykarvyFunds.add(allMFFunds.get(y));
+
+
+								}
+								selectedAMC.setTotalInvestment(totalAMCInvestedVal);
+								selectedAMC.setTotalMarketValue(amcMarketValue);
+								selectedAMC.setCategorizedFund(categorykarvyFunds);
+
+								currentFund.setCollaboratedAmount(totalAMCInvestedVal);
+								currentFund.setCollaboratedMarketValue(amcMarketValue);
+								currentFund.setKarvyFolioList(categorykarvyFunds);
 
 							}
-							selectedAMC.setTotalInvestment(totalAMCInvestedVal);
-							selectedAMC.setTotalMarketValue(amcMarketValue);
-							selectedAMC.setCategorizedFund(categorykarvyFunds);
-							
-							currentFund.setCollaboratedAmount(totalAMCInvestedVal);
-							currentFund.setCollaboratedMarketValue(amcMarketValue);
-							currentFund.setKarvyFolioList(categorykarvyFunds);
-							
+
+							karvyview.add(selectedAMC);
+							listFunds.add(currentFund);
+
 						}
-						
-						karvyview.add(selectedAMC);
-						listFunds.add(currentFund);
-						
+
+						logger.info("Total funds by category- " + karvyview.size());
+
+						//					map.addAttribute("allfundsdata", allMFFunds);
+
 					}
 
-					logger.info("Total funds by category- " + karvyview.size());
-					
-//					map.addAttribute("allfundsdata", allMFFunds);
-					
+				}catch(Exception e){
+					logger.error("Error handling Karvy folio query from controller",e);
 				}
-				
-			}catch(Exception e){
-				logger.error("Error handling Karvy folio query from controller",e);
-			}
-			
+
 			}else {
 
 				String pan = bseEntryManager.getCustomerPanfromMobile(session.getAttribute("userid").toString());
 				map.addAttribute("pan", pan);
 			}
-			
+
 			fileform.setFilecategory("AOF");
 			fileform.setFileowner(session.getAttribute("userid").toString());
 
 
 			//			Get Profile AOF Status
-			
-			
+
+
 			//			map.addAttribute("PROFILE_STATUS", "NOT_FOUND");
 
 			if(listFunds.size()>0){
@@ -511,15 +512,15 @@ public class ProfileManageController{
 				map.addAttribute("allfundsview", listFunds);
 			}else{
 				map.addAttribute("ORDERHISTORY", "EMPTY");
-				
-				
+
+
 			}
 		}
-		
+
 		map.addAttribute("totalasset", totalAsset);
 		map.addAttribute("totalmarketval", totalmarketVal);
 		map.addAttribute("contextcdn", environment.getProperty(CommonConstants.CDN_URL));
-		
+
 		logger.info("Returning to page- "+ returnurl);
 		return returnurl;
 		//		return "my-dashboard";
@@ -574,7 +575,7 @@ public class ProfileManageController{
 				map.addAttribute("STATUS", "N");
 				map.addAttribute("error","Error processing request");
 			}	
-			
+
 			ResetPassword passform = new ResetPassword();
 			passform.setUser(user);
 			passform.setToken(token);
@@ -587,6 +588,24 @@ public class ProfileManageController{
 
 		return returnurl;
 		//		return "my-dashboard";
+	}
+
+
+	@RequestMapping(value = "/force-change-password", method = RequestMethod.GET)
+	public String forChangePassword(/*
+	 * @RequestParam("env")String env,@RequestParam("user")String
+	 * user, @RequestParam("token")String token,
+	 */Model map,HttpServletRequest request,HttpServletResponse response, HttpSession session) {
+		logger.info("@@@@ Force Change Password during first time login");
+		logger.info("Force Change Password request received from ip- "+ CommonTask.getClientSystemIp(request));
+		String returnurl = "";
+		ForceChangePassword changePassword = new ForceChangePassword();
+		
+		map.addAttribute("changePasswordForm", changePassword);
+		map.addAttribute("contextcdn", environment.getProperty(CommonConstants.CDN_URL));
+		returnurl = "force-change-password";
+		
+		return returnurl;
 	}
 
 
@@ -607,12 +626,12 @@ public class ProfileManageController{
 	public String ForgotPasswordResetSubmit(@ModelAttribute("resetPassword")ResetPassword resetPassForm,BindingResult bindingResult,Model model,HttpServletRequest request,HttpServletResponse response, HttpSession session) {
 		//logger.info("@@@@ Inside Login..");
 		logger.info("@@@@ ForgotPasswordresetController @@@@- "+ request.getQueryString());
-//		logger.info(request.getQueryString());
+		//		logger.info(request.getQueryString());
 		String returnurl="";
 		//		RestClient client = new RestClient();
 
 		ResponseEntity<String> responseEntity = null;
-		
+
 		if(!resetPassForm.getNewpassword().equalsIgnoreCase(resetPassForm.getConfirmpassword())){
 			model.addAttribute("STATUS", "N");
 			model.addAttribute("error", "Confirm password do not match");
@@ -644,40 +663,40 @@ public class ProfileManageController{
 			logger.info("Reset password cannot be processed as the request token is not found!");
 			returnurl="redirect:/login";
 		}else{*/
-		
-			model.addAttribute("userid", resetPassForm.getUser());
-			returnurl="reset-password";
-			try {
-				responseEntity = profileRestClientService.forgotPasswordUpdate(resetPassForm,resetPassForm.getUser(), resetPassForm.getToken(),CommonTask.getClientSystemDetails(request).getClientIpv4Address());
-				//				System.err.println(response.getBody());
-				logger.info("ForgotPasswordResetSubmit(): Rsponse from resetting forgot password: "+ responseEntity.getBody());
-				if(responseEntity.getBody().equals("SUCCESS")){
-					model.addAttribute("STATUS", "Y");
-					model.addAttribute("PWDCHANGE", "S");
-					model.addAttribute("success", "Your account password updated successfully");
-					model.addAttribute("resetPassword", new ResetPassword());
-				}else if(responseEntity.getBody().equals("INTERNAL_ERROR")){
-					model.addAttribute("STATUS", "N");
-					model.addAttribute("error", "Internal error. Kindly try again.");
-				}else{
-					model.addAttribute("STATUS", "N");
-					model.addAttribute("error", "Internal error. Kindly contact admin if issue persist.");
-				}
 
-			}catch(HttpStatusCodeException  e){
-				logger.info("ForgotPasswordResetSubmit() HttpStatusCodeException: - ",e);
+		model.addAttribute("userid", resetPassForm.getUser());
+		returnurl="reset-password";
+		try {
+			responseEntity = profileRestClientService.forgotPasswordUpdate(resetPassForm,resetPassForm.getUser(), resetPassForm.getToken(),CommonTask.getClientSystemDetails(request).getClientIpv4Address());
+			//				System.err.println(response.getBody());
+			logger.info("ForgotPasswordResetSubmit(): Rsponse from resetting forgot password: "+ responseEntity.getBody());
+			if(responseEntity.getBody().equals("SUCCESS")){
+				model.addAttribute("STATUS", "Y");
+				model.addAttribute("PWDCHANGE", "S");
+				model.addAttribute("success", "Your account password updated successfully");
+				model.addAttribute("resetPassword", new ResetPassword());
+			}else if(responseEntity.getBody().equals("INTERNAL_ERROR")){
 				model.addAttribute("STATUS", "N");
-				model.addAttribute("error", "Unable to process request curretnly");
-			} catch (JsonProcessingException e) {
-				logger.info("ForgotPasswordResetSubmit() JsonProcessingException: - ",e);
+				model.addAttribute("error", "Internal error. Kindly try again.");
+			}else{
 				model.addAttribute("STATUS", "N");
-				model.addAttribute("error","Invalid form data");
-			}catch(Exception e){
-				logger.info("ForgotPasswordResetSubmit() Exception processing: - ",e);
-				model.addAttribute("STATUS", "N");
-				model.addAttribute("error","Error processing request");
+				model.addAttribute("error", "Internal error. Kindly contact admin if issue persist.");
 			}
-//		}
+
+		}catch(HttpStatusCodeException  e){
+			logger.info("ForgotPasswordResetSubmit() HttpStatusCodeException: - ",e);
+			model.addAttribute("STATUS", "N");
+			model.addAttribute("error", "Unable to process request curretnly");
+		} catch (JsonProcessingException e) {
+			logger.info("ForgotPasswordResetSubmit() JsonProcessingException: - ",e);
+			model.addAttribute("STATUS", "N");
+			model.addAttribute("error","Invalid form data");
+		}catch(Exception e){
+			logger.info("ForgotPasswordResetSubmit() Exception processing: - ",e);
+			model.addAttribute("STATUS", "N");
+			model.addAttribute("error","Error processing request");
+		}
+		//		}
 
 		return returnurl;
 	}

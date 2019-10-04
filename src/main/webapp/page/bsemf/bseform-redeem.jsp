@@ -1,6 +1,6 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <form:form id="regForm"
 	action="${pageContext.request.contextPath}/mutual-funds/mfRedeem.do"
 	method="POST" commandName="mfRedeemForm">
@@ -33,8 +33,7 @@
 
 		<div class="form-group row">
 			<label for="fundname"
-				class="col-sm-2 col-form-label col-form-label-sm">Scheme
-				Name:</label>
+				class="col-sm-2 col-form-label col-form-label-sm">Scheme Name:</label>
 			<div class="col-sm-10">
 				<form:input readonly="true" path="fundName" id="fundname"
 					class="form-control form-control-sm form-control-plaintext" />
@@ -48,16 +47,15 @@
 			<div class="col-sm-10">
 				<form:input path="totalValue" id="availableFund"
 					class="form-control form-control-sm" />
+				
 			</div>
 		</div>
 
 		<div class="form-group row">
 			<label for="redeemamount"
-				class="col-sm-2 col-form-label col-form-label-sm">Redeem
-				Amount:</label>
+				class="col-sm-2 col-form-label col-form-label-sm">Redeem Amount:</label>
 			<div class="col-sm-10">
-				<form:input path="redeemAmounts" id="redeemamount"
-					class="form-control form-control-sm" />
+				<form:input path="redeemAmounts" id="redeemamount" class="form-control form-control-sm" />
 			</div>
 		</div>
 

@@ -31,13 +31,13 @@ public class MfDataController {
 	@CrossOrigin(origins="https://www.freemi.in")
 	@ResponseBody
 	public String  getNavDataForIsisn(@PathVariable(name="isin") String isin,Model model, HttpServletRequest request, HttpServletResponse httpResponse){
-		logger.info("Request received to fetch NAV data via API..");
+		logger.info("Request received to fetch NAV data via API for ISIN - "+ isin);
 //		String response ="SUCCESS";
 		List<MfNavData> navhistorydata = null;
 //		List<String> data = null;
 		String json = null;
 		try{
-			if(!isin.isEmpty()){
+			if(!isin.isEmpty() || !isin.equalsIgnoreCase("null")){
 				
 //				JSONObject obj = new JSONObject(navData);
 //		        String pageName = obj.getJSONObject("pageInfo").getString("pageName");
@@ -46,6 +46,7 @@ public class MfDataController {
 		        
 		        navhistorydata=  bseEntryManager.getnavdataByISIN(isin);
 //				System.out.println(navhistorydata);
+		        logger.info("Returning total nav data- : "+ navhistorydata.size());
 		        json = new Gson().toJson(navhistorydata);
 				
 			}else{

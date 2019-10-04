@@ -1978,14 +1978,19 @@ public class BsemfController {
 			HttpSession session) {
 
 		logger.info("bseRedeemMfFundsPost(): REDEEM REQUEST POST CONTROLLER");
-
+		
+		
+		
 		if (!redeemForm.isAgreePolicy()) {
 			logger.warn("Policy not agreed for redeem transaction.");
 			map.addAttribute("error", "Please agree to the policy for transaction.");
 			map.addAttribute("FUNDAVAILABLE", "Y");
 			return "bsemf/bsemf-redeem";
 		}
-		if (redeemForm.getRedeemAmounts() < 500) {
+		
+		logger.info("Redeem amount selected- "+  redeemForm.getRedeemByAmounts() + " : Redeem All Flag- "+ redeemForm.isRedeemAll());
+		
+		if (redeemForm.getRedeemAmounts() < 500 && !redeemForm.isRedeemAll()) {
 			logger.warn("Minimum redemption amount should be Rs. 500");
 			map.addAttribute("error", "Minimum redemption amount should be Rs. 500");
 			map.addAttribute("FUNDAVAILABLE", "Y");
