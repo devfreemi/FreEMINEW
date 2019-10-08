@@ -21,5 +21,6 @@ public interface BseCustomerMfRepository extends JpaRepository<MfAllInvestorValu
 	
 	public MfAllInvestorValueByCategory findOneByPanAndChannelProductCodeAndRtaAgentAndFolioNumber(String pan, String channelPartnerCode, String rtaAgent, String folioNumber);
 	
-	
+	@Query(value = "select SUM(inv.INVESTMENT_AMOUNT), SUM(inv.MARKET_VALUE) FROM investors_balance_view_all inv WHERE inv.PAN= :pan",nativeQuery = true)
+	public String getCustomerMFInvestmentAmount(@Param("pan") String pan);
 }

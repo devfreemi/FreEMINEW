@@ -1,0 +1,17 @@
+.disclaimer{
+    font-size: 12px;
+    text-align: justify;
+    
+}
+
+.modal-body{
+    background: gainsboro;
+}
+
+.modal-header h3 {
+    margin: auto;
+    font-family: serif;
+    /* color: rgb(231, 215, 195); */
+    color: rgb(54, 52, 52);
+    
+}

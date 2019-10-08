@@ -1,0 +1,132 @@
+.contact_heading{
+    /* text-align: center; */
+    text-transform: uppercase;
+    font-size: 28px;
+    font-family: HelveticaB;
+    color: #061292;
+    font-weight: 600;
+}
+
+.description{
+    font-size: 14px;
+    color: #0d1655;
+    font-family: serif;
+}
+
+.form-details{
+    margin-top: 40px;
+}
+
+.form-container {
+    display:block;
+    width:90%;
+    padding:2em;
+    margin: 2em auto;
+    background:#fff;
+}
+
+.alert {
+    background: #f2edda;
+    padding: 7px;
+    font-size: .9em;
+    margin-bottom: 20px;
+    display: inline-block;
+    animation: 2s alertAnim forwards;
+}
+
+.button {
+    margin-top: 3rem;
+}
+h1 {
+    margin-bottom: 2rem;
+    font-weight:bold;
+    font-family:'Muli';
+    font-size: 2em;
+}
+
+
+@keyframes alertAnim {
+    from {
+        opacity:0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity:1;
+        transform: translateY(0);
+    }
+}
+
+label{
+    font-size: 14px;
+    font-family: DejaVu Sans;
+    color: #313235;
+    font-weight: 600;
+}
+
+textarea {
+    /* width: auto; */
+    height: 100px;
+    min-height: 100px;
+    max-height: 200px;
+    overflow: auto;
+  }
+
+  .success{
+      color: green;
+  }
+
+  .danger{
+      color: red;
+  }
+/* select {
+    -webkit-appearance: menulist;
+    -moz-appearance: menulist;
+    background-color: #C1C5C5;
+} */
+
+.google_map{
+    margin: 40px 5px 20px 5px;
+}
+
+.map_heading{ 
+    margin-bottom: 20px;
+    font-family: fantasy;
+}
+
+agm-map {
+    width: 100%;
+    height: 300px;
+    /* border-radius: 0.5px;
+    border-color: rgba(0, 0, 0, 0.12);
+    border-style: groove;
+    background-color: rgba(250, 235, 215, 0.24); */
+  }
+
+  .form_back{
+    background: -webkit-linear-gradient(to left top, #9dcae6, rgba(11, 51, 3, 0.8));
+    background: -o-linear-gradient(to left top, #9dcae6, rgba(11, 51, 3, 0.8));
+    background: -moz-linear-gradient(to left top, #9dcae6, rgba(11, 51, 3, 0.8));
+    background: linear-gradient(to left top, #9dcae6, rgba(11, 51, 3, 0.8));
+    padding: 10px;
+  }
+
+  .span_style{
+    width: 100%;
+  }
+
+  
+
+  .icon_style{
+    
+    position: absolute;
+    margin-left: 10px;
+    transition: 1s ease-in-out;
+  }
+
+  .text_position{
+      padding-left: 35px;
+  }
+
+  .button_work{
+      margin: 30px;
+  }

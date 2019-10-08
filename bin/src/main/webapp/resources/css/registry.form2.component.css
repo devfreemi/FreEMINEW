@@ -1,0 +1,136 @@
+.page_topic{
+    text-align: center;
+    padding: 5px;
+    margin-bottom: 40px;
+    background: linear-gradient(141deg, #0fb8ad 0%, #1fc8db 51%, #2cb5e8 75%);
+    background: -webkit-linear-gradient(141deg, #0fb8ad 0%, #1fc8db 51%, #2cb5e8 75%);
+    background: -moz-linear-gradient(141deg, #0fb8ad 0%, #1fc8db 51%, #2cb5e8 75%);
+    background: -o-linear-gradient(141deg, #0fb8ad 0%, #1fc8db 51%, #2cb5e8 75%);
+}
+
+.form_entry{
+    animation-name: formmove;
+    animation-duration: 2s;
+}
+
+@-webkit-keyframes formmove {
+    from {opacity: 0;}
+    to {opacity: 1;}
+} 
+
+/* Standard syntax */ 
+@keyframes formmove {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+@media screen and (min-width: 481px) {
+    .form_border{
+        margin: 10px 100px;
+        border: 1px groove;
+        padding: 20px;
+        /* text-align: center; */
+    }
+
+    .label_box{
+        text-align: left;
+        padding-left: 5em;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .form_border{
+        border: 1px groove;
+        padding: 20px;
+        /* text-align: center; */
+    }
+
+    .label_box{
+        text-align: left;
+        /* padding-left: 5em; */
+    }
+}
+
+.label_style{
+    font-weight: bold;
+}
+
+/* STYLISH RADIO BUTTON */
+
+.container_radio {
+    display: block;
+    position: relative;
+    padding-left: 45px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    font-size: 14px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Hide the browser's default radio button */
+.container_radio input {
+    position: absolute;
+    opacity: 0;
+}
+
+/* Create a custom radio button */
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background-color: #eee;
+    border-radius: 50%;
+}
+
+/* On mouse-over, add a grey background color */
+.container_radio:hover input ~ .checkmark {
+    background-color: #ccc;
+}
+
+/* When the radio button is checked, add a blue background */
+.container_radio input:checked ~ .checkmark {
+    background-color: rgb(70, 133, 175);
+}
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Show the indicator (dot/circle) when checked */
+.container_radio input:checked ~ .checkmark:after {
+    display: block;
+}
+
+/* Style the indicator (dot/circle) */
+.container_radio .checkmark:after {
+ 	top: 9px;
+	left: 9px;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: white;
+}
+
+/* End of radio button style */
+
+.input-group-addon {
+    background-color: #64cbf5;
+}
+
+#formCloseOnSubmit {
+    animation-name: formClose;
+    animation-duration: 2s;
+}
+
+@keyframes formClose {
+    from {transform: scaleY(0);}
+    to {transform: scaleY(1);}
+}

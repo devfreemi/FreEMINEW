@@ -8,8 +8,8 @@
 	<Appenders>
 	
 		<!-- Rolling File Appender -->
-		<RollingFile name="FileAppender" fileName="D:/logs/PRODUCTS/freemiweb.log"
-			filePattern="D:/logs/PRODUCTS/freemiweb-%d{yyyy-MM-dd}-%i.log">
+		<RollingFile name="FileAppender" fileName="C:/logs/PRODUCTS/freemiweb.log"
+			filePattern="C:/logs/PRODUCTS/freemiweb-%d{yyyy-MM-dd}-%i.log">
 			<PatternLayout>
 				<Pattern>${LOG_PATTERN}</Pattern>
 			</PatternLayout>

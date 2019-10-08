@@ -132,4 +132,8 @@ public class CommonConstants {
 	};
 	
 	
+//	Date Formats
+	public static final String TIMESTAMP_FORMAT_SNS_REPORT ="yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
+	
+	
 }

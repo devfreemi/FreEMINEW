@@ -1,7 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html>
@@ -11,30 +10,23 @@
 <title>Insert title here</title>
 
 <jsp:include page="include/bootstrap.jsp"></jsp:include>
-<link
-	href="<c:url value="${contextcdn}/resources/css/my-dashboard.component.css"/>"
-	rel="stylesheet">
-<link href="<c:url value="${contextcdn}/resources/css/styles.css"/>"
-	rel="stylesheet">
-<link rel="stylesheet"
-	href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
-<script src="<c:url value="${contextcdn}/resources/js/investment.js" />"></script>
+<link href="<c:url value="${contextcdn}/resources/css/my-dashboard.component.css"/>" rel="stylesheet">
+<link href="<c:url value="${contextcdn}/resources/css/styles.css"/>" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+<link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet">
+<script src="<c:url value="${contextcdn}/resources/js/investment.js" />" async="async"></script>
 
 <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script> -->
 
-<link
-	href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css"
-	rel="stylesheet">
-<script type="text/javascript"
-	src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-<script type="text/javascript"
-	src="https://cdn.datatables.net/buttons/1.5.4/js/buttons.html5.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" async="async"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.4/js/buttons.html5.min.js" async="async"></script>
 
 <script type="text/javascript">
 	var FILE_UPLOAD = $
 	{
 		FILE_IPLOAD
 	};
+	
 </script>
 
 <style>
@@ -59,7 +51,7 @@ table th {
 </style>
 
 </head>
-<body>
+<body onload="getMfData('${PROFILE_STATUS}','${pan }','<%=session.getAttribute("userid").toString()%>');">
 	<jsp:include page="include/header.jsp"></jsp:include>
 
 	<div class="container">
@@ -108,10 +100,11 @@ table th {
 								<div class="col-6">
 									<h5>
 										<i class="fas fa-rupee-sign"> </i>
-										<fmt:formatNumber type="number" pattern="##,###.00"
+										<span id="inval">0</span>
+										<%-- <fmt:formatNumber type="number" pattern="##,###.00" id="invval"
 											minFractionDigits="1" minIntegerDigits="1"
 											maxFractionDigits="2" groupingUsed="true"
-											value="${totalasset }" />
+											value="0" /> --%>
 									</h5>
 								</div>
 							</div>
@@ -123,10 +116,11 @@ table th {
 								<div class="col-6">
 									<h5>
 										<i class="fas fa-rupee-sign"> </i>
-										<fmt:formatNumber type="number" pattern="##,###.00"
+										<span id="marketval">0</span>
+										<%-- <fmt:formatNumber type="number" pattern="##,###.00" id="marketval"
 											minFractionDigits="1" minIntegerDigits="1"
 											maxFractionDigits="2" groupingUsed="true"
-											value="${totalmarketval }" />
+											value="0" /> --%>
 									</h5>
 								</div>
 							</div>
@@ -296,17 +290,14 @@ table th {
 								<c:choose>
 									<c:when test="${FILE_UPLOAD == 'S'}">
 										<div id="aofuploadbutton">
-											<button class="btn btn-sm btn-primary" id="aofuploadbtn"
-												onclick="initiateAOFUpload(<%=session.getAttribute("userid").toString()%>);">
-												UPLOAD YOUR AOF <i class="fas fa-upload"></i>
+											<button class="btn btn-sm btn-primary" id="aofuploadbtn" onclick="initiateAOFUpload(<%=session.getAttribute("userid").toString()%>);">
+											UPLOAD YOUR AOF <i class="fas fa-upload"></i>
 											</button>
 										</div>
 									</c:when>
 									<c:otherwise>
 										<div id="aofuploadbutton">
-											<button class="btn btn-sm btn-primary" id="aofuploadbtn"
-												hidden="hidden"
-												onclick="initiateAOFUpload(<%=session.getAttribute("userid").toString()%>);">
+											<button class="btn btn-sm btn-primary" id="aofuploadbtn" hidden="hidden" onclick="initiateAOFUpload(<%=session.getAttribute("userid").toString()%>);">
 												<span id="uploadtxt">UPLOAD YOUR AOF <i
 													class="fas fa-upload"></i></span> <span id="uploadingtxt"
 													style="display: none;">Uploading... <i
@@ -325,8 +316,7 @@ table th {
 										onclick="initiateAOFUpload(<%=session.getAttribute("userid").toString()%>);">
 										UPLOAD YOUR AOF <i class="fas fa-upload"></i>
 									</button>
-								</div>
-
+</div>
 							</c:when>
 
 							<c:when test="${PROFILE_STATUS == 'ERROR' }">
@@ -360,7 +350,7 @@ table th {
 							data-toggle="tab" href="#fsecure" role="tab"
 							aria-controls="fsecure" aria-selected="false">Insurance</a></li>
 
-						<li class="nav-item"><a class="nav-link" id="contact-tab"
+						<li class="nav-item" onclick="getMFPortfolioData(<%=session.getAttribute("userid").toString()%>,'${PROFILE_STATUS}');"><a class="nav-link" id="contact-tab"
 							data-toggle="tab" href="#registry" role="tab"
 							aria-controls="registry" aria-selected="false">Mutual Funds</a></li>
 					</ul>
@@ -478,6 +468,5 @@ table th {
 
 
 </body>
-<script
-	src="<c:url value="${contextcdn}/resources/js/signaturepanel.js" />"></script>
+<script src="<c:url value="${contextcdn}/resources/js/signaturepanel.js" />" defer="defer"></script>
 </html>

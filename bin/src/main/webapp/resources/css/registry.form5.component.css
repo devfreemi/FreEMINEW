@@ -1,0 +1,147 @@
+.page_topic{
+    /* background: url("/assets/images/registry_travel.jpg") no-repeat; */
+    /* background-color: rgb(29, 143, 143); */
+    background: linear-gradient(to right, #21527e,#45bcd6);
+    background: -webkit-linear-gradient(to right, #21527e,#45bcd6);
+    background: -moz-linear-gradient(to right, #21527e,#45bcd6);
+    background: -o-linear-gradient(to right, #21527e,#45bcd6);
+
+    /* height: 389px; */
+    margin: -18px -15px;
+
+}
+.center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 18px;
+}
+
+
+.form_entry{
+    animation-name: formmove;
+    animation-duration: 2s;
+}
+
+@-webkit-keyframes formmove {
+    from {opacity: 0;}
+    to {opacity: 1;}
+} 
+
+/* Standard syntax */ 
+@keyframes formmove {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+
+
+
+/* Slide in text  right-to-left*/
+
+/* div.slide-left {
+  width:100%;
+  overflow:hidden;
+  color: white;
+  text-align: center;
+}
+div.slide-left p {
+  animation: slide-left 2s;
+}
+
+@keyframes slide-left {
+  from {
+    margin-left: 100%;
+    width: 300%; 
+  }
+
+  to {
+    margin-left: 0%;
+    width: 100%;
+  }
+} */
+
+/*  ------------------------------- */
+/* Slide in text left-to-right */
+/* div.slide-right {
+    width:100%;
+    overflow:hidden;
+  }
+  div.slide-right p {
+    animation: 10s slide-right;
+  }
+  
+  @keyframes slide-right {
+    from {
+      margin-left: -100%;
+      width: 300%; 
+    }
+  
+    to {
+      margin-left: 0%;
+      width: 100%;
+    }
+  } */
+
+  /* ----------------------- */
+
+  /* top-to-bottom */
+  div.slide-down {
+    width:100%;
+    overflow:hidden;
+    color: white;
+    text-align: center;
+  }
+  div.slide-down p {
+    animation: 1s slide-down;
+    margin-top:0%;
+  }
+  
+  @keyframes slide-down {
+    from {
+      margin-top: -100%;
+      height: 300%; 
+    }
+  
+    to {
+      margin-top: 0%;
+      height: 100%;
+    }
+  }
+
+  /* --------------------- */
+
+  .form-box{
+    margin-top: 40px;
+    padding: 20px;
+    border: 1px solid;
+    border-style: groove;
+    border-color: #fdffff;
+    box-shadow: 0px 1px 20px 0px black;
+  }
+
+  .travel_design{
+    color: #fdf079;
+  }
+
+.plus_color{
+  background: #179b6f;
+}
+
+.minus_color{
+  background: #f95d5d;
+}
+
+.fa-minus{
+  color: rgb(255, 255, 255);
+}
+
+.fa-plus{
+  color: rgb(255, 255, 255);
+}
+
+.input_design{
+  text-align: center;
+}
+

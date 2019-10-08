@@ -1,9 +1,15 @@
 package com.freemi.common.util;
 
+import java.text.ParseException;
+import java.time.Instant;
+import java.util.Date;
+import java.util.Locale;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.format.datetime.DateFormatter;
 
 import com.freemi.entity.general.ClientSystemDetails;
 import com.freemi.entity.general.InvestmentFormGeneral;
@@ -61,5 +67,17 @@ public class CommonTask {
 		
 		return false;
 		
+	}
+	
+	
+	public static Date dateFormatter1(String dateFormat, String date) {
+		DateFormatter format = new DateFormatter(dateFormat);
+		Date formattedDate = null;
+		try {
+			formattedDate = format.parse(date, Locale.ENGLISH);
+		} catch (ParseException e) {
+			logger.error("dateFormatter1(): Error formatting date", e);
+		}
+		return formattedDate;
 	}
 }

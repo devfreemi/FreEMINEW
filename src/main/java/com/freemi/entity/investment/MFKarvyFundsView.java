@@ -1,8 +1,15 @@
 package com.freemi.entity.investment;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class MFKarvyFundsView {
+public class MFKarvyFundsView implements Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	
 	private String funName;
 	private Double totalInvestment=0.0;

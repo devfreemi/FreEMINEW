@@ -25,7 +25,7 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/js/mdb.min.js"></script>
 
 <!-- McAfee Secure logo -->
-<script type="text/javascript" src="https://cdn.ywxi.net/js/1.js" defer="defer"></script>
+<!-- <script type="text/javascript" src="https://cdn.ywxi.net/js/1.js" defer="defer"></script> -->
 
 <jsp:include page="./GoogleHeadTag.jsp"></jsp:include>
 <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>

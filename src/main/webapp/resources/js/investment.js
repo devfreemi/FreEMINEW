@@ -1,3 +1,4 @@
+var mfdatapulled=false;
 function AdditionalPurchase(folio,code,type,rtaAgent,productCode){
 	if(folio == 'NEW'){
 		alert("You cannot make additional purhcase until portfolio is assigned!");
@@ -10,7 +11,7 @@ function MFRedeem(folio,code,type,rtaAgent,productCode){
 	if(folio == 'NEW'){
 		alert("No portfolio number to redeem your investment! Please wait for portfolio number.");
 	}else{
-	window.location.assign(window.location.href+"/funds-redeem?r="+btoa(folio+"|"+code+"|"+type+"|"+rtaAgent+"|"+productCode));
+		window.location.assign(window.location.href+"/funds-redeem?r="+btoa(folio+"|"+code+"|"+type+"|"+rtaAgent+"|"+productCode));
 	}
 //	window.location.assign(window.location.href+"/funds-redeem?r="+btoa(folio+"|"+code+"|"+type));
 }
@@ -22,11 +23,11 @@ function cancelOrder(schemeCode,orderno,type,category,transactionId){
 		alert("SIP order cancel process will be available soon. ");
 	}else if(type == 'LUMPSUM' || type == 'SIP'){
 		window.location.assign("/products/my-dashboard/cancel-order?ref="+btoa(schemeCode+"|"+orderno+"|"+type+"|"+category+"|"+transactionId));
-		
+
 	}else{
 		alert("Invalid type of investment");
 	}
-	
+
 }
 
 
@@ -39,7 +40,7 @@ function getbseOrderPaymentStatus(clientId, orderNo) {
 
 		console.log(data);
 		$('#exampleModal1').modal('hide');
-		if (data == 'NO_SESSIION') {
+		if (data == 'NO_SESSION') {
 
 			alert("Invalid request");
 
@@ -76,5 +77,265 @@ $(document).ready(function(){
 				$(this).removeClass("animated pulse");
 			});
 });*/
+
+function getMFPortfolioData(mobile,profileStatus) {
+//	console.log("Get Profile Data as requested- "+mobile);
+
+	if(profileStatus === 'PROFILE_READY'){
+		if(!mfdatapulled){
+
+			$("#mfdatatbody2").children().remove();
+
+			request = $.ajax({
+				url: "/products/api/mf/getmfprofileData",
+				method: "POST",
+				data: {
+					"mobile" : mobile
+
+				},
+				async: true,
+				datatype: "json",
+				beforeSend: function() {
+					showprogress();
+				}
+			});
+
+			request.done(function(msg) {
+
+				if(msg=="NO_SESSION"){
+					$("#msgmfapi").text("Session expired. Login to your account again.");
+
+				}else if(msg=="REQUEST_DENIED"){
+					$("#msgmfapi").text("Request Denied. Please try again or contact admin.");
+				}else{
+					$("#msgmfapi").text("");
+					$("#msgmfapi").html("");
+
+					if(msg.length>0){
+						createmfdataView(msg);
+					}else{
+						$("#msgmfapi").html("<a href=\"/mutual-funds\">Start Investing</a>");
+					}
+
+				}
+
+			});
+
+						request.fail(function(jqXHR, textStatus) {
+							$("#msgmfapi").text("Failed to fetch your data. Please try after sometime");
+
+						});
+
+						request.always(function(msg){
+
+						});
+
+		}
+	}else{
+		$("#msgmfapi").html("<a href=\"/products/mutual-funds/register?mf=01\">Complete your profile Registration and start investing</a>");
+	}
+}
+
+
+function createmfdataView(data){
+//	console.log("Tranasaction Data- " +data.length + " -> " + data);
+	mfdatapulled = true;
+//	var json = JSON.parse(data);
+	var table = document.getElementById("mfdatatbody2");
+	table.setAttribute("class","animated slideInRight");
+
+	for (var i = 0; i < data.length; i++) {
+		/*    console.log(jsonData[i]); */
+
+		var x= data[i];
+//		console.log(x);
+		var fundName = x.fundName;
+		var folioNumber = x.folioNumber;
+//		console.log(data[i].fundName.toString() + " ->" + data[i].folioNumber.toString() + " -> " + data[i].collaboratedMarketValue);
+
+		var row = table.insertRow();
+		var cell1 = row.insertCell(0);
+		var cell2 = row.insertCell(1);
+		var cell3 = row.insertCell(2);
+		var cell4 = row.insertCell(3);
+
+//		Add some text to the new cells:
+
+		cell1.innerHTML =  "<img src=\"https:\/\/resources.freemi.in\/products\/resources\/images\/partnerlogo\/mf\/"+data[i].amcicon.toString()+"\" class=\"img-fluid\" style=\"width: 3rem; float: left;\" >" +data[i].fundName.toString() ;
+		cell2.innerHTML = Number(data[i].collaboratedAmount).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');;
+		cell3.innerHTML = Number(data[i].collaboratedMarketValue).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');;
+		cell4.innerHTML = "<a class=\"\" data-toggle=\"collapse\" href=\"#collapse"+i+"\" role=\"button\" aria-expanded=\"false\" aria-controls=\"collapse"+i+"\"> <span class=\"fas fa-chevron-right\" id=\"rotate\"></span></a>";
+
+		var innerrow = table.insertRow();
+		var cell11 = innerrow.insertCell(0);
+		cell11.colSpan = 7;
+		cell11.style.padding= "0px";
+//		cell11.innerHTML =  "<div class=\"collapse\" id=\"collapse"+i+"\" style=\"margin: .2rem;\"></div>" ;
+		var div = document.createElement("div");
+		div.setAttribute("class", "collapse");
+		div.setAttribute("id", "collapse"+i);
+		div.style.margin= ".2rem";
+
+		cell11.appendChild(div);
+
+//		Insert table inside div
+		var div1 = document.createElement("div");
+		div1.setAttribute("class", "card card-body");
+		div1.style.padding= "0";
+		div.appendChild(div1);
+
+		var amcfoliotable1 = document.createElement("TABLE");
+		amcfoliotable1.setAttribute("class", "table table-sm");
+
+		div1.appendChild(amcfoliotable1);
+
+		var amcfoliotablethead1 = document.createElement("THEAD");
+		amcfoliotablethead1.setAttribute("class","#00796b teal darken-2 white-text");
+		amcfoliotable1.appendChild(amcfoliotablethead1);
+
+		var datarow = amcfoliotablethead1.insertRow();
+		datarow.setAttribute("class", "mftransdetailhead");
+
+		datarow.insertCell(0).outerHTML="<th scope=\"col\" style=\"width: 20rem;\" valign=\"middle\">Folio <br> Scheme Code/Name </th>";
+		datarow.insertCell(1).outerHTML="<th scope=\"col\" valign=\"middle\">Invested Value (Rs.) </th>";
+		datarow.insertCell(2).outerHTML="<th scope=\"col\" valign=\"middle\">Bal. Units </th>";
+		datarow.insertCell(3).outerHTML="<th scope=\"col\" valign=\"middle\">NAV (As on Date) </th>";
+		datarow.insertCell(4).outerHTML="<th scope=\"col\" valign=\"middle\">Current Value (Rs.) </th>";
+		datarow.insertCell(5).outerHTML="<th scope=\"col\" valign=\"middle\">Action </th>";
+
+		var amcfoliotabletbody1 = document.createElement("tbody");
+		amcfoliotable1.appendChild(amcfoliotabletbody1);
+
+//		console.log(data[i].karvyFolioList);
+
+		for (var j = 0; j < data[i].karvyFolioList.length; j++) {
+			var amcfoliodesc = amcfoliotabletbody1.insertRow();
+
+			var amccell1 = amcfoliodesc.insertCell(0);
+			var amccell2 = amcfoliodesc.insertCell(1);
+			var amccell3 = amcfoliodesc.insertCell(2);
+			var amccell4 = amcfoliodesc.insertCell(3);
+			var amccell5 = amcfoliodesc.insertCell(4);
+
+			amccell1.innerHTML =data[i].karvyFolioList[j].folioNumber + "<br>"+data[i].karvyFolioList[j].fundDescription+"/"+data[i].karvyFolioList[j].bsemfschemeCode;
+			amccell1.setAttribute("valign","middle");
+
+			amccell2.innerHTML =Number(data[i].karvyFolioList[j].invAmount).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+			amccell2.setAttribute("valign","middle");
+
+			amccell3.innerHTML =data[i].karvyFolioList[j].units;
+			amccell3.setAttribute("valign","middle");
+
+			amccell4.innerHTML =data[i].karvyFolioList[j].nav +"<br>"+"<span style=\"font-size: 9px; color: grey;\">("+data[i].karvyFolioList[j].navdate+")</span>";
+			amccell4.setAttribute("valign","middle");
+
+			amccell5.innerHTML =Number(data[i].karvyFolioList[j].marketValue).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');;
+			amccell5.setAttribute("valign","middle");
+
+//			console.log(data[i].karvyFolioList[j]);
+			var div2 = document.createElement("div");
+			div2.setAttribute("class", "btn-group");
+			amcfoliodesc.insertCell(5).appendChild(div2);
+
+			var button1 = document.createElement("button");
+			button1.setAttribute("class","btn btn-secondary dropdown-toggle btn-sm");
+			button1.setAttribute("data-toggle","dropdown");
+			button1.setAttribute("aria-haspopup","true");
+			button1.setAttribute("aria-expanded","false");
+			button1.style.fontSize="11px";
+			button1.style.padding="5px";
+			button1.style.width="7rem";
+			button1.innerHTML="ACTION";
+			div2.appendChild(button1);
+
+			var div3 = document.createElement("div");
+			div3.setAttribute("class", "dropdown-menu dropdown-menu-right");
+			div3.innerHTML="<button class=\"dropdown-item\" type=\"button\" style=\"font-size: 12px; color: #238019; font-weight: 600;\" onclick=\"AdditionalPurchase('"+data[i].karvyFolioList[j].folioNumber+"','"+data[i].karvyFolioList[j].bsemfschemeCode+"','"+data[i].karvyFolioList[j].trasanctionType +"','"+data[i].karvyFolioList[j].rtaAgent+"','"+data[i].karvyFolioList[j].channelProductCode+"')\"> Invest More <i class=\"fas fa-arrow-left\"></i></button>";
+			div2.appendChild(div3);
+
+			if(Number(data[i].karvyFolioList[j].invAmount)>0){
+				var button3 = document.createElement("button");
+				button3.setAttribute("class", "dropdown-item");
+				button3.setAttribute("onclick","MFRedeem('"+data[i].karvyFolioList[j].folioNumber+"','"+data[i].karvyFolioList[j].bsemfschemeCode+"','"+data[i].karvyFolioList[j].trasanctionType +"','"+data[i].karvyFolioList[j].rtaAgent+"','"+data[i].karvyFolioList[j].channelProductCode+"')");
+				button3.style.fontSize="12px";
+				button3.style.color="#da2323";
+				button3.style.fontWeight="600";
+
+				button3.innerHTML="Redeem <i class=\"fas fa-arrow-right\"></i>";
+				div3.appendChild(button3);
+
+			}
+
+
+//			var button2 = document.createElement("button").innerHTML="";
+//			button1.setAttribute("class","dropdown-item");
+
+		}
+
+	}
+}
+
+
+function getMfData(profileStatus,pan,mobile){
+//	console.log("Request received to get invested data - "+ pan + " -> "+ profileStatus);
+
+	if(profileStatus === 'PROFILE_READY')
+	{
+		request = $.ajax({
+			url: "/products/api/mf/getmfportfoliototal",
+			method: "POST",
+			data: {
+				"mobile" : mobile,
+				"pan" : pan
+
+			},
+			async: true,
+			datatype: "json",
+			beforeSend: function() {
+			}
+		});
+		request.done(function(msg) {
+//			console.log(msg);
+			if(msg=="NO_SESSION"){
+//				$("#msgmfapi").text("Session expired. Login to your account again.");
+//				console.log("NO_SESSION");
+
+			}else if(msg=="REQUEST_DENIED"){
+//				$("#msgmfapi").text("Request Denied. Please try again or contact admin.");
+//				conosle.log("REQUEST DENIED");
+			}else{
+
+//				console.log(msg);
+				if(msg.invvalue !='null'){
+					$("#inval").text(Number(msg.invvalue).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+					$("#marketval").text(Number(msg.marketvalue).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+				}else{
+//					console.log("No invested data.")
+				}
+
+			}
+
+		});
+
+		request.fail(function(jqXHR, textStatus) {
+			console.log("Failed to fetch your data. Please try after sometime: " + textStatus);
+
+		});
+
+		request.always(function(msg){
+
+		});
+	}else{
+//		console.log("Profile not ready..");
+	}
+
+}
+
+function showprogress(){
+	$("#msgmfapi").html("<div style=\"text-align: center;margin-bottom: 3rem;\"><img alt=\"Fetching your portfolio\" src=\"https://resources.com/products/resources/images/invest/progress2.gif\">");
+
+}
+
+
 
 

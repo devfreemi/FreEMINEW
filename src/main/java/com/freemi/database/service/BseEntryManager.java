@@ -79,6 +79,8 @@ public interface BseEntryManager {
 	public List<BseMFSelectedFunds> getFundsByCategory(String category);
 	public BseMFSelectedFunds getFundsByCode(String rtacode, String isin);
 	
+	public String getCustomerInvestmentValue(String mobile, String pan);
+	
 	
 	public long getCurrentDayNextTransCount(Date date);
 	

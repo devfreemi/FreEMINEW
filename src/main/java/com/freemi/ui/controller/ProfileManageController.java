@@ -386,10 +386,13 @@ public class ProfileManageController{
 
 			String aofstatus=bseEntryManager.investmentProfileStatus(session.getAttribute("userid").toString());
 			map.addAttribute("PROFILE_STATUS", aofstatus);
+			
+			String pan = bseEntryManager.getCustomerPanfromMobile(session.getAttribute("userid").toString());
+			map.addAttribute("pan", pan);
 
 			if(aofstatus.equals("PROFILE_READY")) {
 
-				try{
+				/*try{
 					List<MfAllInvestorValueByCategory> allMFFunds= null;
 					List<MfAllInvestorValueByCategory> categorykarvyFunds= null;
 					List<MFKarvyFundsView> karvyview = new ArrayList<MFKarvyFundsView>();
@@ -484,18 +487,16 @@ public class ProfileManageController{
 
 						logger.info("Total funds by category- " + karvyview.size());
 
-						//					map.addAttribute("allfundsdata", allMFFunds);
-
 					}
 
 				}catch(Exception e){
 					logger.error("Error handling Karvy folio query from controller",e);
-				}
+				}*/
 
 			}else {
 
-				String pan = bseEntryManager.getCustomerPanfromMobile(session.getAttribute("userid").toString());
-				map.addAttribute("pan", pan);
+			/*	String pan = bseEntryManager.getCustomerPanfromMobile(session.getAttribute("userid").toString());
+				map.addAttribute("pan", pan);*/
 			}
 
 			fileform.setFilecategory("AOF");

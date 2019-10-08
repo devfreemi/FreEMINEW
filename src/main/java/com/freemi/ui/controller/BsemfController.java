@@ -128,11 +128,13 @@ public class BsemfController {
 			investForm.setMobile(selectFund.getMobile());
 		} else {
 			logger.info("registerUser(): registerUserMfGet(): selectFund is null.");
+			
 		}
 
 		if (userType.equalsIgnoreCase("01")) {
 			if (session.getAttribute("userid") != null) {
 				map.addAttribute("LOGGED", "Y");
+				investForm.setMobile(session.getAttribute("userid").toString());
 			}
 
 		}
@@ -1919,10 +1921,11 @@ public class BsemfController {
 				redeemForm.setTotalValue(customerFundDetails.getInvAmount());
 
 				try {
-					redeemForm.setRedeemAmounts(0.0);
-					redeemForm.setMarketValue(Double.valueOf(customerFundDetails.getMarketValue()));
+//					redeemForm.setRedeemAmounts(0.0);
+					redeemForm.setMarketValue(customerFundDetails.getMarketValue().equals("NA")?0.0:Double.valueOf(customerFundDetails.getMarketValue()));
 					redeemForm.setCurrentnav(customerFundDetails.getNav());
-
+					redeemForm.setNavDate(customerFundDetails.getNavdate());
+					
 				} catch (Exception e) {
 					logger.error("bseRedeemMfFundsGet(): error setting redeem value ", e);
 				}
@@ -1957,6 +1960,7 @@ public class BsemfController {
 		} catch (Exception e) {
 			logger.error("Failed to fetch selected funds's transaction details", e);
 			map.addAttribute("error", "Failed to fetch the curret investment details");
+			map.addAttribute("FUNDAVAILABLE", "N");
 		}
 
 		map.addAttribute("mfRedeemForm", redeemForm);
@@ -1985,6 +1989,7 @@ public class BsemfController {
 			logger.warn("Policy not agreed for redeem transaction.");
 			map.addAttribute("error", "Please agree to the policy for transaction.");
 			map.addAttribute("FUNDAVAILABLE", "Y");
+//			map.addAttribute("mfRedeemForm", redeemForm);
 			return "bsemf/bsemf-redeem";
 		}
 		
@@ -1994,6 +1999,7 @@ public class BsemfController {
 			logger.warn("Minimum redemption amount should be Rs. 500");
 			map.addAttribute("error", "Minimum redemption amount should be Rs. 500");
 			map.addAttribute("FUNDAVAILABLE", "Y");
+//			map.addAttribute("mfRedeemForm", redeemForm);
 			return "bsemf/bsemf-redeem";
 		}
 
@@ -2079,6 +2085,7 @@ public class BsemfController {
 				logger.error("Unable to save customer transaction request for redeem", e);
 				map.addAttribute("FUNDAVAILABLE", "Y");
 				map.addAttribute("error", "Failed to process your redeem. Please try again.");
+				map.addAttribute("mfRedeemForm", redeemForm);
 				returnUrl = "bsemf/bsemf-redeem";
 			}
 

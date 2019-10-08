@@ -69,7 +69,7 @@
 						<h4 class="text-md-center"
 							style="color: #f16927; font-weight: 500; border-bottom: 1px solid;">Scheme Details</h4>
 						<div class="row">
-							<%-- <jsp:include page="bseform-redeem.jsp"></jsp:include> --%>
+							
 							<div class="col-md-12 col-lg-12" style="text-align: left;">
 								<div>
 									<span id="mandateField" style="color: red;"></span>

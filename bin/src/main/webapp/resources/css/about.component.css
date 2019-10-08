@@ -1,0 +1,102 @@
+.company_description{
+    margin-bottom: 30px;
+}
+
+.company_background{
+    font-size: 14px;
+}
+
+.about_us{
+    height: 257px;
+    background-image: url(/products/resources/images/about_back.jpg);
+    /* width: 100em; */
+    padding-top: 15px;
+    padding-left: 15px;
+    margin-bottom: 20px;
+    background: #000046b3,url(/products/resources/images/about_back.jpg);
+    background: -webkit-linear-gradient(to right, #1cb5e0db, #000046b3),url(/products/resources/images/about_back.jpg);
+    background: linear-gradient(to right, #1cb5e0db, #000046b3),url(/products/resources/images/about_back.jpg)
+}
+
+.about_heading{
+    font-size: 25px;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-weight: 600;
+    color: azure;
+    padding-top: 50px; 
+}
+
+.box_style{
+    margin-bottom: 20px;
+}
+.name_style{
+    font-size: 20px;
+    font-weight: 600;
+    font-family: initial;
+    font-variant: contextual;
+    color: darkcyan;
+}
+
+.img_box{
+    margin-bottom: 10px;
+}
+.designation{
+    font-size: 14px;
+    font-style: italic;
+
+}
+
+.image_size{
+    min-width: 160px;
+    min-height: 160px;
+}
+
+.title{
+    margin-bottom: 10px;
+}
+
+.user_background{
+    font-size: 14px;
+}
+.triangle-topleft {
+	width: 0;
+    height: 0;
+    border-top: 50px solid cornsilk;
+    border-right: 100px solid transparent;
+}
+
+.team_style{
+    float: right;
+    
+}
+
+@media only screen and (min-width: 400px) {
+    .display_full {
+        display: block;
+        float: right;
+    }
+}
+@media only screen and (max-width: 399px) {
+    .display_full {
+        display: none;
+    }
+}
+
+.why_we{
+	font-size: 18px;
+	text-align: justify;
+	color: #2d2d2d;
+	font-family: robotolight;
+	
+}
+
+.us_desc{
+	font-size: 14px;
+	text-align: justify;
+	color: #2d2d2d;
+	font-family: robotolight;
+}
+
+.img_type{
+	max-height: 150px; margin: 10px; border: 1px solid #d0d0d0;
+}

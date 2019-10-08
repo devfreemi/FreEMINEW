@@ -25,6 +25,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 import com.freemi.common.util.CommonConstants;
+import com.freemi.database.interfaces.EmailBounceReportCrudRepository;
 import com.freemi.entity.general.Mail;
 import com.freemi.entity.investment.BseMFInvestForm;
 import com.freemi.entity.investment.MFInvestForm;
@@ -39,7 +40,10 @@ public class MailSenderImpl implements com.freemi.controller.interfaces.MailSend
 
 	@Autowired
 	private JavaMailSender javaMailSender;
-
+	
+	@Autowired
+	EmailBounceReportCrudRepository emailBounceReportCrudRepository;
+	
 	@Autowired
 	@Qualifier("getFreeMarkerConfiguration")
 	private Configuration fmConfiguration;
@@ -107,8 +111,15 @@ public class MailSenderImpl implements com.freemi.controller.interfaces.MailSend
 	private void sendMail(Mail mail, MimeMessage message){
 		try{
 			if(env.getProperty(CommonConstants.EMAIL_SEND_ENABLED).equalsIgnoreCase("Y")){
-				javaMailSender.send(message);
-				logger.info("Mail sent for- "+ mail.getTo().toLowerCase());
+				
+//				Check if mail ID is in bounce List
+				if(!emailBounceReportCrudRepository.existsByBouncedMailId(mail.getTo().toLowerCase())) {
+				
+					javaMailSender.send(message);
+					logger.info("Mail sent for- "+ mail.getTo().toLowerCase());
+				}else {
+					logger.info("Mail is found in bounce list. Mail not triggered for email ID- "+ mail.getTo().toLowerCase());
+				}
 			}else{
 				logger.info("Mail service is disabled currently. SKipping mail trigger.");
 			}

@@ -1,0 +1,47 @@
+.page_topic{
+    text-align: center;
+    margin-bottom: 40px;
+    /* margin-top: 30px; */
+    padding: 10px;
+    background: linear-gradient(141deg, #195955 0%, #1fc8db 51%, #0a5a88 75%);
+    background: -webkit-linear-gradient(141deg, #195955 0%, #1fc8db 51%, #0a5a88 75%);
+    background: -moz-linear-gradient(141deg, #195955 0%, #1fc8db 51%, #0a5a88 75%);
+    background: -o-linear-gradient(141deg, #195955 0%, #1fc8db 51%, #0a5a88 75%);
+}
+
+.form_entry{
+    animation-name: formmove;
+    animation-duration: 2s;
+}
+
+@-webkit-keyframes formmove {
+    from {opacity: 0;}
+    to {opacity: 1;}
+} 
+
+/* Standard syntax */ 
+@keyframes formmove {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+.form-border{
+    margin: auto;
+    border: 1px solid;
+    padding: 20px 10px;
+}
+
+.role_field{
+    -webkit-appearance: menulist;
+    -moz-appearance: menulist;
+   
+}
+
+.imaginary{
+    background: linear-gradient(227.39deg,#d84c40 0,#c8043e 100%);
+    background: -webkit-linear-gradient(227.39deg,#d84c40 0,#c8043e 100%);
+    background: -moz-linear-gradient(227.39deg,#d84c40 0,#c8043e 100%);
+    background: -o-linear-gradient(227.39deg,#d84c40 0,#c8043e 100%);
+    padding: 10px;
+    color: aliceblue
+}

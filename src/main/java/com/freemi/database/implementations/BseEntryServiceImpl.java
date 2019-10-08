@@ -1125,7 +1125,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 //	@Cacheable(value = "mffundhistory", unless = "#result == null", key= "#folios")
 	public List<MfAllInvestorValueByCategory> getCustomersAllFoliosByCategory(String mobile, String pan) {
 		List<MfAllInvestorValueByCategory> folios=null;
-		logger.info("getCustomersKarvyInvByCategory(): Request received to fetch customer Karvy folio details by category for client ID- "+ mobile + " :PAN NO: "+ pan);
+		logger.info("getCustomersAllFoliosByCategory(): Request received to fetch customer Karvy folio details by category for client ID- "+ mobile + " :PAN NO: "+ pan);
 
 		try{
 			if(bseCustomerCrudRespository.existsByMobileAndAccountActive(mobile,"Y")){
@@ -1262,6 +1262,20 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		}
 
 		return navdata;
+	}
+
+	@Override
+	public String getCustomerInvestmentValue(String mobile, String pan) {
+		String investmentresult = null;
+		logger.info("getCustomerInvestmentValue(): Get customer invest value for mobile- "+ pan);
+		
+		try {
+			investmentresult=  bseCustomerMfRepository.getCustomerMFInvestmentAmount(pan);
+			logger.info("getCustomerInvestmentValue(): investment value- "+ investmentresult);
+		}catch(Exception e) {
+			logger.error("Failed to fetch investment value - ",e);
+		}
+		return investmentresult;
 	}
 
 

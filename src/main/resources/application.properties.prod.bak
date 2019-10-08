@@ -23,7 +23,7 @@ logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
 spring.datasource.url=jdbc:mysql://freemiprodenv.crhrqcw50cwq.ap-south-1.rds.amazonaws.com:3306/products
 spring.datasource.username=serviceaccpdt
 spring.datasource.password=9b4b2b7115d6e1185ca05fec274c8753ac22bbafc17a637485616545ebb39507405c3cf4c9cae8088a03fe320722ef2e
-
+#spring.datasource.password=Newyear@jan2019!
 #################################################################################################################
 ################################## AWS SES MAIL SERVER ##########################################################
 mail.enabled=Y

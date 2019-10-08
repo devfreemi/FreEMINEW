@@ -1,0 +1,108 @@
+.page_topic{
+    text-align: center;
+    /* background: linear-gradient(141deg, #0fb8ad 0%, #1fc8db 51%, #2cb5e8 75%);
+    background: -webkit-linear-gradient(141deg, #0fb8ad 0%, #1fc8db 51%, #2cb5e8 75%);
+    background: -moz-linear-gradient(141deg, #0fb8ad 0%, #1fc8db 51%, #2cb5e8 75%);
+    background: -o-linear-gradient(141deg, #0fb8ad 0%, #1fc8db 51%, #2cb5e8 75%); */
+
+    background: linear-gradient(to right, #186d6dd4, #765c19b0),url(/products/resources/images/registry_funds.jpg);
+    background: -webkit-linear-gradient(to right, #186d6dd4, #765c19b0),url(/products/resources/images/registry_funds.jpg);
+    background: -moz-linear-gradient(to right, #186d6dd4, #765c19b0),url(/products/resources/images/registry_funds.jpg);
+    background: -o-linear-gradient(to right, #186d6dd4, #765c19b0),url(/products/resources/images/registry_funds.jpg);
+    margin-bottom: 40px;
+    padding: 10px;
+    font-family: sans-serif;
+    font-weight: 600;
+    color: #FFFFFF;
+    text-transform: capitalize;
+}
+
+.form_entry{
+    margin-right: 5px;
+    margin-left: 5px;
+    animation-name: formmove;
+    animation-duration: 2s;
+}
+
+@-webkit-keyframes formmove {
+    from {opacity: 0;}
+    to {opacity: 1;}
+} 
+
+/* Standard syntax */ 
+@keyframes formmove {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+.selectpicker{
+    border-radius: 0 5px 5px 0;    
+    height: 3em;
+}
+
+.selectpicker:active{
+    border-color: rgb(115, 175, 243);
+}
+
+.datepicker{
+    border-radius: 5px;
+    height: 3em;
+    width: 120px;
+}
+
+label{
+    font-size: 16px;
+    /* font-weight: bold; */
+}
+
+.label_style{
+    /* text-align: center;  */
+    font-weight: 600;
+    /* margin: auto; */
+}
+
+.form_style{
+    /* margin: auto; */
+    border: 1px groove;
+    padding: 10px 20px;
+    /* margin: 50px; */
+}
+
+.days_calc{
+    font-size: 30px;
+    font-family: serif;
+    color: #f55151;
+}
+
+.input-group-addon {
+    background-color: #64cbf5;
+}
+
+.event_content{
+    margin-top: 20px;
+    line-height: 1.6em;
+    text-align: justify;
+    padding: 10px 15px;
+    background: #0b9999;
+    color: azure
+}
+
+.ending{
+    margin-top: 20px;
+    text-align: center;
+}
+
+.draw-line{
+    border-bottom: 1px solid #848688;
+    margin-bottom: 20px;
+    /* margin-left: -20px; */
+    /* margin-right: -20px; */
+}
+
+.amount_dis1{
+	font-size: 20px;
+    font-weight: bold;
+    color: azure;
+    text-align: center;
+}
+

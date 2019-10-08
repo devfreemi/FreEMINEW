@@ -1,0 +1,29 @@
+.strike-line {
+    text-align: center;
+    border-bottom: 1px solid #141313;
+    line-height: 0.1em;
+    margin: 60px auto 60px auto;
+}
+
+.strike-line span {
+    background-color: white;
+    padding: 4px 20px;
+    text-transform: uppercase;
+    font-size: 35px;
+    margin: 0;
+    color: #113780;
+    text-align: center;
+    font-family: fantasy;
+}
+
+.plan_image{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.carousel_style{
+    display: block;
+    box-shadow: 0px 2px 16px 6px #989494;
+    padding: 0px;
+}
