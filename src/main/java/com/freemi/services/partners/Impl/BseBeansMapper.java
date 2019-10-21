@@ -23,7 +23,7 @@ import com.freemi.entity.bse.BseRegistrationMFD;
 import com.freemi.entity.bse.BseSipOrderEntry;
 import com.freemi.entity.bse.BseXipISipOrderEntry;
 import com.freemi.entity.database.UserBankDetails;
-import com.freemi.entity.investment.BseMFInvestForm;
+import com.freemi.entity.investment.MFCustomers;
 import com.freemi.entity.investment.BseOrderEntryResponse;
 import com.freemi.entity.investment.SelectMFFund;
 
@@ -33,7 +33,7 @@ public class BseBeansMapper {
 
 
 
-	public static BseRegistrationMFD  InvestmentFormToBseBeans(BseMFInvestForm registrationForm){
+	public static BseRegistrationMFD  InvestmentFormToBseBeans(MFCustomers registrationForm){
 
 		BseRegistrationMFD clientFregirationForm = new  BseRegistrationMFD();
 
@@ -99,7 +99,7 @@ public class BseBeansMapper {
 		return clientFregirationForm;
 	}
 
-	public static BseFatcaForm  InvestmentFormToBseFATCABeans(BseMFInvestForm registrationForm){
+	public static BseFatcaForm  InvestmentFormToBseFATCABeans(MFCustomers registrationForm){
 		BseFatcaForm fatcaForm = new BseFatcaForm();
 
 		SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy-mm-dd");

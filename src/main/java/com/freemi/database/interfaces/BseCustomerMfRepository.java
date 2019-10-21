@@ -2,6 +2,7 @@ package com.freemi.database.interfaces;
 
 import java.util.List;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,6 +22,10 @@ public interface BseCustomerMfRepository extends JpaRepository<MfAllInvestorValu
 	
 	public MfAllInvestorValueByCategory findOneByPanAndChannelProductCodeAndRtaAgentAndFolioNumber(String pan, String channelPartnerCode, String rtaAgent, String folioNumber);
 	
-	@Query(value = "select SUM(inv.INVESTMENT_AMOUNT), SUM(inv.MARKET_VALUE) FROM investors_balance_view_all inv WHERE inv.PAN= :pan",nativeQuery = true)
-	public String getCustomerMFInvestmentAmount(@Param("pan") String pan);
+//	@Query(value = "select SUM(inv.INVESTMENT_AMOUNT), SUM(inv.MARKET_VALUE) FROM investors_balance_view_all inv WHERE inv.PAN= :pan",nativeQuery = true)
+//	public String getCustomerMFInvestmentAmount(@Param("pan") String pan);
+	
+//	@Cacheable(value = "mfbalancedata", unless = "#result == null", key= "#mobile")
+	@Query(value = "select inv.PAN, SUM(inv.INVESTMENT_AMOUNT), SUM(inv.MARKET_VALUE) FROM investors_balance_view_all inv,bsemf_customers customers WHERE customers.PAN_NO_1=inv.PAN AND customers.MOBILE_NO= :mobile AND customers.ACCOUNT_ACTIVE='Y'",nativeQuery = true)
+	public String getCustomerMFInvestmentAmount(@Param("mobile") String mobile);
 }

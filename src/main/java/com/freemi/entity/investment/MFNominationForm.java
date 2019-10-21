@@ -72,7 +72,7 @@ public class MFNominationForm implements Serializable {
 	
 	@OneToOne(fetch= FetchType.LAZY, optional=false, cascade=CascadeType.PERSIST)
 	@JoinColumn(name="CLIENT_ID", nullable= false,insertable=false,updatable=false)
-	private BseMFInvestForm mfForm;
+	private MFCustomers mfForm;
 
 	
 	public long getSerialNo() {
@@ -87,10 +87,10 @@ public class MFNominationForm implements Serializable {
 	public void setClientID(String clientID) {
 		this.clientID = clientID;
 	}
-	public BseMFInvestForm getMfForm() {
+	public MFCustomers getMfForm() {
 		return mfForm;
 	}
-	public void setMfForm(BseMFInvestForm mfForm) {
+	public void setMfForm(MFCustomers mfForm) {
 		this.mfForm = mfForm;
 	}
 	public static long getSerialversionuid() {

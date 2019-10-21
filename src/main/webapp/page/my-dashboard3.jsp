@@ -7,19 +7,19 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>My Dashboard</title>
 
 <jsp:include page="include/bootstrap.jsp"></jsp:include>
 <link href="<c:url value="${contextcdn}/resources/css/my-dashboard.component.css"/>" rel="stylesheet">
 <link href="<c:url value="${contextcdn}/resources/css/styles.css"/>" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
 <link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet">
-<script src="<c:url value="${contextcdn}/resources/js/investment.js" />" async="async"></script>
+<script src="<c:url value="${contextcdn}/resources/js/investment.js" />" async="true"></script>
 
 <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script> -->
 
-<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" async="async"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.4/js/buttons.html5.min.js" async="async"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" async="true"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.4/js/buttons.html5.min.js" async="true"></script>
 
 <script type="text/javascript">
 	var FILE_UPLOAD = $
@@ -124,6 +124,10 @@ table th {
 									</h5>
 								</div>
 							</div>
+							
+							<div>
+							<span id="mffetchmsg" class="" style="font-size: 9px;color: #fffa66;"></span>
+							</div>
 
 						</div>
 						<div class="footer_link">
@@ -220,11 +224,10 @@ table th {
 								<div style="text-align: center;">
 									<!-- <p>Mode of Holding: </p> -->
 
-									<a href="/products/mutual-funds/pending-payments"
+									<div
 										style="margin-bottom: 20px;">
-										<button class="btn btn-sm btn-info" style="font-size: 12px;">Complete
-											Pending payments</button>
-									</a>
+										<button class="btn btn-sm btn-info" id="pendinglink" style="font-size: 12px;" onclick="completePendingPayments()">Complete Pending payments <img src="<c:url value="${contextcdn}/resources/images/invest/payment21.svg"/>" class="img-fluid" style="height: 1rem;"></button>
+									</div>
 								</div>
 							</c:when>
 
@@ -458,14 +461,10 @@ table th {
 			</div>
 		</section>
 
-
 	</div>
-
 
 	<jsp:include page="include/sub-footer.jsp"></jsp:include>
 	<jsp:include page="include/footer.jsp"></jsp:include>
-
-
 
 </body>
 <script src="<c:url value="${contextcdn}/resources/js/signaturepanel.js" />" defer="defer"></script>

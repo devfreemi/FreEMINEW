@@ -8,26 +8,30 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.freemi.entity.investment.BseMFInvestForm;
+import com.freemi.entity.investment.MFCustomers;
 
-public interface BseCustomerCrudRespository extends JpaRepository<BseMFInvestForm, Long>{
+public interface BseCustomerCrudRespository extends JpaRepository<MFCustomers, Long>{
 
 	/* public List<BseMFInvestForm> findByPan1(String pan1); */
-	public List<BseMFInvestForm> findByPan1AndAccountActive(String pan1, String activestatus);
+	public List<MFCustomers> findByPan1AndAccountActive(String pan1, String activestatus);
 	
 	/* public List<BseMFInvestForm> getByClientID(String customerId); */
-	public List<BseMFInvestForm> getByClientIDAndAccountActive(String customerId, String activestatus);
+	public List<MFCustomers> getByClientIDAndAccountActive(String customerId, String activestatus);
 	
 	/* public BseMFInvestForm getByMobile(String mobile); */
-	public BseMFInvestForm getByMobileAndAccountActive(String mobile, String activestatus);
-	public BseMFInvestForm getByMobileAndPan1AndAccountActive(String mobile,String pan, String activestatus);
+	public MFCustomers getByMobileAndAccountActive(String mobile, String activestatus);
+	public MFCustomers getByMobileAndPan1AndAccountActive(String mobile,String pan, String activestatus);
 	
 	/* public boolean existsByMobile(String mobile); */
 	public boolean existsByMobileAndAccountActive(String mobile,String status);
+	
 	public boolean existsByPan1(String pan);
+	
+//	public boolean existsByPan1AndAccountActive(String pan,String activeStatus);
+	
 	public boolean existsByClientID(String clientID);
 	
-	public BseMFInvestForm findOneByClientID(String clientId);
+	public MFCustomers findOneByClientID(String clientId);
 	
 	/*
 	 * @Query("select c.pan1 from BseMFInvestForm c where c.mobile= :mobile") public

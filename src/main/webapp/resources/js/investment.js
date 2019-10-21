@@ -17,6 +17,48 @@ function MFRedeem(folio,code,type,rtaAgent,productCode){
 }
 
 
+
+function completePendingPayments(){
+	
+	request = $.ajax({
+		url: "/products/api/mutual-funds/pending-payments",
+		method: "POST",
+		data: {
+			"mobile" : "NA"
+		},
+		async: true,
+		datatype: "json",
+		beforeSend: function() {
+			showtaskProgress("pendinglink");
+		}
+	});
+
+	request.done(function(data) {
+
+		if (data == 'NO_SESSION') {
+			alert("Your session has expired. Kindly login again.");
+		} else if (data == 'SERVICE_DISABLED') {
+			alert("Services are currently disabled. Kindly try again later.")
+		}else if (data == 'NO_REGISTERED' ) {
+			alert("You need to complete MF account registration to avail this service. Kindly contact admin if you are registered and facing issue.");
+		} else if (data == 'UNAVAILABLE' || data == 'INTERNAL_ERROR') {
+			alert("Unable to process the request. Kindly contact admin");
+		} else {
+			window.location.href = data;
+		}
+	});
+
+	request.fail(function(jqXHR, textStatus) {
+		alert("Failed to process your request!");
+
+	});
+
+	request.always(function(msg){
+		completetaskProgress("pendinglink","COMPLETE PENDING PAYMENTS");
+	});
+	
+}
+
 function cancelOrder(schemeCode,orderno,type,category,transactionId){
 	console.log("Cancel order request...")
 	if(type== 'SIP_COMMNTED'){
@@ -32,7 +74,7 @@ function cancelOrder(schemeCode,orderno,type,category,transactionId){
 
 
 function getbseOrderPaymentStatus(clientId, orderNo) {
-	console.log("Order staus for id- " + clientId + " : " + orderNo);
+//	console.log("Order staus for id- " + clientId + " : " + orderNo);
 	$.get("/products/mutual-funds/orderpaymentStatus", {
 		client : clientId,
 		order : orderNo
@@ -84,65 +126,95 @@ function getMFPortfolioData(mobile,profileStatus) {
 	if(profileStatus === 'PROFILE_READY'){
 		if(!mfdatapulled){
 
+			let checkexpiretime =window.sessionStorage.getItem("expiremfdata");
+//			console.log(checkexpiretime);
+			if(checkexpiretime!= null && (new Date() > new Date(checkexpiretime))){
+				console.log("Time expired");
+				window.sessionStorage.removeItem("mftata");
+				window.sessionStorage.removeItem("expiremfdata");
+			}else{
+//				console.log("Within time or null");
+			}
+
 			$("#mfdatatbody2").children().remove();
 
-			request = $.ajax({
-				url: "/products/api/mf/getmfprofileData",
-				method: "POST",
-				data: {
-					"mobile" : mobile
+			var storedmfdata=sessionStorage.getItem("mftata");
+//			console.log("storedmfdata- "+ storedmfdata);
+			if(storedmfdata == null){
+				request = $.ajax({
+					url: "/products/api/mf/getmfprofileData",
+					method: "POST",
+					data: {
+						"mobile" : mobile
 
-				},
-				async: true,
-				datatype: "json",
-				beforeSend: function() {
-					showprogress();
-				}
-			});
+					},
+					async: true,
+					datatype: "json",
+					beforeSend: function() {
+						showprogress();
+					}
+				});
 
-			request.done(function(msg) {
+				request.done(function(msg) {
 
-				if(msg=="NO_SESSION"){
-					$("#msgmfapi").text("Session expired. Login to your account again.");
+					if(msg=="NO_SESSION"){
+						$("#msgmfapi").text("Session expired. Login to your account again.");
 
-				}else if(msg=="REQUEST_DENIED"){
-					$("#msgmfapi").text("Request Denied. Please try again or contact admin.");
-				}else{
-					$("#msgmfapi").text("");
-					$("#msgmfapi").html("");
-
-					if(msg.length>0){
-						createmfdataView(msg);
+					}else if(msg=="REQUEST_DENIED"){
+						$("#msgmfapi").text("Request Denied. Please try again or contact admin.");
+					}else if(msg=="NO_DATA"){
+						$("#msgmfapi").html("<a href=\"/mutual-funds\"><button class=\"btn btn-sm\"><img src=\"https://resources.freemi.in/products/resources/images/invest/investment4.png\" class=\"img-fluid\" style=\"height: 2rem;\"> Start Investing</button> </a>");
 					}else{
-						$("#msgmfapi").html("<a href=\"/mutual-funds\">Start Investing</a>");
+						$("#msgmfapi").text("");
+						$("#msgmfapi").html("");
+
+						if(msg.length>0){
+							createmfdataView(msg);
+
+							if (typeof(Storage) !== "undefined") {
+								window.sessionStorage.setItem("mftata",msg);
+								window.sessionStorage.setItem("expiremfdata",(new Date(new Date().getTime() + (60000 * 60))));
+							}
+
+
+						}else{
+							$("#msgmfapi").html("<a href=\"/mutual-funds\"><button class=\"btn btn-sm\"><img src=\"https://resources.freemi.in/products/resources/images/invest/investment4.png\" class=\"img-fluid\" style=\"height: 2rem;\"> Start Investing</button> </a>");
+						}
+
 					}
 
-				}
+				});
 
-			});
+				request.fail(function(jqXHR, textStatus) {
+					$("#msgmfapi").text("Failed to fetch your data. Please try after sometime");
 
-						request.fail(function(jqXHR, textStatus) {
-							$("#msgmfapi").text("Failed to fetch your data. Please try after sometime");
+				});
 
-						});
 
-						request.always(function(msg){
+				request.always(function(msg){
 
-						});
+				});
+
+			}else{
+				console.log("Populate stored data");
+				$("#msgmfapi").html("");
+				createmfdataView(storedmfdata);
+				
+			}
 
 		}
 	}else{
-		$("#msgmfapi").html("<a href=\"/products/mutual-funds/register?mf=01\">Complete your profile Registration and start investing</a>");
+		$("#msgmfapi").html("<a href=\"/products/mutual-funds/register?mf=01\"><button class=\"btn btn-sm\"> Complete you Mutual Fund Account registrastion</button></a>");
 	}
 }
 
 
-function createmfdataView(data){
-//	console.log("Tranasaction Data- " +data.length + " -> " + data);
+function createmfdataView(result){
+//	console.log("Tranasaction Data- " +result.length + " -> " + result);
 	mfdatapulled = true;
-//	var json = JSON.parse(data);
+	var data = JSON.parse(result);
 	var table = document.getElementById("mfdatatbody2");
-	table.setAttribute("class","animated slideInRight");
+	table.setAttribute("class","animated fadeIn");
 
 	for (var i = 0; i < data.length; i++) {
 		/*    console.log(jsonData[i]); */
@@ -161,9 +233,17 @@ function createmfdataView(data){
 
 //		Add some text to the new cells:
 
-		cell1.innerHTML =  "<img src=\"https:\/\/resources.freemi.in\/products\/resources\/images\/partnerlogo\/mf\/"+data[i].amcicon.toString()+"\" class=\"img-fluid\" style=\"width: 3rem; float: left;\" >" +data[i].fundName.toString() ;
-		cell2.innerHTML = Number(data[i].collaboratedAmount).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');;
-		cell3.innerHTML = Number(data[i].collaboratedMarketValue).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');;
+		cell1.innerHTML =  "<img src=\"https:\/\/resources.freemi.in\/products\/resources\/images\/partnerlogo\/mf\/"+data[i].amcicon+"\" class=\"img-fluid\" style=\"width: 3rem; float: left;\" >" +data[i].fundName ;
+		cell2.innerHTML = Number(data[i].collaboratedAmount).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+
+		if(Number(data[i].collaboratedMarketValue)>Number(data[i].collaboratedAmount) ){
+			cell3.innerHTML = "<span class='text-success' >"+Number(data[i].collaboratedMarketValue).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')+"</span>";
+		}else if(Number(data[i].collaboratedMarketValue)<Number(data[i].collaboratedAmount)){
+			cell3.innerHTML = "<span class='text-danger' >"+Number(data[i].collaboratedMarketValue).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')+"</span>";
+		}else{
+			cell3.innerHTML = "<span class='grey-text'>"+Number(data[i].collaboratedMarketValue).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')+"</span>";
+		}
+
 		cell4.innerHTML = "<a class=\"\" data-toggle=\"collapse\" href=\"#collapse"+i+"\" role=\"button\" aria-expanded=\"false\" aria-controls=\"collapse"+i+"\"> <span class=\"fas fa-chevron-right\" id=\"rotate\"></span></a>";
 
 		var innerrow = table.insertRow();
@@ -229,7 +309,13 @@ function createmfdataView(data){
 			amccell4.innerHTML =data[i].karvyFolioList[j].nav +"<br>"+"<span style=\"font-size: 9px; color: grey;\">("+data[i].karvyFolioList[j].navdate+")</span>";
 			amccell4.setAttribute("valign","middle");
 
-			amccell5.innerHTML =Number(data[i].karvyFolioList[j].marketValue).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');;
+			if(Number(data[i].karvyFolioList[j].marketValue)>Number(data[i].karvyFolioList[j].invAmount)){
+				amccell5.innerHTML ="<span class='green-text'>"+ Number(data[i].karvyFolioList[j].marketValue).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')+"</span>";
+			}else if(Number(data[i].karvyFolioList[j].marketValue)<Number(data[i].karvyFolioList[j].invAmount)){
+				amccell5.innerHTML ="<span class='deep-orange-text'>"+ Number(data[i].karvyFolioList[j].marketValue).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')+"</span>";
+			}else{
+				amccell5.innerHTML ="<span class='grey-text'>"+ Number(data[i].karvyFolioList[j].marketValue).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')+"</span>";
+			}
 			amccell5.setAttribute("valign","middle");
 
 //			console.log(data[i].karvyFolioList[j]);
@@ -278,53 +364,87 @@ function createmfdataView(data){
 
 function getMfData(profileStatus,pan,mobile){
 //	console.log("Request received to get invested data - "+ pan + " -> "+ profileStatus);
+	$("#mffetchmsg").text("");
+	let checkexpiretime =window.sessionStorage.getItem("expiremfbaldata");
+//	console.log(checkexpiretime);
+	if(checkexpiretime!= null && (new Date() > new Date(checkexpiretime))){
+		console.log("Time expired");
+		window.sessionStorage.removeItem("mfbalance");
+		window.sessionStorage.removeItem("expiremfbaldata");
+	}else{
+//		console.log("Within time or null");
+	}
 
 	if(profileStatus === 'PROFILE_READY')
 	{
-		request = $.ajax({
-			url: "/products/api/mf/getmfportfoliototal",
-			method: "POST",
-			data: {
-				"mobile" : mobile,
-				"pan" : pan
+		var storeddata=sessionStorage.getItem("mfbalance");
+//		console.log("storeddata- "+ storeddata);
+		if(storeddata == null){
+			request = $.ajax({
+				url: "/products/api/mf/getmfportfoliototal",
+				method: "POST",
+				data: {
+					"mobile" : mobile,
+					"pan" : pan
 
-			},
-			async: true,
-			datatype: "json",
-			beforeSend: function() {
-			}
-		});
-		request.done(function(msg) {
-//			console.log(msg);
-			if(msg=="NO_SESSION"){
-//				$("#msgmfapi").text("Session expired. Login to your account again.");
-//				console.log("NO_SESSION");
-
-			}else if(msg=="REQUEST_DENIED"){
-//				$("#msgmfapi").text("Request Denied. Please try again or contact admin.");
-//				conosle.log("REQUEST DENIED");
-			}else{
-
+				},
+				async: true,
+				datatype: "json",
+				beforeSend: function() {
+					displayMfFetchProgress();
+				}
+			});
+			request.done(function(msg) {
 //				console.log(msg);
-				if(msg.invvalue !='null'){
-					$("#inval").text(Number(msg.invvalue).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
-					$("#marketval").text(Number(msg.marketvalue).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+				if(msg=="NO_SESSION"){
+					$("#inval").html("0");
+					$("#marketval").html("0");
+					$("#mffetchmsg").text("Invalid session. Kindly login again.");
+
+				}else if(msg==="REQUEST_DENIED" || msg==="PAN_INVALID"){
+					$("#inval").html("0");
+					$("#marketval").html("0");
+					$("#mffetchmsg").text("Invalid request.");
+				}else if(msg==="NO_DATA"){
+					$("#inval").html("0");
+					$("#marketval").html("0");
 				}else{
-//					console.log("No invested data.")
+					if (typeof(Storage) !== "undefined") {
+						window.sessionStorage.setItem("mfbalance",msg);
+						window.sessionStorage.setItem("expiremfbaldata",(new Date(new Date().getTime() + (60000 * 60))));
+					} /*else {
+					console.log("Unsupported");
+					}*/
+					var data = JSON.parse(msg);
+					if(msg.invvalue !='null'){
+						$("#inval").text(Number(data.invvalue).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+						$("#marketval").text(Number(data.marketvalue).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+					}
 				}
 
+			});
+
+			request.fail(function(jqXHR, textStatus) {
+//				console.log("Failed to fetch your data. Please try after sometime: " + textStatus);
+				$("#inval").html("NaN");
+				$("#marketval").html("NaN");
+				$("#mffetchmsg").text("*Failed to display your data");
+
+			});
+
+			request.always(function(msg){
+
+			});
+
+		}else{
+//			console.log("Read from session-");
+			var data = JSON.parse(storeddata);
+			if(storeddata.invvalue !='null'){
+				$("#inval").text(Number(data.invvalue).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+				$("#marketval").text(Number(data.marketvalue).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
 			}
 
-		});
-
-		request.fail(function(jqXHR, textStatus) {
-			console.log("Failed to fetch your data. Please try after sometime: " + textStatus);
-
-		});
-
-		request.always(function(msg){
-
-		});
+		}
 	}else{
 //		console.log("Profile not ready..");
 	}
@@ -332,10 +452,23 @@ function getMfData(profileStatus,pan,mobile){
 }
 
 function showprogress(){
-	$("#msgmfapi").html("<div style=\"text-align: center;margin-bottom: 3rem;\"><img alt=\"Fetching your portfolio\" src=\"https://resources.com/products/resources/images/invest/progress2.gif\">");
-
+	$("#msgmfapi").html("<div style=\"text-align: center;margin-bottom: 3rem;\"><img alt=\"Fetching your portfolio\" src=\"https://resources.freemi.in/products/resources/images/invest/progress2.gif\">");
 }
 
+function displayMfFetchProgress(){
+	$("#inval").html("<i class=\"fas fa-spinner fa-spin\"></i>");
+	$("#marketval").html("<i class=\"fas fa-spinner fa-spin\"></i>");
+}
+
+function showtaskProgress(elementid){
+	$("#"+elementid).html("PROCESSING <i class=\"fas fa-spinner fa-spin\"></i>");
+	$('#'+elementid).attr('disabled','disabled');
+}
+
+function completetaskProgress(elementid,msg){
+	$("#"+elementid).html(msg);
+	$('#'+elementid).removeAttr('disabled');
+}
 
 
 

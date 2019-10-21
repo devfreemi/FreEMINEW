@@ -4,9 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -48,8 +46,6 @@ import com.freemi.entity.general.ProfilePasswordChangeForm;
 import com.freemi.entity.general.ResetPassword;
 import com.freemi.entity.general.UserProfile;
 import com.freemi.entity.general.UserProfileLdap;
-import com.freemi.entity.investment.MFKarvyFundsView;
-import com.freemi.entity.investment.MfAllInvestorValueByCategory;
 //import com.freemi.entity.investment.BseAllTransactionsView;
 import com.freemi.ui.restclient.GoogleSecurity;
 

@@ -3,13 +3,13 @@ package com.freemi.database.implementations;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import com.freemi.database.interfaces.EmailUnsubscribeCrudRepository;
 import com.freemi.database.service.EmailServiceInterface;
 import com.freemi.entity.database.EmailUnsubscribeForm;
 
-@Service
+@Component
 public class EmailServiceImpl implements EmailServiceInterface {
 	
 	@Autowired

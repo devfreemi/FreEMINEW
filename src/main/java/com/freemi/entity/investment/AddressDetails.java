@@ -67,7 +67,7 @@ public class AddressDetails implements Serializable{
 	
 	@OneToOne(fetch= FetchType.LAZY, optional=false, cascade=CascadeType.ALL)
 	@JoinColumn(name="CLIENT_ID", nullable= false,insertable=false,updatable=false)
-	private BseMFInvestForm mfForm;
+	private MFCustomers mfForm;
 
 	public long getSerial() {
 		return Serial;
@@ -149,11 +149,11 @@ public class AddressDetails implements Serializable{
 		this.communicationCode = communicationCode;
 	}
 
-	public BseMFInvestForm getMfForm() {
+	public MFCustomers getMfForm() {
 		return mfForm;
 	}
 
-	public void setMfForm(BseMFInvestForm mfForm) {
+	public void setMfForm(MFCustomers mfForm) {
 		this.mfForm = mfForm;
 	}
 

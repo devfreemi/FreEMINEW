@@ -47,6 +47,8 @@ public interface ProfileRestClientService {
 	
 	public ResponseEntity<String> validateUserToken(String userid, String token,String requestingIp);
 	
+	public ResponseEntity<String> linkmfaccountDetails(String mobile, String pan,String bseclientId);
+	
 	
 
 }

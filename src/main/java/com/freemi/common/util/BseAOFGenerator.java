@@ -11,7 +11,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.freemi.entity.investment.BseMFInvestForm;
+import com.freemi.entity.investment.MFCustomers;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
@@ -29,7 +29,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 public class BseAOFGenerator {
 	private static final Logger logger = LogManager.getLogger(BseAOFGenerator.class);
 
-	public static String aofGenerator(BseMFInvestForm investForm,String fileName, String imageAbsPath, String kycStatus, String aofbasepath){
+	public static String aofGenerator(MFCustomers investForm,String fileName, String imageAbsPath, String kycStatus, String aofbasepath){
 
 		String flag = "SUCCESS";
 		PdfWriter writer = null;

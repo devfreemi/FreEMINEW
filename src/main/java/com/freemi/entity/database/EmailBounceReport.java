@@ -21,7 +21,7 @@ public class EmailBounceReport implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private String serialno;
+	private Long serialno;
 	
 	@Column(name="NOTIFICATION_TYPE")
 	private String notificationType;
@@ -41,11 +41,11 @@ public class EmailBounceReport implements Serializable {
 	@Column(name="TIMESTAMP")
 	private Date timestamp;
 
-	public String getSerialno() {
+	public Long getSerialno() {
 		return serialno;
 	}
 
-	public void setSerialno(String serialno) {
+	public void setSerialno(Long serialno) {
 		this.serialno = serialno;
 	}
 

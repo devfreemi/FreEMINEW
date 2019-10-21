@@ -35,7 +35,7 @@ import com.freemi.entity.bse.BsePaymentStatus;
 import com.freemi.entity.bse.BseRegistrationMFD;
 import com.freemi.entity.bse.BseXipISipOrderEntry;
 import com.freemi.entity.database.UserBankDetails;
-import com.freemi.entity.investment.BseMFInvestForm;
+import com.freemi.entity.investment.MFCustomers;
 import com.freemi.entity.investment.BseOrderEntryResponse;
 import com.freemi.entity.investment.SelectMFFund;
 
@@ -51,7 +51,7 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 	BseRestClientService bseRestClientService; 
 
 	@Override
-	public String saveCustomerRegistration(BseMFInvestForm registrationForm, String field1) {
+	public String saveCustomerRegistration(MFCustomers registrationForm, String field1) {
 		String result = "";
 		logger.info("Registration details processing to BSE platform begins");
 		if(env.getProperty(CommonConstants.BSE_ENABLED).equalsIgnoreCase("Y")){
@@ -310,7 +310,7 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 	}
 
 	@Override
-	public BseApiResponse fatcaDeclaration(BseMFInvestForm registrationForm, String field1) {
+	public BseApiResponse fatcaDeclaration(MFCustomers registrationForm, String field1) {
 		logger.info("FATCA declaration process received for customer- "+ registrationForm.getPan1());
 		String response = "";
 		BseApiResponse fatcaResponse = new BseApiResponse();

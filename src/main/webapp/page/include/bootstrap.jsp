@@ -36,13 +36,7 @@ body {
     font-weight: 400;
 }
 </style>
-<!-- 
 <script>
-$(window).on("unload", function(e) {
-	$.get('/products/closewindow',  // url
-		      function (data, textStatus, jqXHR) {  // success callback
-		          console.log('status: ' + textStatus + ', data:' + data);
-		    });
-});
+function clearSessionData(){window.sessionStorage.clear()}$(window).on("unload",function(n){$.get("/products/closewindow",function(n,o,i){})});
 </script>
- -->
+

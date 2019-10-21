@@ -11,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,7 +19,7 @@ import com.freemi.controller.interfaces.ApiFormCaptureInterface;
 import com.freemi.entity.database.BlogAdvisorForm;
 
 @RestController
-
+@RequestMapping("/api")
 public class FormDataController {
 
 	@Autowired
@@ -27,7 +28,7 @@ public class FormDataController {
 	private static final Logger logger = LogManager.getLogger(FormDataController.class);
 
 	
-	@PostMapping(value="/api/blog/advisorsupport")
+	@PostMapping(value="/blog/advisorsupport")
 	@CrossOrigin(origins="*")
 	@ResponseBody
 	public String captureAdvisorSupport(@RequestBody String blogData, BindingResult result, HttpServletRequest request, HttpServletResponse httpResponse){

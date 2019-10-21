@@ -91,7 +91,7 @@ background: linear-gradient(to left, #1CB5E0, #000046); /* W3C, IE 10+/ Edge, Fi
 									Dash-board</a>
           <a class="dropdown-item" href="/products/profile"><i
 									class="fas fa-user"></i> Profile</a>
-          <a class="dropdown-item" href="/products/logout"><i
+          <a class="dropdown-item" href="/products/logout" onclick="clearSessionData();"><i
 									class="fas fa-power-off" style="color: rgb(238, 56, 56)"></i>
 									Log out</a>
         </div>

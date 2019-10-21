@@ -1,7 +1,10 @@
 package com.freemi.controller.interfaces;
 
+import org.springframework.stereotype.Service;
+
 import com.freemi.entity.database.EmailBounceReport;
 
+@Service
 public interface EmailFilterInterface {
 	
 	public void saveEmailBounceReport(EmailBounceReport emailBounceObj);

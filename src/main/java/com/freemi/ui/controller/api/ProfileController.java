@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -36,6 +37,7 @@ import com.google.gson.JsonObject;
 
 @RestController
 @CrossOrigin(origins= {"https://www.freemi.in","http://localhost:8080"})
+@RequestMapping("/api")
 public class ProfileController {
 
 	@Autowired
@@ -49,7 +51,7 @@ public class ProfileController {
 
 	private static final Logger logger = LogManager.getLogger(ProfileController.class);
 
-	@PostMapping(value="/api/login")
+	@PostMapping(value="/login")
 	public Object apiLogin(HttpServletRequest request, HttpServletResponse httpResponse){
 		logger.info("Request received to process login via API.");
 
@@ -97,7 +99,7 @@ public class ProfileController {
 	}
 
 
-	@PostMapping(value="/api/registeruser")
+	@PostMapping(value="/registeruser")
 	public Object apiregisteruser(HttpServletRequest request, HttpServletResponse httpResponse){
 		logger.info("Request received to process login via API.");
 
@@ -148,7 +150,7 @@ public class ProfileController {
 
 	}
 
-	@PostMapping(value="/api/getprofile")
+	@PostMapping(value="/getprofile")
 	public Object apigetProfile(HttpServletRequest request, HttpServletResponse httpResponse){
 
 		logger.error("Request received to fectch profile data via api");
@@ -185,18 +187,18 @@ public class ProfileController {
 	}
 
 
-	@PostMapping(value="/api/mf/getmfportfoliototal",produces = "application/json")
+	@PostMapping(value="/mf/getmfportfoliototal")
 	@ResponseBody
 	public String apiMFBalance(HttpServletRequest request, HttpServletResponse httpResponse,HttpSession session){
 		
 		
-		logger.error("Request received to fectch profile data via api for mobile-" + request.getParameter("mobile"));
-		String json=null;
+		logger.info("Request received to fectch profile data via api for mobile-" + request.getParameter("mobile"));
+		String result=null;
 		JsonObject jsonObject = null;
 		
 		try {
 
-			logger.error("apiMFBalance(): Requesting MF balance from database for account-" + request.getParameter("mobile"));
+			logger.info("apiMFBalance(): Requesting MF balance from database for account-" + request.getParameter("mobile"));
 
 			String mobile=request.getParameter("mobile");
 
@@ -209,33 +211,46 @@ public class ProfileController {
 				if(mobile.equals(session.getAttribute("userid").toString())) {
 
 					try{
-						json = bseEntryManager.getCustomerInvestmentValue(null,request.getParameter("pan"));
-						if(json!=null) {
-							jsonObject = new JsonObject();
-							jsonObject.addProperty("invvalue", json.split(",")[0]);
-							jsonObject.addProperty("marketvalue", json.split(",")[1]);
+						result = bseEntryManager.getCustomerInvestmentValue(null,request.getParameter("mobile"));
+						logger.info("Result received- "+ result);
+						
+						if(result!=null) {
+							if((result.split(",")[0]).equalsIgnoreCase(request.getParameter("pan"))) {
+								logger.info("Send mf data result in JSON format");
+								jsonObject = new JsonObject();
+								jsonObject.addProperty("invvalue", result.split(",")[1]);
+								jsonObject.addProperty("marketvalue", result.split(",")[2]);
+								result=jsonObject.toString();
+							}else if((result.split(",")[0]).equalsIgnoreCase("null")) {
+								result="NO_DATA";
+							}else {
+								result="PAN_INVALID";
+							}
+						}else {
+							logger.info("Result is null...");
+							result="NO_DATA";
 						}
 					
 					}catch(Exception e) {
 						logger.error("apiMFBalance(): Error requesting MF balance",e);
-						return "INTERNAL_ERROR";
+						result= "INTERNAL_ERROR";
 					}
 				}else {
 					logger.info("Passed mobile and sessio mobile data do not match");
-					return "REQUEST_DENIED";
+					result= "REQUEST_DENIED";
 				}
 			}
 		}catch(Exception e) {
 			logger.error("apiMFBalance(): Error processing request",e);
-			return "INTERNAL_ERROR";
+			result= "INTERNAL_ERROR";
 		}
 		
-		logger.info("apiMFBalance(): Retrunung result- "+ json);
-		return jsonObject.toString();
+		logger.info("apiMFBalance(): Retrunung result- "+ result);
+		return result;
 	}
 
 
-	@PostMapping(value="/api/mf/getmfprofileData",produces = "application/json")
+	@PostMapping(value="/mf/getmfprofileData")
 	@ResponseBody
 	public String apiMFgetProfileData(/*@PathVariable("mobile") String mobile,*/HttpServletRequest request, HttpServletResponse httpResponse,HttpSession session){
 
@@ -269,7 +284,9 @@ public class ProfileController {
 
 						if(allMFFunds !=null){
 							logger.info("Total Folio(s) found of customer - " +mobile + " : " + allMFFunds.size());
-
+							
+							if(allMFFunds.size() >0) {
+							
 							for(int j=0;j<allMFFunds.size();j++){
 
 								uniquefundShort.add(allMFFunds.get(j).getAmcShort());
@@ -351,13 +368,19 @@ public class ProfileController {
 								listFunds.add(currentFund);
 
 							}
+							
+							
 
 							logger.info("Total funds by category- " + karvyview.size());
 
 							//					map.addAttribute("allfundsdata", allMFFunds);
-
+							json = new Gson().toJson(listFunds);
+							}else{
+								logger.info("No investment data found..");
+								json="NO_DATA";
+							}
 						}
-						json = new Gson().toJson(listFunds);
+						
 					}catch(Exception e){
 						logger.error("Error handling Karvy folio query from controller",e);
 					}
@@ -374,8 +397,7 @@ public class ProfileController {
 			
 			json="INTERNAL_ERROR";
 		}
-		httpResponse.setContentType("application/json");
-
+//		httpResponse.setContentType("application/json");
 
 		return json;
 

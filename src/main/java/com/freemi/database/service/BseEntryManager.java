@@ -8,12 +8,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.freemi.entity.bse.BseApiResponse;
+import com.freemi.entity.bse.BseOrderPaymentResponse;
 import com.freemi.entity.database.MfTopFundsInventory;
 import com.freemi.entity.database.UserBankDetails;
 import com.freemi.entity.general.UserProfile;
 import com.freemi.entity.investment.BseAllTransactionsView;
 import com.freemi.entity.investment.BseFundsScheme;
-import com.freemi.entity.investment.BseMFInvestForm;
+import com.freemi.entity.investment.MFCustomers;
 import com.freemi.entity.investment.BseMFSelectedFunds;
 import com.freemi.entity.investment.BseMFTop15lsSip;
 import com.freemi.entity.investment.BseMandateDetails;
@@ -31,27 +32,27 @@ import com.freemi.entity.investment.TransactionStatus;
 public interface BseEntryManager {
 	
 	//Customer records related crud operation
-	public String saveCustomerDetails(BseMFInvestForm customerForm);
-	public BseApiResponse saveFatcaDetails(BseMFInvestForm fatcaForm);
+	public String saveCustomerDetails(MFCustomers customerForm);
+	public BseApiResponse saveFatcaDetails(MFCustomers fatcaForm);
 	public String updateFatcaStatus(String clientId, String status, String responseCode, String message);
 	
 	public List<SelectMFFund> getMFOrderHistory(String customerId);
 	public UserProfile getCustomerProfileDetailsByMobile(String mobile);
-	public List<BseMFInvestForm> getCustomerDetails(String customerId);
-	public List<BseMFInvestForm> getCustomerByPan(String pan);
+	public List<MFCustomers> getCustomerDetails(String customerId);
+	public List<MFCustomers> getCustomerByPan(String pan);
 	
 	public boolean isExisitngCustomer(String mobile, String activeStatus);
 	public boolean isExisitngBSECustomerByMobile(String mobile);
 	public String getCustomerPanfromMobile(String mobile);
 	public String getClientIdfromMobile(String mobile);
-	public boolean updateCustomerData(BseMFInvestForm custerProfileData);
+	public boolean updateCustomerData(MFCustomers custerProfileData);
 	public boolean updateCustomerBankDetails(UserProfile investorData);
 	public boolean updateCustomerAddress(UserProfile investorData);
 	public String investmentProfileStatus(String mobileNumber);
 	
 	public List<BseMandateDetails> getCustomerMandateDetails(String clientId, String accountNumber);
 	
-	public BseMFInvestForm getCustomerInvestFormData(String mobile);
+	public MFCustomers getCustomerInvestFormData(String mobile);
 	
 	public UserBankDetails getCustomerBankDetails(String clientCode);
 	public String getEmdandateDetails(String mobile, String clientCode,String mandateType, String accNumber);
@@ -67,6 +68,8 @@ public interface BseEntryManager {
 	public boolean updateCancelledTransactionStatus(String mobile,String clientId, String orderNo, String transactionNo);
 	public SelectMFFund getTransactionDetails(String transactionId, String clientId);
 	
+	public void saveMFInitiatedTranasctionRequest(SelectMFFund fundDetails);
+	
 	public List<BseAllTransactionsView> getCustomerAllTransactionRecords(String clientID, String mobileNumber, String panNumber);
 	public BseAllTransactionsView getFundDetailsForAdditionalPurchase(String portfolio, String schemeCode,String investType, String mobileNumber);
 	public BseAllTransactionsView getFundDetailsForRedemption(String portfolio, String schemeCode,String investType, String mobileNumber);
@@ -78,6 +81,7 @@ public interface BseEntryManager {
 	public List<BseMFSelectedFunds> getAllSelectedFunds();
 	public List<BseMFSelectedFunds> getFundsByCategory(String category);
 	public BseMFSelectedFunds getFundsByCode(String rtacode, String isin);
+	public BseOrderPaymentResponse getpendingPaymentLinks(String userid,String callbackurl);
 	
 	public String getCustomerInvestmentValue(String mobile, String pan);
 	
@@ -100,5 +104,6 @@ public interface BseEntryManager {
 	
 //	NAV
 	public List<MfNavData> getnavdataByISIN(String isin);
+	
 	
 }

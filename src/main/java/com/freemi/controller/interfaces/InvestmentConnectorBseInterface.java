@@ -10,7 +10,7 @@ import com.freemi.entity.bse.BseOrderPaymentRequest;
 import com.freemi.entity.bse.BseOrderPaymentResponse;
 import com.freemi.entity.bse.BsePanStatusResponse;
 import com.freemi.entity.database.UserBankDetails;
-import com.freemi.entity.investment.BseMFInvestForm;
+import com.freemi.entity.investment.MFCustomers;
 import com.freemi.entity.investment.BseOrderEntryResponse;
 import com.freemi.entity.investment.SelectMFFund;
 
@@ -25,9 +25,9 @@ public interface InvestmentConnectorBseInterface {
 	
 	public String checkForExitingPAN(String pan);
 	
-	public BseApiResponse fatcaDeclaration(BseMFInvestForm registrationForm,String field1);
+	public BseApiResponse fatcaDeclaration(MFCustomers registrationForm,String field1);
 	
-	public String saveCustomerRegistration(BseMFInvestForm registrationForm,String field1);
+	public String saveCustomerRegistration(MFCustomers registrationForm,String field1);
 	
 	public BseAOFUploadResponse uploadAOFForm(String mobileNumber, String aoffolderLocation, String clientCode);
 	

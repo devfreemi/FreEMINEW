@@ -31,7 +31,7 @@ import com.google.gson.JsonObject;
 
 //@PropertySource("classpath:application.properties")
 @Component
-public class RestClient implements ProfileRestClientService {
+public class RestClientLdap implements ProfileRestClientService {
 
 
 	@Autowired
@@ -59,7 +59,7 @@ public class RestClient implements ProfileRestClientService {
 
 	private final String ANONYMOUS_TOKEN = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbm9ueW1vdXMifQ.Ch3VesT2dCyRIDandUkxL87dIoioHCAdsRZzoNx0xNw";
 
-	private static final Logger logger = LogManager.getLogger(RestClient.class);
+	private static final Logger logger = LogManager.getLogger(RestClientLdap.class);
 
 	@Override
 	public ResponseEntity<String> login(String userid, String password, String ip){
@@ -317,6 +317,23 @@ public class RestClient implements ProfileRestClientService {
 		}
 		
 		return response;
+	}
+
+	@Override
+	public ResponseEntity<String> linkmfaccountDetails(String mobile, String pan, String bseclientId) {
+		logger.info("Request received to link BSE registered details to rgistered account with mobile no- "+ mobile);
+		
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_PROFILE) + "/linkmfaccountinfo/";
+		RestTemplate restTemplate = new RestTemplate();
+		JsonObject form = new  JsonObject();
+		form.addProperty("mobile", mobile);
+		form.addProperty("pan", pan.toUpperCase());
+		form.addProperty("bseclientid", bseclientId);
+		
+		HttpHeaders headers = new HttpHeaders();	
+		headers.set("authorization", ANONYMOUS_TOKEN);
+		HttpEntity<String> entity = new HttpEntity<String>(form.toString(),headers);
+		return restTemplate.postForEntity(url, entity,  String.class);
 	}
 
 

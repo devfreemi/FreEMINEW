@@ -1,5 +1,6 @@
 package com.freemi.database.implementations;
 
+import java.net.URI;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,20 +14,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.freemi.common.util.BseRelatedActions;
 import com.freemi.common.util.CommonConstants;
 import com.freemi.common.util.InvestFormConstants;
 import com.freemi.controller.interfaces.InvestmentConnectorBseInterface;
+import com.freemi.controller.interfaces.MailSenderHandler;
 import com.freemi.database.interfaces.BseCamsByCategoryRepository;
 import com.freemi.database.interfaces.BseCustomerAddressCrudRepository;
 import com.freemi.database.interfaces.BseCustomerBankDetailsCrudRespository;
 import com.freemi.database.interfaces.BseCustomerCrudRespository;
 import com.freemi.database.interfaces.BseCustomerFATCACrudRepository;
+import com.freemi.database.interfaces.BseCustomerMfRepository;
 import com.freemi.database.interfaces.BseCustomerNomineeCrudRepository;
 import com.freemi.database.interfaces.BseFundsExplorerRepository;
-import com.freemi.database.interfaces.BseCustomerMfRepository;
 import com.freemi.database.interfaces.BseKarvyByCategoryRepository2;
 import com.freemi.database.interfaces.BseMandateCrudRepository;
 import com.freemi.database.interfaces.BseOrderEntryResponseRepository;
@@ -36,12 +39,15 @@ import com.freemi.database.interfaces.BseTransCountCrudRepository;
 import com.freemi.database.interfaces.BseTransCrudRepository;
 import com.freemi.database.interfaces.BseTransHistoryViewCrudRepository;
 import com.freemi.database.interfaces.BseTransactionsView;
+import com.freemi.database.interfaces.MFInitiatedTransactionCrudRepository;
 import com.freemi.database.interfaces.MfCamsFolioCrudRepository;
 import com.freemi.database.interfaces.MfNavDataCrudRepository;
 import com.freemi.database.interfaces.PortfolioCrudRepository;
 import com.freemi.database.interfaces.TopFundsRepository;
 import com.freemi.database.service.BseEntryManager;
 import com.freemi.entity.bse.BseApiResponse;
+import com.freemi.entity.bse.BseOrderPaymentRequest;
+import com.freemi.entity.bse.BseOrderPaymentResponse;
 import com.freemi.entity.database.MfTopFundsInventory;
 import com.freemi.entity.database.UserBankDetails;
 import com.freemi.entity.general.UserProfile;
@@ -49,7 +55,6 @@ import com.freemi.entity.investment.AddressDetails;
 import com.freemi.entity.investment.BseAllTransactionsView;
 import com.freemi.entity.investment.BseDailyTransCounter;
 import com.freemi.entity.investment.BseFundsScheme;
-import com.freemi.entity.investment.BseMFInvestForm;
 import com.freemi.entity.investment.BseMFSelectedFunds;
 import com.freemi.entity.investment.BseMFTop15lsSip;
 import com.freemi.entity.investment.BseMandateDetails;
@@ -57,10 +62,12 @@ import com.freemi.entity.investment.BseOrderEntryResponse;
 import com.freemi.entity.investment.BsemfTransactionHistory;
 import com.freemi.entity.investment.MFCamsFolio;
 import com.freemi.entity.investment.MFCamsValueByCategroy;
-//import com.freemi.entity.investment.MFKarvyFundsView;
-import com.freemi.entity.investment.MfAllInvestorValueByCategory;
+import com.freemi.entity.investment.MFCustomers;
 import com.freemi.entity.investment.MFKarvyValueByCategory2;
 import com.freemi.entity.investment.MFNominationForm;
+import com.freemi.entity.investment.MFinitiatedTrasactions;
+//import com.freemi.entity.investment.MFKarvyFundsView;
+import com.freemi.entity.investment.MfAllInvestorValueByCategory;
 import com.freemi.entity.investment.MfNavData;
 import com.freemi.entity.investment.SelectMFFund;
 import com.freemi.entity.investment.TransactionStatus;
@@ -133,15 +140,18 @@ public class BseEntryServiceImpl implements BseEntryManager {
 
 	@Autowired
 	MfNavDataCrudRepository mfNavDataCrudRepository;
+	
+	@Autowired
+	MFInitiatedTransactionCrudRepository mfInitiatedTransactionCrudRepository;
 
 
-	/*@Autowired
-	MailSenderHandler mailSenderHandler;*/
+	@Autowired
+	MailSenderHandler mailSenderHandler;
 
 	private static final Logger logger = LogManager.getLogger(BseEntryServiceImpl.class);
 
 	@Override
-	public String saveCustomerDetails(BseMFInvestForm customerForm) {
+	public String saveCustomerDetails(MFCustomers customerForm) {
 		logger.info("saveCustomerDetails(): Begin registration process for customer PAN- "+ customerForm.getPan1());
 		String flag = "SUCCESS";
 		String customerid ="";
@@ -170,7 +180,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 				customerForm.getFatcaDetails().setClientID(customerid);
 
 				//				BseMFInvestForm toUpdateForm = bseCustomerCrudRespository.getByMobile(customerForm.getMobile());
-				BseMFInvestForm toUpdateForm = bseCustomerCrudRespository.getByMobileAndPan1AndAccountActive(customerForm.getMobile(),customerForm.getPan1(),"Y");
+				MFCustomers toUpdateForm = bseCustomerCrudRespository.getByMobileAndPan1AndAccountActive(customerForm.getMobile(),customerForm.getPan1(),"Y");
 				mapUpdatedCustomerMfData(customerForm,toUpdateForm);
 				bseCustomerCrudRespository.saveAndFlush(toUpdateForm);
 				logger.info("Customer current details saved/updated in database...");
@@ -179,6 +189,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		}else{
 
 			if(bseCustomerCrudRespository.existsByPan1(customerForm.getPan1())) {
+//			if(bseCustomerCrudRespository.existsByPan1andAccountActive(customerForm.getPan1(),"Y")) {
 				logger.info("PAN already found to be existing. Duplicate PAN entry disallowed..");
 				flag="PAN_DUPLICATE";
 				registerCustomerToBse = false;
@@ -204,7 +215,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 				customerForm.setRegistrationTime(new Date());
 				logger.info("Transaction started to save BSE customer registration data for generated client ID - " + customerid);
 
-				BseMFInvestForm customerCopy = customerForm;
+				MFCustomers customerCopy = customerForm;
 				//			Convert date to db format
 				logger.info("saveCustomerDetails(): Convert DOB Format: "+ customerCopy.getInvDOB());
 				try {
@@ -384,7 +395,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	}
 
 	@Override
-	public List<BseMFInvestForm> getCustomerDetails(String customerId) {
+	public List<MFCustomers> getCustomerDetails(String customerId) {
 		// TODO Auto-generated method stub
 
 		//		return bseCustomerCrudRespository.getByClientID(customerId);
@@ -426,7 +437,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	}
 
 	@Override
-	public List<BseMFInvestForm> getCustomerByPan(String pan) {
+	public List<MFCustomers> getCustomerByPan(String pan) {
 		// TODO Auto-generated method stub
 		logger.info("getCustomerByPan(): Get customers investment profile- "+ pan);
 
@@ -470,7 +481,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	}
 
 	@Override
-	public boolean updateCustomerData(BseMFInvestForm custerProfileData) {
+	public boolean updateCustomerData(MFCustomers custerProfileData) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -493,7 +504,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 
 
 				//				BseMFInvestForm investorProfileData = bseCustomerCrudRespository.getByMobile(mobile);
-				BseMFInvestForm investorProfileData = bseCustomerCrudRespository.getByMobileAndAccountActive(mobile,"Y");
+				MFCustomers investorProfileData = bseCustomerCrudRespository.getByMobileAndAccountActive(mobile,"Y");
 
 				userProfile = new UserProfile();
 				userProfile.setUid(investorProfileData.getClientID());
@@ -889,9 +900,9 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	}
 
 	@Override
-	public BseMFInvestForm getCustomerInvestFormData(String mobile) {
+	public MFCustomers getCustomerInvestFormData(String mobile) {
 		logger.info("Querying to get registered investment form data for mobile- "+ mobile);
-		BseMFInvestForm investmentFormdata = null;
+		MFCustomers investmentFormdata = null;
 		try{
 			if(bseCustomerCrudRespository.existsByMobileAndAccountActive(mobile,"Y")){
 				String clientId = bseCustomerCrudRespository.getClientIdFromMobile(mobile);
@@ -991,7 +1002,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	}
 
 	@Override
-	public BseApiResponse saveFatcaDetails(BseMFInvestForm customerForm) {
+	public BseApiResponse saveFatcaDetails(MFCustomers customerForm) {
 		//					Call FATCADeclaration
 
 		BseApiResponse fatcaResponse=null;
@@ -1167,7 +1178,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	}
 
 
-	private BseMFInvestForm mapUpdatedCustomerMfData(BseMFInvestForm customerForm,BseMFInvestForm toupdateForm){
+	private MFCustomers mapUpdatedCustomerMfData(MFCustomers customerForm,MFCustomers toupdateForm){
 		SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy-mm-dd");
 		SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("dd/mm/yyyy");
 
@@ -1278,7 +1289,60 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		return investmentresult;
 	}
 
+	@Async
+	@Override
+	public void saveMFInitiatedTranasctionRequest(SelectMFFund fundDetails) {
+		
+		logger.info("saveMFInitiatedTranasctionRequest(): Saving initiated MF transaction request ");
+		try {
+			MFinitiatedTrasactions transactions  = new MFinitiatedTrasactions();
+			transactions.setMobile(fundDetails.getMobile());
+			transactions.setPan(fundDetails.getPan().toUpperCase());
+			transactions.setTransactionType(fundDetails.getTransactionType());
+			transactions.setSchemeName(fundDetails.getSchemeName());
+			transactions.setSchemeCode(fundDetails.getSchemeCode());
+			transactions.setSipDate(fundDetails.getSipDate());
+			transactions.setInvestAmount(fundDetails.getInvestAmount());
+			transactions.setOrderPlaceTime(new Date());
+			mfInitiatedTransactionCrudRepository.save(transactions);
+			
+			logger.info("saveMFInitiatedTranasctionRequest(): Request details saved.. Drop mail");
+			mailSenderHandler.sendMFInitiatedNotice(transactions);
+			
+		}catch(Exception e) {
+			logger.error("saveMFInitiatedTranasctionRequest(): Failed to save initiated transaction request data - ",e);
+		}
+	}
 
+	@Override
+	public BseOrderPaymentResponse getpendingPaymentLinks(String userid,String callbackurl) {
+
+		logger.info("Request received to fetch BSE MF pending payments link for user id- ");
+		BseOrderPaymentResponse orderUrlReponse = new BseOrderPaymentResponse();
+		String clientId = getClientIdfromMobile(userid);
+		if(clientId!=null) {
+			BseOrderPaymentRequest orderUrl = new BseOrderPaymentRequest();
+			orderUrl.setClientCode(clientId);
+			orderUrl.setMemberCode(CommonConstants.BSE_MEMBER_ID);
+			// orderUrl.setLogOutURL("http://localhost:8080/products/mutual-funds/my-dashboard");
+
+			logger.info("bsePendingPayments(): Pending order callback url- " + callbackurl);
+			// logger.info("Pending order callback base64- " +
+			// Base64.encodeBase64String(orderCallUrl.getBytes()));
+			// orderUrl.setLogOutURL(Base64.encodeBase64String(orderCallUrl.getBytes()));
+			orderUrl.setLogOutURL(callbackurl.replace("http://", "https://"));
+			orderUrlReponse = investmentConnectorBseInterface.getPaymentUrl(orderUrl);
+			logger.info("bsePendingPayments(): Pending payments URL fetch request response code- " + orderUrlReponse.getStatusCode());
+
+		}else {
+			logger.info("No BSE linked account found for mobile no - "+ userid);
+			orderUrlReponse.setStatusCode("101");
+			orderUrlReponse.setPayUrl("No customer found to process");
+		}
+		
+		return orderUrlReponse;
+
+	}
 
 	/*		public static void main(String[] args){
 		//		System.out.println(new Random());

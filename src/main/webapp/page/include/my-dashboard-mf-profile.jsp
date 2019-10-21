@@ -19,11 +19,12 @@
 			</tr>
 		</thead>
 
-		<tbody id="mfdatatbody2" class="animated slideInRight">
+		<tbody id="mfdatatbody2">
 		</tbody>
 	</table>
 	
-	
+	<div style="text-align: center;">
 	<span id="msgmfapi"><img alt="Fetching your portfolio" class="img-fluid" style="margin: auto;" src="/products/resources/images/invest/progress2.gif"></span>
+	</div>
 	<div style="overflow-x: auto;"></div>
 </div>

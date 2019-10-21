@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.mail.MessagingException;
-import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
@@ -25,10 +24,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 import com.freemi.common.util.CommonConstants;
-import com.freemi.database.interfaces.EmailBounceReportCrudRepository;
 import com.freemi.entity.general.Mail;
-import com.freemi.entity.investment.BseMFInvestForm;
-import com.freemi.entity.investment.MFInvestForm;
+import com.freemi.entity.investment.MFCustomers;
+import com.freemi.entity.investment.MFinitiatedTrasactions;
 import com.freemi.entity.investment.SelectMFFund;
 
 import freemarker.template.Configuration;
@@ -41,8 +39,8 @@ public class MailSenderImpl implements com.freemi.controller.interfaces.MailSend
 	@Autowired
 	private JavaMailSender javaMailSender;
 	
-	@Autowired
-	EmailBounceReportCrudRepository emailBounceReportCrudRepository;
+//	@Autowired
+//	EmailBounceReportCrudRepository emailBounceReportCrudRepository;
 	
 	@Autowired
 	@Qualifier("getFreeMarkerConfiguration")
@@ -113,13 +111,13 @@ public class MailSenderImpl implements com.freemi.controller.interfaces.MailSend
 			if(env.getProperty(CommonConstants.EMAIL_SEND_ENABLED).equalsIgnoreCase("Y")){
 				
 //				Check if mail ID is in bounce List
-				if(!emailBounceReportCrudRepository.existsByBouncedMailId(mail.getTo().toLowerCase())) {
+//				if(!emailBounceReportCrudRepository.existsByBouncedMailId(mail.getTo().toLowerCase())) {
 				
 					javaMailSender.send(message);
 					logger.info("Mail sent for- "+ mail.getTo().toLowerCase());
-				}else {
+				/*}else {
 					logger.info("Mail is found in bounce list. Mail not triggered for email ID- "+ mail.getTo().toLowerCase());
-				}
+				}*/
 			}else{
 				logger.info("Mail service is disabled currently. SKipping mail trigger.");
 			}
@@ -131,7 +129,7 @@ public class MailSenderImpl implements com.freemi.controller.interfaces.MailSend
 
 	@Async
 	@Override
-	public void mfpurchasenotofication(SelectMFFund selectedFund, BseMFInvestForm userDetails,String transactionCategory) throws InterruptedException {
+	public void mfpurchasenotofication(SelectMFFund selectedFund, MFCustomers userDetails,String transactionCategory) throws InterruptedException {
 		logger.info("Request received to process MF transaction mail for client- "+ userDetails.getClientID());
 		try{
 			if(userDetails.getEmail()!=null){
@@ -164,6 +162,8 @@ public class MailSenderImpl implements com.freemi.controller.interfaces.MailSend
 			logger.error("MessageHelper Issue. ",exp);
 		} catch (UnsupportedEncodingException e) {
 			logger.error("Error setting Internet address.\n", e);
+		}catch (Exception e) {
+			logger.error("Error processing mailing task.", e);
 		}
 
 	}
@@ -193,6 +193,8 @@ public class MailSenderImpl implements com.freemi.controller.interfaces.MailSend
 			logger.error("loginOTPMail(): MessageHelper Issue. ",exp);
 		} catch (UnsupportedEncodingException e) {
 			logger.error("loginOTPMail(): Error setting Internet address.\n", e);
+		}catch (Exception e) {
+			logger.error("Error processing mailing task.", e);
 		}
 		
 	}
@@ -236,6 +238,41 @@ public class MailSenderImpl implements com.freemi.controller.interfaces.MailSend
 		}
 		
 		
+		
+	}
+
+	@Override
+	public void sendMFInitiatedNotice(MFinitiatedTrasactions initiatedData) {
+		
+		logger.info("sendMFInitiatedNotice(): Processing request to send mail to notify MF initiated transction to internal team");
+		try{
+			if(initiatedData!=null){
+				InternetAddress address = new InternetAddress(env.getProperty(CommonConstants.MAIL_ACCOUNT_ID), "FreEMI");
+
+				Map<String, Object> replacementContent= new HashMap<String,Object>();
+//				String date = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
+				
+//				replacementContent.put("transactionDate", date);
+				replacementContent.put("mobile", initiatedData.getMobile());
+				replacementContent.put("pan", initiatedData.getPan());
+				replacementContent.put("schemaname", initiatedData.getSchemeName());
+				replacementContent.put("investtype", initiatedData.getInvestype());
+				replacementContent.put("investamount", initiatedData.getInvestAmount());
+
+				Mail mail = processMailAddress(address, replacementContent, env.getProperty("mail.id.mf.initiate"), null, "Mutual Fund Transaction inititated by customer","mf-initiate-notice.txt");
+				
+				processMailRequest(mail,false);
+
+			}else{
+				logger.info("sendMFInitiatedNotice():MFinitiatedTrasactions object is null. Skipping mail trigger");
+			}
+		}catch(MessagingException exp){
+			logger.error("sendMFInitiatedNotice(): MessageHelper Issue. ",exp);
+		} catch (UnsupportedEncodingException e) {
+			logger.error("sendMFInitiatedNotice(): Error setting Internet address.", e);
+		}catch (Exception e) {
+			logger.error("Error processing mailing task.", e);
+		}
 		
 	}
 
