@@ -20,8 +20,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import com.freemi.common.util.CommonConstants;
-import com.freemi.controller.interfaces.BseRestClientService;
-import com.freemi.controller.interfaces.InvestmentConnectorBseInterface;
 import com.freemi.entity.bse.BseAOFUploadRequest;
 import com.freemi.entity.bse.BseAOFUploadResponse;
 import com.freemi.entity.bse.BseApiResponse;
@@ -38,6 +36,8 @@ import com.freemi.entity.database.UserBankDetails;
 import com.freemi.entity.investment.MFCustomers;
 import com.freemi.entity.investment.BseOrderEntryResponse;
 import com.freemi.entity.investment.SelectMFFund;
+import com.freemi.services.interfaces.BseRestClientService;
+import com.freemi.services.interfaces.InvestmentConnectorBseInterface;
 
 @Service
 public class BseConnectorsImpl implements InvestmentConnectorBseInterface {

@@ -23,8 +23,8 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.freemi.controller.interfaces.ProfileRestClientService;
-import com.freemi.database.service.BseEntryManager;
+import com.freemi.common.util.CommonTask;
+import com.freemi.entity.general.HttpClientResponse;
 import com.freemi.entity.general.Login;
 import com.freemi.entity.general.LoginResponse;
 import com.freemi.entity.general.MfCollatedFundsView;
@@ -32,6 +32,8 @@ import com.freemi.entity.general.Registerform;
 import com.freemi.entity.general.UserProfile;
 import com.freemi.entity.investment.MFKarvyFundsView;
 import com.freemi.entity.investment.MfAllInvestorValueByCategory;
+import com.freemi.services.interfaces.BseEntryManager;
+import com.freemi.services.interfaces.ProfileRestClientService;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -100,7 +102,7 @@ public class ProfileController {
 
 
 	@PostMapping(value="/registeruser")
-	public Object apiregisteruser(HttpServletRequest request, HttpServletResponse httpResponse){
+	public Object apiregisteruser(HttpServletRequest request, HttpServletResponse response){
 		logger.info("Request received to process login via API.");
 
 		//		Login loginForm = null;
@@ -115,10 +117,8 @@ public class ProfileController {
 
 
 			//			RestClient client = new RestClient();
-			ResponseEntity<String> response = null;
-
-			response = profileRestClientService.registerUser(registerForm);
-			String status = response.getHeaders().get("STATUS").get(0);
+			HttpClientResponse httpResponse =  profileRestClientService.registerUser(registerForm,CommonTask.getClientSystemDetails(request));
+			String status = httpResponse.getResponseEntity().getHeaders().get("STATUS").get(0);
 			if(status.equals("SUCCESS")){
 				//					model.addAttribute("success", "Registration successful. Login to your account");
 				STATUS="SUCCESS";
@@ -130,7 +130,7 @@ public class ProfileController {
 
 				STATUS="ERROR";
 			}else{
-				logger.info("Reponse for register via api- "+response.getHeaders().get("STATUS").get(0));
+				logger.info("Reponse for register via api- "+httpResponse.getResponseEntity().getHeaders().get("STATUS").get(0));
 				//					model.addAttribute("error", "Unknown response");
 				STATUS="ERROR";
 			}

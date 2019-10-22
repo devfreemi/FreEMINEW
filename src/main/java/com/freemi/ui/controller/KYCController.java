@@ -29,9 +29,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freemi.common.util.CommonConstants;
 import com.freemi.common.util.CommonTask;
-import com.freemi.controller.implementations.FolioManagementImpl;
-import com.freemi.controller.interfaces.FolioManagementContoller;
-import com.freemi.controller.interfaces.RazorpayPayment;
 import com.freemi.entity.birla.ValidateAadhaarOTPOutput;
 import com.freemi.entity.general.AadhaarOTP;
 import com.freemi.entity.investment.AadhaarVerifyStatus;
@@ -40,6 +37,9 @@ import com.freemi.entity.investment.MFInvestForm;
 import com.freemi.entity.investment.PanValidationStatus;
 import com.freemi.entity.investment.RazorpayPayObj;
 import com.freemi.entity.investment.RazorpayPayObj.RoutePay;
+import com.freemi.services.Impl.FolioManagementImpl;
+import com.freemi.services.interfaces.FolioManagementContoller;
+import com.freemi.services.interfaces.RazorpayPayment;
 
 @Controller
 @SessionAttributes({"mfInvestForm"})

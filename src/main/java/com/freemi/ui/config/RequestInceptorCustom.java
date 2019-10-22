@@ -16,7 +16,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.freemi.common.util.CommonConstants;
 import com.freemi.common.util.CommonTask;
-import com.freemi.controller.interfaces.ProfileRestClientService;
+import com.freemi.services.interfaces.ProfileRestClientService;
 
 public class RequestInceptorCustom extends HandlerInterceptorAdapter {
 

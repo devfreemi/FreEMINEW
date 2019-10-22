@@ -43,18 +43,18 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.freemi.common.util.CommonConstants;
 import com.freemi.common.util.CommonTask;
-import com.freemi.controller.interfaces.BseRestClientService;
-import com.freemi.controller.interfaces.MailSenderHandler;
-import com.freemi.controller.interfaces.ProfileRestClientService;
-import com.freemi.controller.interfaces.SmsSenderInterface;
-import com.freemi.database.service.DatabaseEntryManager;
 import com.freemi.entity.database.CampaignSignupForm;
+import com.freemi.entity.database.ContactUsForm;
 import com.freemi.entity.database.EmailUnsubscribeForm;
 import com.freemi.entity.general.ClientSystemDetails;
-import com.freemi.entity.general.ContactUsForm;
 import com.freemi.entity.general.Folios;
 import com.freemi.entity.general.ForgotPassword;
 import com.freemi.entity.general.Login;
+import com.freemi.services.interfaces.BseRestClientService;
+import com.freemi.services.interfaces.DatabaseEntryManager;
+import com.freemi.services.interfaces.MailSenderHandler;
+import com.freemi.services.interfaces.ProfileRestClientService;
+import com.freemi.services.interfaces.SmsSenderInterface;
 import com.freemi.ui.restclient.GoogleSecurity;
 
 @Controller

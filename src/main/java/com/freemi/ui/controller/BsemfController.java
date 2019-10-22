@@ -1,6 +1,5 @@
 package com.freemi.ui.controller;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -60,11 +59,7 @@ import com.freemi.common.util.BseRelatedActions;
 import com.freemi.common.util.CommonConstants;
 import com.freemi.common.util.CommonTask;
 import com.freemi.common.util.InvestFormConstants;
-import com.freemi.controller.interfaces.InvestmentConnectorBseInterface;
-import com.freemi.controller.interfaces.MailSenderHandler;
-import com.freemi.controller.interfaces.ProfileRestClientService;
 import com.freemi.database.interfaces.ProductSchemeDetailService;
-import com.freemi.database.service.BseEntryManager;
 import com.freemi.entity.bse.BseAOFUploadResponse;
 import com.freemi.entity.bse.BseApiResponse;
 import com.freemi.entity.bse.BseFatcaForm;
@@ -73,18 +68,23 @@ import com.freemi.entity.bse.BseOrderPaymentRequest;
 import com.freemi.entity.bse.BseOrderPaymentResponse;
 import com.freemi.entity.database.UserBankDetails;
 import com.freemi.entity.general.ClientSystemDetails;
+import com.freemi.entity.general.HttpClientResponse;
 import com.freemi.entity.general.Registerform;
 import com.freemi.entity.investment.BseFundsScheme;
-import com.freemi.entity.investment.MFCustomers;
 import com.freemi.entity.investment.BseMFSelectedFunds;
 import com.freemi.entity.investment.BseMFTop15lsSip;
 import com.freemi.entity.investment.BseMandateDetails;
 import com.freemi.entity.investment.BsemfTransactionHistory;
 import com.freemi.entity.investment.MFAdditionalPurchaseForm;
+import com.freemi.entity.investment.MFCustomers;
 import com.freemi.entity.investment.MFRedeemForm;
 import com.freemi.entity.investment.MfAllInvestorValueByCategory;
 import com.freemi.entity.investment.SelectMFFund;
 import com.freemi.entity.investment.TransactionStatus;
+import com.freemi.services.interfaces.BseEntryManager;
+import com.freemi.services.interfaces.InvestmentConnectorBseInterface;
+import com.freemi.services.interfaces.MailSenderHandler;
+import com.freemi.services.interfaces.ProfileRestClientService;
 
 @Controller
 @Scope("session")
@@ -307,45 +307,21 @@ public class BsemfController {
 				// token at profile side
 				registerForm.setRegistrationref("MF_REG_NEW");
 
-				// RestClient client = new RestClient();
-				ResponseEntity<String> responsePortal = null;
-				try {
-					responsePortal = profileRestClientService.registerUser(registerForm);
-					String status = responsePortal.getHeaders().get("STATUS").get(0);
-					logger.info("Response received from LDAP account registration during MF account registrartion- "+ status);
-					if (status.equals("SUCCESS")) {
-						logger.info("registerBsepost(): Registration successful for mobile number during MF registration- "+ investForm.getMobile());
-						logger.info("registerBsepost(): User registration successful initiated during new customer registration. Setting parameter to false..");
-						investForm.setProfileRegRequired(false);
-					} else if (status.equals("DUPLICATE ENTRY")) {
-						logger.info("registerBsepost(): Account already exist.");
-						validationpass =false;
-						validationerrormsg="Mobile number is already registered. Please select another mobile no.";
-					}else if (status.equals("DUPLICATE EMAIL")) {
-						logger.info("registerBsepost(): Account already exist.");
-						validationerrormsg="Email ID is registered with another account. Please select another email ID";
-						validationpass =false;
-					} else if (status.equals("ERROR")) {
-						logger.info("registerBsepost(): Registration failed. Please try again after sometime");
-						validationpass =false;
-					} else {
-						logger.info(responsePortal.getHeaders().get("STATUS").get(0));
-						// model.addAttribute("error", "Unknown response");
-						logger.info("registerBsepost(): Registration failed during MF user registration. Please check profile log");
-					}
 
-				} catch (HttpStatusCodeException e) {
-					logger.error("registerBsepost(): bsemfRegisterpost(): Registartion Link failure", e);
-				} catch (JsonProcessingException e) {
-					logger.error("registerBsepost(): bsemfRegisterpost():invalid form data", e);
-				} catch (Exception e) {
-					logger.error("registerBsepost(): bsemfRegisterpost(): Exception proceesing regidtration request.",e);
+				HttpClientResponse httpResponse =  profileRestClientService.registerUser(registerForm,CommonTask.getClientSystemDetails(request));
+				logger.info("Response received from LDAP account registration during MF account registrartion- "+ httpResponse.getResponseCode() + " : "+ httpResponse.getRetrunMessage());
+				if(httpResponse.getResponseCode() == CommonConstants.HTTP_CLIENT_CALL_SUCCESS) {
+					logger.info("registerBsepost(): Registration successful for mobile number during MF registration- "+ investForm.getMobile());
+					logger.info("registerBsepost(): User registration successful initiated during new customer registration. Setting parameter to false..");
+					investForm.setProfileRegRequired(false);
+				}else {
+					validationpass =false;
+					validationerrormsg= httpResponse.getRetrunMessage();
 				}
-
+				
 			} else {
 				logger.info("registerBsepost(): BSE Test is enabled... Skipping the process for mobile number profile generation- "+ investForm.getMobile());
 			}
-			
 			
 			if (!validationpass) {
 				logger.info("registerBsepost(): Error validating form data: " + validationerrormsg);

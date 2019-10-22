@@ -36,8 +36,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freemi.common.util.CommonConstants;
 import com.freemi.common.util.CommonTask;
 import com.freemi.common.util.InvestFormConstants;
-import com.freemi.controller.interfaces.ProfileRestClientService;
-import com.freemi.database.service.BseEntryManager;
 import com.freemi.entity.bse.BseFileUpload;
 import com.freemi.entity.general.ForceChangePassword;
 import com.freemi.entity.general.MfCollatedFundsView;
@@ -46,6 +44,8 @@ import com.freemi.entity.general.ProfilePasswordChangeForm;
 import com.freemi.entity.general.ResetPassword;
 import com.freemi.entity.general.UserProfile;
 import com.freemi.entity.general.UserProfileLdap;
+import com.freemi.services.interfaces.BseEntryManager;
+import com.freemi.services.interfaces.ProfileRestClientService;
 //import com.freemi.entity.investment.BseAllTransactionsView;
 import com.freemi.ui.restclient.GoogleSecurity;
 

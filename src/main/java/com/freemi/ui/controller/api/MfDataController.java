@@ -22,10 +22,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.freemi.common.util.CommonConstants;
-import com.freemi.database.service.BseEntryManager;
 import com.freemi.entity.bse.BseOrderPaymentRequest;
 import com.freemi.entity.bse.BseOrderPaymentResponse;
 import com.freemi.entity.investment.MfNavData;
+import com.freemi.services.interfaces.BseEntryManager;
 import com.google.gson.Gson;
 
 @RestController

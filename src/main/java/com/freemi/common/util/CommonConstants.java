@@ -115,6 +115,9 @@ public class CommonConstants {
 	
 	/*-----------------------------------------------------------------------------*/
 	
+	public static final int HTTP_CLIENT_CALL_SUCCESS= 100;
+	public static final int HTTP_CLIENT_CALL_FAIL= 101;
+	
 	
 	public static List<String> protectedUrl = new ArrayList<String>(){
 		/**

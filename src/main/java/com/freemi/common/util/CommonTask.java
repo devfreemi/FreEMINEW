@@ -1,7 +1,6 @@
 package com.freemi.common.util;
 
 import java.text.ParseException;
-import java.time.Instant;
 import java.util.Date;
 import java.util.Locale;
 
@@ -46,6 +45,8 @@ public class CommonTask {
 			}else{
 				logger.info("Ip address of requestor from X- "+ remoteAddr);
 			}
+		}else {
+			logger.info("HttpServletRequest is null. Check implementation");
 		}
 		systemDetails.setClientIpv4Address(remoteAddr);
 		systemDetails.setClientOS(System.getProperty("os.name").toUpperCase());

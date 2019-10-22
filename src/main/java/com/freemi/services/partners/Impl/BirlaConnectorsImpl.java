@@ -25,7 +25,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freemi.common.util.CommonTask;
-import com.freemi.controller.interfaces.InvestmentConnectorInterfaces;
 import com.freemi.entity.birla.GetBankDetailsByIFSCInput;
 import com.freemi.entity.birla.GetBankDetailsByIFSCOutput;
 import com.freemi.entity.birla.GetFPurchaseBanksInput;
@@ -71,6 +70,7 @@ import com.freemi.entity.general.ClientSystemDetails;
 import com.freemi.entity.general.OauthAccessToken;
 import com.freemi.entity.investment.FolioCreationStatus;
 import com.freemi.entity.investment.MFInvestForm;
+import com.freemi.services.interfaces.InvestmentConnectorInterfaces;
 
 
 /**

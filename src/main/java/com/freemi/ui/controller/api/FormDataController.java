@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.freemi.controller.interfaces.ApiFormCaptureInterface;
 import com.freemi.entity.database.BlogAdvisorForm;
+import com.freemi.services.interfaces.ApiFormCaptureInterface;
 
 @RestController
 @RequestMapping("/api")

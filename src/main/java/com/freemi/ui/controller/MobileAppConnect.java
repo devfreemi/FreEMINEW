@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freemi.common.util.CommonTask;
-import com.freemi.database.service.FreemiServiceInterface;
 import com.freemi.entity.database.FreemiLoanQuery;
 import com.freemi.entity.general.ClientSystemDetails;
+import com.freemi.services.interfaces.FreemiServiceInterface;
 
 @RestController
 public class MobileAppConnect {
