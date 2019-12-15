@@ -143,7 +143,7 @@ table th {
 				<div class="col-md-4 col-lg-4 outer_box">
 					<div class="box-dashboard box-style3 animated fadeIn">
 						<div class="header header-back3">
-							<h5>Insurance</h5>
+							<h5>FD</h5>
 						</div>
 						<div class="box-body">
 							<!-- <div class="row">
@@ -156,11 +156,14 @@ table th {
 							</div> -->
 
 							<div class="row">
-								<div class="col-8">We will be available soon!</div>
+								<div class="col-8">In Progress</div>
 							</div>
 						</div>
 						<div class="footer_link">
-							<!-- <span>VIEW DETAILS</span> -->
+						<a href="/products/fixed-deposit/view-purchase-history"
+								style="text-decoration: none; color: white;"> <span>VIEW
+									DETAILS</span>
+							</a>
 
 						</div>
 					</div>

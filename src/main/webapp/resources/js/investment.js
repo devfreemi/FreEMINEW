@@ -237,11 +237,14 @@ function createmfdataView(result){
 		cell2.innerHTML = Number(data[i].collaboratedAmount).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
 
 		if(Number(data[i].collaboratedMarketValue)>Number(data[i].collaboratedAmount) ){
-			cell3.innerHTML = "<span class='text-success' >"+Number(data[i].collaboratedMarketValue).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')+"</span>";
+//			cell3.innerHTML = "<span class='text-success' >"+Number(data[i].collaboratedMarketValue).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')+"</span>";
+			cell3.innerHTML = "<span class='text-success'>"+convertNumberToIndianFormat(Number(data[i].collaboratedMarketValue).toFixed(2))+"</span>";
 		}else if(Number(data[i].collaboratedMarketValue)<Number(data[i].collaboratedAmount)){
-			cell3.innerHTML = "<span class='text-danger' >"+Number(data[i].collaboratedMarketValue).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')+"</span>";
+//			cell3.innerHTML = "<span class='text-danger' >"+Number(data[i].collaboratedMarketValue).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')+"</span>";
+			cell3.innerHTML = "<span class='text-danger'>"+convertNumberToIndianFormat(Number(data[i].collaboratedMarketValue).toFixed(2))+"</span>";
 		}else{
-			cell3.innerHTML = "<span class='grey-text'>"+Number(data[i].collaboratedMarketValue).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')+"</span>";
+//			cell3.innerHTML = "<span class='grey-text'>"+Number(data[i].collaboratedMarketValue).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')+"</span>";
+			cell3.innerHTML = "<span class='grey-text'>"+convertNumberToIndianFormat(Number(data[i].collaboratedMarketValue).toFixed(2))+"</span>";
 		}
 
 		cell4.innerHTML = "<a class=\"\" data-toggle=\"collapse\" href=\"#collapse"+i+"\" role=\"button\" aria-expanded=\"false\" aria-controls=\"collapse"+i+"\"> <span class=\"fas fa-chevron-right\" id=\"rotate\"></span></a>";
@@ -310,13 +313,18 @@ function createmfdataView(result){
 			amccell4.setAttribute("valign","middle");
 
 			if(Number(data[i].karvyFolioList[j].marketValue)>Number(data[i].karvyFolioList[j].invAmount)){
-				amccell5.innerHTML ="<span class='green-text'>"+ Number(data[i].karvyFolioList[j].marketValue).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')+"</span>";
+//				amccell5.innerHTML ="<span class='green-text'>"+ Number(data[i].karvyFolioList[j].marketValue).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')+"</span>";
+				amccell5.innerHTML ="<span class='green-text'>"+ convertNumberToIndianFormat(Number(data[i].karvyFolioList[j].marketValue).toFixed(2))+"</span>";
 			}else if(Number(data[i].karvyFolioList[j].marketValue)<Number(data[i].karvyFolioList[j].invAmount)){
-				amccell5.innerHTML ="<span class='deep-orange-text'>"+ Number(data[i].karvyFolioList[j].marketValue).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')+"</span>";
+//				amccell5.innerHTML ="<span class='deep-orange-text'>"+ Number(data[i].karvyFolioList[j].marketValue).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')+"</span>";
+				amccell5.innerHTML ="<span class='deep-orange-text'>"+ convertNumberToIndianFormat(Number(data[i].karvyFolioList[j].marketValue).toFixed(2))+"</span>";
 			}else{
-				amccell5.innerHTML ="<span class='grey-text'>"+ Number(data[i].karvyFolioList[j].marketValue).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')+"</span>";
+//				amccell5.innerHTML ="<span class='grey-text'>"+ Number(data[i].karvyFolioList[j].marketValue).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')+"</span>";
+				amccell5.innerHTML ="<span class='grey-text'>"+ convertNumberToIndianFormat(Number(data[i].karvyFolioList[j].marketValue).toFixed(2))+"</span>";
 			}
 			amccell5.setAttribute("valign","middle");
+			
+//			convertNumberToIndianFormat(Number(data.marketvalue).toFixed(2))
 
 //			console.log(data[i].karvyFolioList[j]);
 			var div2 = document.createElement("div");
@@ -417,8 +425,14 @@ function getMfData(profileStatus,pan,mobile){
 					}*/
 					var data = JSON.parse(msg);
 					if(msg.invvalue !='null'){
-						$("#inval").text(Number(data.invvalue).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
-						$("#marketval").text(Number(data.marketvalue).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+						/*$("#inval").text(Number(data.invvalue).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+						$("#marketval").text(Number(data.marketvalue).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));*/
+						var result;
+						result=convertNumberToIndianFormat(Number(data.invvalue).toFixed(2));
+						$("#inval").text(result);
+						result= convertNumberToIndianFormat(Number(data.marketvalue).toFixed(2));
+						$("#marketval").text(result);
+						
 					}
 				}
 
@@ -440,8 +454,11 @@ function getMfData(profileStatus,pan,mobile){
 //			console.log("Read from session-");
 			var data = JSON.parse(storeddata);
 			if(storeddata.invvalue !='null'){
-				$("#inval").text(Number(data.invvalue).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
-				$("#marketval").text(Number(data.marketvalue).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+				var result;
+				result=convertNumberToIndianFormat(Number(data.invvalue).toFixed(2));
+				$("#inval").text(result);
+				result= convertNumberToIndianFormat(Number(data.marketvalue).toFixed(2));
+				$("#marketval").text(result);
 			}
 
 		}
@@ -470,5 +487,22 @@ function completetaskProgress(elementid,msg){
 	$('#'+elementid).removeAttr('disabled');
 }
 
-
+function convertNumberToIndianFormat(value){
+//	console.log("Called- "+ value);
+	var res;
+	var x=value;
+	x=x.toString();
+	var afterPoint = '';
+	if(x.indexOf('.') > 0)
+	   afterPoint = x.substring(x.indexOf('.'),x.length);
+	x = Math.floor(x);
+	x=x.toString();
+	var lastThree = x.substring(x.length-3);
+	var otherNumbers = x.substring(0,x.length-3);
+	if(otherNumbers != '')
+	    lastThree = ',' + lastThree;
+	var res = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree + afterPoint;
+//	console.log(res);
+	return res;
+}
 

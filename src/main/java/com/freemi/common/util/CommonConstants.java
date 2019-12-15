@@ -8,6 +8,8 @@ public class CommonConstants {
 //	Service URL Properties
 	public static final String URL_SERVICE_PROFILE="url.service.profile";
 	
+	public static final String URL_SERVICE_MAHINDRA_FD="url.service.fd.mahindra";
+	
 //	Environment properties
 	public static final String CDN_URL="link.content.cdn";
 	public static final String BSE_ENABLED="investment.bse.enabled";
@@ -90,6 +92,16 @@ public class CommonConstants {
 	
 	public static final String BSE_OTP_ENABLED = "Y";
 	
+	public static final Integer TASK_SUCCESS=100;
+	public static final Integer TASK_FAILURE=101;
+	public static final Integer TASK_UPDATED=102;
+	public static final Integer TASK_SKIPPED=103;
+	public static final Integer NO_ACTION=104;
+	public static final Integer TASK_INVALID=105;
+	
+	public static final Integer TASK_API_RESPONSE_SUCCESS=110;
+	public static final Integer TASK_API_RESPONSE_ERROR=111;
+	
 //	BSE API related reponse code
 	public static final String BSE_API_SERVICE_DISABLED = "000";
 	public static final String BSE_API_SERVICE_ERROR = "999";
@@ -129,6 +141,7 @@ public class CommonConstants {
 			add("/products/profile");
 			add("/products/my-dashboard");
 			add("/products/mutual-funds/view-purchase-history");
+			add("/products/fixed-deposit/view-purchase-history");
 			add("/products/mutual-funds/pending-payments");
 			add("/products/mutual-funds/cancelOrder.do");
 		}
@@ -137,6 +150,8 @@ public class CommonConstants {
 	
 //	Date Formats
 	public static final String TIMESTAMP_FORMAT_SNS_REPORT ="yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
+	
+
 	
 	
 }

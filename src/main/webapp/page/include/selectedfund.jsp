@@ -54,7 +54,7 @@
 						</div>
 
 						<div class="md-form mb-3" style="margin-top: 0px;">
-							 <img class="img-fluid prefix" style="height: 2rem;" src="<c:url value="${contextcdn}/resources/images/invest/investment-funds.png"/>" ><form:input type="text" id="amount" path="investAmount"
+							 <img class="img-fluid prefix lazy" style="height: 2rem;" data-src="<c:url value="${contextcdn}/resources/images/invest/investment-funds.png"/>" ><form:input type="text" id="amount" path="investAmount"
 								class="form-control form-control-sm" value="2000" pattern="[0-9]*"
 								onkeyup="customamount();" required="required" maxlength="7"
 								placeholder="Investment amount" /> 
@@ -80,14 +80,14 @@
 					</div>
 					
 					<div class="md-form mb-3">
-							 <img class="img-fluid prefix" style="height: 2rem;" src="<c:url value="${contextcdn}/resources/images/invest/fund_mobile.svg"/>" ><form:input type="text" class="form-control form-control-sm"
+							 <img class="img-fluid prefix lazy" style="height: 2rem;" data-src="<c:url value="${contextcdn}/resources/images/invest/fund_mobile.svg"/>" ><form:input type="text" class="form-control form-control-sm"
 							id="mobile" path="mobile" style="height: 2rem;"
 							required="required" placeholder="10-digit mobile number"
 							maxlength="10" pattern="[0-9]*" /> 
 						</div>
 					
 					<div class="md-form mb-3">
-							 <img class="img-fluid prefix" style="height: 1.7rem;" src="<c:url value="${contextcdn}/resources/images/invest/pan-card.png"/>" ><form:input path="pan" type="text"
+							 <img class="img-fluid prefix lazy" style="height: 1.7rem;" data-src="<c:url value="${contextcdn}/resources/images/invest/pan-card.png"/>" ><form:input path="pan" type="text"
 							class="form-control fomr-control-sm" id="panval"
 							style="height: 2rem;text-transform: uppercase;"
 							required="required" placeholder="PAN" maxlength="10;" />

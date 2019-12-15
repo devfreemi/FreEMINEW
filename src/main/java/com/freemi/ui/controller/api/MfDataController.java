@@ -3,6 +3,7 @@ package com.freemi.ui.controller.api;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -25,8 +27,12 @@ import com.freemi.common.util.CommonConstants;
 import com.freemi.entity.bse.BseOrderPaymentRequest;
 import com.freemi.entity.bse.BseOrderPaymentResponse;
 import com.freemi.entity.investment.MfNavData;
+import com.freemi.entity.investment.mahindra.MahindraFDMappedLocations;
+import com.freemi.entity.investment.mahindra.MahindraResponse;
 import com.freemi.services.interfaces.BseEntryManager;
+import com.freemi.services.interfaces.MahindraFDServiceInterface;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 @RestController
 @RequestMapping("/api")
@@ -36,6 +42,9 @@ public class MfDataController {
 
 	@Autowired
 	BseEntryManager bseEntryManager;
+	
+	@Autowired
+	MahindraFDServiceInterface mahindraFDServiceInterface;
 
 	@PostMapping(value="/navdata/{isin}",produces = "application/json")
 	@CrossOrigin(origins="https://www.freemi.in")
@@ -107,8 +116,94 @@ public class MfDataController {
 		logger.info("bsePendingPayments(): Return url- "+ responseData);
 		return responseData;
 	}
+	
+	
+	/**
+	 * @apiNote API based query to fetch list of districts from state for Mahindra FD 
+	 * @param requestData
+	 * @param request
+	 * @param response
+	 * @param session
+	 * @return
+	 */
+	@RequestMapping(value = "/fixed-deposit/mmfd/getDistricts", method = RequestMethod.POST)
+	public String getMMFDDistrictsFromState(@RequestBody HashMap<String,String> requestData,HttpServletRequest request, HttpServletResponse response,HttpSession session) {
 
+		logger.info("@@ Mahindra FD API GetDistrictController @@");
+		String responseData = "SUCCESS";
+		String respoonseHeaderStatus="F";
+		try {
+			if(requestData.containsKey("state")) {
+				if(requestData.get("state")!=null) {
+					List<MahindraFDMappedLocations> resultset=  mahindraFDServiceInterface.getAllDistrictFromState(requestData.get("state").toString());
+					if(resultset!=null) {
+						respoonseHeaderStatus = "S";
+						responseData = new Gson().toJson(resultset);
+					}
+				}
+				
+			}else {
+				logger.info("getMMFDDistrictsFromState(): Required field missing..");
+				responseData = "Missing State code";
+			}
 
+		} catch (Exception e) {
+			logger.error("getMMFDDistrictsFromState(): Failed to get District and Pinccode List", e);
+			responseData ="INTERNAL_ERROR";
+		}
 
+		response.setHeader("APICALLSTATUS", respoonseHeaderStatus);
+		return responseData;
+	}
+	
+	
+	
+	@RequestMapping(value = "/fixed-deposit/mmfd/getBankDeailsFromIfsc", method = RequestMethod.POST)
+	public String getMMFDBankDetails(@RequestBody HashMap<String,String> requestData,HttpServletRequest request, HttpServletResponse response,HttpSession session) {
 
+		logger.info("@@ Mahindra FD API getMMFDBankDetails @@");
+		String responseData = "SUCCESS";
+		String respoonseHeaderStatus="F";
+		try {
+			if(requestData.containsKey("ifsccode")) {
+				if(requestData.get("ifsccode")!=null && requestData.get("ifsccode").toString().length()==11) {
+					MahindraResponse resultset=  mahindraFDServiceInterface.getBankDetailsFromIfsc(requestData.get("ifsccode"));
+					if(resultset!=null) {
+						
+//						responseData = new Gson().toJson(resultset);
+						JsonObject jsondata = new JsonObject();
+						jsondata.addProperty("micrcode", resultset.getMicrCode());
+						jsondata.addProperty("bankname", resultset.getBankName());
+						jsondata.addProperty("bankbranch", resultset.getBankBranch());
+						
+						responseData = jsondata.toString();
+						respoonseHeaderStatus = "S";
+					}
+				}else {
+					logger.info("IFSC code pattern do not match or null");
+				}
+				
+			}else {
+				logger.info("getMMFDBankDetails(): Required field missing..");
+				responseData = "Invalid IFSC Code Format";
+			}
+
+		} catch (Exception e) {
+			logger.error("getMMFDBankDetails(): Failed to get IFSC code data from Mahindra", e);
+			responseData ="INTERNAL_ERROR";
+		}
+
+		response.setHeader("APICALLSTATUS", respoonseHeaderStatus);
+		
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			logger.error("Sleep error",e);
+		}
+		return responseData;
+	}
+	
+	
+	
 }

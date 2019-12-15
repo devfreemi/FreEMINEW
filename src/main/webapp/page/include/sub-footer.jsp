@@ -49,24 +49,44 @@
 <a href="https://www.freemi.in/yes-bank/yes-bank-personal-loan/" class="sub-footer-link-style">YES Bank Personal Loan</a>  <span class="pipe-style">|</span>
 <a href="https://www.freemi.in/tata-capital/tata-capital-personal-loan/" class="sub-footer-link-style">TATA Capital Personal Loan</a> <span class="pipe-style">|</span>
 <a href="https://www.freemi.in/fullerton-india/fullerton-india-personal-loan/" class="sub-footer-link-style">Fullerton India Personal Loan</a> <span class="pipe-style">|</span>
-
-
 <a href="https://www.freemi.in/personal-loan-interest-rates/" class="sub-footer-link-style">Personal Loan Interest Rates</a> <span class="pipe-style">|</span>
-<a href="https://www.freemi.in/personal-loan-eligibility-calculator/" class="sub-footer-link-style">Personal Loan Eligibility Calculator</a>
+<a href="https://www.freemi.in/personal-loan-eligibility-calculator/" class="sub-footer-link-style">Personal Loan Eligibility Calculator</a> <span class="pipe-style">|</span>
+
+
+<a href="https://www.freemi.in/axis-bank/axis-bank-business-loan/" class="sub-footer-link-style">Axis Bank Business Loan</a> <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/bajaj-finserv/bajaj-finserv-business-loan/" class="sub-footer-link-style">Bajaj Finserv Business Loan</a> <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/icici-bank/icici-bank-business-loan/" class="sub-footer-link-style">ICICI Bank Business Loan</a> <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/hdfc-bank/hdfc-bank-business-loan/" class="sub-footer-link-style">HDFC Bank Business Loan</a> <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/idfc-bank/idfc-first-bank-business-loan/" class="sub-footer-link-style">IDFC First Business Loan</a> <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/capital-first/capital-first-business-loan/" class="sub-footer-link-style">Capital First Business Loan</a> <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/indiabulls/indiabulls-business-loan/" class="sub-footer-link-style">Indiabulls Business Loan</a> <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/indusind-bank/indusind-business-loan/" class="sub-footer-link-style">IndusInd Bank Business Loan</a> <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/kotak-mahindra-bank/kotak-mahindra-bank-business-loan/" class="sub-footer-link-style">Kotak Mahindra Business Loan</a> <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/yes-bank/yes-bank-business-loan/" class="sub-footer-link-style">Yes Bank Business Loan</a> <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/tata-capital/tata-capital-business-loan/" class="sub-footer-link-style">Tata Capital Business Loan</a> <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/fullerton-india/fullerton-india-business-loan/" class="sub-footer-link-style">Fullerton India Business Loan</a> <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/business-loan-interest-rates/" class="sub-footer-link-style">Business Loan Interest Rate</a> <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/business-loan-eligibility-calculator/" class="sub-footer-link-style">Business Loan Eligibility Calculator</a> 
+
+
 
 </p>
 	
 	<!-- @@@@@@@@@@@ credit card links @@@@@@@@@@@@@ -->
 	
-<p class="mb-0 pt-2"><span class="sub-footer-title">Credit Cards:</span>
-<a href="https://www.freemi.in/credit-card/" class="sub-footer-link-style">Credit Cards</a>  <span class="pipe-style">|</span>  
-<a href="https://www.freemi.in/credit-card/indusind-bank-credit-card/" class="sub-footer-link-style">Indusind Credit Card</a>
+<p class="mb-0 pt-2"><a href="https://www.freemi.in/credit-card/" class="sub-footer-title">Credit Cards:</a>
+<a href="https://www.freemi.in/credit-card/indusind-bank-credit-card/" class="sub-footer-link-style">Indusind Bank Credit Card</a> <span class="pipe-style">|</span> 
+<a href="https://www.freemi.in/sbi-bank/sbi-bank-credit-card/" class="sub-footer-link-style">SBI Bank Credit Card</a> <span class="pipe-style">|</span> 
+<a href="https://www.freemi.in/yes-bank/yes-bank-credit-card/" class="sub-footer-link-style">Yes Bank Credit Card</a> <span class="pipe-style">|</span> 
+<a href="https://www.freemi.in/icici-bank/icici-bank-credit-card/" class="sub-footer-link-style">ICICI Bank Credit Card</a> <span class="pipe-style">|</span> 
+<a href="https://www.freemi.in/hdfc-bank/hdfc-bank-credit-card/" class="sub-footer-link-style">HDFC Bank Credit Card</a>
 </p>
 
 <!-- @@@@@@@@@@@ mutual fund links @@@@@@@@@@@@@ -->
-<p class="mb-0 pt-2"><span class="sub-footer-title">Mutual Funds:</span>
-<a href="https://www.freemi.in/mutual-funds/" class="sub-footer-link-style">Mutual Funds</a>  <span class="pipe-style">|</span> 
-<a href="https://www.freemi.in/mutual-funds/mutual-fund-explorer" class="sub-footer-link-style">Mutual Funds Explorer</a> <span class="pipe-style">|</span>  
+
+
+<p class="mb-0 pt-2"><a href="/mutual-funds/" class="sub-footer-title">Mutual Funds:</a>
+<a href="https://www.freemi.in/mutual-funds/mutual-fund-explorer/" class="sub-footer-link-style">Mutual Funds Explorer</a> <span class="pipe-style">|</span>  
 <a href="https://www.freemi.in/mutual-funds/sbi-mutual-fund/" class="sub-footer-link-style">SBI Mutual Fund</a>  <span class="pipe-style">|</span> 
 <a href="https://www.freemi.in/mutual-funds/reliance-mutual-fund/" class="sub-footer-link-style">RELIANCE Mutual Fund</a>  <span class="pipe-style">|</span> 
 <a href="https://www.freemi.in/mutual-funds/uti-mutual-fund/" class="sub-footer-link-style">UTI Mutual Fund</a>  <span class="pipe-style">|</span> 
@@ -132,5 +152,3 @@ The product information displayed on this website is of the insurer.
 </div>
 </div>
 </div>
-
-

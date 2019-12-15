@@ -3,6 +3,7 @@ package com.freemi.common.util;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Locale;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -81,4 +82,11 @@ public class CommonTask {
 		}
 		return formattedDate;
 	}
+	
+	public static String generateMMTransactionId(){
+		return Long.toString((Math.abs(UUID.randomUUID().getMostSignificantBits())));
+	}
+	
+	
+	
 }

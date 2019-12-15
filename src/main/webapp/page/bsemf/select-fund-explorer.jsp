@@ -10,27 +10,21 @@
 <html>
 <head>
 <title>FreEMI MF Transaction</title>
+<jsp:include page="../include/bootstrap.jsp"></jsp:include>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="description" content="" />
-<meta name="robots" content="index,nofollow" />
-<link
-	href="<c:url value="${contextcdn}/resources/css/bseinvestmentform.css"/>"
-	rel="stylesheet">
-<link href="<c:url value="${contextcdn}/resources/css/pace-theme.css"/>"
-	rel="stylesheet">
-<script src="<c:url value="${contextcdn}/resources/js/pace.min.js" />"></script>
+<meta name="robots" content="index,follow" />
+<link href="<c:url value="${contextcdn}/resources/css/bseinvestmentform.css"/>" rel="stylesheet">
+<link href="<c:url value="${contextcdn}/resources/css/pace-theme.css"/>" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+<script src="<c:url value="${contextcdn}/resources/js/pace.min.js" />" async="true"></script>
 
-<jsp:include page="../include/bootstrap.jsp"></jsp:include>
+<link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet">
+<script type="text/javascript"
+	src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" async="true"></script>
+<script type="text/javascript"
+	src="https://cdn.datatables.net/buttons/1.5.4/js/buttons.html5.min.js" async="true"></script>
 
-<link
-	href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css"
-	rel="stylesheet">
-<script type="text/javascript"
-	src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-<script type="text/javascript"
-	src="https://cdn.datatables.net/buttons/1.5.4/js/buttons.html5.min.js"></script>
-<link rel="stylesheet"
-	href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
 <style type="text/css">
 table td {
     font-size: 12px;
@@ -73,8 +67,7 @@ table.dataTable thead th, table.dataTable thead td {
 										<th scope="col">Action</th>
 									</tr>
 								</thead>
-								<tbody
-									style="font-size: 13px; font-family: sans-serif; font-weight: 400;">
+								<tbody>
 
 									<c:forEach var="listVar" items="${fundsexplorer}">
 										<c:if test="${listVar.fundCatergory == 'EQ_LARGE_CAP'}">
@@ -127,8 +120,7 @@ table.dataTable thead th, table.dataTable thead td {
 										<th scope="col">Action</th>
 									</tr>
 								</thead>
-								<tbody
-									style="font-size: 13px; font-family: sans-serif; font-weight: 400;">
+								<tbody>
 
 									<c:forEach var="listVar" items="${fundsexplorer}">
 										<c:if test="${listVar.fundCatergory == 'EQ_LARGE_MID_CAP'}">
@@ -179,8 +171,7 @@ table.dataTable thead th, table.dataTable thead td {
 										<th scope="col">Action</th>
 									</tr>
 								</thead>
-								<tbody
-									style="font-size: 13px; font-family: sans-serif; font-weight: 400;">
+								<tbody>
 
 									<c:forEach var="listVar" items="${fundsexplorer}">
 										<c:if test="${listVar.fundCatergory == 'EQ_MULTI_CAP'}">
@@ -232,7 +223,7 @@ table.dataTable thead th, table.dataTable thead td {
 									</tr>
 								</thead>
 								<tbody
-									style="font-size: 13px; font-family: sans-serif; font-weight: 400;">
+									>
 
 									<c:forEach var="listVar" items="${fundsexplorer}">
 										<c:if test="${listVar.fundCatergory == 'EQ_MID_CAP'}">
@@ -284,7 +275,7 @@ table.dataTable thead th, table.dataTable thead td {
 									</tr>
 								</thead>
 								<tbody
-									style="font-size: 13px; font-family: sans-serif; font-weight: 400;">
+									>
 
 									<c:forEach var="listVar" items="${fundsexplorer}">
 										<c:if test="${listVar.fundCatergory == 'EQ_SMALL_CAP'}">
@@ -336,7 +327,7 @@ table.dataTable thead th, table.dataTable thead td {
 									</tr>
 								</thead>
 								<tbody
-									style="font-size: 13px; font-family: sans-serif; font-weight: 400;">
+									>
 
 									<c:forEach var="listVar" items="${fundsexplorer}">
 										<c:if test="${listVar.fundCatergory == 'EQ_VAL_ORIENTED'}">
@@ -388,7 +379,7 @@ table.dataTable thead th, table.dataTable thead td {
 									</tr>
 								</thead>
 								<tbody
-									style="font-size: 13px; font-family: sans-serif; font-weight: 400;">
+									>
 
 									<c:forEach var="listVar" items="${fundsexplorer}">
 										<c:if test="${listVar.fundCatergory == 'EQ_TAX_SAVING'}">
@@ -440,7 +431,7 @@ table.dataTable thead th, table.dataTable thead td {
 									</tr>
 								</thead>
 								<tbody
-									style="font-size: 13px; font-family: sans-serif; font-weight: 400;">
+									>
 
 									<c:forEach var="listVar" items="${fundsexplorer}">
 										<c:if test="${listVar.fundCatergory == 'HYD_EQ_SAVING'}">
@@ -492,7 +483,7 @@ table.dataTable thead th, table.dataTable thead td {
 									</tr>
 								</thead>
 								<tbody
-									style="font-size: 13px; font-family: sans-serif; font-weight: 400;">
+									>
 
 									<c:forEach var="listVar" items="${fundsexplorer}">
 										<c:if test="${listVar.fundCatergory == 'HYB_AGRESSIVE_EQ_ORNT'}">
@@ -544,7 +535,7 @@ table.dataTable thead th, table.dataTable thead td {
 									</tr>
 								</thead>
 								<tbody
-									style="font-size: 13px; font-family: sans-serif; font-weight: 400;">
+									>
 
 									<c:forEach var="listVar" items="${fundsexplorer}">
 										<c:if test="${listVar.fundCatergory == 'HYB_CONS_DEBT_ORNT'}">
@@ -597,7 +588,7 @@ table.dataTable thead th, table.dataTable thead td {
 									</tr>
 								</thead>
 								<tbody
-									style="font-size: 13px; font-family: sans-serif; font-weight: 400;">
+									>
 
 									<c:forEach var="listVar" items="${fundsexplorer}">
 										<c:if test="${listVar.fundCatergory == 'DEBT_MEDIUM_TERM'}">
@@ -649,7 +640,7 @@ table.dataTable thead th, table.dataTable thead td {
 									</tr>
 								</thead>
 								<tbody
-									style="font-size: 13px; font-family: sans-serif; font-weight: 400;">
+									>
 
 									<c:forEach var="listVar" items="${fundsexplorer}">
 										<c:if test="${listVar.fundCatergory == 'DEBT_SHORT_TERM'}">
@@ -701,7 +692,7 @@ table.dataTable thead th, table.dataTable thead td {
 									</tr>
 								</thead>
 								<tbody
-									style="font-size: 13px; font-family: sans-serif; font-weight: 400;">
+									>
 
 									<c:forEach var="listVar" items="${fundsexplorer}">
 										<c:if test="${listVar.fundCatergory == 'DEBT_DYNAMIC_BOND'}">
@@ -752,8 +743,7 @@ table.dataTable thead th, table.dataTable thead td {
 										<th scope="col">Action</th>
 									</tr>
 								</thead>
-								<tbody
-									style="font-size: 13px; font-family: sans-serif; font-weight: 400;">
+								<tbody>
 
 									<c:forEach var="listVar" items="${fundsexplorer}">
 										<c:if test="${listVar.fundCatergory == 'DEBT_CORP_BOND'}">

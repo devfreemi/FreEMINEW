@@ -2421,7 +2421,7 @@ public class BsemfController {
 	public String bseMFViewpurchaseHistory(Model map, HttpServletRequest request, HttpServletResponse response,
 			HttpSession session) {
 
-		logger.info("@@ BSE MF STAR purchase confirm controller @@");
+		logger.info("@@ BSE MF STAR purchase history controller @@");
 		String returnUrl = "bsemf/bsemf-purchase-history2";
 
 		try {
