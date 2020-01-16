@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Fixed Deposit Investment, interest rate upto 8.50%*</title>
+<title>Fixed Deposit investment renew, interest rate upto 8.50%*</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -15,11 +15,11 @@
 <meta http-equiv="expires" content="0" />
 <meta name="keywords" content="Fixed Desposit" />
 
-<meta name="description" content="fixed Deposit " />
+<meta name="description" content="Mahindra finance fixed Deposit renewal application" />
 
-<meta name="robots" content="index, follow">
-<meta name="googlebot" content="index, follow" />
-<meta name="bingbot" content="index, follow" />
+<meta name="robots" content="index, nofollow">
+<meta name="googlebot" content="index, nofollow" />
+<meta name="bingbot" content="index, nofollow" />
 
 <link rel="canonical" href="/products/fixed-deposit" />
 <jsp:include page="/page/include/bootstrap.jsp"></jsp:include>
@@ -28,7 +28,6 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.min.js"></script>
-<!-- <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script> -->
 <script type="text/javascript">
 
 </script>
@@ -40,15 +39,12 @@
 		<section>
 			<div class="row">
 				<div class="col-md-7 col-lg-7">
-					<jsp:include page="mahindra-fd-form-detailed.jsp"></jsp:include>
+					<jsp:include page="mahindra-fd-form-renew.jsp"></jsp:include>
 				</div>
 
 				<div class="col-md-5 col-lg-5 d-none d-sm-block">
-					<img
-						src="<c:url value="${contextcdn}/resources/images/invest/fd-1.png"/>"
-						class="img-fluid animated slideInRight">
+					<img src="<c:url value="${contextcdn}/resources/images/invest/fd-1.png"/>" class="img-fluid animated slideInRight">
 				</div>
-
 			</div>
 		</section>
 

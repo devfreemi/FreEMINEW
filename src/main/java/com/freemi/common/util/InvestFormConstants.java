@@ -2,8 +2,11 @@ package com.freemi.common.util;
 
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
+import com.mysql.fabric.xmlrpc.base.Array;
 
 public class InvestFormConstants {
 	
@@ -469,5 +472,27 @@ public class InvestFormConstants {
 
 		}
 	};
+	
+	public static Map<String,String[]> MahindaImageReferenceRequirement = new LinkedHashMap<String,String[]>(){
+		
+		private static final long serialVersionUID = 1L;
+
+		{
+//			Kyc_Image_Ref_No is Mandatory,Kyc_Image_Exp_Date is Mandatory
+			put("A",new String[] {"Y","Y"});
+			put("B",new String[] {"Y","N"});
+			put("C",new String[] {"Y","N"});
+			put("D",new String[] {"Y","Y"});
+			put("E",new String[] {"Y","N"});
+			put("F",new String[] {"N","N"});
+			put("Z",new String[] {"N","N"});
+			put("MFPH",new String[] {"N","N"});
+			put("MFCC",new String[] {"Y","N"});
+			put("MF15GH",new String[] {"N","N"});
+			put("MFTRC",new String[] {"Y","Y"});
+			
+		}
+	};
+	
 
 }

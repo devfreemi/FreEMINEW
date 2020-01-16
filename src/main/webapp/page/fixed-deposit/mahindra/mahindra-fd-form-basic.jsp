@@ -86,6 +86,23 @@
 								id="saveamount" required="required" />
 							<label for="saveamount">Fixed Deposit Amount</label>
 						</div>
+						
+						<div class="btn-group btn-group-sm btn-group-toggle"
+							data-toggle="buttons" id="radioamount" style="padding-left: 2.5rem;">
+							<label class="btn btn-info"> <input type="radio"
+								value="10000" name="options" id="option1">
+								10K
+							</label> <label class="btn btn-info"> <input type="radio"
+								name="options" value="25000" id="option2">
+								25K
+							</label> <label class="btn btn-info"> <input type="radio"
+								name="options" value="50000" id="option3">
+								50K
+							</label> <label class="btn btn-info"> <input type="radio"
+								name="options" value="100000" id="option4">
+								1lac
+							</label>
+						</div>
 
 						<div class="md-form form-sm">
 							<i class="fas fa-mobile-alt prefix"></i>

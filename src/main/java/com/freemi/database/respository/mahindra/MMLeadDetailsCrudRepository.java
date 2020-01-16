@@ -13,6 +13,7 @@ public interface MMLeadDetailsCrudRepository extends JpaRepository<MahindraFDSav
 	public boolean existsByMobile(String mobile);
 	public boolean existsByCpTransRefNo(String cpRefNo);
 	
+	public MahindraFDSaveLeadDetails findOneByCpTransRefNo(String cpTransRefNo);
 	
 	@Transactional
 	@Modifying

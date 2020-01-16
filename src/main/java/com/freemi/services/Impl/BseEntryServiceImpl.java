@@ -69,7 +69,7 @@ import com.freemi.entity.investment.SelectMFFund;
 import com.freemi.entity.investment.TransactionStatus;
 import com.freemi.services.interfaces.BseEntryManager;
 import com.freemi.services.interfaces.InvestmentConnectorBseInterface;
-import com.freemi.services.interfaces.MailSenderHandler;
+import com.freemi.services.interfaces.MailSenderInterface;
 
 @Service
 public class BseEntryServiceImpl implements BseEntryManager {
@@ -145,7 +145,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 
 
 	@Autowired
-	MailSenderHandler mailSenderHandler;
+	MailSenderInterface mailSenderInterface;
 
 	private static final Logger logger = LogManager.getLogger(BseEntryServiceImpl.class);
 
@@ -1306,7 +1306,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 			mfInitiatedTransactionCrudRepository.save(transactions);
 			
 			logger.info("saveMFInitiatedTranasctionRequest(): Request details saved.. Drop mail");
-			mailSenderHandler.sendMFInitiatedNotice(transactions);
+			mailSenderInterface.sendMFInitiatedNotice(transactions);
 			
 		}catch(Exception e) {
 			logger.error("saveMFInitiatedTranasctionRequest(): Failed to save initiated transaction request data - ",e);

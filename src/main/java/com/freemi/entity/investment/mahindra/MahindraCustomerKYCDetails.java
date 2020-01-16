@@ -39,7 +39,11 @@ public class MahindraCustomerKYCDetails implements Serializable {
 
 	@Column(name="KYC_ID_CODE")
 	private String kycid;
-
+	
+	@Column(name = "CANCELLED_CHEQUE")
+	@Lob
+	private byte[] canecelledcheque;
+	
 	@Column(name="KYC_PHOTO")
 	@Lob
 	private byte[] kycUplaodedPhoto;
@@ -51,6 +55,15 @@ public class MahindraCustomerKYCDetails implements Serializable {
 	@Column(name="KYC_ADDRESS_PROOF")
 	@Lob
 	private byte[] kycAddressProofDoc;
+	
+	@Column(name = "ADD_PROOF_TYPE")
+	private String addprooftype;
+	
+	@Column(name = "ADD_PROOF_REF_NO")
+	private String addproofrefno;
+	
+	@Column(name = "ADD_PROOF_EXPIRY_DATE")
+	private Date addproofexpiry;
 
 	@Column(name="IS_ACTIVE")
 	private String active="Y";
@@ -132,7 +145,7 @@ public class MahindraCustomerKYCDetails implements Serializable {
 	private String kycMaidenMiddleName;
 	
 	@JsonProperty("Kyc_FatherFirstName")
-	@Transient
+	@Column(name = "FATHER_FIRST_NAME")
 	private String kycFatherFirstName;
 
 	@JsonProperty("Kyc_FatherFullName")
@@ -140,19 +153,19 @@ public class MahindraCustomerKYCDetails implements Serializable {
 	private String kycFatherFullName;
 
 	@JsonProperty("Kyc_FatherLastName")
-	@Transient
+	@Column(name = "FATHER_LAST_NAME")
 	private String kycFatherLastName;
 	
 	@JsonProperty("Kyc_FatherMiddleName")
-	@Transient
+	@Column(name = "FATHER_MIDDLE_NAME")
 	private String kycFatherMiddleName;
 
 	@JsonProperty("Kyc_FatherNamePrefix")
-	@Transient
+	@Column(name = "FATHER_NAME_PREFIX")
 	private String kycFatherNamePrefix;
 	
 	@JsonProperty("Kyc_SpouseFirstName")
-	@Transient
+	@Column(name = "SPOUSE_FIRST_NAME")
 	private String kycSpouseFirstName;
 	
 	@JsonProperty("Kyc_SpouseFullName")
@@ -160,19 +173,19 @@ public class MahindraCustomerKYCDetails implements Serializable {
 	private String kycSpouseFullName;
 	
 	@JsonProperty("Kyc_SpouseLastName")
-	@Transient
+	@Column(name = "SPOUSE_LAST_NAME")
 	private String kycSpouseLastName;
 	
 	@JsonProperty("Kyc_SpouseMiddleName")
-	@Transient
+	@Column(name = "SPOUSE_MIDDLE_NAME")
 	private String kycSpouseMiddleName;
 	
 	@JsonProperty("Kyc_SpouseNamePrefix")
-	@Transient
+	@Column(name = "SPOUSE_NAME_PREFIX")
 	private String kycSpouseNamePrefix;
 	
 	@JsonProperty("Kyc_MotherFirstName")
-	@Transient
+	@Column(name = "MOTHER_FIRST_NAME")
 	private String kycMotherFirstName;
 	
 	@JsonProperty("Kyc_MotherFullName")
@@ -180,15 +193,15 @@ public class MahindraCustomerKYCDetails implements Serializable {
 	private String kycMotherFullName;
 
 	@JsonProperty("Kyc_MotherLastName")
-	@Transient
+	@Column(name = "MOTHER_LAST_NAME")
 	private String kycMotherLastName;
 	
 	@JsonProperty("Kyc_MotherMiddletName")
-	@Transient
+	@Column(name = "MOTHER_MIDDLE_NAME")
 	private String kycMotherMiddletName;
 	
 	@JsonProperty("Kyc_MotherNamePrefix")
-	@Transient
+	@Column(name = "MOTHER_NAME_PREFIX")
 	private String kycMotherNamePrefix;
 	
 	@JsonProperty("Kyc_Gender")
@@ -216,7 +229,7 @@ public class MahindraCustomerKYCDetails implements Serializable {
 	private String kycResidentialStatusCode;
 	
 	@JsonProperty("Kyc_TaxResidencyOutsideIndia_Code")
-	@Transient
+	@Column(name = "KYC_RESIDENCY_OUTSIDE_INDIA")
 	private String kycTaxResidencyOutsideIndiaCode;
 	
 	@JsonProperty("Kyc_JurisdictionofRes_Code")
@@ -411,6 +424,13 @@ public class MahindraCustomerKYCDetails implements Serializable {
 	public void setKycid(String kycid) {
 		this.kycid = kycid;
 	}
+	
+	public byte[] getCanecelledcheque() {
+		return canecelledcheque;
+	}
+	public void setCanecelledcheque(byte[] canecelledcheque) {
+		this.canecelledcheque = canecelledcheque;
+	}
 	public byte[] getKycUplaodedPhoto() {
 		return kycUplaodedPhoto;
 	}
@@ -428,6 +448,24 @@ public class MahindraCustomerKYCDetails implements Serializable {
 	}
 	public void setKycAddressProofDoc(byte[] kycAddressProofDoc) {
 		this.kycAddressProofDoc = kycAddressProofDoc;
+	}
+	public String getAddprooftype() {
+		return addprooftype;
+	}
+	public void setAddprooftype(String addprooftype) {
+		this.addprooftype = addprooftype;
+	}
+	public String getAddproofrefno() {
+		return addproofrefno;
+	}
+	public void setAddproofrefno(String addproofrefno) {
+		this.addproofrefno = addproofrefno;
+	}
+	public Date getAddproofexpiry() {
+		return addproofexpiry;
+	}
+	public void setAddproofexpiry(Date addproofexpiry) {
+		this.addproofexpiry = addproofexpiry;
 	}
 	public String getActive() {
 		return active;

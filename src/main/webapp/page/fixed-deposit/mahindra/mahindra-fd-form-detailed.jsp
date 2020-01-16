@@ -92,7 +92,8 @@ button:hover {
 
 	<div style="padding-top: 2rem;">
 		<form:form id="fdpurchaseform"
-			action="${pageContext.request.contextPath}/fixed-deposit/mahindra-fd-purchase" enctype="multipart/form-data" modelAttribute="fdform">
+			action="${pageContext.request.contextPath}/fixed-deposit/mahindra-fd-purchase"
+			enctype="multipart/form-data" modelAttribute="fdform">
 
 			<div style="text-align: center; margin-bottom: 40px;">
 				<span class="step"></span> <span class="step"></span> <span
@@ -225,16 +226,16 @@ button:hover {
 									</div>
 									<form:input type="text" path="firstName" class="form-control"
 										style="text-transform:uppercase" minlenth="8" maxlength="64"
-										pattern="[a-zA-Z. ]*" id="firstName" required="required"
+										pattern="[a-zA-Z. ]*" id="firstNameid" required="required"
 										aria-label="First name" placeholder=" First Name" />
 
 									<form:input type="text" path="middleName" class="form-control"
 										style="text-transform:uppercase" minlenth="8" maxlength="64"
-										pattern="[a-zA-Z. ]*" id="middleName" aria-label="Middle name"
-										placeholder=" Middle Name" />
+										pattern="[a-zA-Z. ]*" id="middlenameid"
+										aria-label="Middle name" placeholder=" Middle Name" />
 									<form:input type="text" path="lastName" class="form-control"
 										style="text-transform:uppercase" minlenth="8" maxlength="64"
-										pattern="[a-zA-Z. ]*" id="lastName" required="required"
+										pattern="[a-zA-Z. ]*" id="lastNameid" required="required"
 										aria-label="Last name" placeholder=" last Name" />
 								</div>
 
@@ -254,8 +255,9 @@ button:hover {
 										<div class="md-form form-sm">
 											<i class="fas fa-calendar-day prefix"></i>
 											<form:input type="text" path="dob" required="required"
-												data-provide="datepicker" data-date-start-date="-65y"
-												data-date-end-date="-6750d" maxlength="10"
+												data-provide="datepicker" data-date-format="mm/dd/yyyy"
+												data-date-start-date="-65y" data-date-end-date="-21d"
+												maxlength="10"
 												class="form-control form-control-custom datepicker"
 												id="investorDOB" />
 											<label for="dobid">Date of birth</label>
@@ -332,14 +334,18 @@ button:hover {
 													data-toggle="buttons" id="radioamount">
 
 													<c:forEach var="listVar" items="${tenurelist}">
-														<label class="btn btn-info <c:if test="${fdform.saveTenure eq listVar}">active</c:if>"> <form:radiobutton path="saveTenure" value="${listVar }" /> ${listVar }
+														<label
+															class="btn btn-info <c:if test="${fdform.saveTenure eq listVar}">active</c:if>">
+															<form:radiobutton path="saveTenure" value="${listVar }" />
+															${listVar }
 														</label>
 													</c:forEach>
 
 												</div>
 												<div class="btn-group btn-group-sm btn-group-toggle">
 													<label class="btn btn-secondary">Int. Rate </label> <label
-														class="btn btn-default" id="interestrateview">${fdform.interestRate}% p.a </label>
+														class="btn btn-default" id="interestrateview">${fdform.interestRate}%
+														p.a </label>
 												</div>
 
 											</div>
@@ -351,9 +357,9 @@ button:hover {
 
 									<div class="col-md-6">
 										<div class="form-group row">
-											<label for="tenure" class="col-md-4 col-form-label desc">Holding
+											<label for="tenure" class="col-6 col-form-label desc">Holding
 												Pattern </label>
-											<div class="col-md-8 text-md-right" id="holdingpattern">
+											<div class="col-6 text-md-right" id="holdingpattern">
 												<div class="btn-group btn-group-sm btn-group-toggle"
 													data-toggle="buttons" id="holdingoption">
 													<label class="btn btn-info active"> <form:radiobutton
@@ -366,24 +372,23 @@ button:hover {
 													</label> --%>
 												</div>
 												<div class="custom-control custom-checkbox mt-3">
-													<form:checkbox path="nomieechosen"
-														class="custom-control-input" id="nomiee" />
-													<label class="custom-control-label" for="nomiee">Nomiee</label>
+													<form:checkbox path="nomineechosen"
+														class="custom-control-input" id="nomineeid" />
+													<label class="custom-control-label" for="nomineeid">Nominee</label>
 												</div>
 
 											</div>
 										</div>
 									</div>
 
-
-
 									<div class="col-md-6">
 										<div class="form-group row">
 											<!-- Material input -->
-											<label for="tenure" class="col-md-8 col-form-label desc">Tax
+											<label for="tenure" class="col-8 col-form-label desc">Tax
 												Deduction at Source? </label>
-											<div class="col-md-4 text-md-right" id="scheme">
-												<div class="btn-group btn-group-sm btn-group-toggle"
+											<div class="col-4 text-md-right" id="scheme">
+												<div
+													class="btn-group btn-group-sm btn-group-toggle float-right"
 													data-toggle="buttons" id="taxDeduct">
 													<label class="btn btn-info active"> <form:radiobutton
 															path="taxDeductAtSource" value="YES" autocomplete="off"
@@ -432,7 +437,7 @@ button:hover {
 											<form:select class="custom-select" path="occupation"
 												required="required" id="occupationid"
 												style="border-top: transparent;border-left: transparent;border-right: transparent;">
-												<form:option value="" selected="selected" >Occupation</form:option>
+												<form:option value="" selected="selected">Occupation</form:option>
 												<form:options items="${mmoccupation }" />
 											</form:select>
 										</div>
@@ -469,7 +474,7 @@ button:hover {
 												class="form-control" style="text-transform:uppercase"
 												minlenth="8" maxlength="64" pattern="[a-zA-Z. ]*"
 												id="kycFatherLastNameid" aria-label="Last name"
-												placeholder=" last Name" />
+												placeholder="Last Name" />
 										</div>
 									</div>
 								</div>
@@ -503,10 +508,11 @@ button:hover {
 												class="form-control" style="text-transform:uppercase"
 												minlenth="8" maxlength="64" pattern="[a-zA-Z. ]*"
 												id="kycMotherLastNameid" aria-label="Last name"
-												placeholder=" last Name" />
+												placeholder="last Name" />
 										</div>
 									</div>
 								</div>
+
 
 
 
@@ -600,8 +606,8 @@ button:hover {
 
 									<div class="col-md-4">
 										<div class="md-form form-sm mb-0">
-											<form:select class="custom-select" path="addressstate1"
-												required="required" id="addressstateid"
+											<form:select class="custom-select stateselect"
+												path="addressstate1" required="required" id="addressstateid"
 												style="border-top: transparent;border-left: transparent;border-right: transparent;">
 												<form:option value="" selected="selected"> Select State</form:option>
 												<form:options items="${states}" />
@@ -644,8 +650,9 @@ button:hover {
 									<div class="col-md-4">
 										<div class="md-form form-sm mb-0">
 											<form:input type="text" path="addresspincode1"
-												class="form-control" pattern="[0-9]{6}" minlength="6"
-												maxlength="6" id="addresspincode1id" required="required" />
+												class="form-control pincodeid" pattern="[0-9]{6}"
+												minlength="6" maxlength="6" id="addresspincode1id"
+												required="required" />
 											<label for="addresspincode1id">Pincode</label> <small
 												id="pancodevalidity" class="form-text text-danger"></small>
 
@@ -673,8 +680,233 @@ button:hover {
 				<!-- End of accordion3  -->
 
 
+				<div id="accordion8" class="mt-4">
+					<div class="card">
+						<div class="card-header" id="headingEight">
+							<h5 class="mb-0">
+								<button class="btn btn-link" style="padding: 0; margin: auto;"
+									data-target="#collapseEight" data-toggle="collapse"
+									aria-expanded="true" aria-controls="collapseSeven">
+									<span>Nominee</span>
+								</button>
+							</h5>
+						</div>
+
+						<div id="collapseEight" class="collapse show"
+							aria-labelledby="headingEight" data-parent="#accordion8">
+							<div class="card-body">
+								<!-- ----------------------------- -->
+
+								<!--Nominee Details Block  -->
+
+								<div id="nomineeDetailsBlock"
+									<c:if test="${fdform.nomineechosen == false }">style="display: none;"</c:if>>
+
+									<div class="md-form input-group mb-0">
+										<div class="input-group-prepend">
+											<!-- <span class="input-group-text md-addon"><i
+											class="fas fa-user-alt "></i></span> -->
+											<form:select path="nomineeprefix"
+												class="browser-default custom-select ">
+												<form:option value="MR" selected="selected">Mr</form:option>
+												<form:option value="MS">Ms</form:option>
+												<form:option value="MRS">Mrs</form:option>
+											</form:select>
+
+
+										</div>
+										<form:input type="text" path="nomineefirstname"
+											class="form-control" style="text-transform:uppercase"
+											minlenth="8" maxlength="64" pattern="[a-zA-Z. ]*"
+											id="firstName" aria-label="First name"
+											placeholder=" First Name" />
+
+										<form:input type="text" path="nomineemiddlename"
+											class="form-control" style="text-transform:uppercase"
+											minlenth="8" maxlength="64" pattern="[a-zA-Z. ]*"
+											id="middleName" aria-label="Middle name"
+											placeholder=" Middle Name" />
+										<form:input type="text" path="nomineelastname"
+											class="form-control" style="text-transform:uppercase"
+											minlenth="8" maxlength="64" pattern="[a-zA-Z. ]*"
+											id="nomineelastnameid" aria-label="Last name"
+											placeholder="Last Name" />
+									</div>
+
+									<div class="form-row">
+										<div class="col-md-4">
+											<div class="md-form form-sm mb-0">
+												<form:select class="custom-select" path="nomineerelation"
+													required="required" id="nomineerelationid"
+													style="border-top: transparent;border-left: transparent;border-right: transparent;">
+													<form:option value="" selected="selected">Select Relation</form:option>
+													<form:options items="${relationMaster }" />
+												</form:select>
+											</div>
+
+										</div>
+
+										<div class="col-md-4">
+											<div class="md-form form-sm">
+												<i class="fas fa-calendar-day prefix"></i>
+												<form:input type="text" path="nomineedob"
+													data-provide="datepicker" data-date-format="mm/dd/yyyy"
+													data-date-start-date="-65y" data-date-end-date="-21d"
+													maxlength="10"
+													class="form-control form-control-custom datepicker"
+													id="nomineedobid" />
+												<label for="nomineedobid">Date of birth</label>
+											</div>
+										</div>
+
+										<div class="col-md-4">
+											<div class="md-form input-group mb-3">
+												<div class="input-group-prepend">
+													<form:select path="nomineeminor"
+														class="browser-default custom-select ">
+														<form:option value="N" selected="selected">Not Minor</form:option>
+														<form:option value="Y">Minor</form:option>
+													</form:select>
+
+
+												</div>
+
+												<form:input type="text" path="nomineeguardian"
+													class="form-control" style="text-transform:uppercase"
+													minlenth="8" maxlength="64" pattern="[a-zA-Z. ]*"
+													id="nomineeguardianid" aria-label="Last name"
+													placeholder="Guardian Name" />
+
+											</div>
+										</div>
+
+									</div>
+
+									<div class="form-row">
+										<div class="col-md-6">
+											<div class="md-form form-sm mb-0">
+												<form:input type="text" path="nomineemobile"
+													class="form-control" minlenth="10" maxlength="10"
+													pattern="[0-9]*" id="nomineemobileid"
+													aria-label="Mobile no." placeholder="Nominee's mobile no" />
+											</div>
+										</div>
+
+										<div class="col-md-6">
+											<div class="md-form form-sm mb-0">
+												<form:input type="email" path="nomineeemail"
+													class="form-control" minlenth="10" maxlength="128"
+													id="nomineeemailid" aria-label="Email"
+													placeholder="Email ID" />
+											</div>
+										</div>
+
+									</div>
+
+									<div class="form-row">
+										<div class="col-md-4">
+											<div class="md-form form-sm mb-0">
+												<form:input type="text" path="nomineeaddress1"
+													class="form-control" style="text-transform:uppercase"
+													maxlength="32" pattern="[0-9]*" id="nomineeadd1id"
+													aria-label="Address 1" placeholder="Address 1" />
+											</div>
+										</div>
+
+										<div class="col-md-4">
+											<div class="md-form form-sm mb-0">
+												<form:input type="email" path="nomineeaddress2"
+													style="text-transform:uppercase" class="form-control"
+													maxlength="32" id="nomineeadd2id" aria-label="Address 2"
+													placeholder="Address 2" />
+											</div>
+										</div>
+
+										<div class="col-md-4">
+											<div class="md-form form-sm mb-0">
+												<form:input type="email" path="nomineeaddress3"
+													style="text-transform:uppercase" class="form-control"
+													maxlength="32" id="nomineeadd3id" aria-label="Address 3"
+													placeholder="Address 3" />
+											</div>
+										</div>
+									</div>
+
+									<div class="form-row">
+										<div class="col-md-6">
+											<div class="md-form form-sm mb-0">
+												<form:select class="custom-select stateselect"
+													path="nomineestatecode" id="nomineestatecodeid"
+													style="border-top: transparent;border-left: transparent;border-right: transparent;">
+													<form:option value="" selected="selected"> Select State</form:option>
+													<form:options items="${states}" />
+												</form:select>
+												<small id="nomineestatevalidity"
+													class="form-text text-danger"></small>
+											</div>
+
+										</div>
+
+										<%-- <div class="col-md-6">
+											<div class="md-form form-sm mb-0">
+												<form:input type="text" path="nomineedistrict"
+													class="form-control" maxlength="32" id="nomineedistrictid"
+													aria-label="Email" placeholder="District" />
+											</div>
+										</div> --%>
+										<div class="col-md-6">
+											<div class="md-form form-sm mb-0">
+												<form:select class="custom-select" path="nomineedistrict"
+													required="required" id="nomineedistrictid"
+													style="border-top: transparent;border-left: transparent;border-right: transparent;">
+													<form:option value="${fdform.nomineedistrict }"
+														selected="selected">${fdform.nomineedistrict }</form:option>
+												</form:select>
+												<small id="nomineedistrictvalidity"
+													class="form-text text-danger"></small>
+											</div>
+										</div>
+
+
+									</div>
+
+									<div class="form-row">
+										<div class="col-md-6">
+											<div class="md-form form-sm mb-0">
+												<form:input type="text" path="nomineecity"
+													class="form-control" maxlength="32" id="nomineecityid"
+													aria-label="Email" placeholder="City" />
+											</div>
+										</div>
+
+										<div class="col-md-6">
+											<div class="md-form form-sm mb-0">
+												<form:input type="text" path="nomineecitypincode"
+													class="form-control pincodeid" minlength="6" maxlength="6"
+													pattern="[0-9]*" id="nomineecitypincodeid"
+													aria-label="Email" placeholder="Pincode" />
+												<small id="nomineepancodevalidity"
+													class="form-text text-danger"></small>
+											</div>
+										</div>
+
+									</div>
+
+
+
+									<!--End of Nominee Details Block  -->
+
+
+								</div>
+							</div>
+						</div>
+					</div>
+					<!--  -->
+
+				</div>
 
 			</div>
+			<!--End of 1st TAB  -->
 
 			<div class="tab">
 
@@ -724,6 +956,13 @@ button:hover {
 											</div>
 											<div class="col-8">
 												<label id="bankbranchid">${fdform.bankbranch }</label>
+											</div>
+											
+											<div class="col-4">
+												<label class="desc">MICR Code</label>
+											</div>
+											<div class="col-8">
+												<label id="micrcodeid">${fdform.micrCode }</label>
 											</div>
 
 										</div>
@@ -784,6 +1023,7 @@ button:hover {
 												id="confirmaccountNumberid" required="required" />
 											<label for="confirmaccountNumberid">Confirm Account
 												No.</label>
+											<small id="accountvalidationmsg"></small>
 										</div>
 									</div>
 								</div>
@@ -871,12 +1111,12 @@ button:hover {
 												id="taxresidentOtherIndia">
 												<div class="btn-group btn-group-sm btn-group-toggle"
 													data-toggle="buttons" id="taxResOtherThanIndiaid">
-													<label class="btn btn-secondary"> <form:radiobutton
+													<label class="btn btn-secondary ${fdform.taxResidentOtherCountry == 'YES' ? 'active' : ''}"> <form:radiobutton
 															path="taxResidentOtherCountry" value="YES"
-															autocomplete="off" /> YES
-													</label> <label class="btn btn-secondary active"> <form:radiobutton
+															autocomplete="off" checked="${fdform.taxResidentOtherCountry == 'YES' ? 'checked' : ''}" /> YES
+													</label> <label class="btn btn-secondary ${fdform.taxResidentOtherCountry == 'NO' ? 'active' : ''}"> <form:radiobutton
 															path="taxResidentOtherCountry" value="NO"
-															autocomplete="off" checked="checked" /> NO
+															autocomplete="off" checked="${fdform.taxResidentOtherCountry == 'NO' ? 'checked' : ''}" /> NO
 													</label>
 												</div>
 											</div>
@@ -891,13 +1131,12 @@ button:hover {
 												holder a green card holder? </label>
 											<div class="col-md-4 text-md-right" id="greencardholderid">
 												<div class="btn-group btn-group-sm btn-group-toggle"
-													data-toggle="buttons" id="taxResOtherThanIndiaid">
-													<label class="btn btn-secondary"> <form:radiobutton
-															path="greenCardHolder" value="YES" autocomplete="off" />
+													data-toggle="buttons" id="greenCardHolderbuttonid">
+													<label class="btn btn-secondary ${fdform.greenCardHolder == 'YES' ? 'active' : ''}"> <form:radiobutton
+															path="greenCardHolder" value="YES" checked="${fdform.greenCardHolder == 'YES' ? 'checked' : ''}" />
 														YES
-													</label> <label class="btn btn-secondary active"> <form:radiobutton
-															path="greenCardHolder" value="NO" autocomplete="off"
-															checked="checked" /> NO
+													</label> <label class="btn btn-secondary ${fdform.greenCardHolder == 'NO' ? 'active' : ''}"> <form:radiobutton
+															path="greenCardHolder" value="NO" checked="${fdform.greenCardHolder == 'NO' ? 'checked' : ''}" /> NO
 													</label>
 												</div>
 											</div>
@@ -905,7 +1144,7 @@ button:hover {
 									</div>
 								</div>
 
-								<div class="taxResidentOutsideIndia" style="display: none;">
+								<div class="taxResidentOutsideIndia" style="display: ${fdform.taxResidentOtherCountry == 'NO' ? 'none' : 'block'}">
 									<div class="form-row"
 										style="border: 1px solid #d4d8dc; padding: 5px; overflow-x: scroll;">
 										<p style="color: red; font-size: 11px;">
@@ -914,7 +1153,7 @@ button:hover {
 											below <br>Note: To also include USA where the individual
 											is a citizen/green card holder of USA
 										</p>
-										<table class="table table-sm table-bordered"
+										<table class="table table-sm table-bordered table-responsive"
 											id="mfprofiledata2">
 											<thead class="#3949ab indigo darken-1 white-text">
 												<tr>
@@ -934,10 +1173,35 @@ button:hover {
 													<th scope="col" valign="middle">Tel. No. Primary</th>
 													<th scope="col" valign="middle">Mobile No. Primary</th>
 													<th scope="col" valign="middle">STD Code Other</th>
+													<th scope="col" valign="middle">Action</th>
 												</tr>
 											</thead>
 
-											<tbody id="mfdatatbody2">
+											<tbody id="fdforeigntaxdetailsbody">
+												<c:forEach var="listVar" items="${fdform.foreignTaxDetails}" varStatus="loop">
+													<tr>
+														<%-- <td><form:input class='form-control form-control-sm' id="foreignTaxDetails[${loop.index}].taxid" type="text" path="foreignTaxDetails[${loop.index}].taxid" value="${listVar.taxCountry}" /></td> --%>
+														<td><form:input class="form-control form-control-sm" readonly="true" id="foreignTaxDetails[${loop.index}].taxCountry" type="text" path="foreignTaxDetails[${loop.index}].taxCountry" value="${listVar.taxCountry}" /></td>
+														<td><form:input class="form-control form-control-sm" id="foreignTaxDetails[${loop.index}].taxidentificationtype" type="text" path="foreignTaxDetails[${loop.index}].taxidentificationtype" value="${listVar.taxidentificationtype}" /></td>
+														
+														<td><form:input class="form-control form-control-sm" id="foreignTaxDetails[${loop.index}].taxidentificationno" type="text" path="foreignTaxDetails[${loop.index}].taxidentificationno" value="${listVar.taxidentificationno}" /></td>
+														<td><form:input class="form-control form-control-sm" id="foreignTaxDetails[${loop.index}].trcexpirydate" type="text" path="foreignTaxDetails[${loop.index}].trcexpirydate" value="${listVar.trcexpirydate}" /></td>
+														<td><form:input class="form-control form-control-sm" id="foreignTaxDetails[${loop.index}].taxaddresstype" type="text" path="foreignTaxDetails[${loop.index}].taxaddresstype" value="${listVar.taxaddresstype}" /></td>
+														<td><form:input class="form-control form-control-sm" id="foreignTaxDetails[${loop.index}].ftaxaddress1" type="text" path="foreignTaxDetails[${loop.index}].ftaxaddress1" value="${listVar.ftaxaddress1}" /></td>
+														<td><form:input class="form-control form-control-sm" id="foreignTaxDetails[${loop.index}].ftaxaddress2" type="text" path="foreignTaxDetails[${loop.index}].ftaxaddress2" value="${listVar.ftaxaddress2}" /></td>
+														<td><form:input class="form-control form-control-sm" id="foreignTaxDetails[${loop.index}].ftaxcity" type="text" path="foreignTaxDetails[${loop.index}].ftaxcity" value="${listVar.ftaxcity}" /></td>
+														<td><form:input class="form-control form-control-sm" id="foreignTaxDetails[${loop.index}].ftaxstate" type="text" path="foreignTaxDetails[${loop.index}].ftaxstate" value="${listVar.ftaxstate}" /></td>
+														<td><form:input class="form-control form-control-sm" id="foreignTaxDetails[${loop.index}].ftaxpostalcode" type="text" path="foreignTaxDetails[${loop.index}].ftaxpostalcode" value="${listVar.ftaxpostalcode}" /></td>
+														<td><form:input class="form-control form-control-sm" id="foreignTaxDetails[${loop.index}].ftaxlandmark" type="text" path="foreignTaxDetails[${loop.index}].ftaxlandmark" value="${listVar.ftaxlandmark}" /></td>
+														<td><form:input class="form-control form-control-sm" id="foreignTaxDetails[${loop.index}].stdcodeprimary" type="text" path="foreignTaxDetails[${loop.index}].stdcodeprimary" value="${listVar.stdcodeprimary}" /></td>
+														<td><form:input class="form-control form-control-sm" id="foreignTaxDetails[${loop.index}].primarytelno" type="text" path="foreignTaxDetails[${loop.index}].primarytelno" value="${listVar.primarytelno}" /></td>
+														<td><form:input class="form-control form-control-sm" id="foreignTaxDetails[${loop.index}].ftaxmobileno" type="text" path="foreignTaxDetails[${loop.index}].ftaxmobileno" value="${listVar.ftaxmobileno}" /></td>
+														<td><form:input class="form-control form-control-sm" id="foreignTaxDetails[${loop.index}].ftaxstdother" type="text" path="foreignTaxDetails[${loop.index}].ftaxstdother" value="${listVar.ftaxstdother}" /></td>
+														<td style="text-align: center;">
+															<i class='fas fa-minus-circle' style='color: red;cursor: pointer;' onclick="deleteRow(this)"></i>
+														</td>
+													</tr>
+												</c:forEach>
 											</tbody>
 
 										</table>
@@ -953,11 +1217,11 @@ button:hover {
 											<div class="md-form mt-8">
 												<form:select path="citizenship" class="custom-select"
 													required="required" multiple="multiple">
-													<option value="" selected="selected">Open this
-														select menu</option>
-													<option value="1">One</option>
+													<option value="" selected="selected">Select</option>
+													<!-- <option value="1">One</option>
 													<option value="2">Two</option>
-													<option value="3">Three</option>
+													<option value="3">Three</option> -->
+													<form:options items="${ckyccountrymaster }"/>
 												</form:select>
 											</div>
 										</div>
@@ -993,29 +1257,55 @@ button:hover {
 							aria-labelledby="headingSix" data-parent="#accordion6">
 							<div class="card-body">
 								<div class="form-row">
-									<div class="col-md-4">
+
+									<div class="col-md-3">
 										<div class="input-group input-group-sm mb-3">
 											<div class="input-group-prepend" style="margin: auto;">
-											<img
+												<img
 													src="<c:url value="${contextcdn}/resources/images/invest/upload22.svg"/>"
 													class="img-fluid"
 													style="height: 1.5rem; float: left; margin-right: .5rem;">
 											</div>
 											<div class="custom-file">
-													<%-- <form:input type="file" path="kycphotoproof" id="photoid" onchange="readURL(this,'photospace');"  accept="image/jpg,image/jpeg,application/pdf" /> --%>
-													<form:input type="file" class="custom-file-input" path="kycphotoproof" id="photoid" accept="image/jpg,image/jpeg,application/pdf" />
-													 <label
-													class="custom-file-label" for="photoid">Upload Photo (1MB)</label>
+												<form:input type="file" class="custom-file-input"
+													path="canecelledcheque" id="canecelledchequeid"
+													accept="image/jpg,image/jpeg,application/pdf" />
+												<label class="custom-file-label" for="canecelledchequeid">Cancelled
+													Cheque(1MB)</label>
 											</div>
 											<!-- <div>
 											<img id="photospace" src="#" alt="your image" />
 											</div> -->
-											
+
 										</div>
 										<small id="photomsg" class="form-text text-danger"></small>
 									</div>
 
-									<div class="col-md-4">
+									<div class="col-md-3">
+										<div class="input-group input-group-sm mb-3">
+											<div class="input-group-prepend" style="margin: auto;">
+												<img
+													src="<c:url value="${contextcdn}/resources/images/invest/upload22.svg"/>"
+													class="img-fluid"
+													style="height: 1.5rem; float: left; margin-right: .5rem;">
+											</div>
+											<div class="custom-file">
+												<%-- <form:input type="file" path="kycphotoproof" id="photoid" onchange="readURL(this,'photospace');"  accept="image/jpg,image/jpeg,application/pdf" /> --%>
+												<form:input type="file" class="custom-file-input"
+													path="kycphotoproof" id="photoid"
+													accept="image/jpg,image/jpeg,application/pdf" />
+												<label class="custom-file-label" for="photoid">Upload
+													Photo (1MB)</label>
+											</div>
+											<!-- <div>
+											<img id="photospace" src="#" alt="your image" />
+											</div> -->
+
+										</div>
+										<small id="photomsg" class="form-text text-danger"></small>
+									</div>
+
+									<div class="col-md-3">
 										<div class="input-group input-group-sm mb-3">
 											<div class="input-group-prepend" style="margin: auto;">
 												<img
@@ -1026,16 +1316,18 @@ button:hover {
 											<div class="custom-file">
 												<!-- <input type="file" class="custom-file-input" id="panproofid"> -->
 												<%-- <form:input type="file" path="kycpanproof" id="panproofid" onchange="readURL(this,'panspace');"  accept="image/jpg,image/jpeg,application/pdf" /> --%>
-												<form:input type="file" path="kycpanproof" id="panproofid" accept="image/jpg,image/jpeg,application/pdf" />
-												<label class="custom-file-label" for="panproofid">PAN Proof (1MB)</label>
+												<form:input type="file" path="kycpanproof" id="panproofid"
+													accept="image/jpg,image/jpeg,application/pdf" />
+												<label class="custom-file-label" for="panproofid">PAN
+													Proof (1MB)</label>
 											</div>
-											
+
 											<!-- <img id="panspace" src="#" alt="Your PAN" /> -->
 										</div>
 										<small id="panmsg" class="form-text text-danger"></small>
 									</div>
 
-									<div class="col-md-4">
+									<div class="col-md-3">
 										<div class="input-group input-group-sm mb-3">
 											<div class="input-group-prepend" style="margin: auto;">
 												<img
@@ -1046,13 +1338,47 @@ button:hover {
 											<div class="custom-file">
 												<!-- <input type="file" class="custom-file-input" id="addproofid"> -->
 												<%-- <form:input type="file" path="kycaddressproof" id="addproofid" onchange="readURL(this,'addressspace');"  accept="image/jpg,image/jpeg,application/pdf" /> --%>
-												<form:input type="file" path="kycaddressproof" id="addproofid" accept="image/jpg,image/jpeg,application/pdf" />
-												<label class="custom-file-label" for="addproofid">Address Proof (1MB)</label>
-												<small></small>
+												<form:input type="file" path="kycaddressproof"
+													id="addproofid"
+													accept="image/jpg,image/jpeg,application/pdf" />
+												<label class="custom-file-label" for="addproofid">Address
+													Proof (1MB)</label> <small></small>
 											</div>
 											<!-- <img id="addressspace" src="#" alt="Your Address Proof" /> -->
 										</div>
 										<small id="addmsg" class="form-text text-danger"></small>
+
+										<div class="md-form form-sm mb-0">
+											<form:select class="custom-select" path="addressproofType"
+												required="required" id="addressproofTypeid"
+												style="border-top: transparent;border-left: transparent;border-right: transparent;">
+												<form:option value="NA" selected="selected"> Address Proof Type</form:option>
+												<form:option value="A">Passport</form:option>
+												<form:option value="B">Voter ID</form:option>
+												<form:option value="D">Driving License</form:option>
+												<form:option value="E">UID</form:option>
+											</form:select>
+										</div>
+
+										<div class="md-form form-sm mb-0">
+											<form:input type="text" path="addressproofrefno"
+												class="form-control" minlenth="1" maxlength="24"
+												id="addressproofrefnoid" />
+											<label for="addressproofrefnoid">Reference No.</label>
+										</div>
+
+										<div class="md-form form-sm" style="display: <c:if test="${fdform.addressproofpxpirydate != 'D' || fdform.addressproofpxpirydate != 'E'}">none</c:if>" id="expirydatebox">
+											<i class="fas fa-calendar-day prefix"></i>
+											<form:input type="text" path="addressproofpxpirydate"
+												data-provide="datepicker" data-date-format="dd/mm/yyyy"
+												data-date-start-date="+1d" data-date-end-date="+20y"
+												maxlength="10"
+												class="form-control form-control-custom datepicker"
+												id="addressproofpxpirydateid" />
+											<label for="dobid">Expiry Date</label>
+										</div>
+
+
 									</div>
 
 								</div>
@@ -1063,6 +1389,7 @@ button:hover {
 								<form:hidden path="schemeCode" />
 								<form:hidden path="saveAmount" />
 								<form:hidden path="interestRate" id="intratetoggle" />
+								<form:hidden path="cpTrnasRefNo" />
 
 							</div>
 						</div>
@@ -1294,6 +1621,34 @@ button:hover {
 									</div>
 								</div>
 								<!-- End of row-  -->
+								
+								<div class="row">
+									<!-- New row  -->
+									<div class="col-md-6 col-lg-6">
+										<div class="row">
+											<div class="col-4">
+												<label class="desc">Nominee Chosen</label>
+											</div>
+											<div class="col-8">
+												<label class="disp" id="nomineechosendisplay"></label>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6 col-lg-6">
+										<div class="row">
+											<div class="col-4">
+												<label class="desc">Tax Resident outside India?</label>
+											</div>
+											<div class="col-8">
+												<label class="disp" id="taxresidentoutsideIndia"></label>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- End of row-  -->
+								
+								
+								
 								<!-- ----------------------------- -->
 							</div>
 						</div>
@@ -1322,9 +1677,6 @@ button:hover {
 						onclick="nextPrev(1)">Next</button>
 				</div>
 			</div>
-
-
-
 		</form:form>
 
 

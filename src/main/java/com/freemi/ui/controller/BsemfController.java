@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -83,7 +84,7 @@ import com.freemi.entity.investment.SelectMFFund;
 import com.freemi.entity.investment.TransactionStatus;
 import com.freemi.services.interfaces.BseEntryManager;
 import com.freemi.services.interfaces.InvestmentConnectorBseInterface;
-import com.freemi.services.interfaces.MailSenderHandler;
+import com.freemi.services.interfaces.MailSenderInterface;
 import com.freemi.services.interfaces.ProfileRestClientService;
 
 @Controller
@@ -109,7 +110,7 @@ public class BsemfController {
 	Environment env;
 
 	@Autowired
-	MailSenderHandler mailSenderHandler;
+	MailSenderInterface mailSenderInterface;
 
 	@RequestMapping(value = "/mutual-funds/register", method = RequestMethod.GET)
 	public String registerUserMfGet(
@@ -405,7 +406,7 @@ public class BsemfController {
 
 
 					logger.info("registerBsepost(): Customer registration successful. Drop mail to support team.. ");
-					mailSenderHandler.sendMFRegisterNotification("MF_REG_NOTIFICATION", investForm.getInvName(), investForm.getMobile(), investForm.getEmail(), "NA", investForm.getPan1(), investForm.getPan1KycVerified());
+					mailSenderInterface.sendMFRegisterNotification("MF_REG_NOTIFICATION", investForm.getInvName(), investForm.getMobile(), investForm.getEmail(), "NA", investForm.getPan1(), investForm.getPan1KycVerified());
 
 
 					logger.info("Pushing customer FATCA details to BSE");
@@ -1566,7 +1567,7 @@ public class BsemfController {
 
 						logger.info("Transaction processed successfully.. Processing to send mail for transaction id- "
 								+ selectedFund.getTransactionID());
-						mailSenderHandler.mfpurchasenotofication(selectedFund, userDetails, "purchase");
+						mailSenderInterface.mfpurchasenotofication(selectedFund, userDetails, "purchase");
 					} catch (Exception e) {
 						logger.error("Failed to send mail to customer after purchase..", e);
 					}
@@ -1831,7 +1832,7 @@ public class BsemfController {
 
 						logger.info("Transaction processed successfully.. Processing to send mail for transaction id- "
 								+ fundTransaction.getTransactionID());
-						mailSenderHandler.mfpurchasenotofication(fundTransaction, userDetails, "purchase");
+						mailSenderInterface.mfpurchasenotofication(fundTransaction, userDetails, "purchase");
 					} catch (Exception e) {
 						logger.error("Failed to send mail to customer after purchase..", e);
 					}
@@ -2103,7 +2104,7 @@ public class BsemfController {
 
 						logger.info("Transaction processed successfully.. Processing to send mail for transaction id- "
 								+ fundTransaction.getTransactionID());
-						mailSenderHandler.mfpurchasenotofication(fundTransaction, userDetails, "redemption");
+						mailSenderInterface.mfpurchasenotofication(fundTransaction, userDetails, "redemption");
 					} catch (Exception e) {
 						logger.error("Failed to send mail to customer after purchase..", e);
 					}
@@ -2280,7 +2281,7 @@ public class BsemfController {
 									: fundTransaction.getMobile());
 
 					logger.info("bsecancelOrderPost(): Transaction processed successfully.. Processing to send mail for transaction id- "+ fundTransaction.getTransactionID());
-					mailSenderHandler.mfpurchasenotofication(fundTransaction, userDetails, "cancel");
+					mailSenderInterface.mfpurchasenotofication(fundTransaction, userDetails, "cancel");
 				} catch (Exception e) {
 					logger.error("bsecancelOrderPost(): Failed to send mail to customer after purchase..", e);
 				}
@@ -2772,5 +2773,262 @@ public class BsemfController {
 	 * logger.info("Controlleradvice- page not found"+ request.getRequestURI());
 	 * return "pagenotfound"; }
 	 */
+	
+	 @ModelAttribute("bsecountryofbirth")
+	    public Map<String, String> getckyccountrymaster() {
+		Map<String, String> countrylist = new TreeMap<String,String>();
+		countrylist.put("AD","Andorra");
+		countrylist.put("AE","United Arab Emirates");
+		countrylist.put("AF","Afghanistan");
+		countrylist.put("AG","Antigua And Barbuda");
+		countrylist.put("AI","Anguilla");
+		countrylist.put("AL","Albania");
+		countrylist.put("AM","Armenia");
+		countrylist.put("AN","Netherlands Antilles");
+		countrylist.put("AO","Angola");
+		countrylist.put("AQ","Antarctica");
+		countrylist.put("AR","Argentina");
+		countrylist.put("AS","American Samoa");
+		countrylist.put("AT","Austria");
+		countrylist.put("AU","Australia");
+		countrylist.put("AW","Aruba");
+		countrylist.put("AX","Aland Islands");
+		countrylist.put("AZ","Azerbaijan");
+		countrylist.put("BA","Bosnia And Herzegovina");
+		countrylist.put("BB","Barbados");
+		countrylist.put("BD","Bangladesh");
+		countrylist.put("BE","Belgium");
+		countrylist.put("BF","Burkina Faso");
+		countrylist.put("BG","Bulgaria");
+		countrylist.put("BH","Bahrain");
+		countrylist.put("BI","Burundi");
+		countrylist.put("BJ","Benin");
+		countrylist.put("BL","Saint Barthelemy");
+		countrylist.put("BM","Bermuda");
+		countrylist.put("BN","Brunei Darussalam");
+		countrylist.put("BO","Bolivia");
+		countrylist.put("BQ","Bonaire, Sint Eustatius And Saba");
+		countrylist.put("BR","Brazil");
+		countrylist.put("BS","Bahamas");
+		countrylist.put("BT","Bhutan");
+		countrylist.put("BV","Bouvet Island");
+		countrylist.put("BW","Botswana");
+		countrylist.put("BY","Belarus");
+		countrylist.put("BZ","Belize");
+		countrylist.put("CA","Canada");
+		countrylist.put("CC","Cocos (Keeling) Islands");
+		countrylist.put("CD","Congo, The Democratic Republic Of The");
+		countrylist.put("CF","Central African Republic");
+		countrylist.put("CG","Congo");
+		countrylist.put("CH","Switzerland");
+		countrylist.put("CI","Côte Divoire");
+		countrylist.put("CK","Cook Islands");
+		countrylist.put("CL","Chile");
+		countrylist.put("CM","Cameroon");
+		countrylist.put("CN","China");
+		countrylist.put("CO","Colombia");
+		countrylist.put("CR","Costa Rica");
+		countrylist.put("CU","Cuba");
+		countrylist.put("CV","Cape Verde");
+		countrylist.put("CW","Curacao");
+		countrylist.put("CX","Christmas Island");
+		countrylist.put("CY","Cyprus");
+		countrylist.put("CZ","Czech Republic");
+		countrylist.put("DE","Germany");
+		countrylist.put("DJ","Djibouti");
+		countrylist.put("DK","Denmark");
+		countrylist.put("DM","Dominica");
+		countrylist.put("DO","Dominican Republic");
+		countrylist.put("DZ","Algeria");
+		countrylist.put("EC","Ecuador");
+		countrylist.put("EE","Estonia");
+		countrylist.put("EG","Egypt");
+		countrylist.put("EH","Western Sahara");
+		countrylist.put("ER","Eritrea");
+		countrylist.put("ES","Spain");
+		countrylist.put("ET","Ethiopia");
+		countrylist.put("FI","Finland");
+		countrylist.put("FJ","Fiji");
+		countrylist.put("FK","Falkland Islands (Malvinas)");
+		countrylist.put("FM","Micronesia, Federated States Of");
+		countrylist.put("FO","Faroe Islands");
+		countrylist.put("FR","France");
+		countrylist.put("GA","Gabon");
+		countrylist.put("GB","United Kingdom");
+		countrylist.put("GD","Grenada");
+		countrylist.put("GE","Georgia");
+		countrylist.put("GF","French Guiana");
+		countrylist.put("GG","Guernsey");
+		countrylist.put("GH","Ghana");
+		countrylist.put("GI","Gibraltar");
+		countrylist.put("GL","Greenland");
+		countrylist.put("GM","Gambia");
+		countrylist.put("GN","Guinea");
+		countrylist.put("GP","Guadeloupe");
+		countrylist.put("GQ","Equatorial Guinea");
+		countrylist.put("GR","Greece");
+		countrylist.put("GS","South Georgia And The South Sandwich Islands");
+		countrylist.put("GT","Guatemala");
+		countrylist.put("GU","Guam");
+		countrylist.put("GW","Guinea-Bissau");
+		countrylist.put("GY","Guyana");
+		countrylist.put("HK","Hong Kong");
+		countrylist.put("HM","Heard Island And McDonald Islands");
+		countrylist.put("HN","Honduras");
+		countrylist.put("HR","Croatia");
+		countrylist.put("HT","Haiti");
+		countrylist.put("HU","Hungary");
+		countrylist.put("ID","Indonesia");
+		countrylist.put("IE","Ireland");
+		countrylist.put("IL","Israel");
+		countrylist.put("IM","Isle Of Man");
+		countrylist.put("IO","British Indian Ocean Territory");
+		countrylist.put("IQ","Iraq");
+		countrylist.put("IR","Iran, Islamic Republic Of");
+		countrylist.put("IS","Iceland");
+		countrylist.put("IT","Italy");
+		countrylist.put("JE","Jersey");
+		countrylist.put("JM","Jamaica");
+		countrylist.put("JO","Jordan");
+		countrylist.put("JP","Japan");
+		countrylist.put("KE","Kenya");
+		countrylist.put("KG","Kyrgyzstan");
+		countrylist.put("KH","Cambodia");
+		countrylist.put("KI","Kiribati");
+		countrylist.put("KM","Comoros");
+		countrylist.put("KN","Saint Kitts And Nevis");
+		countrylist.put("KP","Korea, Democratic Peoples Republic Of");
+		countrylist.put("KR","Korea, Republic Of");
+		countrylist.put("KW","Kuwait");
+		countrylist.put("KY","Cayman Islands");
+		countrylist.put("KZ","Kazakhstan");
+		countrylist.put("LA","Lao Peoples Democratic Republic");
+		countrylist.put("LB","Lebanon");
+		countrylist.put("LC","Saint Lucia");
+		countrylist.put("LI","Liechtenstein");
+		countrylist.put("LK","Sri Lanka");
+		countrylist.put("LR","Liberia");
+		countrylist.put("LS","Lesotho");
+		countrylist.put("LT","Lithuania");
+		countrylist.put("LU","Luxembourg");
+		countrylist.put("LV","Latvia");
+		countrylist.put("LY","Libyan Arab Jamahiriya");
+		countrylist.put("MA","Morocco");
+		countrylist.put("MC","Monaco");
+		countrylist.put("MD","Moldova, Republic Of");
+		countrylist.put("ME","Montenegro");
+		countrylist.put("MF","Saint Martin");
+		countrylist.put("MG","Madagascar");
+		countrylist.put("MH","Marshall Islands");
+		countrylist.put("MK","Macedonia, The Former Yugoslav Republic Of");
+		countrylist.put("ML","Mali");
+		countrylist.put("MM","Myanmar");
+		countrylist.put("MN","Mongolia");
+		countrylist.put("MO","Macao");
+		countrylist.put("MP","Northern Mariana Islands");
+		countrylist.put("MQ","Martinique");
+		countrylist.put("MR","Mauritania");
+		countrylist.put("MS","Montserrat");
+		countrylist.put("MT","Malta");
+		countrylist.put("MU","Mauritius");
+		countrylist.put("MV","Maldives");
+		countrylist.put("MW","Malawi");
+		countrylist.put("MX","Mexico");
+		countrylist.put("MY","Malaysia");
+		countrylist.put("MZ","Mozambique");
+		countrylist.put("NA","Namibia");
+		countrylist.put("NC","New Caledonia");
+		countrylist.put("NE","Niger");
+		countrylist.put("NF","Norfolk Island");
+		countrylist.put("NG","Nigeria");
+		countrylist.put("NI","Nicaragua");
+		countrylist.put("NL","Netherlands");
+		countrylist.put("NO","Norway");
+		countrylist.put("NP","Nepal");
+		countrylist.put("NR","Nauru");
+		countrylist.put("NU","Niue");
+		countrylist.put("NZ","New Zealand");
+		countrylist.put("OM","Oman");
+		countrylist.put("PA","Panama");
+		countrylist.put("PE","Peru");
+		countrylist.put("PF","French Polynesia");
+		countrylist.put("PG","Papua New Guinea");
+		countrylist.put("PH","Philippines");
+		countrylist.put("PK","Pakistan");
+		countrylist.put("PL","Poland");
+		countrylist.put("PM","Saint Pierre And Miquelon");
+		countrylist.put("PN","Pitcairn");
+		countrylist.put("PR","Puerto Rico");
+		countrylist.put("PS","Palestinian Territory, Occupied");
+		countrylist.put("PT","Portugal");
+		countrylist.put("PW","Palau");
+		countrylist.put("PY","Paraguay");
+		countrylist.put("QA","Qatar");
+		countrylist.put("RE","Reunion Island");
+		countrylist.put("RO","Romania");
+		countrylist.put("RS","Serbia");
+		countrylist.put("RU","Russian Federation");
+		countrylist.put("RW","Rwanda");
+		countrylist.put("SA","Saudi Arabia");
+		countrylist.put("SB","Solomon Islands");
+		countrylist.put("SC","Seychelles");
+		countrylist.put("SD","Sudan");
+		countrylist.put("SE","Sweden");
+		countrylist.put("SG","Singapore");
+		countrylist.put("SH","Saint Helena, Ascension And Tristan da Cunha");
+		countrylist.put("SI","Slovenia");
+		countrylist.put("SJ","Svalbard And Jan Mayen Islands");
+		countrylist.put("SK","Slovakia");
+		countrylist.put("SL","Sierra Leone");
+		countrylist.put("SM","San Marino");
+		countrylist.put("SN","Senegal");
+		countrylist.put("SO","Somalia");
+		countrylist.put("SR","Suriname");
+		countrylist.put("SS","South Sudan");
+		countrylist.put("ST","Sao Tome And Principe");
+		countrylist.put("SV","El Salvador");
+		countrylist.put("SX","Sint Maarten (Dutch Part)");
+		countrylist.put("SY","Syrian Arab Republic");
+		countrylist.put("SZ","Swaziland");
+		countrylist.put("TC","Turks And Caicos Islands");
+		countrylist.put("TD","Chad");
+		countrylist.put("TF","French Southern Territories");
+		countrylist.put("TG","Togo");
+		countrylist.put("TH","Thailand");
+		countrylist.put("TJ","Tajikistan");
+		countrylist.put("TK","Tokelau");
+		countrylist.put("TL","Timor-Leste");
+		countrylist.put("TM","Turkmenistan");
+		countrylist.put("TN","Tunisia");
+		countrylist.put("TO","Tonga");
+		countrylist.put("TR","Turkey");
+		countrylist.put("TT","Trinidad And Tobago");
+		countrylist.put("TV","Tuvalu");
+		countrylist.put("TW","Taiwan, Province Of China");
+		countrylist.put("TZ","Tanzania, United Republic Of");
+		countrylist.put("UA","Ukraine");
+		countrylist.put("UG","Uganda");
+		countrylist.put("UM","United States Minor Outlying Islands");
+		countrylist.put("US","United States");
+		countrylist.put("UY","Uruguay");
+		countrylist.put("UZ","Uzbekistan");
+		countrylist.put("VA","Vatican City State");
+		countrylist.put("VC","Saint Vincent And The Grenadines");
+		countrylist.put("VE","Venezuela, Bolivarian Republic Of");
+		countrylist.put("VG","Virgin Islands, British");
+		countrylist.put("VI","Virgin Islands, U.S.");
+		countrylist.put("VN","Viet Nam");
+		countrylist.put("VU","Vanuatu");
+		countrylist.put("WF","Wallis And Futuna");
+		countrylist.put("WS","Samoa");
+		countrylist.put("XX","Not categorised");
+		countrylist.put("YE","Yemen");
+		countrylist.put("YT","Mayotte");
+		countrylist.put("ZA","South Africa");
+		countrylist.put("ZM","Zambia");
+		countrylist.put("ZW","Zimbabwe");
+		countrylist.put("ZZ","Others");
+		return countrylist;
+	 }
 
 }

@@ -83,10 +83,10 @@ background: linear-gradient(to left, #1CB5E0, #000046); /* W3C, IE 10+/ Edge, Fi
           aria-expanded="false">
           <i class="fas fa-user"></i> <c:out value="${loggedSession }"></c:out> </a>
         <div class="dropdown-menu dropdown-menu-right dropdown-info" aria-labelledby="link6">
-          <a class="dropdown-item" href="/products/my-dashboard"><i
+          <a class="dropdown-item" href="https://www.freemi.in/products/my-dashboard"><i
 									class="fas fa-archive" style="color: rgb(84, 84, 236);"></i> My
 									Dash-board</a>
-          <a class="dropdown-item" href="/products/profile"><i
+          <a class="dropdown-item" href="https://www.freemi.in/products/profile"><i
 									class="fas fa-user"></i> Profile</a>
           <a class="dropdown-item" href="/products/logout" onclick="clearSessionData()"><i
 									class="fas fa-power-off" style="color: rgb(238, 56, 56)"></i>
@@ -97,13 +97,13 @@ background: linear-gradient(to left, #1CB5E0, #000046); /* W3C, IE 10+/ Edge, Fi
 			<c:otherwise>
 			<li class="nav-item signup-styling" style="display:-webkit-inline-box;">
 			<i class="fas fa-user-plus d-block d-sm-none" style="margin-top: 0.55rem;"></i>
-        			<a class="nav-link" href="/products/register"> <span class="">
+        			<a class="nav-link" href="https://www.freemi.in/products/register"> <span class="">
 									Sign up
 							</span></a>
      		</li>
      		<li class="nav-item login-styling" style="display:-webkit-inline-box;">
      		<i class="fas fa-sign-in-alt d-block d-sm-none" style="margin-top: 0.55rem;"></i>
-        			<a class="nav-link" href="/products/login"><span class="">
+        			<a class="nav-link" href="https://www.freemi.in/products/login"><span class="">
 									Log In 
 							</span></a>
      		</li>

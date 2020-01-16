@@ -144,6 +144,7 @@ public class CommonConstants {
 			add("/products/fixed-deposit/view-purchase-history");
 			add("/products/mutual-funds/pending-payments");
 			add("/products/mutual-funds/cancelOrder.do");
+			add("/products/fixed-deposit-renew");
 		}
 	};
 	

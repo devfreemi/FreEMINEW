@@ -1,8 +1,11 @@
 var district =[];
 var pincodearr =[];
 var statebasedData;
+var statedatamap = new Map();
 var tempstate;
 var tempdist;
+var index=0;
+var foreigntaxcountry = new Map();
 
 /*------------------------------------------------------------------------------------------------------------*/
 
@@ -11,50 +14,50 @@ var tempdist;
 
 /*------------------------------------------------------------------------------------------------------------*/
 function readURL(input,elementid) {
-    if (input.files && input.files[0]) {
-        var reader = new FileReader();
+	if (input.files && input.files[0]) {
+		var reader = new FileReader();
 
-        reader.onload = function (e) {
-            $('#'+elementid)
-                .attr('src', e.target.result)
-                .width(150)
-                .height(200);
-        };
+		reader.onload = function (e) {
+			$('#'+elementid)
+			.attr('src', e.target.result)
+			.width(150)
+			.height(200);
+		};
 
-        reader.readAsDataURL(input.files[0]);
-    }
+		reader.readAsDataURL(input.files[0]);
+	}
 }
 
 
 document.querySelector('#photoid').addEventListener('change',function(e){
-	  var fileName = document.getElementById("photoid").files[0].name;
-	  var nextSibling = e.target.nextElementSibling;
-	  nextSibling.innerText = fileName;
-	  if(this.files[0].size/1024 > 1000){
-		  $("#photomsg").text("File size exceeded limit!");
-	  }
-//	  console.log(this.files[0].size/1048576 + "Mb");
-	});
+	var fileName = document.getElementById("photoid").files[0].name;
+	var nextSibling = e.target.nextElementSibling;
+	nextSibling.innerText = fileName;
+	if(this.files[0].size/1024 > 1000){
+		$("#photomsg").text("File size exceeded limit!");
+	}
+//	console.log(this.files[0].size/1048576 + "Mb");
+});
 
 document.querySelector('#panproofid').addEventListener('change',function(e){
-	  var fileName = document.getElementById("panproofid").files[0].name;
-	  var nextSibling = e.target.nextElementSibling;
-	  nextSibling.innerText = fileName;
-	  if(this.files[0].size/1024 > 1000){
-		  $("#panmsg").text("File size exceeded limit!");
-	  }
-//	  console.log(this.files[0].size/1024 + "Kb");
-	});
+	var fileName = document.getElementById("panproofid").files[0].name;
+	var nextSibling = e.target.nextElementSibling;
+	nextSibling.innerText = fileName;
+	if(this.files[0].size/1024 > 1000){
+		$("#panmsg").text("File size exceeded limit!");
+	}
+//	console.log(this.files[0].size/1024 + "Kb");
+});
 
 document.querySelector('#addproofid').addEventListener('change',function(e){
-	  var fileName = document.getElementById("addproofid").files[0].name;
-	  var nextSibling = e.target.nextElementSibling;
-	  nextSibling.innerText = fileName;
-	  if(this.files[0].size/1024 > 1000){
-		  $("#addmsg").text("File size exceeded limit!");
-	  }
-//	  console.log(this.files[0].size/1024 + "Kb");
-	});
+	var fileName = document.getElementById("addproofid").files[0].name;
+	var nextSibling = e.target.nextElementSibling;
+	nextSibling.innerText = fileName;
+	if(this.files[0].size/1024 > 1000){
+		$("#addmsg").text("File size exceeded limit!");
+	}
+//	console.log(this.files[0].size/1024 + "Kb");
+});
 /*------------------------------------------------------------------------------------------------------------*/
 
 
@@ -114,138 +117,231 @@ $( "#radioamount,#frequencyid" ).change(function() {
 });
 
 
-$( "#addressstateid" ).change(function() {
+$( "#nomineeid" ).change(function() {
 //	Choose District based on state-
-	console.log("Get Districts... ");
+	console.log("Get Nominee... ");
 
-	let state = document.forms["fdpurchaseform"]["addressstate1"].value;
-	console.log("Chosen State- "+ state);
-	var jsonObjects = {"state":state};
+//	let nominee = document.forms["fdpurchaseform"]["nomineechosen"].value;
+	console.log("Chosen Nominee- "+ $('#nomineeid').is(":checked"));
+	if($('#nomineeid').is(":checked")){
+		console.log("TRUE DISPLAY")
+		$("#nomineeDetailsBlock").addClass( "animated fadeIn" );
+		$("#nomineeDetailsBlock").show();
 
-	var request;
-	request = $.ajax({
-		url: "/products/api/fixed-deposit/mmfd/getDistricts",
-		method: "POST",
-		contentType: "application/json",
-		data: JSON.stringify(jsonObjects),
-		async: true,
-		datatype: "json",
-		beforeSend: function() {
-//			disableButon();
-			district=[];
-			var distOption = document.getElementById("addressDistrict1id");
-			$("#addressDistrict1id").empty();
-			var option = document.createElement("option");
-			option.text ="Fetching Data...";
-			option.value = "";
-			distOption.add(option);
-			distOption.selectedIndex = 0;
+	}else{
+		$("#nomineeDetailsBlock").removeClass("animated fadeIn");
+		$("#nomineeDetailsBlock").hide().prop('required',false);
+	}
+});
+
+$( ".stateselect").change(function() {
+//	Choose District based on state-
+	var elementid=$(this).attr('id');
+	var distOption;
+	console.log("Get Districts... for element id- "+ elementid);
+	let state="";
+	let districtfieldid='';
+	if(elementid === 'addressstateid'){
+		state = document.forms["fdpurchaseform"]["addressstate1"].value;
+		districtfieldid ='addressDistrict1id';
+	}else if(elementid === 'nomineestatecodeid'){
+		state = document.forms["fdpurchaseform"]["nomineestatecodeid"].value;
+		districtfieldid='nomineedistrictid';
+	}else{
+		state='NA';
+		districtfieldid='NA';
+		elementid='NA';
+	}
+
+
+	if(elementid!='NA')
+	{
+
+		console.log("Chosen State. Check from temp map first- "+ state);
+
+		var jsonObjects = {"state":state};
+
+		if(statedatamap.has(state)){
+			console.log("Data already fetched and stored in MAP. populating from here...");
+			statebasedData = statedatamap.get(state);
+			getdistricts(state,statebasedData,districtfieldid);
+
+		}else{
+			console.log("Making new API call...")
+			var request;
+			request = $.ajax({
+				url: "/products/api/fixed-deposit/mmfd/getDistricts",
+				method: "POST",
+				contentType: "application/json",
+				data: JSON.stringify(jsonObjects),
+				async: true,
+				datatype: "json",
+				beforeSend: function() {
+//					disableButon();
+					district=[];
+					distOption = document.getElementById(districtfieldid);
+					$("#"+districtfieldid).empty();
+					var option = document.createElement("option");
+					option.text ="Fetching Data...";
+					option.value = "";
+					distOption.add(option);
+					distOption.selectedIndex = 0;
+				}
+			});
+
+			request.done(function(data, textStatus, xhr) {
+
+				console.log("Existing- "+ district);
+				district=[];
+				var obj; 
+				console.log("Get status from header- "+ xhr.getResponseHeader('APICALLSTATUS')); 
+//				console.log("Result- "+ data);
+				statebasedData = JSON.parse(data);
+
+				getdistricts(state,statebasedData,districtfieldid);
+
+			});
+
+			request.fail(function(xhr, textStatus) {
+				alert("Request failed: " + xhr.getResponseHeader('APICALLSTATUS'));
+
+//				location.reload();
+			});
+
+			request.always(function(msg){
+				/*console.log("Final dstatemap- key");
+			for (let entry of statedatamap) { 
+				  console.log(entry);
+				}*/
+
+			});
 		}
-	});
-
-	request.done(function(data, textStatus, xhr) {
-
-		console.log("Existing- "+ district);
-		district=[];
-		var obj; 
-		console.log("Get status from header- "+ xhr.getResponseHeader('APICALLSTATUS')); 
-//		console.log("Result- "+ data);
-		statebasedData = JSON.parse(data);
-		for(var i = 0; i < statebasedData.length; i++) {
-			obj = statebasedData[i];
-//			console.log(obj.district);
-			if( district.indexOf(obj.district) == -1 ) {
-				district.push(obj.district);
-			}else{
-//				console.log("Data already present- "+ obj.district);
-			}
-
-		}
-		console.log("Final District- "+ district);
-//		Push the valus to Dropdown
-		var distOption = document.getElementById("addressDistrict1id");
-		$("#addressDistrict1id").empty();
-		
-		var option = document.createElement("option");
-		option.text ="Select";
-		option.value = "";
-		distOption.add(option);
-
-		for(i=0;i<district.length ; i++){
-//			console.log(dtarray[i]);
-			var option = document.createElement("option");
-			option.text = district[i];
-			option.value = district[i];
-			distOption.add(option);
-		}
-		distOption.selectedIndex = 0;
-
-	});
-
-	request.fail(function(xhr, textStatus) {
-		alert("Request failed: " + xhr.getResponseHeader('APICALLSTATUS'));
-
-//		location.reload();
-	});
-
-	request.always(function(msg){
-//		console.log("first step request done- "+msg);
-		/*$("#loginspin").hide();
-		$("#loginbasic").show();
-		$("#loginsubmit").prop("disabled", false);*/
-	});
+	}else{
+		console.log("Invalid field");
+	}
 
 });
 
 
+function getdistricts(state,resultdata,districtfieldid){
+	console.log("Total district received- "+ statebasedData.length)
+	statedatamap.set(state,statebasedData);
+	for(var i = 0; i < statebasedData.length; i++) {
+		obj = statebasedData[i];
+//		console.log(obj.district);
+		if( district.indexOf(obj.district) == -1 ) {
+			district.push(obj.district);
+		}else{
+//			console.log("Data already present- "+ obj.district);
+		}
 
-$( "#addresspincode1id" ).change(function() {
+	}
+	console.log("Final District- "+ district);
+//	Push the valus to Dropdown
+	var distOption = document.getElementById(districtfieldid);
+	$("#"+districtfieldid).empty();
 
-	let districtval = document.forms["fdpurchaseform"]["addressDistrict1"].value;
-	let pincode = document.forms["fdpurchaseform"]["addresspincode1"].value;
+	var option = document.createElement("option");
+	option.text ="Select";
+	option.value = "";
+	distOption.add(option);
 
-	console.log("Validate PINCODE for district- "+ districtval + " : "+ tempdist);
+	for(i=0;i<district.length ; i++){
+//		console.log(dtarray[i]);
+		var option = document.createElement("option");
+		option.text = district[i];
+		option.value = district[i];
+		distOption.add(option);
+	}
+	distOption.selectedIndex = 0;
+}
+
+
+
+
+$( ".pincodeid" ).change(function() {
+	var elementid=$(this).attr('id');
+
+	console.log("Change triggered by element- "+elementid )
+	let districtval='';
+	let pincode='';
+	let elementstatecode='';
+	if(elementid == 'addresspincode1id'){
+		districtval = document.forms["fdpurchaseform"]["addressDistrict1"].value;
+		pincode = document.forms["fdpurchaseform"]["addresspincode1"].value;
+		elementstatecode = document.forms["fdpurchaseform"]["addressstateid"].value;
+
+	}else if(elementid == 'nomineecitypincodeid'){
+		districtval = document.forms["fdpurchaseform"]["nomineedistrictid"].value;
+		pincode = document.forms["fdpurchaseform"]["nomineecitypincodeid"].value;
+		elementstatecode = document.forms["fdpurchaseform"]["nomineestatecodeid"].value;
+	}else{
+		districtval='NA';
+		pincode='NA';
+		elementstatecode='NA';
+	}
+	console.log("Validate PINCODE for district- "+ elementstatecode+ " -->"+  districtval + " : "+ tempdist);
 
 	if(pincode.length==6){
 		console.log("Validate PINCODE- "+ pincode);
 		let obj;
 //		Populate PINCODE of district
+
+		console.log("Get data from state map-");
+		statebasedData=statedatamap.get(elementstatecode);
+
 		if(statebasedData!=undefined){
-		
-		if(tempdist != districtval ){
-			console.log("Temp district is different.. Reselect District pincode")
-			pincodearr=[];
-			tempdist = districtval;
 
-			for(var i = 0; i < statebasedData.length; i++) {
-				obj = statebasedData[i];
-//				console.log(obj.district);
-				if(obj.district == districtval){
 
-					if( pincodearr.indexOf(obj.pincode) == -1 ) {
-						pincodearr.push(Number(obj.pincode));
-					}else{
-						console.log("PINCODE already present- "+ obj.pincode);
+
+			if(tempdist != districtval ){
+				console.log("Temp district is different.. Reselect District pincode")
+				pincodearr=[];
+				tempdist = districtval;
+
+				for(var i = 0; i < statebasedData.length; i++) {
+					obj = statebasedData[i];
+//					console.log(obj.district);
+					if(obj.district == districtval){
+
+						if( pincodearr.indexOf(obj.pincode) == -1 ) {
+							pincodearr.push(Number(obj.pincode));
+						}else{
+							console.log("PINCODE already present- "+ obj.pincode);
+						}
 					}
+//					district.push(obj.district);
 				}
-//				district.push(obj.district);
+
+			}
+			console.log("Final pincode- "+ pincodearr);
+
+//			if( pincodearr.indexOf(pincode) == -1 ) {
+			if( pincodearr.includes(Number(pincode)) ) {
+//				console.log("VALID PINCODE");
+				if(elementid == 'addresspincode1id'){
+					$("#pancodevalidity").text("");
+				}else if(elementid == 'nomineecitypincodeid'){
+					$("#nomineepancodevalidity").text("");
+				}
+			}else{
+				if(elementid == 'addresspincode1id'){
+					$("#pancodevalidity").text("Invalid pincode");
+				}else if(elementid == 'nomineecitypincodeid'){
+
+					$("#nomineepancodevalidity").text("Invalid pincode");
+				}
+
 			}
 
-		}
-		console.log("Final pincode- "+ pincodearr);
 
-//		if( pincodearr.indexOf(pincode) == -1 ) {
-		if( pincodearr.includes(Number(pincode)) ) {
-//			console.log("VALID PINCODE");
-			$("#pancodevalidity").text("");
 		}else{
-			$("#pancodevalidity").text("Invalid pincode");
-		}
-		
-		
-		}else{
-			$("#pancodevalidity").text("Select State and District first.");
-			console.log("Select District First")
+//			console.log("Select District First")
+			if(elementid == 'addresspincode1id'){
+				$("#pancodevalidity").text("Select State and District first.");
+			}else if(elementid == 'nomineecitypincodeid'){
+				$("#nomineepancodevalidity").text("Select State and District first.");
+			}
 		}
 
 	}else{
@@ -255,14 +351,40 @@ $( "#addresspincode1id" ).change(function() {
 });
 
 
-$( "#ifscid" ).change(function() {
+$("#addressproofTypeid").change(function() {
 	
+	var addressprooftype= document.forms["fdpurchaseform"]["addressproofType"].value;
+	console.log(addressprooftype);
+	if(addressprooftype == 'D' || addressprooftype == 'E'){
+		console.log("Show box expirydatebox");
+		$("#expirydatebox").show();
+		$("#addressproofpxpirydateid").attr("required", "true");
+	}else{
+		console.log("hide box expirydatebox");
+		$("#addressproofpxpirydateid").attr("required", "false");
+		$("#expirydatebox").hide();
+	}
+});
+
+
+/*$( "#addressproofTypeid" ).change(function() {
+	let addressprroftype = document.forms["fdpurchaseform"]["addressproofType"].value;
+	if(addressprroftype === '03'){
+		$("#expirydatebox").show();
+	}else{
+		$("#expirydatebox").hide().prop('required',false);
+	}
+});*/
+
+
+$( "#ifscid" ).change(function() {
+
 	console.log("Get IFSC code data..")
 	var digitregexp = /^[a-zA-Z]{4}[0]{1}[a-zA-Z0-9]{6}$/;
 	var ifsccode= document.forms["fdpurchaseform"]["ifscid"].value;
 	console.log(ifsccode);
-	
-	
+
+
 	if(ifsccode.length == 11 && digitregexp.test(ifsccode)){
 
 		var jsonObjects = {"ifsccode":ifsccode};
@@ -289,14 +411,16 @@ $( "#ifscid" ).change(function() {
 				document.forms["fdpurchaseform"]["micrCode"].value=obj.micrcode;
 				document.forms["fdpurchaseform"]["bankname"].value=obj.bankname;
 				document.forms["fdpurchaseform"]["bankbranch"].value=obj.bankbranch;
-				
+
 				$("#banknameid").text(obj.bankname);
 				$("#bankbranchid").text(obj.bankbranch);
+				$("#micrcodeid").text(obj.micrcode);
+
 				/*$("#").text();*/
 			}else{
 				console.log("Failed to fetch IFSC Data.")
 			}
-				
+
 
 		});
 
@@ -319,21 +443,24 @@ $( "#ifscid" ).change(function() {
 });
 
 $( "#taxResOtherThanIndiaid" ).change(function() {
-	
+
 	let taxresidentOtherCountry = document.forms["fdpurchaseform"]["taxResidentOtherCountry"].value;
 	console.log(taxresidentOtherCountry);
 	if(taxresidentOtherCountry == 'YES'){
 		$( ".taxResidentOutsideIndia" ).addClass( "animated fadeIn" );
 		$(".taxResidentOutsideIndia").show();
 	}else{
-		$(".taxResidentOutsideIndia").hide();
+		$( ".taxResidentOutsideIndia" ).removeClass( "animated fadeIn" );
+		$(".taxResidentOutsideIndia").hide().prop('required',false);
 	}
 
 });
 
 
+
+
 function validateTab1(){
-	
+
 }
 
 
@@ -354,20 +481,161 @@ function populatesummary(){
 	$("#genderdisplay").text(formdata.gender.value);
 	$("#occupationdisplay").text(formdata.occupation.value);
 	$("#genderdisplay").text(formdata.gender.value);
-	$("#occupationdisplay").text(formdata.occupation.value);
+//	$("#occupationdisplay").text(formdata.occupation.value);
+	$("#occupationdisplay").text($("#occupationid :selected").text());
+	
 	$("#birthplacedisplay").text(formdata.cityOfBirth.value);
 	$("#ckycdisplay").text(formdata.ckyc.value);
-	
-	
+
+
 	$("#amountdisplay").text(formdata.saveAmount.value);
 	$("#tenuredisplay").text(formdata.saveTenure.value);
 	$("#categorydisplay").text(formdata.category.value);
 	$("#frequencydisplay").text(formdata.intFreq.value);
 	$("#schemecodedisplay").text(formdata.schemeCode.value);
 	$("#intratedisplay").text(formdata.interestRate.value);
-	
+
 	$("#addressdisplay").html(formdata.address1.value+"<br>"+formdata.address2_1.value+(formdata.address3_1.value!=""?("<br>"+formdata.address3_1.value):"")+"<br><strong>City:</strong> "+formdata.addressCity1.value+"<br><strong>District:</strong> "+formdata.addressDistrict1.value+"<br><strong>State:</strong> "+formdata.addressstate1.value+"<br><strong>Pincode:</strong> "+ formdata.addresspincode1.value);
 	$("#bankdetailsdisplay").html("<strong>A/C No:</strong> "+ formdata.accountNumber.value+"<br><strong>Bank:</strong> "+formdata.bankname.value+"<br><strong>Branch:</strong> "+formdata.bankbranch.value+"<br><strong>IFSC Code:</strong> "+formdata.ifscCode.value);
-	
+	$("#nomineechosendisplay").text(formdata.nomineechosen.value);
+	$("#taxresidentoutsideIndia").text(formdata.taxResidentOtherCountry.value);
 }
 
+
+function insertforeigntaxDetails(formdata){
+
+	var foreigntaxform = document.forms.foreigntaxinfoform;
+	
+	/*var e = document.getElementById("taxCountry");
+	var strUser = e.options[e.selectedIndex].text;
+	console.log("Request for- "+ strUser + " --> "+ $("#taxCountry :selected").text());*/
+	
+	if(foreigntaxcountry.has(foreigntaxform.taxCountry.value)){
+		console.log("This country details are already present..");
+		$("#taxdetailserrormsg").text("Selected country details are already present!");
+		return false;
+	}
+	
+	var table = document.getElementById("fdforeigntaxdetailsbody");
+//	table.setAttribute("class","animated fadeIn");
+	var datarow = table.insertRow();
+	
+	
+	for(var loop=0;loop<=99;loop++){
+		if(!document.getElementById("foreignTaxDetails["+loop +"].taxCountry")){
+			console.log("index is available....")
+			
+//			datarow.insertCell(0).innerHTML="<td><input type='hidden' id='foreignTaxDetails["+(loop) +"].taxCountry' name='foreignTaxDetails["+(loop) +"].taxCountry' value='"+foreigntaxform.taxCountry.val+"'/> <input class='form-control form-control-sm' disabled='true' value='"+$('#taxCountry :selected').text()+"' /></td>";
+			datarow.insertCell(0).innerHTML="<td><input class='form-control form-control-sm' readonly='readonly' id='foreignTaxDetails["+(loop) +"].taxCountry' name='foreignTaxDetails["+(loop) +"].taxCountry' value='"+$('#taxCountry :selected').text()+"'/></td>";
+			datarow.insertCell(1).innerHTML="<td><input class='form-control form-control-sm' id='foreignTaxDetails["+(loop) +"].taxidentificationtype' name='foreignTaxDetails["+(loop) +"].taxidentificationtype' value='"+foreigntaxform.taxIdentype.value+"'/></td>";
+			datarow.insertCell(2).innerHTML="<td><input class='form-control form-control-sm' id='foreignTaxDetails["+(loop) +"].taxidentificationno' name='foreignTaxDetails["+(loop) +"].taxidentificationno' value='"+foreigntaxform.taxIdenNumber.value+"'/></td>";
+			datarow.insertCell(3).innerHTML="<td><input class='form-control form-control-sm' id='foreignTaxDetails["+(loop) +"].trcexpirydate' name='foreignTaxDetails["+(loop) +"].trcexpirydate' value='"+foreigntaxform.taxtrcExpiryDate.value+"'/></td>";
+			datarow.insertCell(4).innerHTML="<td><input class='form-control form-control-sm' id='foreignTaxDetails["+(loop) +"].taxaddresstype' name='foreignTaxDetails["+(loop) +"].taxaddresstype' value='"+foreigntaxform.taxaddressType.value+"'/></td>";
+			datarow.insertCell(5).innerHTML="<td><input class='form-control form-control-sm' id='foreignTaxDetails["+(loop) +"].ftaxaddress1' name='foreignTaxDetails["+(loop) +"].ftaxaddress1' value='"+foreigntaxform.taxAdd1.value+"'/></td>";
+
+			datarow.insertCell(6).innerHTML="<td><input class='form-control form-control-sm' id='foreignTaxDetails["+(loop) +"].ftaxaddress2' name='foreignTaxDetails["+(loop) +"].ftaxaddress2' value='"+foreigntaxform.taxAdd2.value+"'/></td>";
+			datarow.insertCell(7).innerHTML="<td><input class='form-control form-control-sm' id='foreignTaxDetails["+(loop) +"].ftaxcity' name='foreignTaxDetails["+(loop) +"].ftaxcity' value='"+foreigntaxform.taxCity.value+"'/></td>";
+			datarow.insertCell(8).innerHTML="<td><input class='form-control form-control-sm' id='foreignTaxDetails["+(loop) +"].ftaxstate' name='foreignTaxDetails["+(loop) +"].ftaxstate' value='"+foreigntaxform.taxState.value+"'/></td>";
+			datarow.insertCell(9).innerHTML="<td><input class='form-control form-control-sm' id='foreignTaxDetails["+(loop) +"].ftaxpostalcode' name='foreignTaxDetails["+(loop) +"].ftaxpostalcode' value='"+foreigntaxform.taxPostalCode.value+"'/></td>";
+			datarow.insertCell(10).innerHTML="<td><input class='form-control form-control-sm' id='foreignTaxDetails["+(loop) +"].ftaxlandmark' name='foreignTaxDetails["+(loop) +"].ftaxlandmark' value='"+foreigntaxform.taxLandmark.value+"'/></td>";
+			datarow.insertCell(11).innerHTML="<td><input class='form-control form-control-sm' id='foreignTaxDetails["+(loop) +"].stdcodeprimary' name='foreignTaxDetails["+(loop) +"].stdcodeprimary' value='"+foreigntaxform.taxStdCodePr.value+"'/></td>";
+			datarow.insertCell(12).innerHTML="<td><input class='form-control form-control-sm' id='foreignTaxDetails["+(loop) +"].primarytelno' name='foreignTaxDetails["+(loop) +"].primarytelno' value='"+foreigntaxform.taxTelNoPr.value+"'/></td>";
+			datarow.insertCell(13).innerHTML="<td><input class='form-control form-control-sm' id='foreignTaxDetails["+(loop) +"].ftaxmobileno' name='foreignTaxDetails["+(loop) +"].ftaxmobileno' value='"+foreigntaxform.taxMobilePr.value+"'/></td>";
+			datarow.insertCell(14).innerHTML="<td><input class='form-control form-control-sm' id='foreignTaxDetails["+(loop) +"].ftaxstdother' name='foreignTaxDetails["+(loop) +"].ftaxstdother' value='"+foreigntaxform.taxStdOther.value+"'/></td>";
+			datarow.insertCell(15).innerHTML="<td style='text-align: center;'> <i class='fas fa-minus-circle' style='color: red;cursor: pointer;' onclick='deleteRow(this)'></i></td>";
+			foreigntaxcountry.set(foreigntaxform.taxCountry.value);
+			index=loop;
+			$("#taxResidentModal").on('hide.bs.modal', function(){});
+			break;
+		}else{
+			console.log("Increment the ID counter...");
+		}
+	}
+
+	index+=1;
+
+}
+
+
+function deleteRow(r) {
+	var i = r.parentNode.parentNode.rowIndex;
+	document.getElementById("mfprofiledata2").deleteRow(i);
+}
+
+function resetform(formelementid){
+	document.getElementById(formelementid).reset();
+}
+
+
+$( "#confirmaccountNumberid" ).blur(function() {
+	console.log("Validate acc");
+if($("#confirmaccountNumberid").val() != $("#accountNumberid").val()){
+	$("#accountvalidationmsg").text("Account details mismatch");
+	$("#accountvalidationmsg").addClass("text-danger");
+	$("#accountvalidationmsg").removeClass("text-success");
+}else{
+	$("#accountvalidationmsg").text("Account details matched");
+	$("#accountvalidationmsg").addClass("text-success");
+	$("#accountvalidationmsg").removeClass("text-danger");
+}
+});
+
+
+function reuploadkycdoc(applicationno, mobile) {
+//	console.log("Order staus for id- " + clientId + " : " + orderNo);
+	$.post("/products/api/fd/retry-kyc-doc-upload", {
+		"appl_no" : applicationno,
+		"mobile" : mobile
+	}, function(data, status) {
+
+		console.log(data);
+//		$('#exampleModal1').modal('hide');
+		if (data == 'NO_SESSION') {
+			alert("Invalid request");
+		} else if (data == 'REQUEST_DENIED') {
+			alert("Session not found!")
+		} else {
+			alert("Image reupload complete for appl_no: "+applicationno+" : "+ data);
+		}
+
+	}).fail(function(response) {
+		/* $('#exampleModal1').modal('hide');
+		$("#signuploadstatus")
+				.text(
+						"Failed to submit your signature. Please try again."); */
+		/* alert(response); */
+		alert("Failed to get status for application no- "+ applicationno);
+	});
+
+}
+
+
+function getmahindrafdpaymentstatus(applicationno, mobile) {
+//	console.log("Order staus for id- " + clientId + " : " + orderNo);
+	$.post("/products/api/fd/mahindraapplpaymentstatus", {
+		"appl_no" : applicationno,
+		"mobile" : mobile
+	}, function(data, status) {
+
+		console.log(data);
+//		$('#exampleModal1').modal('hide');
+		if (data == 'NO_SESSION') {
+
+			alert("Invalid request");
+
+		} else if (data == 'REQUEST_DENIED') {
+			alert("Session not found!")
+		} else {
+			alert("Status of order no: "+applicationno+"\n"+ data);
+		}
+
+	}).fail(function(response) {
+		/* $('#exampleModal1').modal('hide');
+		$("#signuploadstatus")
+				.text(
+						"Failed to submit your signature. Please try again."); */
+		/* alert(response); */
+		alert("Failed to get status for application no- "+ applicationno);
+	});
+
+}

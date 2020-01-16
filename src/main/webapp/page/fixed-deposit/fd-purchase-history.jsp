@@ -108,40 +108,38 @@ table.dataTable thead th, table.dataTable thead td {
 								<thead class="purchase-records"
 									style="background: #3db4d0; color: #fff29e; font-size: 10px;">
 									<tr>
-										<th scope="col">TRANSACTION REFERENCE</th>
-										<!-- <th scope="col">SCHEME CODE</th> -->
-										<th scope="col">SCHEME DETAILS</th>
+										<th scope="col">TRANSACTION ID</th>
+										<th scope="col">APPLICATION NO</th>
 										<th scope="col">CATEGORY</th>
-										<th scope="col">INVESTMENT TYPE</th>
-										<th scope="col">SIP START DATE</th>
-										<th scope="col">SIP END DATE</th>
-										<th scope="col">INVEST AMOUNT</th>
+										<th scope="col">FREQUENCY</th>
+										<th scope="col">TENURE (in months)</th>
+										<th scope="col">INT. RATE</th>
+										<th scope="col">SAVING AMOUNT</th>
 										<th scope="col">TRANSACTION DATE</th>
-										<th scope="col">ORDER NO</th>
+										<th scope="col">MATURITY AMOUNT</th>
+										<th scope="col">MATURITY DATE</th>
+										<th scope="col">Payment Complete?</th>
 										<th scope="col">ACTION</th>
+									</tr>
 								</thead>
 								<tbody
 									style="font-size: 13px; font-family: sans-serif; font-weight: 400;">
 
 									<c:forEach var="listVar" items="${PURCHASE_ORDERS}">
 										<tr>
-											<td>${listVar.serial }</td>
-											<td>${listVar.transactionApplicationNumber }</td>
+											<td>${listVar.transactionrefid }</td>
+											<td>${listVar.applicationno }</td>
+											<td>${listVar.transactiontype }</td>
+											<td>${listVar.interestfrequency }</td>
+											<td>${listVar.tenure }</td>
+											<td>${listVar.interestrate }</td>
+											<td>${listVar.purchaseamount }</td>
+											<td>${listVar.transactiondate }</td>
 											<td></td>
 											<td></td>
-											<td></td>
-											<td></td>
-											<td></td>
-											<td></td>
-											<td></td>
+											<td>${listVar.ispaymentcomplete }</td>
 											<td style="text-align: center;">
-												<%-- <button class="btn btn-sm btn-secondary" style="padding: .1rem .5rem;"
-													onclick="getbseOrderPaymentStatus('${listVar.clienId}','${listVar.orderNo }' )">
-													Payment Status</button> --%> <%-- <span style="color: blue;cursor: pointer;" onclick="getbseOrderPaymentStatus('${listVar.clienId}','${listVar.orderNo }' )">Order Status</span>
-												<span style="color: red;cursor: pointer;">Cancel Order</span> --%>
-
-
-<%-- 
+												
 												<div class="btn-group">
 													<button type="button"
 														class="btn btn-secondary dropdown-toggle btn-sm"
@@ -149,24 +147,23 @@ table.dataTable thead th, table.dataTable thead td {
 														aria-expanded="false"
 														style="font-size: 11px; padding: 10px; width: 5rem;">ACTION</button>
 													<div class="dropdown-menu dropdown-menu-right">
+														<c:if test="${listVar.ispaymentcomplete =='N'}">
 														<button class="dropdown-item" type="button"
 															style="font-size: 12px; color: #238019; font-weight: 600;"
-															onclick="getbseOrderPaymentStatus('${listVar.clienId}','${listVar.orderNo }' )">
+															onclick="getmahindrafdpaymentstatus('${listVar.applicationno}','${listVar.mobile }' )">
 															Payment Status</button>
-														
-														<c:if test="${listVar.transctionType =='PURCHASE' }">
-														<button class="dropdown-item" type="button"
-															style="font-size: 12px; color: #d82f2f; font-weight: 600;"
-															onclick="cancelOrder('${listVar.clienId}','${listVar.orderNo}','${listVar.investType }','${listVar.transctionType }','${listVar.transactionId }' )">
-															onclick="cancelOrder('${listVar.schemeCode}','${listVar.orderNo },'${listVar.investType }')">
-															Cancel Order</button>
 														</c:if>
-
+														<c:if test="${listVar.transactiontype =='NEW' }">
+														<button class="dropdown-item" type="button"
+															style="font-size: 12px; color: #d82f2f; font-weight: 600;">
+															Renew</button>
+														</c:if>
+														<button class="dropdown-item" type="button"
+															style="font-size: 12px; color: #238019; font-weight: 600;"
+															onclick="reuploadkycdoc('${listVar.applicationno}','${listVar.mobile }' )">
+															Retry KYC upload</button>
 													</div>
 												</div>
- --%>
-
-
 											</td>
 										</tr>
 									</c:forEach>
@@ -202,6 +199,8 @@ table.dataTable thead th, table.dataTable thead td {
 			    null,
 			    null,
 			    null,
+			    null,
+			    null,
 			    { "orderable": false },
 			    { "orderable": false }
 			  ],
@@ -213,7 +212,6 @@ table.dataTable thead th, table.dataTable thead td {
 
 	
 </script>
-
-<%-- <script
-	src="<c:url value="${contextcdn}/resources/js/investment.js" />"></script> --%>
+<script
+	src="<c:url value="${contextcdn}/resources/js/mahindra-fd.js" />"></script>
 </html>

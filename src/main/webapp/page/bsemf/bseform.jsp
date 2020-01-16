@@ -607,14 +607,13 @@
 				<div class="form-group col-md-6">
 					<div class="input-group mb-1">
 						<div class="input-group-prepend">
-							<span class="input-group-text" id="basic-addon3">Wealth
-								Source<sup style="color: red">*</sup>
+							<span class="input-group-text" id="basic-addon3">Country of Birth<sup style="color: red">*</sup>
 							</span>
 						</div>
-						<form:select class="custom-select" id="wealthsource"
-							required="required" path="fatcaDetails.wealthSource">
-							<form:option value="">--Select--</form:option>
-							<form:options items="${wealthSource}" />
+						<form:select class="custom-select" id="incomeslab"
+							required="required" path="fatcaDetails.countryOfBirth">
+							<form:option value="IN" selected="selected" >India</form:option>
+							<form:options items="${ bsecountryofbirth }"/>
 						</form:select>
 					</div>
 				</div>
@@ -663,20 +662,23 @@
 						</form:select>
 					</div>
 				</div>
+				
 				<div class="form-group col-md-6">
 					<div class="input-group mb-1">
 						<div class="input-group-prepend">
-							<span class="input-group-text" id="basic-addon3">Occupation
-								Type<sup style="color: red">*</sup>
+							<span class="input-group-text" id="basic-addon3">Wealth
+								Source<sup style="color: red">*</sup>
 							</span>
 						</div>
-						<form:select class="custom-select" id="occupationType"
-							required="required" path="fatcaDetails.occupationType">
+						<form:select class="custom-select" id="wealthsource"
+							required="required" path="fatcaDetails.wealthSource">
 							<form:option value="">--Select--</form:option>
-							<form:options items="${occupationType}" />
+							<form:options items="${wealthSource}" />
 						</form:select>
 					</div>
 				</div>
+				
+				
 			</div>
 
 
@@ -695,7 +697,20 @@
 						</form:select>
 					</div>
 				</div>
-
+				<div class="form-group col-md-6">
+					<div class="input-group mb-1">
+						<div class="input-group-prepend">
+							<span class="input-group-text" id="basic-addon3">Occupation
+								Type<sup style="color: red">*</sup>
+							</span>
+						</div>
+						<form:select class="custom-select" id="occupationType"
+							required="required" path="fatcaDetails.occupationType">
+							<form:option value="">--Select--</form:option>
+							<form:options items="${occupationType}" />
+						</form:select>
+					</div>
+				</div>
 
 			</div>
 
@@ -704,7 +719,7 @@
 				style="padding-left: 10px; font-weight: 400; background: #fd6d6d;">
 				<div class="custom-control custom-checkbox">
 					<form:checkbox class="custom-control-input"
-						path="fatcaDetails.usCitizenshipCheck" id="uscitizencheck" />
+						path="fatcaDetails.usCitizenshipCheck" id="uscitizencheck" checked="checked" />
 					<label class="custom-control-label" for="uscitizencheck"
 						style="color: white;">I am not a citizen of US/Canada</label>
 				</div>

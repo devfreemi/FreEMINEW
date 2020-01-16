@@ -6,6 +6,7 @@ public class MahindraApiResponse {
 	private String requestJson;
 	private String outputMap;
 	private String outputData;
+	private String responsemsg;
 	
 	private String mfRefNo;
 	private String applicationNo;
@@ -13,6 +14,8 @@ public class MahindraApiResponse {
 	private String paymentVerifyResponse;
 	
 	private String paymentStatusCode;
+	
+	private String acknowledgementdoc;
 	
 	private String micrCode;
 	private String bankBranch;
@@ -41,6 +44,13 @@ public class MahindraApiResponse {
 	}
 	public void setOutputData(String outputData) {
 		this.outputData = outputData;
+	}
+	
+	public String getResponsemsg() {
+	    return responsemsg;
+	}
+	public void setResponsemsg(String responsemsg) {
+	    this.responsemsg = responsemsg;
 	}
 	public String getMfRefNo() {
 		return mfRefNo;
@@ -90,4 +100,11 @@ public class MahindraApiResponse {
 	public void setPaymentStatusCode(String paymentStatusCode) {
 		this.paymentStatusCode = paymentStatusCode;
 	}
+	public String getAcknowledgementdoc() {
+		return acknowledgementdoc;
+	}
+	public void setAcknowledgementdoc(String acknowledgementdoc) {
+		this.acknowledgementdoc = acknowledgementdoc;
+	}
+	
 }

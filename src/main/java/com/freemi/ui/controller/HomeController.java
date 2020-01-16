@@ -52,7 +52,7 @@ import com.freemi.entity.general.ForgotPassword;
 import com.freemi.entity.general.Login;
 import com.freemi.services.interfaces.BseRestClientService;
 import com.freemi.services.interfaces.DatabaseEntryManager;
-import com.freemi.services.interfaces.MailSenderHandler;
+import com.freemi.services.interfaces.MailSenderInterface;
 import com.freemi.services.interfaces.ProfileRestClientService;
 import com.freemi.services.interfaces.SmsSenderInterface;
 import com.freemi.ui.restclient.GoogleSecurity;
@@ -67,7 +67,7 @@ public class HomeController {
 	private DatabaseEntryManager databaseEntryManager ;//= (DatabaseEntryManager) BeanUtil.getBean(DatabaseEntryService.class);
 
 	@Autowired
-	MailSenderHandler mailSenderHandler;
+	MailSenderInterface mailSenderInterface;
 
 	@Autowired
 	BseRestClientService bseRestClientService;
@@ -383,7 +383,7 @@ public class HomeController {
 								//				Trigger mail 
 								session.setAttribute("OTP", resultotp.split("=")[1]);
 								try {
-									mailSenderHandler.loginOTPMail(login.getUsermobile(), resultotp.split("=")[1], userStatus[1], "5");
+									mailSenderInterface.loginOTPMail(login.getUsermobile(), resultotp.split("=")[1], userStatus[1], "5");
 									smsSenderInterface.sendOtp(login.getUsermobile(), resultotp.split("=")[1], "5", null);
 									//									returnUrl="OTP_SENT";
 								} catch (InterruptedException e) {

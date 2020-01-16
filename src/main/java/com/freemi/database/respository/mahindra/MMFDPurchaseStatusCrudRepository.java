@@ -16,6 +16,8 @@ public interface MMFDPurchaseStatusCrudRepository extends JpaRepository<Mahindra
 	
 	public boolean existsByCustomerIdAndTransactionId(String customerId, String transactionId);
 	
+	public boolean existsByCustomerIdAndTransactionApplicationNumber(String customerId, String applicationid);
+	
 	public MahindraFDTransactionStatus findOneByCustomerIdAndTransactionId(String customerId, String transactionId);
 	
 	public MahindraFDTransactionStatus findOneByCustomerIdAndTransactionApplicationNumber(String customerId, String applicationNo);
@@ -35,4 +37,7 @@ public interface MMFDPurchaseStatusCrudRepository extends JpaRepository<Mahindra
 	public List<MahindraFDTransactionStatus> getTransactionList(@Param("customerid") String customerid );
 	
 	public List<MahindraFDTransactionStatus> findAllByCustomerId(String customerid);
+	
+	@Query("select b.serial, b.transactionId, b.transactionApplicationNumber, b.isTransactionComplete, b.isPaymentComplete from  MahindraFDTransactionStatus b where b.customerId= :customerid")
+	public List<MahindraFDTransactionStatus> getTransactionHistory(@Param("customerid") String customerid );
 }

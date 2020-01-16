@@ -19,7 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 @Component
-public class MahindraFDEntity implements Serializable {
+public class MahindraFDRenewalEntity implements Serializable {
 
 	/**
 	 * 
