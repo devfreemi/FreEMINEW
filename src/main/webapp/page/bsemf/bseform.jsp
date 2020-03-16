@@ -197,7 +197,7 @@
 								</span>
 							</div>
 									<form:input type="text"
-										class="form-control form-control-custom" maxlength="10"
+										class="form-control form-control-custom" minlength="10" maxlength="10"
 										pattern="[0-9]*" id="mobile" path="mobile" required="required"
 										aria-describedby="basic-addon3" readonly="${LOGGED =='Y' ? 'true' : 'false' }" />
 						</div>

@@ -170,6 +170,12 @@ public class BseMFInvestForm implements Serializable {
 	@Column(name="AOF_UPLOAD_COMPLETE")
 	private String aofuploadComplete="N";
 	
+	@Column(name = "RESGISTRATION_RESPONSE")
+	private String registrationResponse;
+	
+	@Column(name = "AOF_UPLOAD_RESPONSE")
+	private String aofUploadResponse;
+	
 	@Column(name="REGISTER_TIME")
 	private Date registrationTime;
 	
@@ -756,6 +762,26 @@ public class BseMFInvestForm implements Serializable {
 
 	public void setAccountSuspended(String accountSuspended) {
 		this.accountSuspended = accountSuspended;
+	}
+
+
+	public String getRegistrationResponse() {
+	    return registrationResponse;
+	}
+
+
+	public void setRegistrationResponse(String registrationResponse) {
+	    this.registrationResponse = registrationResponse;
+	}
+
+
+	public String getAofUploadResponse() {
+	    return aofUploadResponse;
+	}
+
+
+	public void setAofUploadResponse(String aofUploadResponse) {
+	    this.aofUploadResponse = aofUploadResponse;
 	}
 	
 }

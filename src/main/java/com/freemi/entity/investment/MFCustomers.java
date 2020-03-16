@@ -17,6 +17,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Proxy;
 import org.hibernate.validator.constraints.NotBlank;
@@ -85,7 +86,7 @@ public class MFCustomers implements Serializable {
 	@Column(name="EMAIL")
 	private String email="";
 	
-	@NotBlank(message="Mobile number is mandatory")
+	@NotBlank(message="Mobile number is mandatory") @Size(min = 10, max = 10, message = "Invalid mobile no format")
 	@Column(name="MOBILE_NO")
 	private String mobile="";
 	
@@ -169,6 +170,13 @@ public class MFCustomers implements Serializable {
 	
 	@Column(name="AOF_UPLOAD_COMPLETE")
 	private String aofuploadComplete="N";
+	
+	@Column(name = "RESGISTRATION_RESPONSE")
+	private String registrationResponse;
+	
+	@Column(name = "AOF_UPLOAD_RESPONSE")
+	private String aofUploadResponse;
+	
 	
 	@Column(name="REGISTER_TIME")
 	private Date registrationTime;
@@ -756,6 +764,26 @@ public class MFCustomers implements Serializable {
 
 	public void setAccountSuspended(String accountSuspended) {
 		this.accountSuspended = accountSuspended;
+	}
+
+
+	public String getRegistrationResponse() {
+	    return registrationResponse;
+	}
+
+
+	public void setRegistrationResponse(String registrationResponse) {
+	    this.registrationResponse = registrationResponse;
+	}
+
+
+	public String getAofUploadResponse() {
+	    return aofUploadResponse;
+	}
+
+
+	public void setAofUploadResponse(String aofUploadResponse) {
+	    this.aofUploadResponse = aofUploadResponse;
 	}
 	
 }

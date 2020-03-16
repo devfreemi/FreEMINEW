@@ -13,13 +13,10 @@ import javax.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -35,9 +32,7 @@ import com.freemi.entity.general.Registerform;
 import com.freemi.entity.general.UserProfile;
 import com.freemi.entity.investment.MFKarvyFundsView;
 import com.freemi.entity.investment.MfAllInvestorValueByCategory;
-import com.freemi.entity.investment.mahindra.MahindraResponse;
 import com.freemi.services.interfaces.BseEntryManager;
-import com.freemi.services.interfaces.MahindraFDServiceInterface;
 import com.freemi.services.interfaces.ProfileRestClientService;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -50,8 +45,8 @@ public class ProfileController {
     @Autowired
     ProfileRestClientService profileRestClientService; 
 
-    @Autowired
-    MahindraFDServiceInterface mahindraFDServiceInterface;
+    /*    @Autowired
+    MahindraFDServiceInterface mahindraFDServiceInterface;*/
 
     //	@Autowired
     //	private Environment environment;
@@ -414,85 +409,7 @@ public class ProfileController {
     }
 
 
-    @PostMapping(value="/fd/mahindraapplpaymentstatus")
-    @ResponseBody
-    public String mahidnrafdpaymentstatus(HttpServletRequest request, HttpServletResponse httpResponse,HttpSession session){
-
-	String mobile=request.getParameter("mobile");
-	logger.info("Request received to fectch payment status of FD purchase for customer-" + mobile+ " : APPL_NO: "+ request.getParameter("appl_no"));
-	String result ="NA";
-	MahindraResponse response=null;
-	JsonObject jsonObject = null;
-
-	try {
-
-	    logger.info("mahidnrafdpaymentstatus(): Requesting Mahindra payment status for mobile" + mobile);
-
-	    if(session.getAttribute("token") == null || session.getAttribute("userid") == null){
-		logger.info("User session not found to process request..");
-		return "NO_SESSION";
-	    }else{
-
-		if(mobile.equals(session.getAttribute("userid").toString())) {
-
-		    try{
-			response = mahindraFDServiceInterface.verifyPaymentStatus(null, mobile, request.getParameter("appl_no"),session.getAttribute("email")!=null?session.getAttribute("email").toString():null);
-			if(response!=null) {
-			    logger.info("Result received- "+ response.getStatusCode() + " --> "+ response.getStatusMsg());
-			    logger.info("Send FD payment result in JSON format");
-			    jsonObject = new JsonObject();
-			    jsonObject.addProperty("apimsg", response.getStatusMsg());
-			    result=jsonObject.toString();
-			}else {
-			    logger.info("Result is null...");
-			    result="NO_DATA";
-			}
-
-		    }catch(Exception e) {
-			logger.error("apiMFBalance(): Error requesting MF balance",e);
-			result= "INTERNAL_ERROR";
-		    }
-		}else {
-		    logger.info("Passed mobile and sessio mobile data do not match");
-		    result= "REQUEST_DENIED";
-		}
-	    }
-	}catch(Exception e) {
-	    logger.error("apiMFBalance(): Error processing request",e);
-	    result= "INTERNAL_ERROR";
-	}
-
-	logger.info("mahidnrafdpaymentstatus(): Retrunung result- "+ result);
-	return result;
-    }
-
-
-    @PostMapping(value = "/fd/retry-kyc-doc-upload")
-    @ResponseBody
-    public String reuploaddocument(Model model, HttpServletRequest request, HttpSession session) {
-	
-	String datafound="Y";
-	String mobile=request.getParameter("mobile");
-	String applicationno=request.getParameter("appl_no");
-	logger.info("Request received to retry doc upload again for applocation- "+ applicationno);
-	try {
-	if(applicationno!=null && mobile!= null) {
-	    if (session.getAttribute("userid") != null || session.getAttribute("token") != null) {
-
-		MahindraResponse response =  mahindraFDServiceInterface.retryDocumentupload(mobile, null, applicationno);
-		logger.info("Redocument reupload status- "+ response.getStatusCode());
-	    }else {
-		datafound="NO_SESSION";
-	    }
-	}else {
-	    datafound="INVALID_DATA";
-	}
-	}catch(Exception e) {
-	    logger.error("Error Processing request..",e);
-	    datafound = "INTERNAL_EXCEPTION";
-	}
-	return datafound;
-    }
+   
 
 
 

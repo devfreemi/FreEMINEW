@@ -18,68 +18,98 @@ public class Registerform implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	@NotNull @NotEmpty @Size(min=4,max=128,message="Name should be 4-128 characters") @Pattern(regexp="[a-zA-Z .]*", message="Name should not contain special characters")
+//	@NotNull @NotEmpty @Size(min=4,max=128,message="Name should be 4-128 characters") @Pattern(regexp="[a-zA-Z .]*", message="Name should not contain special characters")
 	private String fullName;
 	
-	@NotNull @NotEmpty @Size(min=8,max=24,message="password length should be 8-24 characters")
+	@NotNull(message = "Mention first name") @NotEmpty @Size(min=4,max=128,message="First Name should be 2-64 characters") @Pattern(regexp="[a-zA-Z .]*", message="Name should not contain special characters")
+	private String fname;
+	
+	@NotNull(message = "Mention last name") @NotEmpty @Size(min=4,max=128,message="Last Name should be 2-64 characters") @Pattern(regexp="[a-zA-Z .]*", message="Name should not contain special characters")
+	private String lname;
+	
+	@NotNull(message="Provide a password for your account") @NotEmpty @Size(min=8,max=24,message="password length should be 8-24 characters")
 	private String password;
 	
 	@Email(message="Email format invalid")
 	private String email;
 	
-	@NotNull @NotEmpty @Size(min=10,max=10) @Pattern(regexp="[6-9][0-9]{9}", message="Mobile nunmber format invalid")
+	@NotNull(message = "Mobile no is mandatory") @NotEmpty @Size(min=10,max=10) @Pattern(regexp="[6-9][0-9]{9}", message="Mobile nunmber format invalid")
 	private String mobile;
 	private String customerID;
 	private String registrationref="DEFAULT";
-	
-/*	private String username;
-	private String registermobile;
-	private String useremail;
-	private String registerpassword;*/
+	private String requestingip;
+	private String clientbrowserdetails;
+	private String mobileimei;
 	
 	public String getFullName() {
-		return fullName;
+	    return fullName;
 	}
 	public void setFullName(String fullName) {
-		this.fullName = fullName;
+	    this.fullName = fullName.trim();
+	}
+	public String getFname() {
+	    return fname;
+	}
+	public void setFname(String fname) {
+	    this.fname = fname.trim();
+	}
+	public String getLname() {
+	    return lname;
+	}
+	public void setLname(String lname) {
+	    this.lname = lname;
 	}
 	public String getPassword() {
-		return password;
+	    return password;
 	}
 	public void setPassword(String password) {
-		this.password = password;
+	    this.password = password.trim();
 	}
 	public String getEmail() {
-		return email;
+	    return email;
 	}
 	public void setEmail(String email) {
-		this.email = email;
+	    this.email = email;
 	}
 	public String getMobile() {
-		return mobile;
+	    return mobile;
 	}
 	public void setMobile(String mobile) {
-		this.mobile = mobile;
+	    this.mobile = mobile;
 	}
 	public String getCustomerID() {
-		return customerID;
+	    return customerID;
 	}
 	public void setCustomerID(String customerID) {
-		this.customerID = customerID;
+	    this.customerID = customerID;
 	}
-	
-	
 	public String getRegistrationref() {
-		return registrationref;
+	    return registrationref;
 	}
 	public void setRegistrationref(String registrationref) {
-		this.registrationref = registrationref;
+	    this.registrationref = registrationref;
+	}
+	public String getRequestingip() {
+	    return requestingip;
+	}
+	public void setRequestingip(String requestingip) {
+	    this.requestingip = requestingip;
+	}
+	public String getClientbrowserdetails() {
+	    return clientbrowserdetails;
+	}
+	public void setClientbrowserdetails(String clientbrowserdetails) {
+	    this.clientbrowserdetails = clientbrowserdetails;
+	}
+	public String getMobileimei() {
+	    return mobileimei;
+	}
+	public void setMobileimei(String mobileimei) {
+	    this.mobileimei = mobileimei;
 	}
 	public static long getSerialversionuid() {
-		return serialVersionUID;
+	    return serialVersionUID;
 	}
-
-	
 	
 	
 }

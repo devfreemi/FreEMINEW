@@ -26,8 +26,8 @@ import com.freemi.services.interfaces.BseEntryManager;
 import com.google.gson.Gson;
 
 @RestController
-@RequestMapping("/api")
-public class MfDataController {
+@RequestMapping("/mobileapi")
+public class MobileApiServicesController {
 
     private static final Logger logger = LogManager.getLogger(FormDataController.class);
 

@@ -15,6 +15,8 @@ public interface MailSenderInterface {
 	
 	public void sendMFInitiatedNotice(MFinitiatedTrasactions initiatedData);
 	
-	public void sendMahindraFDAcknowledgementdocument(String binarydoc, String emailid, String mobile, String customername, String applicationno);
+	public void sendMahindraFDAcknowledgementdocument(String binarydoc, String emailid, String mobile, String customername, String applicationno,int amount, String nbfcname,String schemecategory);
 	
+	
+	public void notifyTransactionErrorToAdmin(Object data1, String message, String requesteddata, String errorType, String subcategory, String customerid, String name);
 }

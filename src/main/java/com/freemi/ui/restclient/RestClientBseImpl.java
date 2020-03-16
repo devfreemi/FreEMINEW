@@ -132,6 +132,8 @@ public class RestClientBseImpl implements BseRestClientService {
 				 * "101|FAILED: DOB MANDATORY";
 				 */
 				returnRes = "SUCCESS";
+//			    returnRes="101|FAILED: INVALID DATE OF BIRTH OF INDIVIDUAL";
+//			    returnRes="100|RECORD INSERTED SUCCESSFULLY";
 			}
 
 
@@ -371,7 +373,7 @@ public class RestClientBseImpl implements BseRestClientService {
 				//				returnRes = "101|FAILED: AMOUNT SHOULD NOT BE BLANK";
 				//				returnRes = "101|FAILED: INVALID CLIENT ACCOUNT NUMBER";
 				returnRes = "100|RECORD SAVED SUCCESSFULLY";
-				//				returnRes = "101|FAILED: INVALID ADDRESS TYPE";
+//				returnRes = "101|FAILED: INVALID ADDRESS TYPE";
 			}
 
 		} catch (JsonProcessingException e) {

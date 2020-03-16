@@ -9,6 +9,12 @@ var foreigntaxcountry = new Map();
 
 /*------------------------------------------------------------------------------------------------------------*/
 
+$(document).on("click", "#radioamount", function() {
+	var x = $("input[type='radio'][name='options']:checked").val();
+	console.log("Select: " + $("input[type='radio'][name='options']:checked").val()); 
+	$("#saveamount").val(x);
+	$("input[type='radio'][name='options']:checked").css("background","red");
+});
 
 
 
@@ -352,7 +358,7 @@ $( ".pincodeid" ).change(function() {
 
 
 $("#addressproofTypeid").change(function() {
-	
+
 	var addressprooftype= document.forms["fdpurchaseform"]["addressproofType"].value;
 	console.log(addressprooftype);
 	if(addressprooftype == 'D' || addressprooftype == 'E'){
@@ -466,7 +472,7 @@ function validateTab1(){
 
 function showprogress(){
 	$("#errormsgbox").text("");
-	$("#progressdisplay").html("<div style=\"text-align: center;margin-bottom: 3rem;\"><img alt=\"Fetching your portfolio\" src=\"https://resources.freemi.in/products/resources/images/invest/progress2.gif\">");
+	$("#progressdisplay").html("<div style=\"text-align: center;margin-bottom: 3rem;\"><h3>Processing your request. Please do not press 'Back' Button or refresh the page.</h3><img alt=\"Fetching your portfolio\" src=\"https://resources.freemi.in/products/resources/images/invest/progress2.gif\">");
 	$("#prevBtn").attr("disabled", "disabled");
 	$("#nextBtn").attr("disabled", "disabled");
 }
@@ -483,7 +489,7 @@ function populatesummary(){
 	$("#genderdisplay").text(formdata.gender.value);
 //	$("#occupationdisplay").text(formdata.occupation.value);
 	$("#occupationdisplay").text($("#occupationid :selected").text());
-	
+
 	$("#birthplacedisplay").text(formdata.cityOfBirth.value);
 	$("#ckycdisplay").text(formdata.ckyc.value);
 
@@ -505,26 +511,26 @@ function populatesummary(){
 function insertforeigntaxDetails(formdata){
 
 	var foreigntaxform = document.forms.foreigntaxinfoform;
-	
+
 	/*var e = document.getElementById("taxCountry");
 	var strUser = e.options[e.selectedIndex].text;
 	console.log("Request for- "+ strUser + " --> "+ $("#taxCountry :selected").text());*/
-	
+
 	if(foreigntaxcountry.has(foreigntaxform.taxCountry.value)){
 		console.log("This country details are already present..");
 		$("#taxdetailserrormsg").text("Selected country details are already present!");
 		return false;
 	}
-	
+
 	var table = document.getElementById("fdforeigntaxdetailsbody");
 //	table.setAttribute("class","animated fadeIn");
 	var datarow = table.insertRow();
-	
-	
+
+
 	for(var loop=0;loop<=99;loop++){
 		if(!document.getElementById("foreignTaxDetails["+loop +"].taxCountry")){
 			console.log("index is available....")
-			
+
 //			datarow.insertCell(0).innerHTML="<td><input type='hidden' id='foreignTaxDetails["+(loop) +"].taxCountry' name='foreignTaxDetails["+(loop) +"].taxCountry' value='"+foreigntaxform.taxCountry.val+"'/> <input class='form-control form-control-sm' disabled='true' value='"+$('#taxCountry :selected').text()+"' /></td>";
 			datarow.insertCell(0).innerHTML="<td><input class='form-control form-control-sm' readonly='readonly' id='foreignTaxDetails["+(loop) +"].taxCountry' name='foreignTaxDetails["+(loop) +"].taxCountry' value='"+$('#taxCountry :selected').text()+"'/></td>";
 			datarow.insertCell(1).innerHTML="<td><input class='form-control form-control-sm' id='foreignTaxDetails["+(loop) +"].taxidentificationtype' name='foreignTaxDetails["+(loop) +"].taxidentificationtype' value='"+foreigntaxform.taxIdentype.value+"'/></td>";
@@ -569,73 +575,41 @@ function resetform(formelementid){
 
 $( "#confirmaccountNumberid" ).blur(function() {
 	console.log("Validate acc");
-if($("#confirmaccountNumberid").val() != $("#accountNumberid").val()){
-	$("#accountvalidationmsg").text("Account details mismatch");
-	$("#accountvalidationmsg").addClass("text-danger");
-	$("#accountvalidationmsg").removeClass("text-success");
-}else{
-	$("#accountvalidationmsg").text("Account details matched");
-	$("#accountvalidationmsg").addClass("text-success");
-	$("#accountvalidationmsg").removeClass("text-danger");
-}
+	if($("#confirmaccountNumberid").val() != $("#accountNumberid").val()){
+		$("#accountvalidationmsg").text("Account details mismatch");
+		$("#accountvalidationmsg").addClass("text-danger");
+		$("#accountvalidationmsg").removeClass("text-success");
+	}else{
+		$("#accountvalidationmsg").text("Account details matched");
+		$("#accountvalidationmsg").addClass("text-success");
+		$("#accountvalidationmsg").removeClass("text-danger");
+	}
 });
 
 
-function reuploadkycdoc(applicationno, mobile) {
-//	console.log("Order staus for id- " + clientId + " : " + orderNo);
-	$.post("/products/api/fd/retry-kyc-doc-upload", {
-		"appl_no" : applicationno,
-		"mobile" : mobile
-	}, function(data, status) {
 
-		console.log(data);
-//		$('#exampleModal1').modal('hide');
-		if (data == 'NO_SESSION') {
-			alert("Invalid request");
-		} else if (data == 'REQUEST_DENIED') {
-			alert("Session not found!")
-		} else {
-			alert("Image reupload complete for appl_no: "+applicationno+" : "+ data);
-		}
-
-	}).fail(function(response) {
-		/* $('#exampleModal1').modal('hide');
-		$("#signuploadstatus")
-				.text(
-						"Failed to submit your signature. Please try again."); */
-		/* alert(response); */
-		alert("Failed to get status for application no- "+ applicationno);
-	});
-
+function customamount() {
+	if ($('input:radio[name="options"]:checked')) {
+		console.log("Check active")
+		$('#radioamount label').removeClass('active');
+	}
 }
 
+function formsubmitvalidation(){
+	let saveamount = $("#saveamount").val();
+	console.log("VAlidaet - "+ saveamount);
+	$("#jsmsg").html("");
+	if(saveamount%1000 != 0){
+		console.log("Invalid amount")
+		$("#jsmsg").text("Amount must be multiple of 1,000");
+		return false;
+	}
 
-function getmahindrafdpaymentstatus(applicationno, mobile) {
-//	console.log("Order staus for id- " + clientId + " : " + orderNo);
-	$.post("/products/api/fd/mahindraapplpaymentstatus", {
-		"appl_no" : applicationno,
-		"mobile" : mobile
-	}, function(data, status) {
-
-		console.log(data);
-//		$('#exampleModal1').modal('hide');
-		if (data == 'NO_SESSION') {
-
-			alert("Invalid request");
-
-		} else if (data == 'REQUEST_DENIED') {
-			alert("Session not found!")
-		} else {
-			alert("Status of order no: "+applicationno+"\n"+ data);
-		}
-
-	}).fail(function(response) {
-		/* $('#exampleModal1').modal('hide');
-		$("#signuploadstatus")
-				.text(
-						"Failed to submit your signature. Please try again."); */
-		/* alert(response); */
-		alert("Failed to get status for application no- "+ applicationno);
-	});
-
+	var panregex = new RegExp('^[a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}$');
+	var pandata = $("#panid").val();
+	if(!(panregex.test(pandata))){
+		$("#jsmsg").text("Invalid PAN number format!");
+		return false;
+	}
+	return true;
 }

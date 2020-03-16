@@ -92,7 +92,7 @@ table.dataTable thead th, table.dataTable thead td {
 						<h5 style="color: #2793e2; font-family: serif;">No purchase
 							history found</h5>
 						<div style="text-align: center;">
-							<a href="/products/mutual-funds/funds-explorer"><button
+							<a href="/products/fixed-deposit"><button
 									class="btn btn-sm btn-info">
 									Make your 1<sup>st</sup>Investment
 								</button></a>
@@ -152,6 +152,11 @@ table.dataTable thead th, table.dataTable thead td {
 															style="font-size: 12px; color: #238019; font-weight: 600;"
 															onclick="getmahindrafdpaymentstatus('${listVar.applicationno}','${listVar.mobile }' )">
 															Payment Status</button>
+															
+															<button class="dropdown-item" type="button"
+															style="font-size: 12px; color: #238019; font-weight: 600;"
+															onclick="completefdpayment('${listVar.applicationno}','${listVar.mobile }','${listVar.transactionrefid }','${listVar.mfsysrefid }' )">
+															Complete payment</button>
 														</c:if>
 														<c:if test="${listVar.transactiontype =='NEW' }">
 														<button class="dropdown-item" type="button"
@@ -213,5 +218,5 @@ table.dataTable thead th, table.dataTable thead td {
 	
 </script>
 <script
-	src="<c:url value="${contextcdn}/resources/js/mahindra-fd.js" />"></script>
+	src="<c:url value="${contextcdn}/resources/js/fd-profile.js" />"></script>
 </html>

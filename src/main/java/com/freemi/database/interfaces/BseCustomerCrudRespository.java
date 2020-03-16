@@ -61,6 +61,11 @@ public interface BseCustomerCrudRespository extends JpaRepository<MFCustomers, L
 	
 	@Transactional
 	@Modifying
+	@Query("update MFCustomers b set b.bseregistrationSuccess= :success, b.registrationResponse= :responsemsg where b.clientID=:clientid and b.accountActive = 'Y'")
+	public int updateBseRegistrationStatusAndRegistrationResponse(@Param("clientid") String clientid,@Param("responsemsg") String responsemsg, @Param("success") String success);
+	
+	@Transactional
+	@Modifying
 	@Query("update BseMFInvestForm b set b.customerSignature1= :sign1,b.customerSignature2= :sign2  where b.clientID= :clientId and b.pan1= :pan and b.accountActive = 'Y'")
 	public int uploadCustomerSignature(@Param("clientId") String clientId,@Param("pan") String pan,@Param("sign1") String signature1, @Param("sign2") String signature2);
 	
@@ -71,6 +76,11 @@ public interface BseCustomerCrudRespository extends JpaRepository<MFCustomers, L
 	@Modifying
 	@Query("update BseMFInvestForm b set b.aofuploadComplete= 'Y' where b.mobile= :mobile and b.accountActive = 'Y'")
 	public int updateAofUploadStatus(@Param("mobile") String mobile);
+	
+	@Transactional
+	@Modifying
+	@Query("update BseMFInvestForm b set b.aofuploadComplete= :success, b.aofUploadResponse= :message where b.mobile= :mobile and b.accountActive = 'Y'")
+	public int updateAofUploadStatus(@Param("mobile") String mobile, @Param("success") String success,@Param("message") String message );
 	
 	
 }

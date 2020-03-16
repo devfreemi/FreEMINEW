@@ -14,5 +14,8 @@ public interface MMCustomersCrudRepository extends JpaRepository<MahindraCustome
 	
 	@Query("select c.customerId from MahindraCustomerDetails c where c.mobile= :mobile")
 	public String getCustomerIdromMobile(@Param("mobile") String mobile);
+	
+	@Query("select c.pan from MahindraCustomerDetails c where c.mobile= :mobile")
+	public String getCustomerPanromMobile(@Param("mobile") String mobile);
 
 }

@@ -526,7 +526,7 @@ public class MahindraFDBeansMapper {
 				transStatus.setCustomerId(customerId);
 				transStatus.setTransactionId(transactionId);
 				transStatus.setSaveTransactionRequestBody(tranasctionApiResponse.getRequestJson());
-				transStatus.setTransactionStatus(tranasctionApiResponse.getStatus());
+				transStatus.setTransactionStatus(tranasctionApiResponse.getStatus() + " : "+ tranasctionApiResponse.getResponsemsg());
 				transStatus.setTransactionApplicationNumber(tranasctionApiResponse.getStatus().equals("OK")?tranasctionApiResponse.getApplicationNo():null);
 				transStatus.setIsTransactionComplete(tranasctionApiResponse.getStatus().equals("OK")?"Y":"N");
 

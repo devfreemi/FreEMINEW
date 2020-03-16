@@ -187,5 +187,5 @@ function fixStepIndicator(n) {
 	
 </script>
 <script src="<c:url value="${contextcdn}/resources/js/mahindra-fd.js" />" type="text/javascript"></script>
-
+<script src="<c:url value="${contextcdn}/resources/js/dropzone.js" />" type="text/javascript"></script>
 </html>

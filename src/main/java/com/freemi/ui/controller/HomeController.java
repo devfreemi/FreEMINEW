@@ -288,6 +288,7 @@ public class HomeController {
 			try {
 				url = new URL(referer);
 				uri = url.toURI();
+				logger.info("uri - "+ uri);
 				if(uri.getRawPath().contains("/register") || uri.getRawPath().contains("/forgotPassword") || uri.getRawPath().contains("/resetPassword")){
 					//					returnUrl=uri.getRawPath().split("/products/")[1].replace(".do", "");
 					//					returnUrl = referer.replace(".do", "");
@@ -305,10 +306,11 @@ public class HomeController {
 			}catch (URISyntaxException e) {
 				returnUrl =  uri.getRawPath().split("/products/")[1];
 			}*/catch (Exception e) {
+			    	logger.error("redirectUrlAfterLogin(): Exception while processing...",e);
 				returnUrl =  uri.getRawPath().split("/products/")[1];
 			}
 		}else{
-			logger.debug("Referer is null");
+			logger.info("redirectUrlAfterLogin(): Referer is null....");
 
 			//			returnUrl = "redirect:/products/";
 			returnUrl = /*"redirect:" +*/URI.create(request.getRequestURL().toString()).resolve(request.getContextPath()).toString();
@@ -323,10 +325,10 @@ public class HomeController {
 	@RequestMapping(value = "/login2.do", method = RequestMethod.POST)
 	@ResponseBody
 	public String loginwithJqueryAttemptPost2(@ModelAttribute("login") @Valid Login login,ModelMap model, BindingResult bindingResult,HttpServletRequest request,HttpServletResponse response, HttpSession session) {
-		logger.info("@@@@ Inside Login do loginwithJqueryAttemptPost2()..");	
+		logger.info("@@@@ Inside Login do loginwithJqueryAttemptPost2().. /login2.do");	
 		//		logger.info("Referer- "+ request.getHeader("Referer"));
 		//		String referer = request.getHeader("Referer");
-		logger.info("loginwithJqueryAttemptPost2(): Session id during login- "+ session.getId());
+		
 		logger.debug("loginwithJqueryAttemptPost2(): Recpcha form resuest- "+ request.getParameter("g-recaptcha-response"));
 
 		logger.debug("loginwithJqueryAttemptPost2(): Fetching after login url- "+ login.getReturnUrl() + " OTPMIT - "+ login.isOtpSubmit());
@@ -350,7 +352,7 @@ public class HomeController {
 				return "Captcha validation failed!";
 			}
 		}
-
+		logger.info("loginwithJqueryAttemptPost2(): Session id during login- "+ session.getId() + " :mobile : "+ login.getUsermobile());
 		//		logger.info("Beginning attemptAuthentication() from IP- "+ request.getRemoteHost()+ "/"+request.getHeader("X-Forwarded-for"));
 		logger.debug("loginwithJqueryAttemptPost2(): OTP login check- "+ login.isOtpLogin());
 
@@ -631,7 +633,7 @@ public class HomeController {
 		}
 
 		//		logger.info("Beginning attemptAuthentication() from IP- "+ request.getRemoteHost()+ "/"+request.getHeader("X-Forwarded-for"));
-		logger.info("OTP login check- "+ login.isOtpLogin());
+		logger.info("OTP login check for mobile: "  + login.getUsermobile() +  " : OTP login check- "+ login.isOtpLogin() );
 
 		String returnUrl="";
 		String referer = (String) session.getAttribute("returnSite");
@@ -751,10 +753,10 @@ public class HomeController {
 
 	@RequestMapping(value = "/forgotPassword.do", method = RequestMethod.POST)
 	public String forgotPasswordSubmit(@ModelAttribute("forgotPasswordForm") @Valid ForgotPassword forgotPasswordForm, BindingResult bindingResult, Model model, HttpServletRequest request, HttpServletResponse resp) {
-		logger.info("@@@@ Forgot password request submit POSTController..");
+		logger.info("@@@@ Forgot password request submit POSTController.. /forgotPassword.do");
 
 		if(bindingResult.hasErrors()){
-			logger.info("Error in forgot form- "+ bindingResult.getFieldError());
+			logger.info("Error in forgotpassword form- "+ bindingResult.getFieldError());
 			model.addAttribute("error", bindingResult.getFieldError().getDefaultMessage());
 			return "forgotPassword";
 		}
@@ -769,13 +771,13 @@ public class HomeController {
 				return "forgotPassword";
 			}
 		}
-
+		
 		//		RestClient client = new RestClient();
 		ResponseEntity<String> response = null;
 		try {
-			logger.info("Beginning process to request password change process...");
+			logger.info("Beginning process to request password change process for mobile..." + forgotPasswordForm.getUsermobile());
 			response = profileRestClientService.forgotPassword(forgotPasswordForm);
-			logger.info("Forgot password change response- "+ response.getBody());
+			logger.info("Forgot password change response for mobile:  "+forgotPasswordForm.getUsermobile() +" : " + response.getBody());
 			//			logger.info(response.getHeaders());
 			model.addAttribute("success", "Password reset mail sent on registered email id.");
 		}catch(HttpStatusCodeException  e){

@@ -3,11 +3,8 @@ package com.freemi.ui.controller;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Arrays;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
@@ -15,42 +12,39 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import javax.websocket.server.PathParam;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.repository.query.Param;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.freemi.common.util.CommonConstants;
+import com.freemi.common.util.CommonTask;
 import com.freemi.common.util.InvestFormConstants;
-import com.freemi.entity.investment.BsemfTransactionHistory;
-import com.freemi.entity.investment.mahindra.MahindraApiResponse;
+import com.freemi.entity.general.HttpClientResponse;
+import com.freemi.entity.general.Registerform;
 import com.freemi.entity.investment.mahindra.MahindraFDEntity;
 import com.freemi.entity.investment.mahindra.MahindraFDRenewalEntity;
-import com.freemi.entity.investment.mahindra.MahindraFDTransactionStatus;
 import com.freemi.entity.investment.mahindra.MahindraResponse;
 import com.freemi.entity.investment.mahindra.MahindraSchemesList;
 import com.freemi.entity.investment.mahindra.Mahindrapurchasehistory;
 import com.freemi.services.interfaces.MahindraFDServiceInterface;
+import com.freemi.services.interfaces.ProfileRestClientService;
 import com.google.gson.Gson;
-
-import javafx.collections.transformation.SortedList;
-import okhttp3.internal.http.HttpDate;
 
 @Controller
 public class MahindaFinanceController {
@@ -61,12 +55,15 @@ public class MahindaFinanceController {
     @Autowired
     MahindraFDServiceInterface mahindraFDServiceInterface;
 
+    @Autowired
+    ProfileRestClientService profileRestClientService;
+
     private static final Logger logger = LogManager.getLogger(MahindaFinanceController.class);
 
     @RequestMapping(value = {"/fixed-deposit/view-purchase-history"}, method = RequestMethod.GET)
     public String fdViewPurchaseHistory(Model model, HttpServletRequest request, HttpSession session) {
 
-	logger.info("@@ FIXED DEPOSITY purchase history controller @@");
+	logger.info("@@ FIXED DEPOSIT purchase history controller @@");
 	String returnUrl = "fixed-deposit/fd-purchase-history";
 	List<Mahindrapurchasehistory> purchaseHistoryList = null;
 	try {
@@ -107,61 +104,224 @@ public class MahindaFinanceController {
     public String mmfdHomeGet(Model model, HttpServletRequest request, HttpSession session) {
 
 	logger.info("Fixed depoit- "+ request.getRequestURI());
-	model.addAttribute("fdform", new MahindraFDEntity());
+	MahindraFDEntity fdEntity =new MahindraFDEntity();
+	if( session.getAttribute("token") !=null) {
+	    if(session.getAttribute("userid")!=null) {
+		fdEntity.setMobile(session.getAttribute("userid").toString());
+		String pan = mahindraFDServiceInterface.getRegisteredPan(session.getAttribute("userid").toString());
+		if(pan!=null) {
+		    fdEntity.setPan(pan);
+		}
+	    }
+	}
+
+	model.addAttribute("fdform",fdEntity );
 
 	model.addAttribute("contextcdn", environment.getProperty(CommonConstants.CDN_URL));
 
 	return "fixed-deposit/mahindra/mahindra-fd-home";
     }
 
-    @RequestMapping(value = "/fixed-deposit/capture-fd-request", method = RequestMethod.POST)
-    public String postFdpurchaseRequest(@ModelAttribute("fdform")MahindraFDEntity fdEntity,  Model model, HttpServletRequest request,RedirectAttributes attrs, HttpSession session) {
+    @RequestMapping(value = "/fixed-deposit/capture-fd-request", method = {RequestMethod.POST, RequestMethod.GET})
+    public String postFdpurchaseRequest(@ModelAttribute("fdform")MahindraFDEntity fdEntity,  Model model, HttpServletRequest request,RedirectAttributes attrs, HttpSession session, RedirectAttributes redirectAttrs) {
 
 	logger.info("Fixed depoit- "+ request.getRequestURI() + " : Mobile: "+ fdEntity.getMobile());
 	//		model.addAttribute("fdform", fdEntity);
+	String returnUrl ="redirect:/fixed-deposit/mahindra-fd-purchase";
+
 
 	try {
-	    attrs.addFlashAttribute("fdform", fdEntity);
+	    String flag ;
 
-	}catch(Exception e){
-	    logger.error("Error ",e);
+	    flag = checkRegisteredCustomer(fdEntity.getMobile(), session);
+	    /*if(fdEntity.getNbscName().equalsIgnoreCase("MAHINDRA")) {
+	    flag = mahindraFDServiceInterface.isExistingCustomer(fdEntity.getMobile(), null);
+	    }*/
+
+	    logger.info("postFdpurchaseRequest(): Is existing customer by mobile? - " + flag + " : NBSC: " + fdEntity.getNbscName());
+
+
+	    logger.info("postFdpurchaseRequest(): Setting session for current selected fund with customer details");
+
+
+	    if (flag.equals("Y")) {
+		if(session.getAttribute("token") == null) {
+		    logger.info("Existing customer need to login to complete transaction...");
+		    session.setAttribute("NEXT_URL", "/fixed-deposit/mahindra-fd-purchase");
+		    //			redirectAttrs.addAttribute("ref",URLEncoder.encode(request.getRequestURL().toString(), StandardCharsets.UTF_8.toString()));
+		    redirectAttrs.addAttribute("ref",URLEncoder.encode(URI.create(request.getRequestURL().toString()).resolve(request.getContextPath()).toString()+"/fixed-deposit/mahindra-fd-purchase", StandardCharsets.UTF_8.toString()));
+		    returnUrl = "redirect:/login?mf=00"; // Already existing customer, just login and fetch customer details
+		    session.setAttribute("PURCHASE_TYPE", "EXISTING_CUSTOMER");
+		}else {
+		    logger.info("Existing customer logged in already... Get PAN if FD account already registered");
+		    // If logged in account PAN and mobile do not match with provided PAN. Revert
+		    // back to page which should pick up correct details from session now overriding
+		    session.setAttribute("PURCHASE_TYPE", "ACTIVE");
+
+		    if (!session.getAttribute("userid").toString().equalsIgnoreCase(fdEntity.getMobile())) {
+			logger.warn("postFdpurchaseRequest(): Customer logged in with another mobile than provided during form fillup.");
+			//			redirectAttrs.addFlashAttribute("USERINFO", "01");
+			returnUrl = "redirect:/fixed-deposit?error=MOB_MISMATCH";
+		    } else {
+			logger.info("Customer provided details and logged in account matches.. validate PAN");
+			String pan =mahindraFDServiceInterface.getRegisteredPan(session.getAttribute("userid").toString());
+			if(pan!=null){
+			    if(pan.equalsIgnoreCase(fdEntity.getPan())) {
+				logger.info("PAN data matches... Proceed with transaction..");
+				returnUrl = "redirect:/fixed-deposit/mahindra-fd-purchase";
+			    }else {
+				logger.info("PAN data mismatch!!!");
+				returnUrl = "redirect:/fixed-deposit?error=PAN_MISMATCH";
+			    }
+			}else{
+			    logger.info("PAN not found from FD profile.. Not registered yet....");
+			    returnUrl = "redirect:/fixed-deposit/mahindra-fd-purchase";
+			}
+		    }
+		}
+	    }else if(flag.equals("N")) {
+		logger.info("Customer not regsitered.. ");
+		returnUrl = "redirect:/fixed-deposit/mahindra-fd-purchase?mf=02"; // Complete fresh customer. Create both profile and register for MF
+		session.setAttribute("PURCHASE_TYPE", "NEW_CUSTOMER");
+		fdEntity.setProfileRegistrationReq(true);
+	    }else if(flag.equals("E")) {
+		logger.info("Error checking if profile exist... Prevent transaction.... Retry");
+		returnUrl = "redirect:/fixed-deposit/mahindra-fd-purchase?mf=03";
+	    }else {
+		logger.warn("Unknown error while checking profile status..");
+	    }
+
+
+
+
+	    /*   if (flag.equals("Y") && session.getAttribute("token") == null) {
+
+	    } else if ((flag.equals("Y") && session.getAttribute("token") != null)) {
+	    logger.info("Existing customer need logged in already...");
+	    // If logged in account PAN and mobile do not match with provided PAN. Revert
+	    // back to page which should pick up correct details from session now overriding
+
+	    String pan =mahindraFDServiceInterface.getRegisteredPan(session.getAttribute("userid").toString());
+
+	    if (!session.getAttribute("userid").toString().equalsIgnoreCase(fdEntity.getMobile())
+	    	&& !pan.equalsIgnoreCase(fdEntity.getPan())) {
+	        logger.warn("postFdpurchaseRequest(): Customer logged in with another mobile than provided during form fillup. Also the PAN number is different. Redirecting back to fund selection page and override information with current details");
+	        logger.warn("postFdpurchaseRequest(): Data provided during form fillup:[ " + fdEntity.getPan() + " : " + fdEntity.getMobile() + "] Data from session user:[" + pan + " : "+ session.getAttribute("userid").toString() + "]");
+
+	        redirectAttrs.addFlashAttribute("USERINFO", "01");
+	        returnUrl = "redirect:/fixed-deposit";
+	    } else {
+	        returnUrl = "redirect:/fixed-deposit/mahindra-fd-purchase";
+	    }
+
+	    } else {
+	    // Check if he is registered customer form LDAP. If already registered customer,
+	    // then only need to register for FD, else create profile password as well
+
+	    // RestClient client = new RestClient();
+	    ResponseEntity<String> responseProfile = null;
+
+	    try {
+	        responseProfile = profileRestClientService.isUserExisitng(fdEntity.getMobile());
+	        logger.info("postFdpurchaseRequest(): Response for user existing check- " + responseProfile.getBody());
+
+	    } catch (HttpStatusCodeException e) {
+	        logger.info("postFdpurchaseRequest(): Failed to check user exisitng status - " + e.getStatusCode());
+	    } catch (JsonProcessingException e) {
+	        logger.error("postFdpurchaseRequest(): Json parsing excetption- ", e);
+	    } catch (Exception e) {
+	        logger.error("postFdpurchaseRequest(): Error processing request- ", e);
+	    }
+	    if (responseProfile.getBody().equalsIgnoreCase("Y")) {
+
+	        if (session.getAttribute("token") != null) {
+	    	returnUrl = "redirect:/fixed-deposit/mahindra-fd-purchase?mf=01";
+	        } else {
+	    	returnUrl = "redirect:/login?mf=01"; // User exist, so just need to register FD profile for NBSC
+	        }
+
+	    } else if (responseProfile.getBody().equalsIgnoreCase("N")) {
+	        returnUrl = "redirect:/fixed-deposit/mahindra-fd-purchase?mf=02"; // Complete fresh customer. Create both profile and register for MF
+	        session.setAttribute("PURCHASE_TYPE", "NEW_CUSTOMER");
+	    } else {
+	        logger.warn("postFdpurchaseRequest(): Failed to get cutomer status from LDAP");
+	        returnUrl = "redirect:/fixed-deposit/mahindra-fd-purchase?mf=03";
+
+	    }
+
+	    }*/
+
+	    redirectAttrs.addFlashAttribute("fdform", fdEntity);
+	} catch (Exception e) {
+	    logger.error("postFdpurchaseRequest(): Failed to check customer in databases/LDAP", e);
+
 	}
+	session.removeAttribute("FDPURCHASEDETAILS");
+	session.setAttribute("FDPURCHASEDETAILS", fdEntity);
 	model.addAttribute("contextcdn", environment.getProperty(CommonConstants.CDN_URL));
 
-	return "redirect:/fixed-deposit/mahindra-fd-purchase";
+	return returnUrl;
+    }
+
+
+    protected String checkRegisteredCustomer(String mobile, HttpSession session) {
+	String returnflag="N";
+	ResponseEntity<String> responseProfile = null;
+	try {
+	    responseProfile = profileRestClientService.isUserExisitng(mobile);
+	    logger.info("checkRegisteredCustomer(): Response for user existing check- " + responseProfile.getBody());
+
+	    if (responseProfile.getBody().equalsIgnoreCase("Y")) {
+		returnflag = "Y";
+	    } else if (responseProfile.getBody().equalsIgnoreCase("N")) {
+		returnflag = "N";
+	    } else {
+		returnflag="E";
+	    }
+
+	}  catch (Exception e) {
+	    returnflag="E";
+	    logger.error("purchasemfbsePost(): Error processing request- ", e);
+	}
+
+	return returnflag;
     }
 
     @RequestMapping(value = "/fixed-deposit/mahindra-fd-purchase", method = RequestMethod.GET)
     public String postFdpurchaseRequest1(@ModelAttribute("fdform")MahindraFDEntity fdEntity,  Model model, HttpServletRequest request, HttpSession session) {
 
 
+	logger.info("/fixed-deposit/mahindra-fd-purchase..... ");
 	try {
-	    logger.info("Fixed depoit- "+ request.getRequestURI() + " : Mobile: "+ fdEntity.getMobile());
+	    logger.info("/fixed-deposit/mahindra-fd-purchase : Mobile: "+ fdEntity.getMobile());
+
 
 	    if(fdEntity.getMobile() !=null) {
 
 		fdEntity = mahindraFDServiceInterface.getRegisteredDetails(fdEntity);
 		//				System.out.println("DOB of user- "+ fdEntity!=null?fdEntity.getDob().toString():"No data");
 		//				System.out.println("Account number - "+ fdEntity.getAccountNumber());
-		session.setAttribute("fdform", fdEntity);
+
+		session.setAttribute("FDPURCHASEDETAILS", fdEntity);
 	    }
 
-	    if(session.getAttribute("fdform")!=null) {
-		logger.info("Session data found...");
-		fdEntity = (MahindraFDEntity) session.getAttribute("fdform");
 
+	    if(session.getAttribute("FDPURCHASEDETAILS")!=null) {
+		logger.info("Session data found...");
+		fdEntity = (MahindraFDEntity) session.getAttribute("FDPURCHASEDETAILS");
 		if(session.getAttribute("email")!=null) {
 		    fdEntity.setEmail(session.getAttribute("email").toString());
 		}
-
-		model.addAttribute("fdform", fdEntity);
+		if(session.getAttribute("token")!=null) {
+		    fdEntity = mahindraFDServiceInterface.getRegisteredDetails(fdEntity);
+		    model.addAttribute("fdform", fdEntity);
+		}
 	    }else {
 		logger.info("No data found to process for fd request in session... Redirecting to fill data again...");
 		return "redirect:/fixed-deposit";
 	    }
 
-	    //			Fetch scheme details
-
+	    //	    Fetch scheme details
 	    getSchemeDetails(fdEntity.getScheme(), fdEntity.getCategory(), model);
 
 	}catch(Exception e){
@@ -220,6 +380,9 @@ public class MahindaFinanceController {
 	logger.info("postsaveFdpurchaseRequest(): .........................Request Received to save mahindra fixed deposit for customer- "+ fdEntity.getMobile());
 	String returnUrl ="fixed-deposit/mahindra/mahindra-fd-purchase";
 	boolean taskdone=true;
+
+
+
 	if (bindResult.hasErrors()) {
 	    logger.error("postsaveFdpurchaseRequest(): Error processing Mahindra FD request. Form validation error: ", bindResult.getFieldError().getDefaultMessage());
 	    model.addAttribute("error", bindResult.getFieldError().getDefaultMessage());
@@ -238,6 +401,61 @@ public class MahindaFinanceController {
 	 * "NULL"); System.out.println("Citizenshirp = "+ fdEntity.getCitizenship());
 	 * }catch(Exception e) { e.printStackTrace(); }
 	 */
+	boolean validationpass= true;
+	String validationerrormsg = "";
+	try {
+	    logger.info(session.getAttribute("PUCHASE_TYPE") + " -> "+ environment.getProperty(CommonConstants.LDAP_USER_REGISTRATION_ENABLED) + " -> "+ fdEntity.isProfileRegistrationReq());
+	    if (environment.getProperty(CommonConstants.LDAP_USER_REGISTRATION_ENABLED).equalsIgnoreCase("Y")) {
+
+		if(fdEntity.isProfileRegistrationReq()) {
+		    logger.info("postsaveFdpurchaseRequest(): Registering user during FD purchase- "+ fdEntity.getMobile());
+		    //		if(session.getAttribute("PUCHASE_TYPE")!=null && session.getAttribute("PUCHASE_TYPE").equals("NEW_CUSTOMER")  ) {
+		    Registerform registerForm = new Registerform();
+		    registerForm.setMobile(fdEntity.getMobile());
+		    registerForm.setEmail(fdEntity.getEmail());
+		    registerForm.setFullName(fdEntity.getFirstName()+ (!fdEntity.getMiddleName().isEmpty()?" "+fdEntity.getMiddleName():"") +" "+ fdEntity.getLastName());
+		    registerForm.setPassword(CommonConstants.GENERATE_PASSWORD_BY_FREEMI); // Reserved token for generating
+		    // token at profile side
+		    registerForm.setRegistrationref("MF_REG_NEW");
+
+		    HttpClientResponse httpResponse =  profileRestClientService.registerUser(registerForm,CommonTask.getClientSystemDetails(request));
+		    logger.info("Response received from LDAP account registration during MF account registrartion- "+ httpResponse.getResponseCode() + " : "+ httpResponse.getRetrunMessage());
+		    if(httpResponse.getResponseCode() == CommonConstants.HTTP_CLIENT_CALL_SUCCESS) {
+			logger.info("postsaveFdpurchaseRequest(): Registration successful for mobile number during MF registration- "+ fdEntity.getMobile());
+			logger.info("postsaveFdpurchaseRequest(): User registration successful initiated during new customer registration. Setting parameter to false..");
+			fdEntity.setProfileRegistrationReq(false);
+		    }else {
+			logger.info("User Registration failed...");
+			validationpass=false;
+			validationerrormsg= httpResponse.getRetrunMessage();
+		    }
+		    /*}else {
+		    validationpass=false;
+		    validationerrormsg= "Customer status could not found..";
+		}*/
+		}else {
+		    logger.info("Validate emAIL id for already registered account-");
+		    ResponseEntity<String> responseEntity  = profileRestClientService.validateuserIdAndGetMail(fdEntity.getMobile());
+		    String[] userStatus = responseEntity.getBody().toString().split(",");
+
+		    logger.info("Retrieved registered email ID status for given mobile no - "+ Arrays.asList(userStatus));
+		    if(userStatus[0].equalsIgnoreCase("VALID")){
+			if(!userStatus[1].equals("NO_EMAIL") && !userStatus[1].equalsIgnoreCase(fdEntity.getEmail())){
+			    validationpass =false;
+			    validationerrormsg="Invalid registered email ID.";
+			}else {
+			    logger.info("Email ID matched with registered email ID for given mobile....");
+			}
+		    }
+		}
+	    } else {
+		logger.info("postsaveFdpurchaseRequest(): BSE Test is enabled... Skipping the process for mobile number profile generation- "+ fdEntity.getMobile());
+	    }
+	}catch(Exception e) {
+	    logger.error("Error while registering user ",e);
+	    validationpass=false;
+	    validationerrormsg= e.getMessage();
+	}
 
 	MahindraResponse response1;
 	MahindraResponse response2;
@@ -246,6 +464,16 @@ public class MahindaFinanceController {
 	MahindraResponse response5;
 	MahindraResponse response6 = null;
 
+	if(!validationpass) {
+	    model.addAttribute("error",validationerrormsg);
+
+	    //			Fetch scheme details
+	    getSchemeDetails(fdEntity.getScheme(), fdEntity.getCategory(), model);
+	    model.addAttribute("states", InvestFormConstants.states);
+
+	    model.addAttribute("contextcdn", environment.getProperty(CommonConstants.CDN_URL));
+	    return returnUrl;
+	}
 
 
 	//		System.out.println("Interest rate- "+ fdEntity.getInterestRate());
@@ -337,7 +565,8 @@ public class MahindaFinanceController {
 			}else if(response4.getStatusMsg().equals("API_RESPONSE_ERROR_SAVETRANSACTION_DETAILS")) {
 			    model.addAttribute("error", "Failed to complete your transaction. Kindly try again.");
 			}else {
-			    model.addAttribute("error", "Processing incomplete. Kindly contact admin/try again.");
+//			    model.addAttribute("error", "Processing incomplete. Kindly contact admin/try again.");
+			    model.addAttribute("error",response4.getStatusMsg());
 			}
 		    }else if(response4.getStatusCode()== CommonConstants.TASK_FAILURE) {
 			if(response4.getStatusMsg().equals("INTERNAL_ERROR")) {
@@ -358,6 +587,7 @@ public class MahindaFinanceController {
 	}catch(Exception e){
 	    logger.error("Error getting page- ",e);
 	}
+
 
 	if(!taskdone) {
 	    logger.info("Task not done. Refetch data...");

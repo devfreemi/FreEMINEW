@@ -57,4 +57,7 @@ public interface MahindraFDServiceInterface {
 	
 	public MahindraFDRenewalEntity getFDRenewalDetails(String customerid, String mobile, String applicationno);
 	
+	public boolean isExistingCustomer(String mobile, String pan);
+	
+	public String getRegisteredPan(String mobile);
 }

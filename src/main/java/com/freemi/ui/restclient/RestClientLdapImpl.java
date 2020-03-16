@@ -91,7 +91,8 @@ public class RestClientLdapImpl implements ProfileRestClientService {
 		logger.info("Initiating API call to register user- "+ registerForm.getMobile());
 		HttpClientResponse httpClientResponse = new HttpClientResponse();
 		try {
-			
+			registerForm.setRequestingip(systemDetails.getClientIpv4Address());
+			registerForm.setClientbrowserdetails(systemDetails.getClientBrowser());
 			ResponseEntity<String> response = null;
 			final String url = env.getProperty(CommonConstants.URL_SERVICE_PROFILE) + "/publicenv/registerUser";
 			ObjectMapper mapper = new ObjectMapper();
@@ -107,19 +108,23 @@ public class RestClientLdapImpl implements ProfileRestClientService {
 			if(status.equals("SUCCESS")){
 				httpClientResponse.setResponseCode(CommonConstants.HTTP_CLIENT_CALL_SUCCESS);
 				httpClientResponse.setRetrunMessage("Registration successful. Login to your account");
-				try {
-					logger.info("User registration complete in LDAP. Save basic details in database");
-					PortalUsers registeredUser = new PortalUsers();
-					registeredUser.setMobile(registerForm.getMobile());
-					registeredUser.setFullname(registerForm.getFullName());
-					registeredUser.setEmail(registerForm.getEmail());
-					registeredUser.setSystemIp(systemDetails.getClientIpv4Address());
-					registeredUser.setSystemDetails(systemDetails.getClientBrowser());
-					registeredUser.setRegistrationTime(new Date());
-					portalUsersCrudRepository.save(registeredUser);
-				}catch(Exception e) {
-					logger.error("registerUser(): Failed to save registered user details to database for user- ",registerForm.getMobile(),e );
-				}
+				
+		/*
+		try {
+			logger.info("User registration complete in LDAP. Save basic details in database");
+			PortalUsers registeredUser = new PortalUsers();
+			registeredUser.setMobile(registerForm.getMobile());
+			registeredUser.setFullname(registerForm.getFullName());
+			registeredUser.setEmail(registerForm.getEmail());
+			registeredUser.setSystemIp(systemDetails.getClientIpv4Address());
+			registeredUser.setSystemDetails(systemDetails.getClientBrowser());
+			registeredUser.setRegistrationTime(new Date());
+			portalUsersCrudRepository.save(registeredUser);
+		}catch(Exception e) {
+			logger.error("registerUser(): Failed to save registered user details to database for user- ",registerForm.getMobile(),e );
+		}
+		*/
+				
 			}else if(status.equals("DUPLICATE ENTRY")){
 				httpClientResponse.setResponseCode(CommonConstants.HTTP_CLIENT_CALL_FAIL);
 				httpClientResponse.setRetrunMessage("Account already exist with this number.");

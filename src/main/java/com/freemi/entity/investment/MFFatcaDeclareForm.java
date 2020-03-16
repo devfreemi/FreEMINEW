@@ -118,6 +118,9 @@ public class MFFatcaDeclareForm implements Serializable {
 	@Column(name="FATCA_DECLARE_UPLOAD_COMPLETE")
 	private boolean fatcaUploaded=false;
 	
+	@Column(name = "UPLOAD_RESPONSE")
+	private String uploadResponse;
+	
 	@Column(name="DECLARATION_DATE")
 	private Date daclarationDate;
 	
@@ -353,6 +356,12 @@ public class MFFatcaDeclareForm implements Serializable {
 	}
 	public void setUscanadaCitizen(String uscanadaCitizen) {
 		this.uscanadaCitizen = uscanadaCitizen;
+	}
+	public String getUploadResponse() {
+	    return uploadResponse;
+	}
+	public void setUploadResponse(String uploadResponse) {
+	    this.uploadResponse = uploadResponse;
 	}
 		
 }

@@ -502,7 +502,11 @@ public class MahindraFDServiceImpl implements MahindraFDServiceInterface {
 
 		if(transactionDetails!=null) {
 		    logger.info("Initiate DB call to save transaction details ..");
-		    mmFDTranactionCrudRepository.save(transactionDetails);
+		    if(mmFDPurchaseStatusCrudRepository.existsByCustomerIdAndTransactionId(customerId, cptransactionId)) {
+			mmFDTranactionCrudRepository.save(transactionDetails);
+		    }else {
+			logger.info("Pre-save skipped as details already exist..");
+		    }
 		    response.setStatusCode(CommonConstants.TASK_SUCCESS);
 		    response.setResultData1(bankDetailsId);
 		    response.setMfSysRefNo(saveDetailsResponseCode);
@@ -517,7 +521,8 @@ public class MahindraFDServiceImpl implements MahindraFDServiceInterface {
 			response.setStatusMsg(apiresp2.getApplicationNo());
 		    }else {
 			response.setStatusCode(CommonConstants.TASK_API_RESPONSE_ERROR);
-			response.setStatusMsg("API_RESPONSE_ERROR_SAVETRANSACTION_DETAILS");
+//			response.setStatusMsg("API_RESPONSE_ERROR_SAVETRANSACTION_DETAILS");
+			response.setStatusMsg(apiresp2.getResponsemsg());
 
 		    }
 
@@ -887,20 +892,21 @@ public class MahindraFDServiceImpl implements MahindraFDServiceInterface {
 	try {
 	    customerid = mmCustomersCrudRepository.getCustomerIdromMobile(mobile);
 	    if(customerid!=null) {
-		List<MahindraKycDocUploadStatus> faileddoctypes = mmKycDocUploadRepository.findAllByApplicationnoAndUploadstatus(applicationo, "N");
-		if(faileddoctypes.size()>0) {
-		    for(int i=0;i<faileddoctypes.size();i++) {
-			logger.info("Process reupload for failed doc type- "+ faileddoctypes.get(i).getImagetype());
-			details = mmCustKycDocumentRepository.findOneByImageTypeAndCustomeridAndActive(faileddoctypes.get(i).getImagetype(), customerid, "Y");
-			apiresp = restClientMahindraFD.savekycdocuments(faileddoctypes.get(i).getHoldingtype(), details, faileddoctypes.get(i).getCptransrefid(), faileddoctypes.get(i).getMftransRefId(), faileddoctypes.get(i).getApplicationno());
+		List<MahindraKycDocUploadStatus> appfailedkycuploads = mmKycDocUploadRepository.findAllByApplicationnoAndUploadstatus(applicationo, "N");
+		if(appfailedkycuploads.size()>0) {
+		    for(int i=0;i<appfailedkycuploads.size();i++) {
+			logger.info("Process reupload for failed doc type- "+ appfailedkycuploads.get(i).getImagetype());
+			details = mmCustKycDocumentRepository.findOneByImageTypeAndCustomeridAndActive(appfailedkycuploads.get(i).getImagetype(), customerid, "Y");
+			apiresp = restClientMahindraFD.savekycdocuments(appfailedkycuploads.get(i).getHoldingtype(), details, appfailedkycuploads.get(i).getCptransrefid(), appfailedkycuploads.get(i).getMftransRefId(), appfailedkycuploads.get(i).getApplicationno());
 			if(apiresp.getStatus().equals("OK")) {
-			    logger.info("retryDocumentupload(): Re-upload successfull. Save doc Upload status to DB..");
-			    int stat= mmKycDocUploadRepository.reuploaddocstatus("Y", apiresp.getResponsemsg(),faileddoctypes.get(i).getSerial(), customerid);
+			    logger.info("retryDocumentupload(): Re-upload successfull. Updating status to DB....");
+			    int stat= mmKycDocUploadRepository.reuploaddocstatus("Y", apiresp.getResponsemsg(),appfailedkycuploads.get(i).getSerial(), customerid);
 			    logger.info("retryDocumentupload: Reloaded status updated in DB- "+ stat);
 			}else {
-			    logger.info("Upload KYC doc failed for category.." + faileddoctypes.get(i).getImagetype());
+			    logger.info("Re-Upload KYC doc failed for category.." + appfailedkycuploads.get(i).getImagetype() + " : Updating status to DB....");
 			    //			kycuploadstatus.setUploadstatus("N");
 			    //			kycuploadstatus.setApiresponse(apiresp.getResponsemsg());
+			    mmKycDocUploadRepository.reuploaddocstatus("N", apiresp.getResponsemsg(),appfailedkycuploads.get(i).getSerial(), customerid);
 			}
 
 		    }
@@ -946,6 +952,7 @@ public class MahindraFDServiceImpl implements MahindraFDServiceInterface {
 		details.setMobile(fdEntity.getMobile());
 		details.setCustomerid(customerid);
 		details.setImageType("MFPH");
+		details.setImagesubtype("Photograph");
 		if(fdEntity.getKycphotoproof()!=null) {
 		    try {
 			logger.debug("Photograph- "+FilenameUtils.getExtension(fdEntity.getKycphotoproof().getOriginalFilename()) + " -->"+Base64.encodeBase64String(fdEntity.getKycphotoproof().getBytes()));
@@ -971,6 +978,7 @@ public class MahindraFDServiceImpl implements MahindraFDServiceInterface {
 		details.setCustomerid(customerid);
 		details.setImageType("C");
 		details.setImagesubtype("Identity");
+		details.setImagerefrenceno(fdEntity.getPan());
 		if(fdEntity.getKycpanproof()!=null) {
 		    try {
 			logger.debug("PAN- "+FilenameUtils.getExtension(fdEntity.getKycpanproof().getOriginalFilename()) + " -->"+Base64.encodeBase64String(fdEntity.getKycphotoproof().getBytes()));
@@ -1117,7 +1125,7 @@ public class MahindraFDServiceImpl implements MahindraFDServiceInterface {
 		if(apiresp.getStatus().equals("SUCCESS")) {
 		    String doc= (apiresp.getAcknowledgementdoc().split(";")[1]).split(",")[1];
 		    logger.info("Final split acknowledged doc- "+ doc);
-		    mailSenderInterface.sendMahindraFDAcknowledgementdocument(doc, email, mobile, name,applicationno);
+		    mailSenderInterface.sendMahindraFDAcknowledgementdocument(doc, email, mobile, name,applicationno,0,"Mahindra Finance",null);
 		}else {
 		    logger.info("GenerateDoc status failed- "+ apiresp.getStatus());
 		}
@@ -1145,6 +1153,38 @@ public class MahindraFDServiceImpl implements MahindraFDServiceInterface {
 	    logger.info("getFDRenewalDetails(): No details found for application for the customerid- "+ applicationno);
 	}
 	return renewwaldetails;
+    }
+
+
+    @Override
+    public boolean isExistingCustomer(String mobile, String pan) {
+	logger.info("isExistingCustomer(): Request received to check if customer exist for mobile no: " + mobile);
+
+	boolean flag=false;
+	try {
+	    if(mmCustomersCrudRepository.existsByMobile(mobile)) {
+		flag =true;
+	    }else {
+		logger.info("isExistingCustomer(): MAHINDRA FD account not registered for mobile "+ mobile);
+	    }
+	}catch(Exception e) {
+	    logger.error("isExistingCustomer(): Error querying database: ",e);
+	}
+	return flag;
+    }
+
+
+    @Override
+    public String getRegisteredPan(String mobile) {
+	logger.info("getRegisteredPan(): Request received to fetch PAN for mobile no: " + mobile);
+	String pan = null;
+	try {
+	  pan = mmCustomersCrudRepository.getCustomerPanromMobile(mobile);
+	  logger.info("Received PAN - "+ pan);
+	}catch(Exception e) {
+	    logger.error("getRegisteredPan(): Error querying database: ",e);
+	}
+	return pan;
     }
 
 

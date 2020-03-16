@@ -107,6 +107,8 @@ public class ProductsController {
 			return "register";
 		}
 		
+		registerForm.setFullName(registerForm.getFname() + " "+ registerForm.getLname());
+		
 		HttpClientResponse httpResponse =  profileRestClientService.registerUser(registerForm,CommonTask.getClientSystemDetails(request));
 		
 		if(httpResponse.getResponseCode() == CommonConstants.HTTP_CLIENT_CALL_SUCCESS) {

@@ -26,6 +26,7 @@ public class MahindraFDEntity implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	private String nbscName="MAHINDRA";
 	
 	private String cpTrnasRefNo;
 	
@@ -134,6 +135,7 @@ public class MahindraFDEntity implements Serializable {
 	private String addressDistrict2;
 	private String addressCity2;
 	private Integer addresspincode2;
+	private boolean profileRegistrationReq=false;
 	
 	@NotNull(message = "Bank name is null") @NotEmpty(message = "Bank name not found. Please check your banl IFSC code")
 	private String bankname;
@@ -751,6 +753,19 @@ public class MahindraFDEntity implements Serializable {
 	public void setCancelledchecqueRefNo(String cancelledchecqueRefNo) {
 		this.cancelledchecqueRefNo = cancelledchecqueRefNo;
 	}
+	public String getNbscName() {
+	    return nbscName;
+	}
+	public void setNbscName(String nbscName) {
+	    this.nbscName = nbscName;
+	}
+	public boolean isProfileRegistrationReq() {
+	    return profileRegistrationReq;
+	}
+	public void setProfileRegistrationReq(boolean profileRegistrationReq) {
+	    this.profileRegistrationReq = profileRegistrationReq;
+	}
+	
 	
 		
 }

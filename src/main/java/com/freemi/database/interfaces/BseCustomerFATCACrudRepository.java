@@ -17,4 +17,9 @@ public interface BseCustomerFATCACrudRepository extends JpaRepository<MFFatcaDec
 	@Query("update MFFatcaDeclareForm b set b.fatcaUploaded= :fatuploadStatus where b.clientID=:clientid")
 	public int updateFatcaDeclarationStatus(@Param("fatuploadStatus") boolean fatcaUpload, @Param("clientid") String clientId);
 	
+	@Transactional
+	@Modifying
+	@Query("update MFFatcaDeclareForm b set b.fatcaUploaded= :fatuploadStatus, b.uploadResponse= :responsemsg where b.clientID=:clientid")
+	public int updateFatcaDeclarationStatus(@Param("fatuploadStatus") boolean fatcaUpload,@Param("responsemsg") String responsemsg, @Param("clientid") String clientId);
+	
 }

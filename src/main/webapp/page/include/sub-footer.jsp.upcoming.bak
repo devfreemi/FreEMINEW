@@ -1,0 +1,145 @@
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
+<div class="sub-footer mt-3 p-4" style="background:#123647; margin-top: 2%; color:white;">
+	<div class="col-12 col-md-11 mx-auto py-3 px-0 p-md-3">
+
+<p class="col-12 sf-main-title text-center" id="freemi-trending">FreEMI Trends</p>
+		<hr class="col-6 col-lg-3 mx-auto sf-hr-line my-1 d-none d-md-block">
+
+<div class="row mx-auto mw-100 mt-4" id="mobile-optimize">
+
+<!-- @@@@@@@@@@@ registry links @@@@@@@@@@@@@ -->
+
+<div class="col-7 col-md-3 mx-auto pl-md-1 pr-md-3 px-0">
+<a href="https://www.freemi.in/mutual-fund-registry/" class="sub-footer-title mb-3">Mutual Fund Registry</a> <br>
+<a href="https://www.freemi.in/mutual-fund-registry/anniversary-registry/" class="sub-footer-link-style">Anniversary Registry</a>  <br>
+<a href="https://www.freemi.in/mutual-fund-registry/travel-registry/" class="sub-footer-link-style"> Travel Expenses Registry</a>  <br>
+<a href="https://www.freemi.in/mutual-fund-registry/parties-registry/" class="sub-footer-link-style">Parties Expenses Registry</a>  <br>
+<p class="view-all view-all-registry mt-2">See More...</p>
+</div>
+<div class="col-5 col-md-3 mx-auto pr-0 pr-md-3">
+<p class="sub-footer-title mb-0">Loans</p>
+<a href="https://www.freemi.in/personal-loan/" class="sub-footer-link-style">Personal Loan</a>  <br>
+<a href="https://www.freemi.in/business-loan/" class="sub-footer-link-style">Business Loan</a>  <br>
+<a href="https://www.freemi.in/home-loan/" class="sub-footer-link-style">Home Loan</a>
+<p class="view-all view-all-loans mt-2">See More...</p>
+</div>
+
+<div class="col-7 col-md-3 mx-auto px-0 px-md-3">
+<a href="https://www.freemi.in/credit-card/" class="sub-footer-title mb-3">Credit Cards</a> <br>
+<a href="https://www.freemi.in/icici-bank/icici-bank-credit-card/" class="sub-footer-link-style">ICICI Bank Credit Card</a>  <br> 
+<a href="https://www.freemi.in/credit-card/indusind-bank-credit-card/" class="sub-footer-link-style">Indusind Bank Credit Card</a>  <br> 
+<a href="https://www.freemi.in/sbi-bank/sbi-bank-credit-card/" class="sub-footer-link-style">SBI Bank Credit Card</a>  <br> 
+<p class="view-all view-all-credit-card mt-2">See More...</p>
+</div>
+
+<div class="col-5 col-md-3 mx-auto pr-0 pr-md-3">
+<p class="sub-footer-title mb-0">Bankwise Pages</p>
+<a href="https://www.freemi.in/icici-bank/" class="sub-footer-link-style">ICICI Bank</a>   <br>
+<a href="https://www.freemi.in/axis-bank/" class="sub-footer-link-style">Axis Bank</a>   <br>
+<a href="https://www.freemi.in/hdfc-bank/" class="sub-footer-link-style">HDFC Bank</a>  
+<p class="view-all view-all-bankwise mt-2">See More...</p>
+</div>
+
+<div class="col-12 link-display-one mx-1 p-3 mb-3">
+<div class="registry-links-disp">
+<a href="https://www.freemi.in/mutual-fund-registry/birthday-registry/" class="sf-hidden-links">Birthday Expenses Registry</a> <span class="pipe-style">|</span> 
+<a href="https://www.freemi.in/mutual-fund-registry/tax-saving-registry/" class="sf-hidden-links">Tax Saving Registry</a> <span class="pipe-style">|</span> 
+<a href="https://www.freemi.in/mutual-fund-registry/retirement-registry/" class="sf-hidden-links">Retirement Registry</a> <span class="pipe-style">|</span> 
+<a href="https://www.freemi.in/mutual-fund-registry/home-loan-registry/" class="sf-hidden-links">Home Loan Registry</a> <span class="pipe-style">|</span> 
+<a href="https://www.freemi.in/mutual-fund-registry/school-fees-registry/" class="sf-hidden-links">School Fees Registry</a> <span class="pipe-style">|</span> 
+<a href="https://www.freemi.in/mutual-fund-registry/bill-payment-registry/" class="sf-hidden-links">Bill Payment Registry</a> <span class="pipe-style">|</span> 
+<a href="https://www.freemi.in/mutual-fund-registry/daily-office-expenses-registry/" class="sf-hidden-links">Daily Office Expenses</a> <span class="pipe-style">|</span> 
+<a href="https://www.freemi.in/mutual-fund-registry/marriage-expenses-registry/" class="sf-hidden-links">Marriage Expenditures</a> <span class="pipe-style">|</span> 
+<a href="https://www.freemi.in/mutual-fund-registry/wedding-gift-registry/" class="sf-hidden-links">Wedding Gift Registry</a> <span class="pipe-style">|</span> 
+<a href="https://www.freemi.in/mutual-fund-registry/personal-loan-registry/" class="sf-hidden-links">Personal Loan Registry</a> <span class="pipe-style">|</span> 
+<a href="https://www.freemi.in/mutual-fund-registry/child-education-registry/" class="sf-hidden-links">Child Education Registry</a> 
+</div>
+<!-- ------ loans links ------- -->
+<div class="loans-links-disp">
+<a href="https://www.freemi.in/loans/personal-loan-kolkata/" class="sf-hidden-links">Personal Loan Kolkata</a> <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/personal-loan-interest-rates/" class="sf-hidden-links">Personal Loan Interest Rates</a> <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/personal-loan-eligibility-calculator/" class="sf-hidden-links">Personal Loan Eligibility Calculator</a> <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/axis-bank/axis-bank-business-loan/" class="sf-hidden-links">Axis Bank Business Loan</a> <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/bajaj-finserv/bajaj-finserv-business-loan/" class="sf-hidden-links">Bajaj Finserv Business Loan</a> <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/icici-bank/icici-bank-business-loan/" class="sf-hidden-links">ICICI Bank Business Loan</a> <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/hdfc-bank/hdfc-bank-business-loan/" class="sf-hidden-links">HDFC Bank Business Loan</a> <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/idfc-first-bank/idfc-first-bank-business-loan/" class="sf-hidden-links">IDFC First Business Loan</a> <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/capital-first/capital-first-business-loan/" class="sf-hidden-links">Capital First Business Loan</a> <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/indiabulls/indiabulls-business-loan/" class="sf-hidden-links">Indiabulls Business Loan</a> <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/indusind-bank/indusind-bank-business-loan/" class="sf-hidden-links">IndusInd Bank Business Loan</a> <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/kotak-mahindra-bank/kotak-mahindra-bank-business-loan/" class="sf-hidden-links">Kotak Mahindra Business Loan</a> <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/yes-bank/yes-bank-business-loan/" class="sf-hidden-links">Yes Bank Business Loan</a> <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/tata-capital/tata-capital-business-loan/" class="sf-hidden-links">Tata Capital Business Loan</a> <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/fullerton-india/fullerton-india-business-loan/" class="sf-hidden-links">Fullerton India Business Loan</a> <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/business-loan-interest-rates/" class="sf-hidden-links">Business Loan Interest Rate</a> <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/business-loan-eligibility-calculator/" class="sf-hidden-links">Business Loan Eligibility Calculator</a> 
+</div>
+<!-- ------ bankwise page links ------- -->
+<div class="bankwise-links-disp">
+<a href="https://www.freemi.in/kotak-mahindra-bank/" class="sf-hidden-links">Kotak Mahindra Bank</a>  <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/indusind-bank/" class="sf-hidden-links">IndusInd Bank</a>  <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/idfc-first-bank/" class="sf-hidden-links">IDFC First Bank</a>  <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/yes-bank/" class="sf-hidden-links">YES Bank</a>  <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/bajaj-finserv/" class="sf-hidden-links">Bajaj Finserv</a>  <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/capital-first/" class="sf-hidden-links">Capital First</a>  <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/edelweiss/" class="sf-hidden-links">Edelweiss</a>  <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/indiabulls/" class="sf-hidden-links">Indiabulls</a>  <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/tata-capital/" class="sf-hidden-links">TATA Capital</a> <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/fullerton-india/" class="sf-hidden-links">Fullerton India</a>
+</div>
+<!-- ------ credit card links ------- -->
+<div class="cc-links-disp">
+<a href="https://www.freemi.in/yes-bank/yes-bank-credit-card/" class="sf-hidden-links">Yes Bank Credit Card</a> <span class="pipe-style">|</span> 
+<a href="https://www.freemi.in/hdfc-bank/hdfc-bank-credit-card/" class="sf-hidden-links">HDFC Bank Credit Card</a>
+</div>
+<!-- ------ mf links ------- -->
+
+
+
+</div><!-- -------- extra links ends ----------- -->
+
+<div class="col-7 col-md-3 pl-md-1 pr-md-3 px-0 mt-3 mt-md-0" id="sf-mf-mobile">
+<a href="https://www.freemi.in/mutual-funds/" class="sub-footer-title mb-3">Mutual Funds</a> <br>
+<a href="https://www.freemi.in/elss/elss-mutual-fund/" class="sub-footer-link-style">Equity Linked Savings Scheme</a>  <br>
+<a href="https://www.freemi.in/elss/elss-funds-explorer/" class="sub-footer-link-style">ELSS Funds Explorer</a>  <br>
+<a href="https://www.freemi.in/mutual-funds/mutual-fund-explorer/" class="sub-footer-link-style">Mutual Funds Explorer</a>
+</div>
+<div class="col-12 col-md-3 px-0 px-md-3 mt-3 mt-md-0" id="sf-mf-insurance">
+<p class="sub-footer-title mb-0">Insurance</p>
+<a href="https://www.freemi.in/two-wheeler-insurance/" class="sub-footer-link-style">Two wheeler Insurance</a>   <br>
+<a href="https://www.freemi.in/car-insurance/" class="sub-footer-link-style">Car Insurance</a>  <br>
+<a href="https://www.freemi.in/health-insurance/" class="sub-footer-link-style">Health Insurance</a>
+</div>
+<div class="col-5 col-md-3 pr-0 pr-md-3 mt-3 mt-md-0" id="sf-mf-calcs">
+<p class="sub-footer-title mb-0">Financial Tools<p>
+<a href="https://www.freemi.in/products/tax-calculator/" class="sub-footer-link-style">Tax Calculator</a>   <br>
+<a href="https://www.freemi.in/mutual-funds/sip-calculator/" class="sub-footer-link-style">SIP Calculator</a>   <br>
+<a href="https://www.freemi.in/emi-calculator/" class="sub-footer-link-style">EMI Calculator</a> 
+</div>
+
+
+
+</div>
+
+
+<!-- @@@@@@@@@@@ disclaimers @@@@@@@@@@@@@ -->
+
+
+<div class="col-12 px-0 py-1 pt-md-3 px-md-1 mt-3 mx-auto sub-footer-disclaimer">
+<span class="text-white"><strong>Disclaimer:</strong></span>
+FreEMI do not sell any kind of loans on it's own and do not take any kind of fees from our customers. We recommend our customers to select best offers from Banks and its advertisers. We do not assure or grantee any loans, as the loan is sanctioned as per the norms of Banks and NBFCs. We propose all customers to never entertain any monetary demand for disbursal of loan. Also, it is a request that in case if any individual asking for money and calling themselves as representative of 
+FreEMI should be immediately reported to us via mail at <a href="mailto:support@freemi.in" class="support-mail">support@freemi.in</a>
+<br><br>
+Display of any logos, tradenames, trademarks, and other subject matters of intellectual property belong to their particular intellectual property owners. Display of such IP including the related product
+details does not imply FreEMI's partnership with the Intellectual Property owner or manufacturer /issuer of such products.
+
+<br><br>
+<a href="https://www.freemi.in/mutual-fund-sip-disclaimer/" class="text-white"><strong>Mutual Fund Disclaimer:</strong></a> Mutual fund investments are subject to market risks. Please read the scheme related information and offered documents carefully before investing. Past performance is not indicative of future returns. | <span style="color:#80be53;">ARN - 141396</span>
+<br><br>
+<span style="color:#80be53;">IRDA Registration No. HCG11821 </span> Insurance is the subject matter of solicitation. Our visitors are hereby informed that their information submitted may be shared with HDFC ERGO.
+The product information displayed on this website is of the insurer.
+</div>
+</div>
+</div>
+

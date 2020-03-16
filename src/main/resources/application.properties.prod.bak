@@ -42,10 +42,9 @@ spring.mail.protocol=smtp
 ##############################Y
 #INVESTMENT_ENABLED=N
 investment.api.birla.enabaled=N
-
 investment.bse.enabled=Y
 investment.bse.testphase.enabled=N
-
+investment.bse.sign.bypasskyc=Y
 ######### PROD ##################
 
 #Acceess by internal private IP. VPC peering is enabled for lilghtsail environment
@@ -107,8 +106,13 @@ server.session.cookie.http-only=true
 
 mail.id.developer.team=deba.joy89@gmail.com
 mail.id.support.team=support@freemi.in
-investment.bse.mail.support=Y
-
-mfregistration.bse.mail.support=Y
-
 mail.id.mf.initiate=kousik.chatterjee09@gmail.com
+investment.bse.mail.support=Y
+mfregistration.bse.mail.support=Y
+#Whether to send mail to support team when any trasnaction error happens
+error.general.transaction.mail.support=Y
+
+################################# BACKEND SERVICE API URL ##################################
+
+url.service.fd.mahindra=http://localhost:8050/freemiservices/api/mahindrafd
+#url.service.fd.mahindra=http://localhost:6080/freemiservices-0.0.1-SNAPSHOT/api/mahindrafd

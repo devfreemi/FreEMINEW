@@ -9,10 +9,20 @@ var distance = 300000;
 var tokenexpired= false;
 
 function formOnLoad(){
-	
+
 	validateForm();
 
 }
+
+
+$("#validationCustomUsername,#validationPassword,#validationOTP,#otplogin").keyup(function(){
+	validateForm();
+});
+
+$("#otplogin").change(function(){
+	validateForm();
+});
+
 
 function validateForm(){
 //	console.log("validate");
@@ -74,11 +84,11 @@ function submitLogin(e){
 	var otploginChosen = $("#otplogin").is(":checked");
 	var otpVal = document.forms["login"]["otpVal"].value;
 	var token =  $('input[name="_csrf"]').attr('value'); 
-	
+
 	if(otploginChosen){
 		pass="OTP_LOGIN";
 	}
-	
+
 	if(!otpsubmit){
 		$.ajaxSetup({
 			headers:
@@ -102,7 +112,7 @@ function submitLogin(e){
 			datatype: "json",
 			beforeSend: function() {
 				disableButon();
-		    }
+			}
 		});
 
 		request.done(function(msg) {
@@ -112,11 +122,11 @@ function submitLogin(e){
 				document.getElementById("passbox").style.display = 'none';
 				document.getElementById("otpChoice").style.display = 'none';
 				document.getElementById("otpbox").style.display = 'block';
-				
+
 				$("#otpsubmitstat").val(true);
 				otpsubmit = true;
 				countDownTimer();
-				
+
 			}else if(msg=="SUCCESS"){
 //				console.log("Redirect to: " +returnUrl);
 				window.location.href = returnUrl;
@@ -128,25 +138,25 @@ function submitLogin(e){
 		});
 
 		request.fail(function(jqXHR, textStatus) {
-			alert("Request failed: " + textStatus);
-			
+			$("#loginmsg").text("Request failed..");
+
 //			location.reload();
 		});
-		
+
 		request.always(function(msg){
 //			console.log("first step request done- "+msg);
 			$("#loginspin").hide();
 			$("#loginbasic").show();
 			$("#loginsubmit").prop("disabled", false);
 		});
-		
+
 	}else{
 		var otpv = document.forms["login"]["otpVal"].value;
 		if(otpv=="" || otpv.length!=6){
 			$("#loginmsg").text("Invalid OTP!");
 			return false;
 		}
-		
+
 		$.ajaxSetup({
 			headers: { 'X-CSRF-TOKEN': token }
 		});
@@ -168,7 +178,7 @@ function submitLogin(e){
 			datatype: "json",
 			beforeSend: function() {
 				disableButon();
-		    }
+			}
 		});
 
 		request.done(function(msg) {
@@ -178,7 +188,7 @@ function submitLogin(e){
 				document.getElementById("passbox").style.display = 'none';
 				document.getElementById("otpChoice").style.display = 'none';
 				document.getElementById("otpbox").style.display = 'block';
-				
+
 			}else if(msg=="SUCCESS"){
 //				console.log("Redirect to: " +returnUrl);
 				window.location.href = returnUrl;
@@ -197,13 +207,13 @@ function submitLogin(e){
 		});
 
 		request.fail(function(jqXHR, textStatus) {
-			alert("Request failed: " + textStatus);
+			$("#loginmsg").text("Request failed..");
 //			location.reload();
 		});
-		
+
 		request.always(function(msg){
 //			console.log("AJAX requests process complete- "+ msg);
-			
+
 			if(msg!='SUCCESS'){
 				$("#loginsubmit").prop("disabled", false);
 				$("#loginspin").hide();
@@ -211,7 +221,7 @@ function submitLogin(e){
 			}
 		});
 	}
-	
+
 	return false;
 
 }
@@ -250,5 +260,17 @@ function disableButon(){
 	$("#loginbasic").hide();
 	$("#loginspin").show();
 	$("#loginsubmit").prop("disabled", true);
-	
+
 }
+
+var input = document.getElementById("validationPassword");
+input.addEventListener("keyup", function(event) {
+
+	  // If "caps lock" is pressed, display the warning text
+	  if (event.getModifierState("CapsLock")) {
+	    $("#msg2").html("Caps lock ON!");
+	  } else {
+		  $("#msg2").html("");
+	  }
+	});
+

@@ -33,7 +33,7 @@ public class ApplicationConfig {
 	
 	@Bean("javaMailSender")
     public JavaMailSender javaMailSender(){
-    	logger.info("Loading mail config...");
+    	logger.info("products app -> Loading mail config...");
     	
     	Properties javaMailProperties = new Properties();
     	JavaMailSenderImpl sender = new JavaMailSenderImpl();

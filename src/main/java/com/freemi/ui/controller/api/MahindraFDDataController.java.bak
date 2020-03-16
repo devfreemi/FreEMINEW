@@ -1,0 +1,282 @@
+package com.freemi.ui.controller.api;
+
+import java.net.URI;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.freemi.common.util.CommonConstants;
+import com.freemi.entity.bse.BseOrderPaymentResponse;
+import com.freemi.entity.investment.MfNavData;
+import com.freemi.entity.investment.mahindra.MahindraFDMappedLocations;
+import com.freemi.entity.investment.mahindra.MahindraResponse;
+import com.freemi.services.interfaces.BseEntryManager;
+import com.freemi.services.interfaces.MahindraFDServiceInterface;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
+@RestController
+@RequestMapping("/api")
+public class MahindraFDDataController {
+
+    private static final Logger logger = LogManager.getLogger(FormDataController.class);
+
+    @Autowired
+    MahindraFDServiceInterface mahindraFDServiceInterface;
+
+
+    /*
+    *//**
+        * @apiNote API based query to fetch list of districts from state for Mahindra
+        *          FD
+        * @param requestData
+        * @param request
+        * @param response
+        * @param session
+        * @return
+        */
+	  @RequestMapping(value = "/fixed-deposit/mmfd/getDistricts", method = RequestMethod.POST)
+	  public String getMMFDDistrictsFromState(@RequestBody HashMap<String,String> requestData,HttpServletRequest request, HttpServletResponse response,HttpSession session) {
+	  
+	  logger.info("@@ Mahindra FD API GetDistrictController @@");
+	  String responseData = "SUCCESS";
+	  String respoonseHeaderStatus="F";
+	  try {
+	  	if(requestData.containsKey("state")) {
+	  		if(requestData.get("state")!=null) {
+	  			List<MahindraFDMappedLocations> resultset=  mahindraFDServiceInterface.getAllDistrictFromState(requestData.get("state").toString());
+	  			if(resultset!=null) {
+	  				respoonseHeaderStatus = "S";
+	  				responseData = new Gson().toJson(resultset);
+	  			}
+	  		}
+	  		
+	  	}else {
+	  		logger.info("getMMFDDistrictsFromState(): Required field missing..");
+	  		responseData = "Missing State code";
+	  	}
+	  
+	  } catch (Exception e) {
+	  	logger.error("getMMFDDistrictsFromState(): Failed to get District and Pinccode List", e);
+	  	responseData ="INTERNAL_ERROR";
+	  }
+	  
+	  response.setHeader("APICALLSTATUS", respoonseHeaderStatus);
+	  return responseData;
+	  }
+	  
+	  
+	  
+	  @RequestMapping(value = "/fixed-deposit/mmfd/getBankDeailsFromIfsc", method = RequestMethod.POST)
+	  public String getMMFDBankDetails(@RequestBody HashMap<String,String> requestData,HttpServletRequest request, HttpServletResponse response,HttpSession session) {
+	  
+	  logger.info("@@ Mahindra FD API getMMFDBankDetails @@");
+	  String responseData = "SUCCESS";
+	  String respoonseHeaderStatus="F";
+	  try {
+	  	if(requestData.containsKey("ifsccode")) {
+	  		if(requestData.get("ifsccode")!=null && requestData.get("ifsccode").toString().length()==11) {
+	  			MahindraResponse resultset=  mahindraFDServiceInterface.getBankDetailsFromIfsc(requestData.get("ifsccode"));
+	  			if(resultset!=null) {
+	  				
+	  //						responseData = new Gson().toJson(resultset);
+	  				JsonObject jsondata = new JsonObject();
+	  				jsondata.addProperty("micrcode", resultset.getMicrCode());
+	  				jsondata.addProperty("bankname", resultset.getBankName());
+	  				jsondata.addProperty("bankbranch", resultset.getBankBranch());
+	  				
+	  				responseData = jsondata.toString();
+	  				respoonseHeaderStatus = "S";
+	  			}
+	  		}else {
+	  			logger.info("IFSC code pattern do not match or null");
+	  		}
+	  		
+	  	}else {
+	  		logger.info("getMMFDBankDetails(): Required field missing..");
+	  		responseData = "Invalid IFSC Code Format";
+	  	}
+	  
+	  } catch (Exception e) {
+	  	logger.error("getMMFDBankDetails(): Failed to get IFSC code data from Mahindra", e);
+	  	responseData ="INTERNAL_ERROR";
+	  }
+	  
+	  response.setHeader("APICALLSTATUS", respoonseHeaderStatus);
+	  
+	  try {
+	  	Thread.sleep(3000);
+	  } catch (InterruptedException e) {
+	  	// TODO Auto-generated catch block
+	  	logger.error("Sleep error",e);
+	  }
+	  return responseData;
+	  }
+	  
+	   @PostMapping(value="/fd/mahindraapplpaymentstatus")
+    @ResponseBody
+    public String mahidnrafdpaymentstatus(HttpServletRequest request, HttpServletResponse httpResponse,HttpSession session){
+
+	String mobile=request.getParameter("mobile");
+	logger.info("Request received to fectch payment status of FD purchase for customer-" + mobile+ " : APPL_NO: "+ request.getParameter("appl_no"));
+	String result ="NA";
+	MahindraResponse response=null;
+	JsonObject jsonObject = null;
+
+	try {
+
+	    logger.info("mahidnrafdpaymentstatus(): Requesting Mahindra payment status for mobile" + mobile);
+
+	    if(session.getAttribute("token") == null || session.getAttribute("userid") == null){
+		logger.info("User session not found to process request..");
+		return "NO_SESSION";
+	    }else{
+
+		if(mobile.equals(session.getAttribute("userid").toString())) {
+
+		    try{
+			response = mahindraFDServiceInterface.verifyPaymentStatus(null, mobile, request.getParameter("appl_no"),session.getAttribute("email")!=null?session.getAttribute("email").toString():null);
+			if(response!=null) {
+			    logger.info("Result received- "+ response.getStatusCode() + " --> "+ response.getStatusMsg());
+			    logger.info("Send FD payment result in JSON format");
+			    jsonObject = new JsonObject();
+			    jsonObject.addProperty("apimsg", response.getStatusMsg());
+			    result=jsonObject.toString();
+			}else {
+			    logger.info("Result is null...");
+			    result="NO_DATA";
+			}
+
+		    }catch(Exception e) {
+			logger.error("apiMFBalance(): Error requesting MF balance",e);
+			result= "INTERNAL_ERROR";
+		    }
+		}else {
+		    logger.info("Passed mobile and sessio mobile data do not match");
+		    result= "REQUEST_DENIED";
+		}
+	    }
+	}catch(Exception e) {
+	    logger.error("apiMFBalance(): Error processing request",e);
+	    result= "INTERNAL_ERROR";
+	}
+
+	logger.info("mahidnrafdpaymentstatus(): Retrunung result- "+ result);
+	return result;
+    }
+    
+    
+    @PostMapping(value="/fd/mahindrafdinitiatepayment")
+    @ResponseBody
+    public String mahindrafdinitiatepayment(HttpServletRequest request, HttpServletResponse httpResponse,HttpSession session){
+
+	String mobile=request.getParameter("mobile");
+	String applno =request.getParameter("appl_no");
+	String cpTransRefNo = request.getParameter("cp_trans_id");
+	String mfSysRefNo =request.getParameter("mf_sys_ref_no");
+	
+	logger.info("Request received initiate payment for mobile -" + mobile+ " : APPL_NO: "+ applno);
+	String result ="NA";
+	MahindraResponse response=null;
+	JsonObject jsonObject = null;
+	String headerstatus = "F";
+	try {
+
+	    logger.info("mahidnrafdpaymentstatus(): Requesting Mahindra payment status for mobile" + mobile);
+
+	    if(session.getAttribute("token") == null || session.getAttribute("userid") == null){
+		logger.info("User session not found to process request..");
+		return "NO_SESSION";
+	    }else{
+
+		if(mobile.equals(session.getAttribute("userid").toString())) {
+
+		    try{
+			/*response = mahindraFDServiceInterface.verifyPaymentStatus(null, mobile, request.getParameter("appl_no"),session.getAttribute("email")!=null?session.getAttribute("email").toString():null);
+			if(response!=null) {
+			    logger.info("Result received- "+ response.getStatusCode() + " --> "+ response.getStatusMsg());
+			    logger.info("Send FD payment result in JSON format");
+			    jsonObject = new JsonObject();
+			    jsonObject.addProperty("apimsg", response.getStatusMsg());
+			    result=jsonObject.toString();
+			}else {
+			    logger.info("Result is null...");
+			    result="NO_DATA";
+			}*/
+			MahindraResponse response5;
+			String callbackUrl = URI.create(request.getRequestURL().toString()).resolve(request.getContextPath()).toString()+ "/fixed-deposit/purchase-status?id="+ applno+ "&mobileid=" + mobile;
+			logger.info("Callback URL formed- "+ callbackUrl);
+			response5 = mahindraFDServiceInterface.getMMFDpaymentLink(null, mobile, callbackUrl,cpTransRefNo, mfSysRefNo, applno);
+			if(response5.getStatusCode() == CommonConstants.TASK_SUCCESS) {
+			    result=response5.getPaymentLink();
+			    //					model.addAttribute("paymentLink", "http://localhost:8080/products/fixed-deposit/purchase-status?id="+applNo+"&mobileid="+mobile+"&dir=psc");
+			    
+			    headerstatus ="S";
+			}else {
+			    result= "EXCEPTION";
+			}
+
+		    }catch(Exception e) {
+			logger.error("apiMFBalance(): Error requesting MF balance",e);
+			result= "INTERNAL_ERROR";
+		    }
+		}else {
+		    logger.info("Passed mobile and sessio mobile data do not match");
+		    result= "REQUEST_DENIED";
+		}
+	    }
+	}catch(Exception e) {
+	    logger.error("apiMFBalance(): Error processing request",e);
+	    result= "INTERNAL_ERROR";
+	}
+	httpResponse.setHeader("STATUS", headerstatus);
+	logger.info("mahidnrafdpaymentstatus(): Retrunung result- "+ result);
+	return result;
+    }
+    
+
+
+    @PostMapping(value = "/fd/retry-kyc-doc-upload")
+    @ResponseBody
+    public String reuploaddocument(Model model, HttpServletRequest request, HttpSession session) {
+	
+	String datafound="Y";
+	String mobile=request.getParameter("mobile");
+	String applicationno=request.getParameter("appl_no");
+	logger.info("Request received to retry doc upload again for applocation- "+ applicationno);
+	try {
+	if(applicationno!=null && mobile!= null) {
+	    if (session.getAttribute("userid") != null || session.getAttribute("token") != null) {
+
+		MahindraResponse response =  mahindraFDServiceInterface.retryDocumentupload(mobile, null, applicationno);
+		logger.info("Redocument reupload status- "+ response.getStatusCode());
+	    }else {
+		datafound="NO_SESSION";
+	    }
+	}else {
+	    datafound="INVALID_DATA";
+	}
+	}catch(Exception e) {
+	    logger.error("Error Processing request..",e);
+	    datafound = "INTERNAL_EXCEPTION";
+	}
+	return datafound;
+    }
+
+}

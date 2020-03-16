@@ -77,7 +77,7 @@
 						<form:input type="text" style="padding-left: 5px;"
 							id="validationCustomUsername"
 							class="form-control form-control-sm" path="usermobile"
-							onkeyup="validateForm();" pattern="[0-9]{10}" maxlength="10"
+							 pattern="[0-9]{10}" maxlength="10"
 							autocomplete="off" placeholder="Mobile number"></form:input>
 						<!-- <label for="validationCustomUsername">Mobile number</label> -->
 					</div>
@@ -88,9 +88,9 @@
 						<i class="fas fa-lock prefix" id="passico" style="color: #5a5a5a;"></i>
 						<form:input type="password" style="padding-left: 5px;"
 							class="form-control form-control-sm" path="userpassword"
-							id="validationPassword" maxlength="24" oninput="validateForm();"
+							id="validationPassword" maxlength="24"
 							autocomplete="off" placeholder="Your password"></form:input>
-						<!-- <label for="validationPassword">Your password</label> -->
+						<small id="msg2" style="font-size: 10px;padding-left:2.5rem;color: #f33c3c;"></small>
 					</div>
 
 					<div class="md-form form-group mt-0 animated fadeIn " id="otpbox"
@@ -100,7 +100,7 @@
 							class="img-fluid prefix" style="height: 2rem;" alt="OTP">
 						<form:input type="text" style="padding-left: 5px;" pattern="[0-9]*"
 							class="form-control form-control-sm mr-sm-3" path="otpVal"
-							id="validationOTP" maxlength="6" oninput="validateForm();"
+							id="validationOTP" maxlength="6"
 							autocomplete="off" placeholder="OTP"
 							aria-describedby="validationOTP"></form:input>
 						<!-- <small id="validationPassword" class="text-muted">Resend </small> -->
@@ -119,7 +119,7 @@
 							class="col-8 col-md-8 col-lg-8 custom-control custom-checkbox"
 							style="margin-top: 7px; font-weight: 500; color: #ea6f25;">
 							<form:checkbox path="otpLogin" class="custom-control-input"
-								id="otplogin" onchange="validateForm();"></form:checkbox>
+								id="otplogin"></form:checkbox>
 							<label class="custom-control-label" for="otplogin">Login
 								by OTP</label>
 						</div>

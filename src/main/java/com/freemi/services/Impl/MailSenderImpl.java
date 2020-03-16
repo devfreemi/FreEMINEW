@@ -1,11 +1,5 @@
 package com.freemi.services.Impl;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
@@ -15,15 +9,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.activation.DataHandler;
 import javax.activation.DataSource;
-import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 
 import org.apache.logging.log4j.LogManager;
@@ -32,7 +21,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -47,7 +35,6 @@ import com.freemi.entity.investment.SelectMFFund;
 import com.freemi.services.interfaces.MailSenderInterface;
 
 import freemarker.template.Configuration;
-import sun.misc.BASE64Decoder;
 
 @Component
 //@PropertySource("classpath:app-config.properties")
@@ -348,20 +335,19 @@ public class MailSenderImpl implements MailSenderInterface {
 
 	@Override
 	public void sendMahindraFDAcknowledgementdocument(String binarydoc, String emailid, String mobile,
-			String customername,String applicationno) {
+			String customername,String applicationno,int amount, String nbfcname,String schemecategory) {
 		logger.info("sendMFInitiatedNotice(): Processing request to send mail to notify MF initiated transction to internal team");
 		try{
 			if(emailid!=null){
 				InternetAddress address = new InternetAddress(env.getProperty(CommonConstants.MAIL_ACCOUNT_ID), "FreEMI");
 
 				Map<String, Object> replacementContent= new HashMap<String,Object>();
-				replacementContent.put("mobile", "NA");
-				replacementContent.put("pan", "NA");
-				replacementContent.put("schemaname", "NA");
-				replacementContent.put("investtype", "NA");
-				replacementContent.put("investamount", "NA");
+				replacementContent.put("username", customername!=null?customername:"investor");
+				replacementContent.put("investcategory", "FIXED DEPOSIT");
+				replacementContent.put("fdnbfcname", nbfcname!=null?nbfcname:"NBFC");
+				replacementContent.put("transactionno",applicationno!=null?applicationno:"<blank>");
 
-				Mail mail = processMailAddress(address, replacementContent, emailid, null, "Mahindra FD Purchase acknowledge","mf-initiate-notice.txt");
+				Mail mail = processMailAddress(address, replacementContent, emailid, null, "Mahindra Finance FD Purchase acknowledgement","fd-transaction.txt");
 
 				byte[] testbyte = binarydoc.getBytes();
 				DataSource dataSource = new ByteArrayDataSource(Base64.getDecoder().decode(testbyte), "application/pdf");
@@ -379,6 +365,42 @@ public class MailSenderImpl implements MailSenderInterface {
 			logger.error("Error processing mailing task.", e);
 		}
 
+	}
+
+	@Override
+	@Async
+	public void notifyTransactionErrorToAdmin(Object data1, String message, String requesteddata,
+		String errorType,  String subcategory, String customerid, String name) {
+	    logger.info("notifyTransactionErrorToAdmin(): Notify tranasction error to Admin for type- "+ errorType);
+		try{
+		    	if(env.getProperty("error.general.transaction.mail.support").equals("Y"))
+		    	{
+				InternetAddress address = new InternetAddress(env.getProperty(CommonConstants.MAIL_ACCOUNT_ID), "FreEMI");
+
+				Map<String, Object> replacementContent= new HashMap<String,Object>();
+				//				String date = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
+
+				//				replacementContent.put("transactionDate", date);
+				replacementContent.put("transcategory", errorType);
+				replacementContent.put("subcategory", subcategory);
+				replacementContent.put("reason", message!=null?message:"NA");
+				replacementContent.put("invsestordetails1", customerid!=null?customerid:"NA");
+				replacementContent.put("otherdata1", name!=null?name:"NA");
+
+				Mail mail = processMailAddress(address, replacementContent,env.getProperty("mail.id.support.team"), env.getProperty("mail.id.developer.team"), "FreEMI Portal - Transaction Error","tranasction_error.txt");
+
+				processMailRequest(mail,false);
+		    	}else {
+		    	    logger.info("Mail notificaiton for transactional error is disabled...");
+		    	}
+		}catch(MessagingException exp){
+			logger.error("notifyTransactionErrorToAdmin(): MessageHelper Issue. ",exp);
+		} catch (UnsupportedEncodingException e) {
+			logger.error("notifyTransactionErrorToAdmin(): Error setting Internet address.", e);
+		}catch (Exception e) {
+			logger.error("notifyTransactionErrorToAdmin(): Error processing mailing task.", e);
+		}
+	    
 	}
 
 	/*

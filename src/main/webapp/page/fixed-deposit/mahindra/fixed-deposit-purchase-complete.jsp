@@ -56,19 +56,19 @@
 						<div class="col-md-8 col-lg-8 " style="background: white;border: 1px solid #ececec;">
 							<c:choose>
 								<c:when test="${VIEW_STATUS == 'PAYLINK' }">
-									<h3 class="text-success" style="text-align: center;">your order has been
+									<h3 class="text-success" style="text-align: center; margin-top: .5rem;font-weight: 500;">Your order has been
 										processed successfully</h3>
 
 								</c:when>
 								<c:when test="${VIEW_STATUS == 'PAYMENT_CALLBACK_STATUS' }">
-									<h3 class="text-success" style="text-align: center;">Your payment has been
+									<h3 class="text-success" style="text-align: center;margin-top: .5rem;font-weight: 500;">Your payment has been
 										processed</h3>
 								</c:when>
 								<c:when test="${VIEW_STATUS == 'ERROR' }">
-									<h3 class="text-danger" style="text-align: center;">Your request Declined!!</h3>
+									<h3 class="text-danger" style="text-align: center;margin-top: .5rem;font-weight: 500;">Your request Declined!!</h3>
 								</c:when>
 								<c:when test="${VIEW_STATUS == 'EXCEPTION' }">
-									<h3 class="text-danger" style="text-align: center;">Error processing your
+									<h3 class="text-danger" style="text-align: center;margin-top: .5rem;font-weight: 500;">Error processing your
 										request!!</h3>
 								</c:when>
 								<c:otherwise>
@@ -108,7 +108,7 @@
 							<c:if test="${VIEW_STATUS == 'PAYLINK' }">
 								<div style="text-align: center;">
 									<a href="${paymentLink}"><button
-											class="btn btn-sm btn-default">COMPLETE YOUR PAYMENT</button></a>
+											class="btn btn-sm #f4511e deep-orange darken-1 white-text">COMPLETE YOUR PAYMENT</button></a>
 								</div>
 							</c:if>
 						</div>

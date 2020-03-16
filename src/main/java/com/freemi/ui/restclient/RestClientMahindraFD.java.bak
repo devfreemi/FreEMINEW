@@ -1,5 +1,6 @@
 package com.freemi.ui.restclient;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -17,11 +18,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freemi.common.util.CommonConstants;
+import com.freemi.entity.investment.mahindra.Ifscdetails;
 import com.freemi.entity.investment.mahindra.MahindraApiResponse;
 import com.freemi.entity.investment.mahindra.MahindraCustomerKYCDetails;
 import com.freemi.entity.investment.mahindra.MahindraFDEntity;
@@ -142,23 +146,26 @@ public class RestClientMahindraFD {
 			 * for (String name : jsonMap.keySet()) { logger.info("Key = " + name
 			 * +", Value = " + jsonMap.get(name)); }
 			 */
-
+			String responsemsg="";
 			apiResponse.setStatus(jsonMap.get("status").toString());
 			if(jsonMap.get("status").equals("OK")) {
 				Map<String, String> outputData= (Map<String, String>) jsonMap.get("outputMap");
 				if((outputData.containsKey("msg") && outputData.get("msg").equalsIgnoreCase("SUCCESS")) || outputData.containsKey("MF_SYS_REF_NO")) {
 					apiResponse.setApplicationNo(outputData.get("Appl_No"));
 				}else {
-					logger.info("saveTransactionDetails(): Transaction failed... Not containing required data...");
+				    responsemsg=outputData.get("msg");
+					logger.info("saveTransactionDetails(): Transaction failed... " +  responsemsg);
 					apiResponse.setStatus("FAIL");
 				}
 			}else {
 				apiResponse.setStatus("FAIL");
+				apiResponse.setResponsemsg(responsemsg);
 			}
 		}
 		catch(Exception e) {
 			apiResponse.setStatus("ERROR");
-
+//			apiResponse.setResponsemsg(e.getLocalizedMessage());
+			apiResponse.setResponsemsg("API_RESPONSE_ERROR_SAVE_DETAILS");
 			logger.error("Mahindra API call failure...",e);
 		}
 		logger.info("saveTransactionDetails(): API call complete... Return.");
@@ -171,6 +178,9 @@ public class RestClientMahindraFD {
 
 		MahindraApiResponse apiResponse = new MahindraApiResponse();
 		logger.info("savekycdocuments(): Process data to initiate API call...");
+		SimpleDateFormat apifmt = new SimpleDateFormat("dd-MMM-yyyy");
+		SimpleDateFormat dbfmt =new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat uifmt =new SimpleDateFormat("dd/MM/yyyy");
 		try {
 			final String url = env.getProperty(CommonConstants.URL_SERVICE_MAHINDRA_FD)+"/OvdImageDetail";
 			logger.info("API Reuqesting url- "+ url);
@@ -181,7 +191,7 @@ public class RestClientMahindraFD {
 			Map<String, Object> requestbodyMap = new HashMap<String, Object>();
 //			parametersMap = uploadkycdocuments(fdEntity, kycDocuments, applicationno, cpTransRefId, mfSysRefNo);
 
-			requestbodyMap.put("Scp_code", "");
+			requestbodyMap.put("Scp_code", "NA");
 			requestbodyMap.put("CP_Trans_Ref_No",cpTransRefId);
 			requestbodyMap.put("Appl_No",applicationno);
 			requestbodyMap.put("Cp_Location_Code", "Kolklata");
@@ -198,7 +208,12 @@ public class RestClientMahindraFD {
 			requestbodyMap.put("Source_type", "CP");
 			requestbodyMap.put("User_name", "MCP");
 			requestbodyMap.put("Kyc_Image_Ref_No", kycDocuments.getImagerefrenceno());
-			requestbodyMap.put("Kyc_Image_Exp_Date", kycDocuments.getImagexpirydate());
+			try {
+			    requestbodyMap.put("Kyc_Image_Exp_Date", kycDocuments.getImagexpirydate()!=null?apifmt.format(dbfmt.parse(kycDocuments.getImagexpirydate())):"");
+			}catch(Exception e) {
+			    logger.error("Error parsing KYC document expiry date. Setting blank value",e);
+			    requestbodyMap.put("Kyc_Image_Exp_Date", "");
+			}
 			
 
 			requestBodyToJson(apiResponse, requestbodyMap);
@@ -211,15 +226,18 @@ public class RestClientMahindraFD {
 			
 //			apiResponse.setStatus(jsonMap.get("status").toString());
 			if(jsonMap.get("status").equals("OK")) {
-				Map<String, String> outputData= (Map<String, String>) jsonMap.get("outputData");
+				Map<String, String> outputData= (Map<String, String>) jsonMap.get("outputMap");
 				if(outputData.containsKey("res") && outputData.get("res").equalsIgnoreCase("Transaction successfull")) {
 					apiResponse.setStatus("OK");
 					apiResponse.setResponsemsg(outputData.get("res"));
 					
+				}else if(outputData.containsKey("INTERNAL") && outputData.get("INTERNAL").equalsIgnoreCase("ERROR_PARSING_RESPONSE")) {
+				    	apiResponse.setStatus("FAIL");
+					apiResponse.setResponsemsg((String) jsonMap.get("outputData"));
 				}else {
-					logger.info("savekycdocuments(): Transaction failed... Not containing required data...");
+				    	logger.info("savekycdocuments(): Transaction failed... Not containing required data...");
 					apiResponse.setStatus("FAIL");
-					apiResponse.setResponsemsg(outputData.get("outputData"));
+					apiResponse.setResponsemsg((String) jsonMap.get("outputData"));
 				}
 			}else {
 				apiResponse.setStatus("FAIL");
@@ -258,7 +276,7 @@ public class RestClientMahindraFD {
 			RestTemplate restTemplate = new RestTemplate();
 
 			Map<String, Object> parametersMap = new HashMap<String, Object>();
-			parametersMap.put("ifsccode", ifscCode);
+			parametersMap.put("SearchText", ifscCode);
 
 			ResponseEntity<String> response = null;
 
@@ -275,19 +293,29 @@ public class RestClientMahindraFD {
 
 			apiResponse.setStatus(jsonMap.get("status").toString());
 			if(jsonMap.get("status").equals("OK")) {
-				List<Map<String, String>> outputData= (List<Map<String, String>>) jsonMap.get("outputData");
-				//				apiResponse.setPaymentUrl(outputData.get("result"));
-				apiResponse.setMicrCode(outputData.get(0).get("MICR_CODE"));
-				apiResponse.setBankName(outputData.get(0).get("BANK_NAME"));
-				apiResponse.setBankBranch(outputData.get(0).get("BANK_BRANCH"));
-
+		/*
+		List<Map<String, Object>> outputData= (List<Map<String, Object>>) jsonMap.get("outputData");
+		apiResponse.setMicrCode(outputData.get(0).get("MICR_CODE").toString());
+		apiResponse.setBankName(outputData.get(0).get("BANK_NAME").toString());
+		apiResponse.setBankBranch(outputData.get(0).get("BANK_BRANCH").toString());
+		*/
+			    Ifscdetails[] ifsc = mapper.readValue(jsonMap.get("outputData").toString(), Ifscdetails[].class);
+			    	apiResponse.setMicrCode(ifsc[0].getMicrcode());
+				apiResponse.setBankName(ifsc[0].getBankname());
+				apiResponse.setBankBranch(ifsc[0].getBankbranch());
 			}else {
 				logger.info("getBankDetails(): No data found...");
+				apiResponse.setMicrCode("NA");
+				apiResponse.setBankName("NA");
+				apiResponse.setBankBranch("NA");
 			}
 
 		}catch(Exception e) {
 			apiResponse.setStatus("ERROR");
 			logger.error("getBankDetails(): Mahindra API call failure...",e);
+			apiResponse.setMicrCode("Error");
+			apiResponse.setBankName("Error");
+			apiResponse.setBankBranch("Error");
 		}
 
 		logger.info("getBankDetails(): API call complete... Return.");
@@ -832,6 +860,26 @@ public class RestClientMahindraFD {
 		return parameters;
 
 	}
-
+	
+    /*public static void main(String[] args) throws JsonParseException, JsonMappingException, IOException {
+        
+        ObjectMapper mapper = new ObjectMapper();
+        String ar="{\"status\":\"OK\",\"outputMap\":null,\"outputData\":\"[{\\\"LABEL\\\":\\\"(700229019 >> ICIC0000371 >> KOLKATA - VIP ROADÂ  >> ICICI BANK LTD)\\\",\\\"MICR_CODE\\\":\\\"700229019\\\",\\\"NEFT_CODE\\\":\\\"ICIC0000371\\\",\\\"BANK_BRANCH\\\":\\\"KOLKATA - VIP ROADÂ \\\",\\\"BANK_NAME\\\":\\\"ICICI BANK LTD\\\"}]\"}";
+        Map<String, Object> jsonMap = mapper.readValue(ar,new TypeReference<Map<String,Object>>(){});
+    
+    //		apiResponse.setStatus(jsonMap.get("status").toString());
+    	if(jsonMap.get("status").equals("OK")) {
+    //			List<Map<String, String>> outputData= (List<Map<String, String>>) jsonMap.get("outputData");
+    	    
+    	    	Ifscdetails[] pp1 = mapper.readValue(jsonMap.get("outputData").toString(), Ifscdetails[].class);
+    		//				apiResponse.setPaymentUrl(outputData.get("result"));
+    		System.out.println(pp1[0].getLabel());
+    //			System.out.println(outputData.get(0).get("BANK_NAME").toString());
+    //			System.out.println(outputData.get(0).get("BANK_BRANCH").toString());
+    
+    	}else {
+    		logger.info("getBankDetails(): No data found...");
+    	}
+    }*/
 
 }

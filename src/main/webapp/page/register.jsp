@@ -6,7 +6,8 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <html>
 <head>
-<meta name="keywords" content="freemi signup, freemi register, investment portal" />
+<meta name="keywords"
+	content="freemi signup, freemi register, investment portal" />
 <link rel="canonical" href=" https://www.freemi.in/products/register" />
 
 <meta name="title" content="Sign up" />
@@ -14,12 +15,15 @@
 	content="Get registered to FreEMI and invest to fill your goals" />
 <meta name="robots" content="follow,index" />
 <jsp:include page="include/bootstrap.jsp"></jsp:include>
-<link href="<c:url value="${contextcdn}/resources/css/register.component.css"/>" rel="stylesheet">
-<link href="<c:url value="${contextcdn}/resources/css/styles.css"/>" rel="stylesheet">
-<link href="<c:url value="${contextcdn}/resources/css/animate.css"/>" type="text/css" rel="stylesheet">
+<link
+	href="<c:url value="${contextcdn}/resources/css/register.component.css"/>"
+	rel="stylesheet">
+<link href="<c:url value="${contextcdn}/resources/css/styles.css"/>"
+	rel="stylesheet">
+<link href="<c:url value="${contextcdn}/resources/css/animate.css"/>"
+	type="text/css" rel="stylesheet">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>New to FreEMI? Get registered today.</title>
-<script src="<c:url value="${contextcdn}/resources/js/register.js" />"></script>
 
 </head>
 <body class="login_design" onload="formOnLoad();">
@@ -50,19 +54,19 @@
 				</div>
 				<div class="row">
 					<c:choose>
-						
+
 						<c:when test="${not empty success }">
 							<div class="col-md-12 col-lg-12">
-							<div class="alert alert-primary" role="alert">
-								<span> ${success}</span>
-							</div>
+								<div class="alert alert-primary" role="alert">
+									<span> ${success}</span>
+								</div>
 							</div>
 						</c:when>
 						<c:when test="${not empty error }">
-						<div class="col-md-12 col-lg-12">
-							<div class="alert alert-danger" role="alert">
-								<span>${error}</span>
-							</div>
+							<div class="col-md-12 col-lg-12">
+								<div class="alert alert-danger" role="alert">
+									<span>${error}</span>
+								</div>
 							</div>
 						</c:when>
 						<c:otherwise>
@@ -75,39 +79,43 @@
 				<form:form method="POST"
 					action="${pageContext.request.contextPath}/register.do"
 					commandName="registerForm">
-					<div class="md-form mb-1">
-						<i class="fas fa-user prefix" id="userico"></i>
-						<form:input type="text" style="padding-left: 5px;" id="username"
-							class="form-control form-control-sm" path="fullName"
-							onkeyup="validateForm();" pattern="[a-zA-Z0-9 .]*" maxlength="128"
-							autocomplete="off" placeholder="Full Name" ></form:input>
-							<!-- <label for="username">Full Name</label> -->
-					</div>
-					<div class="md-form mb-1">
-						<i class="fas fa-mobile-alt prefix" id="mobico"></i>
-						<form:input type="text" style="padding-left: 5px;" id="registermobile"
-							class="form-control form-control-sm" path="mobile"
-							onkeyup="validateForm();" pattern="[0-9]*" maxlength="10"
-							autocomplete="off" placeholder="10-digit mobile number"></form:input>
-							<!-- <label for="username">10-digit mobile number</label> -->
-					</div>
 
-					
-					<div class="md-form mb-1">
-						<i class="fas fa-envelope prefix" id="mailico"></i>
-						<form:input type="text" style="padding-left: 5px;" id="useremail"
-							class="form-control form-control-sm" path="email"
-							onkeyup="validateForm();" maxlength="128"
-							autocomplete="off" placeholder="Valid Email ID"></form:input>
-							<!-- <label for="useremail">Valid Email ID</label> -->
+					<div class="md-form input-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text md-addon"><i class="fas fa-user" id="userico"></i></span>
+						</div>
+						<form:input type="text" style="padding-left: 5px;" id="fnameid" class="form-control form-control-sm" path="fname" aria-label="First name" pattern="[a-zA-Z0-9 .]*" maxlength="64" autocomplete="off" placeholder="First Name" ></form:input>
+						<form:input type="text" style="padding-left: 5px;" id="lnameid" class="form-control form-control-sm" path="lname" aria-label="Last name" pattern="[a-zA-Z0-9 .]*" maxlength="64" autocomplete="off" placeholder="Last Name" ></form:input>
 					</div>
-					<div class="md-form mb-1">
-						<i class="fas fa-lock prefix" id="passico"></i>
-						<form:input type="password" style="padding-left: 5px;" id="registerpassword"
-							class="form-control form-control-sm" path="password"
-							onkeyup="validateForm();" minlength="8" maxlength="24"
-							autocomplete="off" placeholder="Password for login"></form:input>
-							<!-- <label for="registerpassword">Password for login</label> -->
+					
+					<div class="md-form input-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text md-addon"><i class="fas fa-mobile-alt" id="mobico"></i></span>
+						</div>
+						<form:input type="text" style="padding-left: 5px;"
+							id="registermobile" class="form-control form-control-sm"
+							path="mobile" pattern="[0-9]*" maxlength="10" autocomplete="off"
+							placeholder="10-digit mobile number"></form:input>
+					</div>
+					
+					<div class="md-form input-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text md-addon"><i class="fas fa-envelope" id="mailico"></i></span>
+						</div>
+						<form:input type="text" style="padding-left: 5px;" id="useremail"
+							class="form-control form-control-sm" path="email" maxlength="128"
+							autocomplete="off" placeholder="Valid Email ID"></form:input>
+					</div>
+					
+					<div class="md-form input-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text md-addon"><i class="fas fa-lock" id="passico"></i></span>
+						</div>
+						<form:input type="password" style="padding-left: 5px;"
+							id="registerpassword" class="form-control form-control-sm"
+							path="password" minlength="8" maxlength="24" autocomplete="off"
+							placeholder="Password for login"></form:input>
+						<small id="msg2" style="font-size: 10px; padding-left: 2.5rem; color: #f33c3c;"></small>
 					</div>
 
 					<div>
@@ -117,7 +125,8 @@
 						</button>
 						<a href="${pageContext.request.contextPath}/login"
 							style="text-decoration: none; margin-top: 10px;">
-							<button type="button" class="btn btn-sm btn-block purple-gradient white-text">
+							<button type="button"
+								class="btn btn-sm btn-block purple-gradient white-text">
 								<span> Already registered? Login </span>
 							</button>
 						</a>
@@ -131,7 +140,7 @@
 			<div class="col-md-6 col-lg-6"
 				style="margin: auto; padding-top: 10px; font-size: 14px; color: aliceblue;">
 				<span> By clicking "Register", I agree to FreEMI <a
-					href="${pageContext.request.contextPath}/terms-conditions"
+					href="https://www.freemi.in/terms-conditions"
 					style="color: rgb(253, 244, 115)">Terms of Service</a>.
 				</span>
 			</div>
@@ -139,4 +148,5 @@
 
 	</div>
 </body>
+<script src="<c:url value="${contextcdn}/resources/js/register.js" />"></script>
 </html>

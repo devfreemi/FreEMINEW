@@ -24,29 +24,18 @@
 			<div class="modal-body">
 				<div class="text-default">Provide the required details to
 					process your deposit request</div>
-				<div style="padding-top: 2rem;">
+				<div style="padding-top: 1rem;">
 					<form:form method="POST"
 						action="${pageContext.request.contextPath}/fixed-deposit/capture-fd-request"
-						modelAttribute="fdform">
-
-						<c:choose>
-							<c:when test="${STATUS == 'N' }">
-								<div class="alert alert-danger" role="alert"
-									style="padding: 7px; font-size: 13px;">Sorry, we are
-									unable to process your request currently</div>
-							</c:when>
-							<c:when test="${FORM_VALID == 'N' }">
-								<div class="alert alert-danger" role="alert"
-									style="padding: 7px; font-size: 13px;">${error_msg }</div>
-							</c:when>
-							<c:otherwise>
-								<div class="alert alert-danger" role="alert"
-									style="padding: 7px; font-size: 13px; display: none;"
-									id="validmsg">
-									<span id="jsmsg"></span>
-								</div>
-							</c:otherwise>
-						</c:choose>
+						modelAttribute="fdform" onsubmit="return formsubmitvalidation();">
+						<div >
+							<span id="jsmsg" class="text-danger" style="padding: 7px; font-size: 13px;"> <c:if test="${STATUS == 'N' }">
+								Sorry, we are unable to process your request currently
+							</c:if> <c:if test="${FORM_VALID == 'N' }">
+								${error_msg }
+							</c:if>
+							</span>
+						</div>
 
 						<div class="row" style="background: aliceblue; margin: auto;">
 							<div class="col-6">
@@ -78,29 +67,28 @@
 						</div> --%>
 
 						<form:hidden path="category" />
+						<form:hidden path="nbscName" value="MAHINDRA" />
 
 						<div class="md-form form-sm">
 							<i class="fas fa-rupee-sign prefix"></i>
 							<form:input type="text" path="saveAmount" class="form-control"
 								min="10000" minlength="4" maxlength="7" pattern="[0-9]*"
-								id="saveamount" required="required" />
+								value="10000" id="saveamount" onkeyup="customamount();"
+								required="required" />
 							<label for="saveamount">Fixed Deposit Amount</label>
 						</div>
-						
+
 						<div class="btn-group btn-group-sm btn-group-toggle"
-							data-toggle="buttons" id="radioamount" style="padding-left: 2.5rem;">
-							<label class="btn btn-info"> <input type="radio"
-								value="10000" name="options" id="option1">
-								10K
+							data-toggle="buttons" id="radioamount"
+							style="padding-left: 2.5rem;">
+							<label class="btn btn-info active"> <input type="radio"
+								value="10000" name="options" id="option1"> 10K
 							</label> <label class="btn btn-info"> <input type="radio"
-								name="options" value="25000" id="option2">
-								25K
+								name="options" value="25000" id="option2"> 25K
 							</label> <label class="btn btn-info"> <input type="radio"
-								name="options" value="50000" id="option3">
-								50K
+								name="options" value="50000" id="option3"> 50K
 							</label> <label class="btn btn-info"> <input type="radio"
-								name="options" value="100000" id="option4">
-								1lac
+								name="options" value="100000" id="option4"> 1lac
 							</label>
 						</div>
 
@@ -129,17 +117,17 @@
 							</label>
 							<div class="col-md-10 text-md-right" id="scheme">
 								<div class="btn-group btn-group-sm btn-group-toggle"
-									data-toggle="buttons" id="schemeid" >
+									data-toggle="buttons" id="schemeid">
 									<%-- <label class="btn btn-info"> <form:radiobutton
 											path="scheme" value="MICRO DEPOSIT" id="option1"
 											autocomplete="off" /> MICRO DEPOSIT
-									</label> --%> 
+									</label> --%>
 									<label class="btn btn-info active"> <form:radiobutton
-											path="scheme" value="C" id="option2"
-											autocomplete="off" checked="checked" /> CUMULATIVE
+											path="scheme" value="C" id="scheme1" autocomplete="off"
+											checked="checked" /> CUMULATIVE
 									</label> <label class="btn btn-info"> <form:radiobutton
-											path="scheme" value="NC" id="option3"
-											autocomplete="off" /> NON CUMULATIVE
+											path="scheme" value="NC" id="scheme2" autocomplete="off" />
+										NON CUMULATIVE
 									</label>
 
 								</div>

@@ -30,6 +30,9 @@ public class Mahindrapurchasehistory implements Serializable {
 	@Column(name="CP_TRANS_REF_NO")
 	private String transactionrefid;
 	
+	@Column(name="MF_SYS_REF_NO")
+	private String mfsysrefid;
+	
 	@Column(name="SCHEME_CODE")
 	private String schemecode;
 	
@@ -91,6 +94,14 @@ public class Mahindrapurchasehistory implements Serializable {
 
 	public void setTransactionrefid(String transactionrefid) {
 		this.transactionrefid = transactionrefid;
+	}
+	
+	public String getMfsysrefid() {
+	    return mfsysrefid;
+	}
+
+	public void setMfsysrefid(String mfsysrefid) {
+	    this.mfsysrefid = mfsysrefid;
 	}
 
 	public String getSchemecode() {

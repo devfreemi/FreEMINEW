@@ -1390,6 +1390,7 @@ button:hover {
 								<form:hidden path="saveAmount" />
 								<form:hidden path="interestRate" id="intratetoggle" />
 								<form:hidden path="cpTrnasRefNo" />
+								<form:hidden path="profileRegistrationReq"/>
 
 							</div>
 						</div>

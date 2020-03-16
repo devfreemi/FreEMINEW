@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Proxy;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -83,9 +84,11 @@ public class SelectMFFund implements Serializable {
 	private String portfolio;
 	
 	@Transient
+//	@NotNull(message = "Mobile no is mandatory")
 	private String mobile;
 	
 	@Transient
+//	@NotNull(message = "PAN no is mandatory")
 	private String pan;
 	
 	@Column(name="SIP_START_FROM")

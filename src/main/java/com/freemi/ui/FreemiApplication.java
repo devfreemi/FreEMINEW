@@ -39,11 +39,12 @@ public class FreemiApplication implements WebApplicationInitializer {
 	private Environment env;
 	public static void main(String[] args) {
 		SpringApplication.run(FreemiApplication.class, args);
+		System.out.println("products - MVC loading complete...");
 	}
 
 	@Bean
 	public DataSource dataSource() {
-		System.out.println("@@@@ Datasource Created @@@@@@");
+		System.out.println("@@@@ products app ->  Datasource Created @@@@@@");
 		
 //		String s = decryptPassword(env.getProperty("spring.datasource.password"));
 //		System.out.println("Password- "+ s);

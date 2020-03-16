@@ -32,7 +32,7 @@ import com.freemi.entity.investment.TransactionStatus;
 public interface BseEntryManager {
 	
 	//Customer records related crud operation
-	public String saveCustomerDetails(MFCustomers customerForm);
+	public String saveCustomerDetails(MFCustomers customerForm, String customerType, String customerlogged);
 	public BseApiResponse saveFatcaDetails(MFCustomers fatcaForm);
 	public String updateFatcaStatus(String clientId, String status, String responseCode, String message);
 	

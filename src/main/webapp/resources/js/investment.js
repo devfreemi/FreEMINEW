@@ -1,4 +1,7 @@
 var mfdatapulled=false;
+var mfdatainprogress=false;
+//console.log = function(){};
+
 function AdditionalPurchase(folio,code,type,rtaAgent,productCode){
 	if(folio == 'NEW'){
 		alert("You cannot make additional purhcase until portfolio is assigned!");
@@ -140,7 +143,7 @@ function getMFPortfolioData(mobile,profileStatus) {
 
 			var storedmfdata=sessionStorage.getItem("mftata");
 //			console.log("storedmfdata- "+ storedmfdata);
-			if(storedmfdata == null){
+			if(storedmfdata == null && mfdatainprogress == false){
 				request = $.ajax({
 					url: "/products/api/mf/getmfprofileData",
 					method: "POST",
@@ -152,6 +155,7 @@ function getMFPortfolioData(mobile,profileStatus) {
 					datatype: "json",
 					beforeSend: function() {
 						showprogress();
+						mfdatainprogress=true;
 					}
 				});
 
@@ -192,7 +196,8 @@ function getMFPortfolioData(mobile,profileStatus) {
 
 
 				request.always(function(msg){
-
+					console.log("MF data fetch complete.");
+					mfdatainprogress=false;
 				});
 
 			}else{
@@ -371,7 +376,7 @@ function createmfdataView(result){
 
 
 function getMfData(profileStatus,pan,mobile){
-//	console.log("Request received to get invested data - "+ pan + " -> "+ profileStatus);
+	console.log("Request received to get invested data - "+ pan + " -> "+ profileStatus);
 	$("#mffetchmsg").text("");
 	let checkexpiretime =window.sessionStorage.getItem("expiremfbaldata");
 //	console.log(checkexpiretime);
@@ -447,7 +452,6 @@ function getMfData(profileStatus,pan,mobile){
 			});
 
 			request.always(function(msg){
-
 			});
 
 		}else{
