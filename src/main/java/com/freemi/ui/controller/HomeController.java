@@ -31,6 +31,7 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -92,7 +93,7 @@ public class HomeController {
 
 
 	@RequestMapping(value = "/login", method = RequestMethod.GET )
-	public String login(@ModelAttribute("login")Login login,@ModelAttribute("otpForm")Login otpForm, @RequestParam(name="ref",required=false)String referrerUrl,@RequestParam(name="mf",required=false)String mfStatus,Model map, HttpServletRequest request, HttpSession session) {
+	public String login(@ModelAttribute("login")Login login,@ModelAttribute("otpForm")Login otpForm, @RequestParam(name="ref",required=false)String referrerUrl,@RequestParam(name="mf",required=false)String mfStatus,@RequestParam(name="id",required=false)String loginid, Model map, HttpServletRequest request, HttpSession session) {
 		//logger.info("@@@@ Inside Login..");
 
 		logger.info("@@@@ LoginController @@@@");
@@ -140,6 +141,11 @@ public class HomeController {
 			logger.info("User session is already detected. Preventing another attempt of login.");
 			return "redirect:"+URI.create(request.getRequestURL().toString()).resolve(request.getContextPath()).toString();
 		}
+		
+		if(loginid!=null) {
+		    login.setUsermobile(CommonTask.decryptPassword(loginid).equals("NA")?null:CommonTask.decryptPassword(loginid));
+		}
+		
 		return "login";
 	}
 
@@ -441,7 +447,10 @@ public class HomeController {
 					if(responseEntity.getHeaders().get("email")!=null){
 						session.setAttribute("email",responseEntity.getHeaders().get("email")!=null?responseEntity.getHeaders().get("email").get(0):"");
 					}
-
+					if(responseEntity.getHeaders().get("pan")!=null){
+						session.setAttribute("pan",responseEntity.getHeaders().get("pan").get(0));
+					}
+					
 					//					Set session for other applciations
 					//					RestClientApps.setAllAppSession( response.getHeaders().get("userid").get(0), response.getHeaders().get("email").get(0), response.getHeaders().get("fname").get(0).split(" ")[0], response.getHeaders().get("Authorization").get(0));
 
@@ -461,6 +470,9 @@ public class HomeController {
 						
 						if(responseEntity.getHeaders().get("email")!=null){
 							response.addCookie(setSessionCookie("email", responseEntity.getHeaders().get("email").get(0)));
+						}
+						if(responseEntity.getHeaders().get("pan")!=null){
+						    response.addCookie(setSessionCookie("pan", CommonTask.encryptPassword(responseEntity.getHeaders().get("pan").get(0))));
 						}
 
 						logger.info("Setting session in cookie for customer is complete.");
@@ -527,8 +539,14 @@ public class HomeController {
 								//						response.addCookie(setSessionCookie("token", URLEncoder.encode(responseEntity.getHeaders().get("Authorization").get(0), "UTF-8")));
 								session.setAttribute("token", responseEntity.getHeaders().get("Authorization").get(0));
 								session.setAttribute("userid", responseEntity.getHeaders().get("userid").get(0));
-								session.setAttribute("email",responseEntity.getHeaders().get("email").get(0));
-
+//								session.setAttribute("email",responseEntity.getHeaders().get("email").get(0));
+								if(responseEntity.getHeaders().get("email")!=null){
+									session.setAttribute("email",responseEntity.getHeaders().get("email")!=null?responseEntity.getHeaders().get("email").get(0):"");
+								}
+								
+								if(responseEntity.getHeaders().get("pan")!=null){
+									session.setAttribute("pan",responseEntity.getHeaders().get("pan").get(0));
+								}
 								logger.info(responseEntity.getHeaders().get("Authorization").get(0));
 
 
@@ -547,6 +565,9 @@ public class HomeController {
 									//							response.addCookie(setSessionCookie("token", responseEntity.getHeaders().get("Authorization").get(0)));
 									response.addCookie(setSessionCookie("userid", responseEntity.getHeaders().get("userid").get(0)));
 									response.addCookie(setSessionCookie("email",responseEntity.getHeaders().get("email").get(0)));
+									if(responseEntity.getHeaders().get("pan")!=null){
+									    response.addCookie(setSessionCookie("pan", CommonTask.encryptPassword(responseEntity.getHeaders().get("pan").get(0))));
+									}
 
 									logger.info("Setting session in cookie for customer is complete after OTP validation.");
 								}catch(Exception e){

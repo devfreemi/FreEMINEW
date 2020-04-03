@@ -7,6 +7,8 @@ public class UserProfileLdap {
 	private String mobile;
 	private String mail;
 	private String fname;
+	private String lname;
+	private String fullname;
 	private String accountHolder;
 	private String ifscCode;
 	private String bankName;
@@ -54,6 +56,22 @@ public class UserProfileLdap {
 
 	public void setFname(String fname) {
 		this.fname = fname;
+	}
+
+	public String getLname() {
+	    return lname;
+	}
+
+	public void setLname(String lname) {
+	    this.lname = lname;
+	}
+
+	public String getFullname() {
+	    return fullname;
+	}
+
+	public void setFullname(String fullname) {
+	    this.fullname = fullname;
 	}
 
 	public String getAccountHolder() {

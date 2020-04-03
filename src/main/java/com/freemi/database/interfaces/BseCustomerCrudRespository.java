@@ -51,6 +51,9 @@ public interface BseCustomerCrudRespository extends JpaRepository<MFCustomers, L
 	@Query("select c.bseregistrationSuccess from BseMFInvestForm c where c.pan1= :pan and c.accountActive = 'Y' ")
 	public String getBseRegistrationStatus(@Param("pan") String pan );
 	
+	@Query("select c.bseregistrationSuccess from BseMFInvestForm c where c.mobile= :mobile and c.accountActive = :activestatus ")
+	public String getBseRegistrationStatusByMobile(@Param("mobile") String mobile, @Param("activestatus") String activestatus );
+	
 	@Query("select c.bseregistrationSuccess, c.aofuploadComplete from BseMFInvestForm c where c.mobile= :mobile and c.accountActive = 'Y'")
 	public String getBseRegistrationAOFStatus(@Param("mobile") String mobile);
 	

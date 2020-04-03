@@ -216,9 +216,9 @@ public class RestClientBseImpl implements BseRestClientService {
 	}
 
 	@Override
-	public String purchaseXSIPISIPRequestProcess(BseXipISipOrderEntry form){
+	public String purchaseCancelXSIPISIPRequestProcess(BseXipISipOrderEntry form){
 
-		logger.info("purchaseXSIPISIPRequestProcess(): Process to send request...");
+		logger.info("purchaseCancelXSIPISIPRequestProcess(): Process to send SIP request for type- "+ form.getTransactionCode());
 
 		final String url = env.getProperty("investment.bse.serviceurl") + "/orderxsip";
 		ObjectMapper mapper = new ObjectMapper();
@@ -372,8 +372,9 @@ public class RestClientBseImpl implements BseRestClientService {
 			}else{
 				//				returnRes = "101|FAILED: AMOUNT SHOULD NOT BE BLANK";
 				//				returnRes = "101|FAILED: INVALID CLIENT ACCOUNT NUMBER";
-				returnRes = "100|RECORD SAVED SUCCESSFULLY";
+//				returnRes = "100|RECORD SAVED SUCCESSFULLY";
 //				returnRes = "101|FAILED: INVALID ADDRESS TYPE";
+			    	returnRes ="101|FAILED: INVALID DATE OF BIRTH FORMAT MM/DD/YYYY";
 			}
 
 		} catch (JsonProcessingException e) {

@@ -33,6 +33,8 @@ public interface InvestmentConnectorBseInterface {
 	
 	public BseOrderEntryResponse processCustomerTransactionbsaRequest(SelectMFFund selectedFund, String transactionNumber, String mandateId);
 	
+	public BseOrderEntryResponse cancelSipOrder(SelectMFFund selectedFund, String uniqueReferenceNo, String orderno, String refno);
+	
 	public BseOrderPaymentResponse getPaymentUrl(BseOrderPaymentRequest request);
 	
 	public String BseOrderPaymentStatus(String clientId, String orderNo);

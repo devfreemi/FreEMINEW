@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.format.datetime.DateFormatter;
+import org.springframework.security.crypto.encrypt.Encryptors;
+import org.springframework.security.crypto.encrypt.TextEncryptor;
 
 import com.freemi.entity.general.ClientSystemDetails;
 import com.freemi.entity.general.InvestmentFormGeneral;
@@ -87,6 +89,29 @@ public class CommonTask {
 		return Long.toString((Math.abs(UUID.randomUUID().getMostSignificantBits())));
 	}
 	
-	
+	 public static String encryptPassword(String plaintext){
+		TextEncryptor t = Encryptors.text(CommonConstants.ENCRYPTION_SECUENCE, CommonConstants.ENCRYPTION_SALT);
+		String s="NA";
+		try {
+		    s = t.encrypt(plaintext);
+		}catch(Exception e) {
+		    logger.error("Error encrypting text. ",e);
+		}
+		return s;
+	}
+	 
+	 public static String decryptPassword(String encryptedText){
+		TextEncryptor t = Encryptors.text(CommonConstants.ENCRYPTION_SECUENCE, CommonConstants.ENCRYPTION_SALT);
+		
+		String s="NA";
+		try {
+		    s =t.decrypt(encryptedText);
+		    logger.debug("Decrypted text- " + s);
+		}catch(Exception e) {
+		    logger.error("Error decrypting text. ",e);
+		}
+		
+		return s;
+	}
 	
 }

@@ -98,6 +98,7 @@ public class ProfileManageController{
 			try{
 				UserProfile profile = bseEntryManager.getCustomerProfileDetailsByMobile(session.getAttribute("userid").toString());
 				if(profile!=null){
+				    	profile.setAccountNumber(profile.getAccountNumber().replace(profile.getAccountNumber().subSequence(2, profile.getAccountNumber().length()-2), "XXXXXX"));
 					model.addAttribute("profileBasic", profile);
 					model.addAttribute("INV_PROF","Y");
 				}else{

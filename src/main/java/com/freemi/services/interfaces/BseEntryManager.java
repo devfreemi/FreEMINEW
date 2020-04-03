@@ -32,8 +32,8 @@ import com.freemi.entity.investment.TransactionStatus;
 public interface BseEntryManager {
 	
 	//Customer records related crud operation
-	public String saveCustomerDetails(MFCustomers customerForm, String customerType, String customerlogged);
-	public BseApiResponse saveFatcaDetails(MFCustomers fatcaForm);
+	public String saveCustomerDetails(MFCustomers customerForm, String customerType, String customerlogged, String initiatedmobileid);
+	public BseApiResponse saveFatcaDetails(MFCustomers fatcaForm, String flag1, String dateformat);
 	public String updateFatcaStatus(String clientId, String status, String responseCode, String message);
 	
 	public List<SelectMFFund> getMFOrderHistory(String customerId);
@@ -67,7 +67,8 @@ public interface BseEntryManager {
 	public List<BsemfTransactionHistory> getAllPurchaseHistory(String clientId);
 	public boolean updateCancelledTransactionStatus(String mobile,String clientId, String orderNo, String transactionNo);
 	public SelectMFFund getTransactionDetails(String transactionId, String clientId);
-	
+	public TransactionStatus cancelSIPOrder(String mobile, String orderNo, String clientid, String oldtransactionid,String newtransactionid,  String investype);
+	public TransactionStatus cancelSIPOrderStatus(String orderNo, String clientid, String oldtransactionid);
 	public void saveMFInitiatedTranasctionRequest(SelectMFFund fundDetails);
 	
 	public List<BseAllTransactionsView> getCustomerAllTransactionRecords(String clientID, String mobileNumber, String panNumber);
@@ -105,5 +106,7 @@ public interface BseEntryManager {
 //	NAV
 	public List<MfNavData> getnavdataByISIN(String isin);
 	
+	public Object getMfRegistrationStatus(String mobile, String pan, String clientid);
 	
+	public String generateTransId();
 }

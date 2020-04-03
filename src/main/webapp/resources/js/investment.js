@@ -510,3 +510,58 @@ function convertNumberToIndianFormat(value){
 	return res;
 }
 
+
+$(document).ready(function(){
+	  $("form").submit(function(e){
+		  e.preventDefault();
+	    console.log("Submitted");
+	    
+	    request = $.ajax({
+			url: "/products/api/mutual-funds/cancel-sip",
+			method: "POST",
+			data: JSON.stringify({
+				"orderno" : $("#orderno").val(),
+				"clientid" : $("#formclientid").val(),
+				"transactionid" : $("#siptransactionid").val()
+			}),
+			async: true,
+			datatype: "json",
+			contentType: 'application/json',
+			beforeSend: function() {
+				$("#cancelsubmitbtn").html("Processing <i class=\"fas fa-spinner fa-spin\"></i>");
+				$('#cancelsubmitbtn').attr('disabled','disabled');
+			}
+		});
+		request.done(function(msg) {
+//			console.log(msg);
+			if(msg=="SUCCESS"){
+				$("#cancelresponse").text("SIP Cancelled Successfully");
+			}
+			if(msg=="NO_SESSION"){
+				$("#cancelresponse").text("Invalid session. Kindly login again.");
+
+			}else if(msg==="REQUEST_DENIED" || msg==="PAN_INVALID"){
+				$("#cancelresponse").text("Invalid request.");
+			}else if(msg==="NO_DATA"){
+				$("#cancelresponse").text("Invalid data");
+			}else{
+				$("#cancelresponse").text(msg);
+				
+			}
+
+		});
+
+		request.fail(function(jqXHR, textStatus) {
+			$("#cancelresponse").text("Failed to process your request.");
+
+		});
+
+		request.always(function(msg){
+			$("#cancelsubmitbtn").html("Cancel SIP");
+			$('#cancelsubmitbtn').removeAttr('disabled');
+		});
+	    
+	    
+	  });
+	});
+

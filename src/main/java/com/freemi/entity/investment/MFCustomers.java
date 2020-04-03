@@ -17,6 +17,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Proxy;
@@ -55,6 +56,14 @@ public class MFCustomers implements Serializable {
 	@NotBlank(message="Investor name is mandatory")
 	@Column(name=" INVESTOR_1")
 	private String invName="";
+	
+	@Column(name = "FNAME")
+	@NotNull(message = "First Name is mandatory") @Size(max = 48, message = "First name max 48 characters allowed") @Pattern(regexp = "[a-zA-Z .]*", message = "No special charcaters allowed in name")
+	private String fname;
+	
+	@Column(name = "LNAME")
+	@NotNull(message = "Last Name is mandatory") @Size(max = 48, message = "Last name max 48 characters allowed") @Pattern(regexp = "[a-zA-Z .]*", message = "No special charcaters allowed in name")
+	private String lname;
 	
 	@Column(name="INVESTOR_2")
 	private String applicant2="";
@@ -296,18 +305,30 @@ public class MFCustomers implements Serializable {
 	public void setInvName(String invName) {
 		this.invName = invName;
 	}
-	
-	
+
+	public String getFname() {
+	    return fname;
+	}
+
+	public void setFname(String fname) {
+	    this.fname = fname;
+	}
+
+	public String getLname() {
+	    return lname;
+	}
+
+	public void setLname(String lname) {
+	    this.lname = lname;
+	}
 
 	public String getApplicant2() {
 		return applicant2;
 	}
 
-
 	public void setApplicant2(String applicant2) {
 		this.applicant2 = applicant2;
 	}
-
 
 	public String getInvDOB() {
 		return invDOB;

@@ -7,7 +7,7 @@
 <section>
 
 	<!-- Material form login -->
-	<div class="card">
+	<div class="card mt-4">
 		<h5
 			class="card-header #d84315 deep-orange darken-3 white-text text-center">
 			<strong>Redeem your balance </strong> <img alt="Withdraw"

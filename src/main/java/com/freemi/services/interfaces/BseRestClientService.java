@@ -20,7 +20,7 @@ public interface BseRestClientService {
 	public String registerUser(BseRegistrationMFD form);
 	public String purchaseRequestProcess(BseOrderEntry form);
 	public String purchaseSIPRequestProcess(BseSipOrderEntry form);
-	public String purchaseXSIPISIPRequestProcess(BseXipISipOrderEntry form);
+	public String purchaseCancelXSIPISIPRequestProcess(BseXipISipOrderEntry form);
 	public String purchasePaymentLink(BseOrderPaymentRequest form);
 	public String orderPaymentStatus(BsePaymentStatus form);
 	public String eMandateRegistration(BseEMandateRegistration form);

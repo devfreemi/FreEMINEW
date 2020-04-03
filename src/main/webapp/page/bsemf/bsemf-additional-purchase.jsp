@@ -13,7 +13,8 @@
 <link
 	href="<c:url value="${contextcdn}/resources/css/bseinvestmentform.css"/>"
 	rel="stylesheet">
-<link href="<c:url value="${contextcdn}/resources/css/multistep.css"/>" rel="stylesheet">
+<link href="<c:url value="${contextcdn}/resources/css/multistep.css"/>"
+	rel="stylesheet">
 <link href="<c:url value="${contextcdn}/resources/css/pace-theme.css"/>"
 	rel="stylesheet">
 <script src="<c:url value="${contextcdn}/resources/js/pace.min.js" />"></script>
@@ -25,28 +26,31 @@
 	<div class="container">
 		<div class="row" style="margin-bottom: 3rem;">
 			<div class="col-md-7 col-lg-7">
-				<h2 class="redeem-h2">Additional Investment</h2>
+				<h2 class="redeem-h2 mt-4">Additional Investment</h2>
 				<section class="redeem-form-section">
 					<div style="background: #e4e3e1;">
 						<div class="row">
-							<div class="col-4">
-								<div class="form-group row" style="font-size: 12px;">
+							<div class="col-md-4" style="margin: auto;">
+								<div class="form-group row"
+									style="margin: auto; font-size: 12px;">
 									<div class="col-6">
 										<label>Folio No:</label>
 									</div>
 									<label class="col-6" style="font-weight: 600;">${purchaseForm.portfolio}</label>
 								</div>
 							</div>
-							<div class="col-4">
-								<div class="form-group row" style="font-size: 12px;">
+							<div class="col-md-4" style="margin: auto;">
+								<div class="form-group row"
+									style="margin: auto; font-size: 12px;">
 									<div class="col-6">
 										<label>Account Holder</label>
 									</div>
 									<label class="col-6" style="font-weight: 600;">${purchaseForm.unitHolderName}</label>
 								</div>
 							</div>
-							<div class="col-4">
-								<div class="form-group row" style="font-size: 12px;">
+							<div class="col-md-4" style="margin: auto;">
+								<div class="form-group row"
+									style="margin: auto; font-size: 12px;">
 									<div class="col-6">
 										<label>Date</label>
 									</div>
@@ -56,139 +60,95 @@
 						</div>
 					</div>
 
-					<form:form class="form cf" id="regForm"
+					<form:form class="form cf" id="regFormadditionalpurchase"
 						action="${pageContext.request.contextPath}/mutual-funds/mfInvestAdditionalPurchase.do"
 						method="POST" commandName="purchaseForm">
 
 						<!-- One "tab" for each step in the form: -->
-						<div class="tab">
-							<h4 class="text-md-center" style="color: #f16927; font-weight: 500;border-bottom: 1px solid;">1. Scheme Details</h4>
+						<div class="tab animated fadeIn">
+							<h4 class="text-md-center mb-2 mt-2"
+								style="color: #f16927; font-weight: 500; border-bottom: 1px solid;">1.
+								Scheme Details</h4>
 							<div class="row">
 								<div class="col-md-12 col-lg-12" style="text-align: left;">
-									<div>
-										<span id="mandateField" style="color: red;"></span>
+									
+									<div class="md-form form-sm">
+										<form:input readonly="true" path="portfolio" id="folio"
+												class="form-control form-control-sm form-control-plaintext" /> <label
+											for="folio">Folio No.</label>
 									</div>
-									<c:if test="${error!= null }">
-										<span style="color: red;">${error }</span>
-									</c:if>
-
-									<div class="form-group row">
-										<label for="folio"
-											class="col-6 col-md-4 col-lg-4 col-form-label col-form-label-sm">Folio
-											No:</label>
-										<div class="col-6 col-md-8 col-lg-8">
-											<form:input readonly="true" path="portfolio" id="folio"
-												class="form-control form-control-sm form-control-plaintext" />
-										</div>
+									
+									<div class="md-form form-sm">
+										<form:input readonly="true" path="fundName" id="fundname"
+												class="form-control form-control-sm form-control-plaintext" /> <label
+											for="fundname">Scheme Name</label>
 									</div>
-
-									<div class="form-group row">
-										<label for="fundname"
-											class="col-6 col-md-4 col-lg-4 col-form-label col-form-label-sm">Scheme
-											Name:</label>
-										<div class="col-6 col-md-8 col-lg-8">
-											<form:input readonly="true" path="fundName" id="fundname"
-												class="form-control form-control-sm form-control-plaintext" />
-										</div>
+									
+									
+									<div class="md-form form-sm" id="growthcode">
+										 <form:input path="growthSchemeCode" readonly="readonly" class="form-control form-control-sm form-control-plaintext" /> <label
+											for="fundname">Growth Scheme Code</label>
 									</div>
-
-									<div class="form-group row">
-										<label for="schemeName"
-											class="col-6 col-md-4 col-lg-4 col-form-label col-form-label-sm">Scheme
-											Code</label>
-										<div class="col-6 col-md-8 col-lg-8">
-											<%-- <input type="text" readonly class="form-control-plaintext"
-									id="schemeName" value="${selectedFund.schemeName }"> --%>
-											<span id="growthcode"> <form:input
-													path="growthSchemeCode" readonly="readonly"
-													class="form-control-plaintext" />
-											</span> <span id="reinvcode" style="display: none;"> <form:input
-													path="reinvSchemeCode" readonly="readonly"
-													class="form-control-plaintext" />
-											</span>
-										</div>
+									
+									<div class="md-form form-sm" id="reinvcode" style="display: none;">
+										 <form:input path="reinvSchemeCode" readonly="readonly" class="form-control form-control-sm form-control-plaintext" /> <label
+											for="fundname">Re-investment Scheme Code</label>
 									</div>
+									
 
-									<div class="form-group row">
-										<label for="investtype"
-											class="col-6 col-md-4 col-lg-4 col-form-label col-form-label-sm">Investment
-											Type:</label>
-										<div class="col-6 col-md-8 col-lg-8">
-
-											<div
-												class="custom-control custom-radio custom-control-inline">
-												<form:radiobutton path="investType" value="LUMPSUM"
-													id="investtype1" name="investType"
-													class="custom-control-input" />
+									<div class="form-group row form-sm">
+										<label for="investtype" class="col-md-6 text-primary">Investment Type:</label>
+										<div class="col-md-6">
+											<div class="custom-control custom-radio custom-control-inline">
+												<form:radiobutton path="investType" value="LUMPSUM" id="investtype1" name="investType" class="custom-control-input" />
 												<label class="custom-control-label" for="investtype1">Lumpsum</label>
 											</div>
-											<%-- <div
-												class="custom-control custom-radio custom-control-inline">
-												<form:radiobutton path="investType" value="SIP"
-													id="investtype2" name="investType"
-													class="custom-control-input" />
-												<label class="custom-control-label" for="investtype2">SIP</label>
-											</div> --%>
 
 										</div>
 									</div>
 
-
-									<div class="form-group row">
-										<label for="redeemamount"
-											class="col-6 col-md-4 col-lg-4 col-form-label col-form-label-sm">Purchase
-											Amount:</label>
-										<div class="col-6 col-md-8 col-lg-8">
-											<form:input path="purchaseAmounts" id="purchaseamount"
-												class="form-control form-control-sm" />
-										</div>
+									<div class="md-form form-sm">
+										<img alt="" src="<c:url value="${contextcdn}/resources/images/invest/invest-42.svg"/>" class="img-fluid prefix" style="height: 2rem;">
+										<form:input path="purchaseAmounts" id="purchaseamount" style="margin-left:3rem;width: calc(100% - 3rem);" maxlength="7"
+												class="form-control form-control-sm" /> <label
+											for="purchaseamount" style="margin-left:3rem;" >Purchase Amount</label>
 									</div>
+									
 
 								</div>
 							</div>
 						</div>
 
-						<div class="tab">
+						<div class="tab animated fadeIn">
 							<div class="row">
 								<div class="col-md-12 col-lg-12 purchase-confirm-tab">
-									<h4 class="text-md-center" style="color: #f16927; font-weight: 500;border-bottom: 1px solid;">2. Confirm Details</h4>
+									<h4 class="text-md-center  mb-4 mt-2"
+										style="color: #f16927; font-weight: 500; border-bottom: 1px solid;">2.
+										Confirm Details</h4>
 									<!-- ------------------------------  Confirm tab ------------------------------------------------------>
 
 									<div class="form-group row mb-1">
-										<label for="folioconf"
-											class="col-6 col-md-4 col-lg-4 col-form-label col-form-label-sm">Folio
-											No:</label>
-										<div class="col-6 col-md-8 col-lg-8">
-											<label class="confirm-label" id="folioconf">${purchaseForm.portfolio }</label>
-										</div>
+										<label for="folioconf" class="col-md-4 text-primary">Folio No:</label>
+										<label class="col-md-8 confirm-label" id="folioconf">${purchaseForm.portfolio }</label>
 									</div>
 
 									<div class="form-group row mb-1">
-										<label for="fundnameconf"
-											class="col-6 col-md-4 col-lg-4 col-form-label col-form-label-sm">Scheme
-											Name:</label>
-										<div class="col-6 col-md-8 col-lg-8">
-											<label class="confirm-label" id="fundnameconf">${purchaseForm.fundName }</label>
-										</div>
+										<label for="fundnameconf" class="col-md-4 text-primary">Scheme Name:</label>
+											<label class="confirm-label col-md-8" id="fundnameconf">${purchaseForm.fundName }</label>
 									</div>
 
 									<div class="form-group row mb-1">
 										<label for="investtypeconf"
-											class="col-6 col-md-4 col-lg-4 col-form-label col-form-label-sm">Investment
+											class="col-md-4 text-primary">Investment
 											Type:</label>
-										<div class="col-6 col-md-8 col-lg-8">
-											<label class="confirm-label" id="investtypeconf">${purchaseForm.investType }</label>
-
-										</div>
+											<label class="col-md-8 confirm-label" id="investtypeconf">${purchaseForm.investType }</label>
 									</div>
 
 									<div class="form-group row mb-1">
 										<label for="redeemamountconf"
-											class="col-6 col-md-4 col-lg-4 col-form-label col-form-label-sm">Purchase
-											Amount:</label>
-										<div class="col-6 col-md-8 col-lg-8">
-											<label class="confirm-label" id="purchaseamountconf"></label>
-										</div>
+											class="col-md-4 text-primary">Purchase
+											Amount (Rs.) :</label>
+											<label class="col-md-8 confirm-label" id="purchaseamountconf"></label>
 									</div>
 
 									<hr>
@@ -230,10 +190,13 @@
 								</div>
 							</div>
 						</div>
-						
-						<jsp:include page="transaction-in-progress-icon.jsp"></jsp:include>
+
+						<div id="progressdisplay"></div>
 
 						<div style="overflow: auto;">
+							<div>
+										<span id="mandateField" style="color: red;"><c:if test="${error!= null }">${error}</c:if> </span>
+									</div>
 							<div style="float: right;">
 								<form:button type="button" class="btn btn-sm btn-info"
 									id="prevBtn" onclick="nextPrevAdditional(-1)">
@@ -274,7 +237,7 @@
 	showTabAdditional(currentTab); // Display the current tab
 
 	function showTabAdditional(n) {
-		//console.log("Show current tab.")
+		//console.log("JSP - Show current tab." + n)
 		// This function will display the specified tab of the form ...
 		var x = document.getElementsByClassName("tab");
 		x[n].style.display = "block";
@@ -299,25 +262,30 @@
 	function nextPrevAdditional(n) {
 		// This function will figure out which tab to display
 		//console.log("Next page...");
+		//console.log("nextprev- "+currentTab + " : n: "+n );
 		var x = document.getElementsByClassName("tab");
 		// Exit the function if any field in the current tab is invalid:
 		//console.log("n- " + n)
 		
+		
 		if (n == 1 && currentTab == 1) {
-//		console.log("Display progress");
-		$("#display_progress").css({
-			"display" : "block"
-		});
-		
-		$("#prevBtn").attr("disabled", "disabled");
-		$("#nextBtn").attr("disabled", "disabled");
-		
-	}
-		
+
+			if($('#agreepolicyconf').is(':checked') ){
+				showprogress();
+			}
+			else{
+				$("#mandateField").text("Confirm the policy to proceed to transaction.");
+				return false;
+				}
+		}
+
 		if (n == 2) {
 			//console.log("Return false");
 			return false;
 		}
+
+		if (n == 1 && !validateForm())
+			return false;
 		// Hide the current tab:
 		x[currentTab].style.display = "none";
 		// Increase or decrease the current tab by 1:
@@ -325,7 +293,8 @@
 		// if you have reached the end of the form... :
 		if (currentTab >= x.length) {
 			//...the form gets submitted:
-			document.getElementById("regForm").submit();
+			
+			document.getElementById("regFormadditionalpurchase").submit();
 			return false;
 		}
 		// Otherwise, display the correct tab:
@@ -334,26 +303,20 @@
 	}
 
 	function validateForm() {
-		// This function deals with validation of the form fields
-		//console.log("Validate additional purchase");
-		var x, y, i, valid = true;
-		x = document.getElementsByClassName("tab");
-		y = x[currentTab].getElementsByTagName("input");
-		// A loop that checks every input field in the current tab:
-		for (i = 0; i < y.length; i++) {
-			// If a field is empty...
-			if (y[i].value == "") {
-				// add an "invalid" class to the field:
-				y[i].className += " invalid";
-				// and set the current valid status to false:
-				valid = false;
-			}
+		var x= Number($("#purchaseamount").val());
+		console.log(Number.isInteger(x));
+		if( !Number.isInteger(x) ){
+			$("#mandateField").text("Invalid amount!");
+			return false;	
 		}
-		// If the valid status is true, mark the step as finished and valid:
-		if (valid) {
-			document.getElementsByClassName("step")[currentTab].className += " finish";
+
+		if( Number($("#purchaseamount").val()) == 0 ){
+			$("#mandateField").text("Please provide minimum purchase amount.");
+			return false;	
 		}
-		return valid; // return the valid status
+		$("#mandateField").text("");
+		return true;
+		
 	}
 
 	function fixStepIndicatorAdditional(n) {
@@ -365,7 +328,15 @@
 		//... and adds the "active" class to the current step:
 		x[n].className += " active";
 	}
+
+	function showprogress(){
+		$("#errormsgbox").text("");
+		$("#progressdisplay").html("<div class=\"mb-3 mt-3 text-center text-secondary\"><h5>Processing your request. Please do not press 'Back' Button or refresh the page.</h5><img alt=\"Fetching your portfolio\" src=\"https://resources.freemi.in/products/resources/images/invest/progress2.gif\">");
+		$("#prevBtn").attr("disabled", "disabled");
+		$("#nextBtn").attr("disabled", "disabled");
+		}
+	
 </script>
-<script src="<c:url value="${contextcdn}/resources/js/bseinvest.js" />" async="true"></script>
+<%-- <script src="<c:url value="${contextcdn}/resources/js/bseinvest.js" />" async="true"></script> --%>
 </html>
 

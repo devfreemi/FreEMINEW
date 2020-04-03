@@ -66,7 +66,8 @@ table.dataTable thead th, table.dataTable thead td {
 </head>
 <body>
 	<jsp:include page="../include/header.jsp"></jsp:include>
-	<div class="container-fluid" style="min-height: 100vh;margin-bottom: 5rem;">
+	<div class="container-fluid"
+		style="min-height: 100vh; margin-bottom: 5rem;">
 		<div class="row" style="margin: auto; overflow: auto;">
 			<div class="col-md-12 col-lg-12"
 				style="margin: auto; margin-top: 30px;">
@@ -136,12 +137,6 @@ table.dataTable thead th, table.dataTable thead td {
 											<td>${listVar.orderTime }</td>
 											<td>${listVar.orderNo }</td>
 											<td style="text-align: center;">
-												<%-- <button class="btn btn-sm btn-secondary" style="padding: .1rem .5rem;"
-													onclick="getbseOrderPaymentStatus('${listVar.clienId}','${listVar.orderNo }' )">
-													Payment Status</button> --%> <%-- <span style="color: blue;cursor: pointer;" onclick="getbseOrderPaymentStatus('${listVar.clienId}','${listVar.orderNo }' )">Order Status</span>
-												<span style="color: red;cursor: pointer;">Cancel Order</span> --%>
-
-
 
 												<div class="btn-group">
 													<button type="button"
@@ -150,18 +145,41 @@ table.dataTable thead th, table.dataTable thead td {
 														aria-expanded="false"
 														style="font-size: 11px; padding: 10px; width: 5rem;">ACTION</button>
 													<div class="dropdown-menu dropdown-menu-right">
-														<button class="dropdown-item" type="button"
-															style="font-size: 12px; color: #238019; font-weight: 600;"
-															onclick="getbseOrderPaymentStatus('${listVar.clienId}','${listVar.orderNo }' )">
-															Payment Status</button>
-														
-														<c:if test="${listVar.transctionType =='PURCHASE' }">
-														<button class="dropdown-item" type="button"
-															style="font-size: 12px; color: #d82f2f; font-weight: 600;"
-															onclick="cancelOrder('${listVar.clienId}','${listVar.orderNo}','${listVar.investType }','${listVar.transctionType }','${listVar.transactionId }' )">
-															<%-- onclick="cancelOrder('${listVar.schemeCode}','${listVar.orderNo },'${listVar.investType }')"> --%>
-															Cancel Order</button>
-														</c:if>
+
+														<c:choose>
+															<c:when
+																test="${listVar.transctionType =='PURCHASE' && listVar.investType == 'SIP'  }">
+																<button class="dropdown-item" type="button"
+																	style="font-size: 12px; color: #238019; font-weight: 600;"
+																	onclick="getbseOrderPaymentStatus('${listVar.clienId}','${listVar.orderNo }' )">
+																	Order Status</button>
+																<button class="dropdown-item" type="button"
+																	data-toggle="modal" data-target="#sipcancelmodal"
+																	data-orderno="${listVar.orderNo }" data-amount="${listVar.investAmount }" data-clientid="${listVar.clienId}" data-transactionid="${listVar.transactionId}"
+																	style="font-size: 12px; color: red; font-weight: 600;">
+																	Cancel SIP</button>
+															</c:when>
+
+															<c:when
+																test="${listVar.transctionType =='PURCHASE' && listVar.investType == 'LUMPSUM'  }">
+																<button class="dropdown-item" type="button"
+																	style="font-size: 12px; color: #238019; font-weight: 600;"
+																	onclick="getbseOrderPaymentStatus('${listVar.clienId}','${listVar.orderNo }' )">
+																	Payment Status</button>
+
+																<button class="dropdown-item" type="button"
+																	style="font-size: 12px; color: #d82f2f; font-weight: 600;"
+																	onclick="cancelOrder('${listVar.clienId}','${listVar.orderNo}','${listVar.investType }','${listVar.transctionType }','${listVar.transactionId }' )">
+																	Cancel Order</button>
+															</c:when>
+
+															<c:otherwise>
+																<button class="dropdown-item" type="button"
+																	style="font-size: 12px; color: #238019; font-weight: 600;"
+																	onclick="getbseOrderPaymentStatus('${listVar.clienId}','${listVar.orderNo }' )">
+																	Payment Status</button>
+															</c:otherwise>
+														</c:choose>
 
 													</div>
 												</div>
@@ -184,7 +202,58 @@ table.dataTable thead th, table.dataTable thead td {
 		</div>
 
 	</div>
-	
+
+
+	<!-- Modal -->
+	<div class="modal fade" id="sipcancelmodal" tabindex="-1" role="dialog"
+		aria-labelledby="sipcancellabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header" style="background: #44ca9e;">
+					<h5 class="modal-title white-text" id="sipcancellabel">Cancel your SIP</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span class="white-text" aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div>
+					<span id="cancelresponse" class="text-primary"></span>
+					</div>
+					<form action="" id="sipcancelform">
+						<div class="row mt-2">
+							<div class="col-4">
+								<label class="text-muted">SIP Order No</label>
+							</div>
+							<div class="col-8">
+								<input type="text" id="orderno" name="orderno" class="form-control form-control-plaintext" readonly="readonly">
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-4">
+								<label class="text-muted">Invest Amount</label>
+							</div>
+							<div class="col-8">
+							<input type="text" id="sipamnt" name="sipamnt" class="form-control form-control-plaintext" readonly="readonly">
+							</div>
+						</div>
+						<input type="hidden" value="" id="formclientid">
+						<input type="hidden" value="" id="siptransactionid">
+						
+						<div class="mt-2 text-center">
+						<button type="submit" class="btn btn-sm btn-deep-orange" id="cancelsubmitbtn">Cancel
+							SIP</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+
 	<jsp:include page="../include/sub-footer.jsp"></jsp:include>
 	<jsp:include page="../include/footer.jsp"></jsp:include>
 
@@ -193,28 +262,40 @@ table.dataTable thead th, table.dataTable thead td {
 <script type="text/javascript">
 	$(document).ready(function() {
 		$('#dtBasicExample').DataTable({
-			"columns": [
-			    { "orderable": false },
-			  /*   { "orderable": false }, */
-			    null,
-			    null,
-			    null,
-			    null,
-			    null,
-			    null,
-			    null,
-			    { "orderable": false },
-			    { "orderable": false }
-			  ],
-			  "order": [[ 7, "desc" ]]
+			"columns" : [ {
+				"orderable" : false
+			},
+			/*   { "orderable": false }, */
+			null, null, null, null, null, null, null, {
+				"orderable" : false
+			}, {
+				"orderable" : false
+			} ],
+			"order" : [ [ 7, "desc" ] ]
 		});
 		$('.dataTables_length').addClass('bs-select');
-		
+
 	});
 
-	
+	$("#sipcancelmodal").on('show.bs.modal', function(event) {
+		//console.log("Modal called")
+		if ($(event.relatedTarget).attr("data-orderno") == undefined) {
+			$("#orderno").val("NA");
+		} else {
+			$("#orderno").val($(event.relatedTarget).attr("data-orderno"));
+		}
+
+		if ($(event.relatedTarget).attr("data-amount") == undefined) {
+			$("#sipamnt").val("NA");
+		} else {
+			$("#sipamnt").val($(event.relatedTarget).attr("data-amount"));
+		}
+
+		$("#formclientid").val($(event.relatedTarget).attr("data-clientid"));
+		$("#siptransactionid").val($(event.relatedTarget).attr("data-transactionid"));
+
+	});
 </script>
 
-<script
-	src="<c:url value="${contextcdn}/resources/js/investment.js" />"></script>
+<script src="<c:url value="${contextcdn}/resources/js/investment.js" />"></script>
 </html>

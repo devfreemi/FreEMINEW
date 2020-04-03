@@ -97,8 +97,9 @@ $(document).on("click", "#reinvestcategory", function() {
 //BSE Invest form register
 function showTab(n) {
 	// This function will display the specified tab of the form ...
+	
 	var x = document.getElementsByClassName("tab");
-//	console.log("Showtab- "+n);
+	console.log("JS(): Showtab- "+n);
 	x[n].style.display = "block";
 
 	// ... and fix the Previous/Next buttons:

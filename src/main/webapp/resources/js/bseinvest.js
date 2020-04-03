@@ -98,7 +98,7 @@ $(document).on("click", "#reinvestcategory", function() {
 function showTab(n) {
 	// This function will display the specified tab of the form ...
 	var x = document.getElementsByClassName("tab");
-//	console.log("Showtab- "+n);
+	console.log("JS(): Showtab- "+n);
 	x[n].style.display = "block";
 
 	// ... and fix the Previous/Next buttons:
@@ -222,7 +222,7 @@ function validBasicForm() {
 		return false;
 	}
 	
-	if ($("#investorDOB").val() == "" || $("#invName").val() == "" || $("#email").val() == "" ||$("#mobile").val() == "") {
+	if ($("#investorDOB").val() == "" || $("#fname").val() == "" || $("#lname").val() == "" || $("#email").val() == "" ||$("#mobile").val() == "") {
 		$("#mandateField").text("Please provide mandatory fields data.");
 		return false;
 	}
@@ -299,9 +299,12 @@ function populateConfirmPage() {
 	if($("input[name='ubo']:checked").val() == undefined){
 		$("#nextBtn").attr("disabled", "disabled");
 	}
-
+	$("#invName").val($("#fname").val().trim() + " "+ $("#lname").val().trim());
+	
 	//Personal Details
 	$("#nameDisplay").text($("#invName").val());
+//	$("#nameDisplay").text($("#fname").val().trim() + " "+ $("#lname").val().trim());
+	
 	$("#PANDisplay").text($("#pan1").val());
 
 	$("#mobileDisplay").text($("#mobile").val());

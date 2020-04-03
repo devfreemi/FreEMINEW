@@ -12,4 +12,6 @@ public interface BseTransHistoryViewCrudRepository extends JpaRepository<BsemfTr
 	
 	public BsemfTransactionHistory findOneByClienIdAndTransctionTypeAndTransactionId(String clientId,String category, String tran);
 	
+	public boolean existsByClienIdAndTransactionIdAndOrderNo(String clientid, String transactionid, String orderno);
+	
 }

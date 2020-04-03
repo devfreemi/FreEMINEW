@@ -2,6 +2,7 @@ package com.freemi.ui.controller.api;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -10,10 +11,11 @@ import javax.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.freemi.common.util.CommonConstants;
 import com.freemi.entity.bse.BseOrderPaymentResponse;
 import com.freemi.entity.investment.MfNavData;
+import com.freemi.entity.investment.TransactionStatus;
 import com.freemi.services.interfaces.BseEntryManager;
 import com.google.gson.Gson;
 
@@ -29,13 +32,13 @@ import com.google.gson.Gson;
 @RequestMapping("/api")
 public class MfDataController {
 
-    private static final Logger logger = LogManager.getLogger(FormDataController.class);
+    private static final Logger logger = LogManager.getLogger(MfDataController.class);
 
     @Autowired
     BseEntryManager bseEntryManager;
 
     @PostMapping(value = "/navdata/{isin}", produces = "application/json")
-//    @CrossOrigin(origins = "https://www.freemi.in")
+    //    @CrossOrigin(origins = "https://www.freemi.in")
     @ResponseBody
     public String getNavDataForIsisn(@PathVariable(name = "isin") String isin, Model model, HttpServletRequest request,
 	    HttpServletResponse httpResponse) {
@@ -69,7 +72,7 @@ public class MfDataController {
 	//		return navhistorydata;
     }
 
-    @RequestMapping(value = "/mutual-funds/pending-payments", method = RequestMethod.POST)
+    @RequestMapping(value = "/mutual-funds/pending-payments", method = RequestMethod.POST ,consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public String bsePendingPayments(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 
 	logger.info("@@ BSE MF STAR pending payments clearance @@");
@@ -106,6 +109,37 @@ public class MfDataController {
 
 	//		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 	logger.info("bsePendingPayments(): Return url- " + responseData);
+	return responseData;
+    }
+
+
+    @RequestMapping(value = "/mutual-funds/cancel-sip", method = RequestMethod.POST)
+    public String bseCancekSIP(@RequestBody Map<String, String> requestbody, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+
+	logger.info("@@ BSE MF STAR cancel SIP @@");
+	String responseData = "SUCCESS";
+	try {
+	    if (session.getAttribute("token") != null && session.getAttribute("userid") != null) {
+		    if(requestbody.containsKey("orderno") && requestbody.containsKey("clientid") && requestbody.containsKey("transactionid")) {
+		    
+		    TransactionStatus flag=  bseEntryManager.cancelSIPOrder(session.getAttribute("userid").toString(), requestbody.get("orderno"), requestbody.get("clientid"),requestbody.get("transactionid"), null, "SIP");
+		    bseEntryManager.cancelSIPOrderStatus( requestbody.get("orderno"), requestbody.get("clientid"),requestbody.get("transactionid"));
+		    if(flag.getSuccessFlag().equals("S")) {
+			responseData="SUCCESS";
+		    }else {
+			responseData=flag.getStatusMsg();
+		    }
+		    }else {
+			responseData="INVALID_DATA";
+		    }
+	    }else {
+		responseData="NO_SESSION";
+	    }
+	} catch (Exception e) {
+	    logger.error("bseCancekSIP(): Failed to get pending url links. Returning to dashboard", e);
+	    responseData = "INTERNAL_ERROR";
+	}
+	logger.info("bseCancekSIP(): Return response- " + responseData);
 	return responseData;
     }
 

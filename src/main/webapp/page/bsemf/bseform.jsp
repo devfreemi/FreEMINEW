@@ -45,6 +45,7 @@
 
 			<form:hidden path="profileRegRequired" />
 			<form:hidden path="customerRegistered" />
+			<form:hidden path="invName" id="invName"/>
 
 			<div class="form-row">
 				<div class="form-group col-md-6">
@@ -146,7 +147,7 @@
 
 				<div class="form-row">
 					<div class="form-group col-md-6">
-						<div class="input-group mb-1">
+						<%-- <div class="input-group mb-1">
 							<div class="input-group-prepend">
 								<span class="input-group-text" id="basic-addon3">Name<sup
 									style="color: red">*</sup></span>
@@ -154,6 +155,14 @@
 							<form:input type="text" class="form-control form-control-custom"
 								maxlength="128" id="invName" path="invName" required="required"
 								aria-describedby="basic-addon3" />
+						</div> --%>
+						<div class="input-group">
+							<div class="input-group-prepend mb-1">
+								<span class="input-group-text" id="basic-addon3">Name<sup style="color: red">*</sup></span>
+							</div>
+							<form:input type="text" class="form-control form-control-custom"
+								maxlength="48" id="fname" path="fname" required="required" placeholder="First Name" /> <form:input type="text" class="form-control form-control-custom"
+								maxlength="48" id="lname" path="lname" required="required" placeholder="Last name" />
 						</div>
 					</div>
 					<div class="form-group col-md-6">
@@ -184,7 +193,8 @@
 							</div>
 							<form:input type="email" class="form-control form-control-custom"
 								maxlength="128" id="email" path="email" required="required"
-								aria-describedby="basic-addon3" readonly="${LOGGED =='Y' ? 'true' : 'false' }" />
+								aria-describedby="basic-addon3"
+								readonly="${LOGGED =='Y' ? 'true' : 'false' }" />
 						</div>
 					</div>
 
@@ -196,10 +206,11 @@
 									no.<sup style="color: red">*</sup>
 								</span>
 							</div>
-									<form:input type="text"
-										class="form-control form-control-custom" minlength="10" maxlength="10"
-										pattern="[0-9]*" id="mobile" path="mobile" required="required"
-										aria-describedby="basic-addon3" readonly="${LOGGED =='Y' ? 'true' : 'false' }" />
+							<form:input type="text" class="form-control form-control-custom"
+								minlength="10" maxlength="10" pattern="[0-9]*" id="mobile"
+								path="mobile" required="required"
+								aria-describedby="basic-addon3"
+								readonly="${LOGGED =='Y' ? 'true' : 'false' }" />
 						</div>
 					</div>
 
@@ -607,13 +618,14 @@
 				<div class="form-group col-md-6">
 					<div class="input-group mb-1">
 						<div class="input-group-prepend">
-							<span class="input-group-text" id="basic-addon3">Country of Birth<sup style="color: red">*</sup>
+							<span class="input-group-text" id="basic-addon3">Country
+								of Birth<sup style="color: red">*</sup>
 							</span>
 						</div>
 						<form:select class="custom-select" id="incomeslab"
 							required="required" path="fatcaDetails.countryOfBirth">
-							<form:option value="IN" selected="selected" >India</form:option>
-							<form:options items="${ bsecountryofbirth }"/>
+							<form:option value="IN" selected="selected">India</form:option>
+							<form:options items="${ bsecountryofbirth }" />
 						</form:select>
 					</div>
 				</div>
@@ -662,7 +674,7 @@
 						</form:select>
 					</div>
 				</div>
-				
+
 				<div class="form-group col-md-6">
 					<div class="input-group mb-1">
 						<div class="input-group-prepend">
@@ -677,8 +689,8 @@
 						</form:select>
 					</div>
 				</div>
-				
-				
+
+
 			</div>
 
 
@@ -719,7 +731,8 @@
 				style="padding-left: 10px; font-weight: 400; background: #fd6d6d;">
 				<div class="custom-control custom-checkbox">
 					<form:checkbox class="custom-control-input"
-						path="fatcaDetails.usCitizenshipCheck" id="uscitizencheck" checked="checked" />
+						path="fatcaDetails.usCitizenshipCheck" id="uscitizencheck"
+						checked="checked" />
 					<label class="custom-control-label" for="uscitizencheck"
 						style="color: white;">I am not a citizen of US/Canada</label>
 				</div>

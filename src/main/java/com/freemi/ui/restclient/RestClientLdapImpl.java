@@ -1,5 +1,6 @@
 package com.freemi.ui.restclient;
 
+import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -369,6 +370,28 @@ public class RestClientLdapImpl implements ProfileRestClientService {
 		headers.set("authorization", ANONYMOUS_TOKEN);
 		HttpEntity<String> entity = new HttpEntity<String>(form.toString(),headers);
 		return restTemplate.postForEntity(url, entity,  String.class);
+	}
+
+	@Override
+	public String isPanExisitngForOthers(String mobile, String pan) {
+	    	String response="E";
+	    try {
+	    	final String url = env.getProperty(CommonConstants.URL_SERVICE_PROFILE) + "/checkPanExistForOtherUsers"+"/" + mobile+"/"+pan;
+		
+	    	
+	    	RestTemplate restTemplate = new RestTemplate();
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", ANONYMOUS_TOKEN);
+		HttpEntity<String> entity = new HttpEntity<String>(headers);
+		ResponseEntity<String> resp =  restTemplate.postForEntity(url, entity,  String.class);
+		logger.info("isPanExisitngForOthers(): Search response- " + resp.getBody());
+		response= resp.getBody();
+		
+	    }catch(Exception e) {
+		logger.error("Error requesting check for PAN search",e);
+	    }
+	    
+	    return response;
 	}
 
 

@@ -44,7 +44,7 @@ spring.mail.protocol=smtp
 #INVESTMENT_ENABLED=N
 investment.api.birla.enabaled=N
 investment.bse.enabled=Y
-investment.bse.testphase.enabled=N
+investment.bse.testphase.enabled=Y
 investment.bse.sign.bypasskyc=N
 ######### DEV ##################
 
@@ -109,12 +109,10 @@ investment.bse.mail.support=N
 mfregistration.bse.mail.support=Y
 #Whether to send mail to support team when any trasnaction error happens
 error.general.transaction.mail.support=Y
+
 ################################# BACKEND SERVICE API URL ##################################
 #url.service.fd.mahindra=http://localhost:8050/freemiservices/api/mahindrafd
 url.service.fd.mahindra=http://localhost:8090/freemiservices-0.0.1-SNAPSHOT/api/mahindrafd
 
-################################# BACKEND SERVICE API URL ##################################
 
-url.service.fd.mahindra=http://localhost:8050/freemiservices/api/mahindrafd
-#url.service.fd.mahindra=http://localhost:6080/freemiservices-0.0.1-SNAPSHOT/api/mahindrafd
 
