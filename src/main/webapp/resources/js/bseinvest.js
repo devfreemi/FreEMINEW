@@ -1,3 +1,4 @@
+//console.log = function() {}
 var minsip=0;
 var minlumpsum=0;
 
@@ -42,16 +43,16 @@ $(document).ready(function() {
 
 //selectfund
 
-$(document).on("click", "#radioamount", function() {
+$(document).on("click change", "#radioamount", function() {
 	var x = $("input[type='radio'][name='options']:checked").val();
-	/* console.log("Test" + $("input[type='radio'][name='options']:checked").val()); */
+//	 console.log("Test " + x); 
 	$("#amount").val(x);
 	$("input[type='radio'][name='options']:checked").css("background","red");
 });
 
 function customamount() {
 	if ($('input:radio[name="options"]:checked')) {
-//		console.log("Check active")
+		console.log("Check active")
 		$('#radioamount label').removeClass('active');
 		
 
@@ -450,6 +451,7 @@ function validateFundForm(){
 			$("#selectmsg").text("");
 		}
 		
+		
 	}
 	
 //	validate amount
@@ -486,67 +488,7 @@ function validateFundForm(){
 		  return false;
 	  }
 	
-	
-	return true;
-}
-
-
-
-function bseinvest(mfCode,reinvCode, mfName, lumpsumMinimum, amcCode, sipMin,sipDates,rtaAgent,amcicon) {
-//	console.log("Reached- " + mfCode + " " + mfName);
-	var radioValue = $("input[name='investype']:checked").val();
-//	console.log("Selected- " + radioValue);
-//	console.log("SIP dates- "+ sipDates);
-	minsip=sipMin;
-	minlumpsum=lumpsumMinimum;
-	$("#myModal").modal();
-	$("#schemeNameTitle").text(mfName);
-	$("#schemeName").val(mfName);
-	$("#rtaAgent").val(rtaAgent);
-	var dtarray = sipDates.split(",");
-	
-	if(amcicon != ''){
-		document.getElementById("amcicondisplay").src = "https://resources.freemi.in/products/resources/images/partnerlogo/mf/"+amcicon;
-		$("amcicondisplay").css("background","white");
-	}else{
-		document.getElementById("amcicondisplay").src = "https://resources.freemi.in/products/resources/images/partnerlogo/mf/default-amc.png";
-		$("amcicondisplay").css("background","white");
-	}
-	
-	var x = document.getElementById("sipOtherDates");
-	$("#sipOtherDates").empty();
-	/*
-	for (i = 0; i < x.length; i++) {
-		  x.remove(i);
-		}*/
-	
-	for(i=0;i<dtarray.length ; i++){
-//		console.log(dtarray[i]);
-		var option = document.createElement("option");
-		option.text = dtarray[i];
-		option.value = dtarray[i];
-		x.add(option);
-	}
-	x.selectedIndex = 1; 
-	
-	if (radioValue == 'SIP') {
-		$("#sipbox").show();
-		
-		
-		
-		$("#minvalreq").text(minsip);
-	} else if (radioValue == 'LUMPSUM') {
-		$("#sipbox").hide();
-		$("#minvalreq").text(minlumpsum);
-	} else {
-		$("#sipbox").hide();
-		$("#minvalreq").text("0");
-	}
-	$("#minValls").hide();
-	$("#schemecode").val(mfCode);
-	console.log("Reonv code- "+ reinvCode);
-	$("#reinvSchemeCode").val(reinvCode);
-	$("#amcCode").val(amcCode);
+	displayprocessing("#selectfundbtn");
 	return true;
 }
 
@@ -566,5 +508,15 @@ function mandateTypeChosen(){
 		$("#xsip").show();
 	}
 //	$("#occupationtypedisplay").text($("#mandateType :selected").text());
+}
+
+$('#selectedFund').on('submit', function() {
+	displayprocessing("#orderconfirmbtn");
+	return true;
+});
+
+function displayprocessing(elementid){
+	$(elementid).html("Processing.. <i class='fas fa-spinner fa-spin'>");
+	$(elementid).attr("disabled", "disabled");
 }
 

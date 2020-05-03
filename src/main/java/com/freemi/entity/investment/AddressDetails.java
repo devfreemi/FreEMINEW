@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -38,9 +39,11 @@ public class AddressDetails implements Serializable{
 	@Column(name="CLIENT_ID")
 	private String clientID;
 	
+	@NotNull(message="Address 1 field is mandatory") 
 	@Column(name="ADDRESS_1")
 	private String address1="";
 	
+	@NotNull(message="Address 2 field is mandatory")
 	@Column(name="ADDRESS_2")
 	private String address2="";
 	
@@ -51,11 +54,11 @@ public class AddressDetails implements Serializable{
 	private String city="";
 	
 	@Column(name="PINCODE")
-	@Pattern(regexp="[0-9]{6}",message="Enter valid ZIP code")
+	@NotNull(message = "Address PIN code is mandatory") @NotEmpty(message = "Address PIN code is mandatory") @Pattern(regexp="[0-9]{6}",message="Enter valid ZIP code")
 	@Size(max=6, message="PIN code must be 6 digit")
 	private String pinCode="";
 	
-	@NotEmpty(message="Mention your state")
+	@NotNull(message="Mention your state") @NotEmpty(message="Mention your state")
 	@Column(name="STATE")
 	private String state="";
 	

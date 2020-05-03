@@ -357,9 +357,10 @@ public class RestClientLdapImpl implements ProfileRestClientService {
 
 	@Override
 	public ResponseEntity<String> linkmfaccountDetails(String mobile, String pan, String bseclientId) {
-		logger.info("Request received to link BSE registered details to rgistered account with mobile no- "+ mobile);
-
+		logger.info("Request received to link PAN to registered account with mobile no- "+ mobile);
+		ResponseEntity<String> response = null;
 		final String url = env.getProperty(CommonConstants.URL_SERVICE_PROFILE) + "/linkmfaccountinfo/";
+		try {
 		RestTemplate restTemplate = new RestTemplate();
 		JsonObject form = new  JsonObject();
 		form.addProperty("mobile", mobile);
@@ -369,7 +370,12 @@ public class RestClientLdapImpl implements ProfileRestClientService {
 		HttpHeaders headers = new HttpHeaders();	
 		headers.set("authorization", ANONYMOUS_TOKEN);
 		HttpEntity<String> entity = new HttpEntity<String>(form.toString(),headers);
-		return restTemplate.postForEntity(url, entity,  String.class);
+		response= restTemplate.postForEntity(url, entity,  String.class);
+		logger.info("Updating profile with PAN no status- "+ response.getBody());
+		}catch(Exception e) {
+		    logger.error("Error updating PAn to LDAP account ",e);
+		}
+		return response;
 	}
 
 	@Override

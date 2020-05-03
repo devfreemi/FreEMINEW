@@ -148,18 +148,7 @@ function calculate(month){
        return t/12;
      }
 
-     function clearMAForm(){
-       var form = document.getElementById("maCalculator");
-       form.reset();
-       // document.getElementById("final-maturity-amount").innerHTML = '<i class="fa fa-inr "></i>';
-     }
-     function clearIAForm(){
-       var form = document.getElementById("iaCalculator");
-       form.reset();
-       // document.getElementById("final-installment-amount").innerHTML = '<i class="fa fa-inr "></i>';
-     }
-
-     function calculateInstallmentAmount(t ){
+       function calculateInstallmentAmount(t ){
 
        var a = document.getElementById('amount_sip').value;
 //       console.log("amount_sip="+a);

@@ -7,7 +7,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.freemi.entity.bse.BseAOFUploadResponse;
 import com.freemi.entity.bse.BseApiResponse;
+import com.freemi.entity.bse.BseOrderPaymentRequest;
 import com.freemi.entity.bse.BseOrderPaymentResponse;
 import com.freemi.entity.database.MfTopFundsInventory;
 import com.freemi.entity.database.UserBankDetails;
@@ -109,4 +111,12 @@ public interface BseEntryManager {
 	public Object getMfRegistrationStatus(String mobile, String pan, String clientid);
 	
 	public String generateTransId();
+	
+	public BseAOFUploadResponse uploadAOFForm(String mobileNumber, String aoffolderLocation, String clientCode);
+	
+	public String BseOrderPaymentStatus(String clientid, String orderno);
+	
+	public BseOrderPaymentResponse getPaymentUrl(BseOrderPaymentRequest request);
+	
+	public BseApiResponse extractAllotmentstatement(String fromdate, String todate, String orderstatus, String ordertype, String settlementtype);
 }

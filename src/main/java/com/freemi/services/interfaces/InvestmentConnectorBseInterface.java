@@ -1,6 +1,7 @@
 package com.freemi.services.interfaces;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import com.freemi.entity.bse.BseOrderPaymentResponse;
 import com.freemi.entity.bse.BsePanStatusResponse;
 import com.freemi.entity.database.UserBankDetails;
 import com.freemi.entity.investment.MFCustomers;
+import com.freemi.entity.investment.Allotmentstatement;
 import com.freemi.entity.investment.BseOrderEntryResponse;
 import com.freemi.entity.investment.SelectMFFund;
 
@@ -40,5 +42,8 @@ public interface InvestmentConnectorBseInterface {
 	public String BseOrderPaymentStatus(String clientId, String orderNo);
 	
 	public BseApiResponse emandateRegistration(UserBankDetails bankDetails,String mandateType, String amount, String clientCode, Date startDate, Date endDate);
+	
+	public List<Allotmentstatement> getAllotmentstatement(String fromdate, String todate, String orderstatus,
+		    String ordertype, String settlementtype);
 
 }

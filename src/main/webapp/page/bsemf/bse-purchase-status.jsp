@@ -6,25 +6,17 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 
-<title>FreEMI MF</title>
-
+<title>FreEMI Mutual Fund Purchase Status</title>
 
 <meta name="description" content="" />
 <meta name="robots" content="index,nofollow" />
-<link
-	href="<c:url value="${contextcdn}/resources/css/bseinvestmentform.css"/>"
-	rel="stylesheet">
-<link href="<c:url value="${contextcdn}/resources/css/pace-theme.css"/>"
-	rel="stylesheet">
-<script src="<c:url value="${contextcdn}/resources/js/pace.min.js" />"></script>
 
 <jsp:include page="../include/bootstrap.jsp"></jsp:include>
-<link href='https://fonts.googleapis.com/css?family=Arsenal' rel='stylesheet'>
-<style type="text/css">
-td{
-border: 1px solid #8b8e90;
-}
-</style>
+<link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet">
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<link href="<c:url value="${contextcdn}/resources/css/bseinvestmentform.css"/>" rel="stylesheet">
+<link href="<c:url value="${contextcdn}/resources/css/pace-theme.css"/>" rel="stylesheet">
+<script src="<c:url value="${contextcdn}/resources/js/pace.min.js" />"></script>
 </head>
 <script type="text/javascript">
 	window.history.forward();
@@ -33,30 +25,51 @@ border: 1px solid #8b8e90;
 	}
 </script>
 
-<body onLoad="noBack();" onpageshow="if (event.persisted) noBack();"
-	onUnload="">
+<body >
 	<jsp:include page="../include/header.jsp"></jsp:include>
 	<div class="container">
 
 		<section class="purchase_status" style="margin-bottom: 5rem;">
 			<div class="row" style="margin: auto;">
-				<div class="col-md-6 col-lg-6"
-					style="margin: auto; text-align: center; padding: 20px; background: aliceblue;">
-
-					<div class="" style="margin-bottom: 2rem;">
-						<img class="d-block img-fluid" style="height: 2rem; margin: auto;"
+				<div class="col-md-8 col-lg-8 p-4"
+					style="margin: auto;box-shadow: 0 0 6px 1px #b7b7b7; border-radius: 5px;">
+					
+					<div class="row mb-4">
+					<div class="col-md-4 col-lg-4" style="margin: auto;">
+					<img class="img-fluid d-none d-md-block" 
+							src="<c:url value="${contextcdn}/resources/images/invest/transaction-receipt.svg"/>"
+							alt="Transact">
+					</div>
+					<div class="col-md-8 col-lg-8">
+					<div class="text-center d-md-none mb-3">
+						<img class="img-fluid" style="height: 2rem; margin: auto;"
 							src="<c:url value="${contextcdn}/resources/images/invest/transact_bse.svg"/>"
 							alt="Transact">
 					</div>
 					
 					<c:choose>
 						<c:when test="${TRANS_STATUS == 'COMPLETE' }">
-							<h5>Your purchase is complete!</h5>
-							<h6>${ORDER_STATUS }</h6>
+							<h5 class="text-center #00897b teal darken-1 white-text p-1 mb-4">Your purchase is complete!</h5>
+							
+							<div class="dataTables_wrapper dt-bootstrap4 animated fadeIn"
+										style="margin-top: 30px; overflow: auto;">
+									<table class="table">
+										<tr>
+											<th class="text-dark">Order No</th>
+											<td>${orderno}</td>
+										</tr>
+										<tr>
+											<th class="text-dark">Payment Status</th>
+											<td>${ORDER_STATUS}</td>
+										</tr>										
+										
+									</table>
+									</div>
+							
 							<section style="margin-top: 30px;">
 								<div class="row" style="margin: auto;">
-									<div class="col-md-6 col-lg-6"
-										style="margin: auto; text-align: center;">
+									<div class="col-md-6 col-lg-6 text-center"
+										style="margin: auto;">
 										<a
 											style="text-decoration: none;"
 											href="${pageContext.request.contextPath}/mutual-funds/funds-explorer"><button class="btn btn-sm mdb-color darken-1 white-text">Place another Order</button> </a>
@@ -66,54 +79,61 @@ border: 1px solid #8b8e90;
 						</c:when>
 
 						<c:when test="${TRANS_STATUS == 'Y' }">
-							<h5>Your order placed successfully</h5>
-							<div class="row">
-								<div class="col-md-12 col-lg-12" style="margin-bottom: 2rem;">
-									<table style="box-shadow: 1px 3px 4px 0px #b1b1b1;margin: auto;">
+							<h5 class="text-center #00897b teal darken-1 white-text p-1 mb-4">Your order is placed successfully</h5>
+								<div class="dataTables_wrapper dt-bootstrap4 animated fadeIn"
+										style="margin-top: 30px; overflow: auto;">
+									<table class="table">
 										<tr>
-											<td><label>Fund Name</label></td>
+											<th class="text-dark">Fund Name</th>
 											<td>${TRANSACTION_REPORT.fundName }</td>
 										</tr>
 										<tr>
-											<td><label>Transaction Reference no</label></td>
+											<th class="text-dark">Transaction type</th>
+											<td>${TRANS_TYPE }</td>
+										</tr>
+										<tr>
+											<th class="text-dark">Transaction Reference no</th>
 											<td>${TRANS_ID }</td>
 										</tr>
 										<tr>
-											<td><label>Order No</label></td>
-											<td>${TRANSACTION_REPORT.bseOrderNoFromResponse }</td>
+											<th class="text-dark">Order No</th>
+											<td>${TRANSACTION_REPORT.bseOrderNoFromResponse}</td>
 										</tr>
 									</table>
-									
-									<div>
-									<span>${TRANSACTION_REPORT.statusMsg }</span>
 									</div>
-								</div>
-							</div>
-
-							<c:if test="${FIRST_PAY == 'Y' }">
-								<c:if test="${orderUrl.statusCode == '100' }">
-									<a href="${orderUrl.payUrl }">
-										<button class="btn btn-sm btn-success">Complete your
-											payment</button>
-									</a>
-								</c:if>
-							</c:if>
+									<hr>
+									<div class="text-center">
+									<small class="text-muted">${TRANSACTION_REPORT.statusMsg }</small>
+									</div>
+								
 							<c:if test="${not empty EMANDATE}">
 								<c:choose>
 									<c:when test="${EMANDATE == 'S' }">
 										<div>
-											<span style="font-weight: 500;">E-mandate registered successfully</span>
+											<small class="text-muted">E-mandate registered successfully. Kindly ensure to register the mandate ID in your internet banking account.</small>
 										</div>
 									</c:when>
 									<c:when test="${EMANDATE == 'F' }">
-										<div>
-											<span>Failed to register bank for E-mandate. Please
-												contact admin.</span>
+										<div class="mb-2">
+											<small class="text-muted">Failed to generate mandate ID. Please
+												contact admin if the issue persist.</small >
 										</div>
 									</c:when>
 								</c:choose>
-								<p>${MANDATE_REMARKS }</p>
+								<%-- <p></p> --%>
 							</c:if>
+							
+							<c:if test="${FIRST_PAY == 'Y' }">
+								<c:if test="${orderUrl.statusCode == '100' }">
+									<div class="text-center">
+									<a href="${orderUrl.payUrl }">
+										<button class="btn #ff7043 deep-orange lighten-1 text-white">Complete your
+											payment <i class="fab fa-opencart"></i></button>
+									</a>
+									</div>
+								</c:if>
+							</c:if>
+							
 
 						</c:when>
 						<c:when test="${TRANS_STATUS == 'N' }">
@@ -140,6 +160,11 @@ border: 1px solid #8b8e90;
 								request at FreEMI. Admin will help you fix the problem.</h5>
 						</c:when>
 					</c:choose>
+					</div>
+					
+					</div>
+					
+					
 				</div>
 			</div>
 		</section>

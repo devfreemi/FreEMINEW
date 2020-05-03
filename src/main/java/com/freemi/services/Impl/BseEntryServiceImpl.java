@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import com.freemi.common.util.BseRelatedActions;
 import com.freemi.common.util.CommonConstants;
 import com.freemi.common.util.InvestFormConstants;
+import com.freemi.database.interfaces.AllotmentStmntCrudRepository;
 import com.freemi.database.interfaces.BseCamsByCategoryRepository;
 import com.freemi.database.interfaces.BseCustomerAddressCrudRepository;
 import com.freemi.database.interfaces.BseCustomerBankDetailsCrudRespository;
@@ -43,6 +44,7 @@ import com.freemi.database.interfaces.MfCamsFolioCrudRepository;
 import com.freemi.database.interfaces.MfNavDataCrudRepository;
 import com.freemi.database.interfaces.PortfolioCrudRepository;
 import com.freemi.database.interfaces.TopFundsRepository;
+import com.freemi.entity.bse.BseAOFUploadResponse;
 import com.freemi.entity.bse.BseApiResponse;
 import com.freemi.entity.bse.BseOrderPaymentRequest;
 import com.freemi.entity.bse.BseOrderPaymentResponse;
@@ -50,6 +52,7 @@ import com.freemi.entity.database.MfTopFundsInventory;
 import com.freemi.entity.database.UserBankDetails;
 import com.freemi.entity.general.UserProfile;
 import com.freemi.entity.investment.AddressDetails;
+import com.freemi.entity.investment.Allotmentstatement;
 import com.freemi.entity.investment.BseAllTransactionsView;
 import com.freemi.entity.investment.BseDailyTransCounter;
 import com.freemi.entity.investment.BseFundsScheme;
@@ -149,6 +152,9 @@ public class BseEntryServiceImpl implements BseEntryManager {
     @Autowired
     ProfileRestClientService profileRestClientService;
 
+    @Autowired
+    AllotmentStmntCrudRepository allotmentStmntCrudRepository;
+    
 
     @Autowired
     MailSenderInterface mailSenderInterface;
@@ -314,7 +320,8 @@ public class BseEntryServiceImpl implements BseEntryManager {
 
     @Override
     public TransactionStatus savetransactionDetails(SelectMFFund selectedMFFund, String mandateId) {
-	// TODO Auto-generated method stub
+	logger.info("BSE TRANSCTION ... Process...");
+	
 	boolean transactionfailed = false;
 	//Save details to database, process to BSE, update database with response
 	TransactionStatus transStatus = new TransactionStatus();
@@ -777,7 +784,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 
 	    }
 	}catch(ParseException e){
-	    e.printStackTrace();
+	  logger.error("Error gettimng BSE transaction count..",e);
 	}
 	return Long.valueOf(l);
     }
@@ -829,10 +836,11 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		logger.info("Status for signature update- "+ result);
 	    }else{
 		logger.info("Cusotmer not found to update signature- "+ mobile);
+		flag="NO_CUSTOMER";
 	    }
 	}catch(Exception e){
 	    logger.error("Failed to update customer signature data. ",e);
-	    flag="FAIL";
+	    flag="INERNAL_ERROR";
 	}
 	return flag;
     }
@@ -987,8 +995,8 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	List<BseMandateDetails> mandateDetails = null;
 	try{
 
-	    mandateDetails = bseMandateCrudRepository.findAllByClientCodeAndAccountNumber(clientId, accountNumber);	
-
+//	    mandateDetails = bseMandateCrudRepository.findAllByClientCodeAndAccountNumber(clientId, accountNumber);	
+	    mandateDetails = bseMandateCrudRepository.findAllByClientCodeAndAccountNumberAndMandateTypeAndMandateActive(clientId,accountNumber,"I","Y");
 	}catch(Exception e){
 	    logger.error("Failed to query database to fetch mandate details",e);
 	}
@@ -1100,7 +1108,6 @@ public class BseEntryServiceImpl implements BseEntryManager {
 
     @Override
     public String getEmdandateDetails(String mobile, String clientCode, String mandateType, String accNumber) {
-	//		Call FATCADeclaration
 
 	BseMandateDetails mandateId=null;
 	String clientId=null;
@@ -1111,7 +1118,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 
 		logger.info("Look for mandate corresponding to registered bank- ");
 
-		mandateId= bseMandateCrudRepository.findOneByClientCodeAndAccountNumberAndMandateActive(clientCode, userbankDetails.getAccountNumber(),"Y");
+		mandateId= bseMandateCrudRepository.findAllByClientCodeAndAccountNumberAndMandateTypeAndMandateActive(clientCode, userbankDetails.getAccountNumber(),"I","Y").get(0);
 		logger.info("Mandate ID receieved for "+clientId + " : mandate type:  " +mandateType +" : "+ mandateId);
 	    }
 	}catch(Exception e){
@@ -1541,6 +1548,60 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	
 	
 	return null;
+    }
+    
+
+    @Override
+    public BseAOFUploadResponse uploadAOFForm(String mobileNumber, String aoffolderLocation, String clientCode) {
+	
+	return investmentConnectorBseInterface.uploadAOFForm(mobileNumber, aoffolderLocation, clientCode);
+    }
+
+    @Override
+    public String BseOrderPaymentStatus(String clientid, String orderno) {
+	return investmentConnectorBseInterface.BseOrderPaymentStatus(clientid, orderno);
+    }
+
+    @Override
+    public BseOrderPaymentResponse getPaymentUrl(BseOrderPaymentRequest request) {
+	return investmentConnectorBseInterface.getPaymentUrl(request);
+    }
+
+    @Override
+    public BseApiResponse extractAllotmentstatement(String fromdate, String todate, String orderstatus,
+	    String ordertype, String settlementtype) {
+	
+	logger.info("Start executing to getAllotment statement");
+	List<Allotmentstatement> data = investmentConnectorBseInterface.getAllotmentstatement(fromdate, todate, orderstatus, ordertype, settlementtype);
+	List<Allotmentstatement> tosave= new ArrayList<Allotmentstatement>();
+	BseApiResponse response = new BseApiResponse();
+	try {
+	if(data!=null) {
+	    for(int i=0;i<data.size();i++) {
+		logger.info("Check if TRX already exist- "+ data.get(i).getRtatransno());
+		if(!allotmentStmntCrudRepository.existsByRtatransno(data.get(i).getRtatransno())) {
+		    tosave.add(data.get(i));
+		}else {
+		    logger.info("Allotment statement already found in DB for RTA trans no: "+ data.get(i).getRtatransno() );
+		}
+	    }
+	    
+	    logger.info("Total records to save- "+ tosave.size());
+	    allotmentStmntCrudRepository.save(tosave);
+	    response.setResponseCode(CommonConstants.TASK_SUCCESS_S);
+	    response.setRemarks("Total processed- "+ tosave!=null?Integer.toString(tosave.size()):"NULL");   
+	}else {
+	    response.setResponseCode(CommonConstants.TASK_FAILURE_S);
+	    response.setRemarks("No records");
+	}
+	 
+	
+	}catch(Exception e) {
+	    logger.info("extractAllotmentstatement(): Error saving data to DB/processing",e);
+	    response.setResponseCode(CommonConstants.TASK_FAILURE_S);
+	    response.setRemarks(e.getMessage());
+	}
+	return response ;
     }
 
     /*		public static void main(String[] args){

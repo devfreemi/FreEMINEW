@@ -33,7 +33,7 @@ public class Registerform implements Serializable {
 	@Email(message="Email format invalid")
 	private String email;
 	
-	@NotNull(message = "Mobile no is mandatory") @NotEmpty @Size(min=10,max=10) @Pattern(regexp="[6-9][0-9]{9}", message="Mobile nunmber format invalid")
+	@NotNull(message = "Mobile no is mandatory") @NotEmpty(message = "Mobile no should not be empty") @Size(min=10,max=10, message = "10 digit valid mobile no accepted") @Pattern(regexp="[6-9][0-9]{9}", message="Mobile no format should be 10 digit beginning with number 6-9")
 	private String mobile;
 	private String customerID;
 	private String registrationref="DEFAULT";

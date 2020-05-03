@@ -48,6 +48,12 @@ table th {
 .table thead th {
 	vertical-align: middle;
 }
+
+.collapsed .fas {
+  transform: rotate(-180deg);
+   transition-duration: 1s;
+}
+
 </style>
 
 </head>
@@ -474,4 +480,6 @@ table th {
 
 </body>
 <script src="<c:url value="${contextcdn}/resources/js/signaturepanel.js" />" defer="defer"></script>
+<script type="text/javascript">
+</script>
 </html>

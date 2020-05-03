@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,7 +32,6 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -62,94 +62,97 @@ import com.freemi.ui.restclient.GoogleSecurity;
 @Scope("session")
 public class HomeController {
 
-	private static final Logger logger = LogManager.getLogger(HomeController.class);
+    private static final Logger logger = LogManager.getLogger(HomeController.class);
 
-	@Autowired
-	private DatabaseEntryManager databaseEntryManager ;//= (DatabaseEntryManager) BeanUtil.getBean(DatabaseEntryService.class);
+    @Autowired
+    private DatabaseEntryManager databaseEntryManager ;//= (DatabaseEntryManager) BeanUtil.getBean(DatabaseEntryService.class);
 
-	@Autowired
-	MailSenderInterface mailSenderInterface;
+    @Autowired
+    MailSenderInterface mailSenderInterface;
 
-	@Autowired
-	BseRestClientService bseRestClientService;
+    @Autowired
+    BseRestClientService bseRestClientService;
 
-	@Autowired
-	ProfileRestClientService profileRestClientService;
+    @Autowired
+    ProfileRestClientService profileRestClientService;
 
-	@Autowired
-	SmsSenderInterface smsSenderInterface;
+    @Autowired
+    SmsSenderInterface smsSenderInterface;
 
-	@Autowired
-	private Environment env;
+    @Autowired
+    private Environment env;
 
-	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public String home(Model map) {
-		//logger.info("@@@@ Inside Login..");
-		logger.info("@@@@ HomeController @@@@");
-		//		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
-		/*return "index";*/
-		return "redirect:/mutual-funds/funds-explorer";
-	}
-
-
-	@RequestMapping(value = "/login", method = RequestMethod.GET )
-	public String login(@ModelAttribute("login")Login login,@ModelAttribute("otpForm")Login otpForm, @RequestParam(name="ref",required=false)String referrerUrl,@RequestParam(name="mf",required=false)String mfStatus,@RequestParam(name="id",required=false)String loginid, Model map, HttpServletRequest request, HttpSession session) {
-		//logger.info("@@@@ Inside Login..");
-
-		logger.info("@@@@ LoginController @@@@");
-		logger.debug("Referrer url if passed-"+ referrerUrl!=null?referrerUrl:request.getHeader("Referer"));
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public String home(Model map) {
+	//logger.info("@@@@ Inside Login..");
+	logger.info("@@@@ HomeController @@@@");
+	//		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
+	/*return "index";*/
+	return "redirect:/mutual-funds/funds-explorer";
+    }
 
 
+    @RequestMapping(value = "/login", method = RequestMethod.GET )
+    public String login(@ModelAttribute("login")Login login,@ModelAttribute("otpForm")Login otpForm, @RequestParam(name="ref",required=false)String referrerUrl,@RequestParam(name="mf",required=false)String mfStatus,@RequestParam(name="id",required=false)String loginid, Model map, HttpServletRequest request, HttpSession session, HttpServletResponse response) {
+	//logger.info("@@@@ Inside Login..");
 
-		//		map.addAttribute("login", login);
-		//		logger.info("Referer- "+ request.getHeader("Referer"));
-		//		model.addAttribute("returnSite", request.getHeader("Referer"));
-		logger.debug("url from referrer- "+ request.getHeader("Referer"));
-		try {
-			//			login.setReturnUrl(referrerUrl!=null?URLDecoder.decode(referrerUrl, StandardCharsets.UTF_8.toString()):request.getHeader("Referer"));
+	logger.info("@@@@ LoginController @@@@");
+	logger.debug("Referrer url if passed-"+ referrerUrl!=null?referrerUrl:request.getHeader("Referer"));
 
-			/*if(referrerUrl==null || referrerUrl.contains("/register") || referrerUrl.contains("/forgotPassword")){
+
+
+	//		map.addAttribute("login", login);
+	//		logger.info("Referer- "+ request.getHeader("Referer"));
+	//		model.addAttribute("returnSite", request.getHeader("Referer"));
+	logger.info("url from referrer- "+ request.getHeader("Referer"));
+	try {
+	    //			login.setReturnUrl(referrerUrl!=null?URLDecoder.decode(referrerUrl, StandardCharsets.UTF_8.toString()):request.getHeader("Referer"));
+
+	    /*if(referrerUrl==null || referrerUrl.contains("/register") || referrerUrl.contains("/forgotPassword")){
 				referrerUrl= URI.create(request.getRequestURL().toString()).resolve(request.getContextPath()).toString();
 				logger.info("Modified refereele url to- "+ referrerUrl);
 			}*/
-			String returnUrl = redirectUrlAfterLogin(referrerUrl!=null?URLDecoder.decode(referrerUrl, StandardCharsets.UTF_8.toString()):request.getHeader("Referer")!=null?request.getHeader("Referer"):URI.create(request.getRequestURL().toString()).resolve(request.getContextPath()).toString(),request);
-			login.setReturnUrl(returnUrl);
-			otpForm.setReturnUrl(returnUrl);
-			session.setAttribute("returnSite", referrerUrl!=null?URLDecoder.decode(referrerUrl, StandardCharsets.UTF_8.toString()):request.getHeader("Referer"));
-			logger.debug("Set return url- "+ login.getReturnUrl());
-		} catch (UnsupportedEncodingException e) {
-			logger.error("Failed to decode string",e);
-		}
-
-		if(session.getAttribute("token") ==null){
-
-			if(mfStatus!=null){
-				if(mfStatus.equals("00")){
-					map.addAttribute("info", "Kindly login to complete your purchase.");
-				}
-				else if(mfStatus.equals("01"))
-				{
-					map.addAttribute("info", "Kindly login to complete your registration process.");
-				}else{
-					map.addAttribute("info", "");
-				}
-			}
-
-			map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
-
-		}else{
-			logger.info("User session is already detected. Preventing another attempt of login.");
-			return "redirect:"+URI.create(request.getRequestURL().toString()).resolve(request.getContextPath()).toString();
-		}
-		
-		if(loginid!=null) {
-		    login.setUsermobile(CommonTask.decryptPassword(loginid).equals("NA")?null:CommonTask.decryptPassword(loginid));
-		}
-		
-		return "login";
+	    String returnUrl = redirectUrlAfterLogin(referrerUrl!=null?URLDecoder.decode(referrerUrl, StandardCharsets.UTF_8.toString()):request.getHeader("Referer")!=null?request.getHeader("Referer"):URI.create(request.getRequestURL().toString()).resolve(request.getContextPath()).toString(),request);
+	    login.setReturnUrl(returnUrl);
+	    otpForm.setReturnUrl(returnUrl);
+	    session.setAttribute("returnSite", referrerUrl!=null?URLDecoder.decode(referrerUrl, StandardCharsets.UTF_8.toString()):request.getHeader("Referer"));
+	    logger.debug("Set return url- "+ login.getReturnUrl());
+	} catch (UnsupportedEncodingException e) {
+	    logger.error("Failed to decode string",e);
 	}
 
-	/*@RequestMapping(value = "/login", method = RequestMethod.GET )
+	if(session.getAttribute("token") ==null){
+
+	    if(mfStatus!=null){
+		if(mfStatus.equals("00")){
+		    map.addAttribute("info", "Kindly login to complete your purchase.");
+		}
+		else if(mfStatus.equals("01"))
+		{
+		    map.addAttribute("info", "Kindly login to complete your registration process.");
+		}else{
+		    map.addAttribute("info", "");
+		}
+	    }
+
+	    map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
+
+	}else{
+	    logger.info("User session is already detected. Preventing another attempt of login. Update session cookie with current details");
+	    resetcookiesesiionvalue(session, response);
+	    String returnurl = request.getHeader("Referer")!=null?request.getHeader("Referer").toString():URI.create(request.getRequestURL().toString()).resolve(request.getContextPath()).toString();
+	    logger.info("Return url from login- "+ returnurl);
+	    return "redirect:"+returnurl;
+	}
+
+	if(loginid!=null) {
+	    login.setUsermobile(CommonTask.decryptText(loginid).equals("NA")?null:CommonTask.decryptText(loginid));
+	}
+
+	return "login";
+    }
+
+    /*@RequestMapping(value = "/login", method = RequestMethod.GET )
 	public String login(@ModelAttribute("otpForm")Login otpForm, @RequestParam(name="ref",required=false)String referrerUrl,@RequestParam(name="mf",required=false)String mfStatus,Model map, HttpServletRequest request, HttpSession session) {
 		//logger.info("@@@@ Inside Login..");
 
@@ -186,85 +189,85 @@ public class HomeController {
 		return "login";
 	}*/
 
-	@RequestMapping(value = "/login.do", method = RequestMethod.GET)
-	public String loginAttemptGet(ModelMap model) {
-		return "redirect:/login";
+    @RequestMapping(value = "/login.do", method = RequestMethod.GET)
+    public String loginAttemptGet(ModelMap model) {
+	return "redirect:/login";
+    }
+
+    @RequestMapping(value = "/login.do", method = RequestMethod.POST)
+    public String loginAttemptPost(@ModelAttribute("login") @Valid Login login, BindingResult bindingResult, ModelMap model, HttpServletRequest request, HttpSession session) {
+	logger.info("@@@@ Inside Login do..");
+	//		logger.info("Referer- "+ request.getHeader("Referer"));
+	//		String referer = request.getHeader("Referer");
+	logger.debug("Recpcha form resuest- "+ request.getParameter("g-recaptcha-response"));
+
+	String ip = CommonTask.getClientSystemIp(request);
+
+	if(bindingResult.hasErrors()){
+	    logger.info("Error in login form");
+	    //			model.addAttribute("error", "Invalid form data");
+	    model.addAttribute("error", bindingResult.getFieldError().getDefaultMessage());
+	    return "login";
+	}
+	if(request.getParameter("g-recaptcha-response")==""){
+	    logger.info("Security token not checked");
+	    model.addAttribute("error", "Please check the security verification");
+	    return "login";
+	}else{
+	    if(!GoogleSecurity.verifyRecaptcha(request.getParameter("g-recaptcha-response"), "N", ip, request.getRequestURL().toString())){
+		logger.warn("Security token validation failed");
+		model.addAttribute("error", "Security token validation failed!");
+		return "login";
+	    }
 	}
 
-	@RequestMapping(value = "/login.do", method = RequestMethod.POST)
-	public String loginAttemptPost(@ModelAttribute("login") @Valid Login login, BindingResult bindingResult, ModelMap model, HttpServletRequest request, HttpSession session) {
-		logger.info("@@@@ Inside Login do..");
-		//		logger.info("Referer- "+ request.getHeader("Referer"));
-		//		String referer = request.getHeader("Referer");
-		logger.debug("Recpcha form resuest- "+ request.getParameter("g-recaptcha-response"));
+	//		logger.info("Beginning attemptAuthentication() from IP- "+ request.getRemoteHost()+ "/"+request.getHeader("X-Forwarded-for"));
+	logger.debug("OTP login check- "+ login.isOtpLogin());
 
-		String ip = CommonTask.getClientSystemIp(request);
+	String returnUrl="";
+	String referer = (String) session.getAttribute("returnSite");
+	logger.info(referer);
+	returnUrl = redirectUrlAfterLogin(referer,request);
 
-		if(bindingResult.hasErrors()){
-			logger.info("Error in login form");
-			//			model.addAttribute("error", "Invalid form data");
-			model.addAttribute("error", bindingResult.getFieldError().getDefaultMessage());
-			return "login";
-		}
-		if(request.getParameter("g-recaptcha-response")==""){
-			logger.info("Security token not checked");
-			model.addAttribute("error", "Please check the security verification");
-			return "login";
-		}else{
-			if(!GoogleSecurity.verifyRecaptcha(request.getParameter("g-recaptcha-response"), "N", ip, request.getRequestURL().toString())){
-				logger.warn("Security token validation failed");
-				model.addAttribute("error", "Security token validation failed!");
-				return "login";
-			}
-		}
-
-		//		logger.info("Beginning attemptAuthentication() from IP- "+ request.getRemoteHost()+ "/"+request.getHeader("X-Forwarded-for"));
-		logger.debug("OTP login check- "+ login.isOtpLogin());
-
-		String returnUrl="";
-		String referer = (String) session.getAttribute("returnSite");
-		logger.info(referer);
-		returnUrl = redirectUrlAfterLogin(referer,request);
-
-		//		RestClient client = new RestClient();
-		ResponseEntity<String> response = null;
+	//		RestClient client = new RestClient();
+	ResponseEntity<String> response = null;
 
 
-		try{
-			response= profileRestClientService.login(login.getUsermobile(), login.getUserpassword(), ip);
-			//			model.addAttribute("token",response.getHeaders().get("Authorization").get(0));
-			//			model.addAttribute("loggedInUser",response.getHeaders().get("fname").get(0).split(" ")[0]);
+	try{
+	    response= profileRestClientService.login(login.getUsermobile(), login.getUserpassword(), ip);
+	    //			model.addAttribute("token",response.getHeaders().get("Authorization").get(0));
+	    //			model.addAttribute("loggedInUser",response.getHeaders().get("fname").get(0).split(" ")[0]);
 
-			session.setAttribute("loggedSession", response.getHeaders().get("fname").get(0).split(" ")[0]);
-			session.setAttribute("token", response.getHeaders().get("Authorization").get(0));
-			session.setAttribute("userid", response.getHeaders().get("userid").get(0));
-			session.setAttribute("email",response.getHeaders().get("email").get(0));
+	    session.setAttribute("loggedSession", response.getHeaders().get("fname").get(0).split(" ")[0]);
+	    session.setAttribute("token", response.getHeaders().get("Authorization").get(0));
+	    session.setAttribute("userid", response.getHeaders().get("userid").get(0));
+	    session.setAttribute("email",response.getHeaders().get("email").get(0));
 
-			logger.info(response.getHeaders().get("Authorization").get(0));
-		}
-		catch(HttpStatusCodeException  e){
-			logger.error("Connection failure - " + e.getStatusCode());
-			if(e.getRawStatusCode()==401)
-				model.addAttribute("error", "Invalid userid or password");
-			if(e.getRawStatusCode() == 500)
-				model.addAttribute("error", "Unable to connect to server");
-			if(e.getRawStatusCode() == 404)
-				model.addAttribute("error", "Service url not found");
-			returnUrl="login";
-		}catch(Exception e){
-			logger.error("Error while trying to login",e);
-			model.addAttribute("error", "Unable to process request currently");
-			returnUrl="login";
-		}
-		logger.info("Returning to URL- "+ returnUrl);
-		return returnUrl;
+	    logger.info(response.getHeaders().get("Authorization").get(0));
 	}
+	catch(HttpStatusCodeException  e){
+	    logger.error("Connection failure - " + e.getStatusCode());
+	    if(e.getRawStatusCode()==401)
+		model.addAttribute("error", "Invalid userid or password");
+	    if(e.getRawStatusCode() == 500)
+		model.addAttribute("error", "Unable to connect to server");
+	    if(e.getRawStatusCode() == 404)
+		model.addAttribute("error", "Service url not found");
+	    returnUrl="login";
+	}catch(Exception e){
+	    logger.error("Error while trying to login",e);
+	    model.addAttribute("error", "Unable to process request currently");
+	    returnUrl="login";
+	}
+	logger.info("Returning to URL- "+ returnUrl);
+	return returnUrl;
+    }
 
 
-	private String redirectUrlAfterLogin(String referer, HttpServletRequest request) {
-		String returnUrl;
-		logger.info("Url for processing after login- "+ referer);
-		/*if(referer!= null && !referer.isEmpty()){
+    private String redirectUrlAfterLogin(String referer, HttpServletRequest request) {
+	String returnUrl;
+	logger.info("Url for processing after login- "+ referer);
+	/*if(referer!= null && !referer.isEmpty()){
 			URL url = null;
 			try {
 				url = new URL(referer);
@@ -288,23 +291,23 @@ public class HomeController {
 			returnUrl = "redirect:/";
 		}*/
 
-		if(referer!= null && !referer.isEmpty()){
-			URL url = null;
-			URI uri = null;
-			try {
-				url = new URL(referer);
-				uri = url.toURI();
-				logger.info("uri - "+ uri);
-				if(uri.getRawPath().contains("/register") || uri.getRawPath().contains("/forgotPassword") || uri.getRawPath().contains("/resetPassword")){
-					//					returnUrl=uri.getRawPath().split("/products/")[1].replace(".do", "");
-					//					returnUrl = referer.replace(".do", "");
-					//					returnUrl = "redirect:/products/";
-					returnUrl = /*"redirect:"+*/ URI.create(request.getRequestURL().toString()).resolve(request.getContextPath()).toString();
-				}else
-					//					returnUrl = uri.getRawPath().split("/products/")[1].replace(".do", "");
-					returnUrl = referer.replace(".do", "");
+	if(referer!= null && !referer.isEmpty()){
+	    URL url = null;
+	    URI uri = null;
+	    try {
+		url = new URL(referer);
+		uri = url.toURI();
+		logger.info("uri - "+ uri);
+		if(uri.getRawPath().contains("/register") || uri.getRawPath().contains("/forgotPassword") || uri.getRawPath().contains("/resetPassword")){
+		    //					returnUrl=uri.getRawPath().split("/products/")[1].replace(".do", "");
+		    //					returnUrl = referer.replace(".do", "");
+		    //					returnUrl = "redirect:/products/";
+		    returnUrl = /*"redirect:"+*/ URI.create(request.getRequestURL().toString()).resolve(request.getContextPath()).toString();
+		}else
+		    //					returnUrl = uri.getRawPath().split("/products/")[1].replace(".do", "");
+		    returnUrl = referer.replace(".do", "");
 
-			} /*catch (MalformedURLException e1) {
+	    } /*catch (MalformedURLException e1) {
 				logger.error("Logincontroller post: Failed to form the URL",e1);
 				returnUrl =  uri.getRawPath().split("/products/")[1];
 			}catch(ArrayIndexOutOfBoundsException e){
@@ -312,560 +315,575 @@ public class HomeController {
 			}catch (URISyntaxException e) {
 				returnUrl =  uri.getRawPath().split("/products/")[1];
 			}*/catch (Exception e) {
-			    	logger.error("redirectUrlAfterLogin(): Exception while processing...",e);
-				returnUrl =  uri.getRawPath().split("/products/")[1];
+			    logger.error("redirectUrlAfterLogin(): Exception while processing...",e);
+			    returnUrl =  uri.getRawPath().split("/products/")[1];
 			}
-		}else{
-			logger.info("redirectUrlAfterLogin(): Referer is null....");
+	}else{
+	    logger.info("redirectUrlAfterLogin(): Referer is null....");
 
-			//			returnUrl = "redirect:/products/";
-			returnUrl = /*"redirect:" +*/URI.create(request.getRequestURL().toString()).resolve(request.getContextPath()).toString();
-		}
-
-		logger.info("Redirect url after login- "+ returnUrl);
-		return returnUrl;
+	    //			returnUrl = "redirect:/products/";
+	    returnUrl = /*"redirect:" +*/URI.create(request.getRequestURL().toString()).resolve(request.getContextPath()).toString();
 	}
 
+	logger.info("Redirect url after login- "+ returnUrl);
+	return returnUrl;
+    }
 
 
-	@RequestMapping(value = "/login2.do", method = RequestMethod.POST)
-	@ResponseBody
-	public String loginwithJqueryAttemptPost2(@ModelAttribute("login") @Valid Login login,ModelMap model, BindingResult bindingResult,HttpServletRequest request,HttpServletResponse response, HttpSession session) {
-		logger.info("@@@@ Inside Login do loginwithJqueryAttemptPost2().. /login2.do");	
-		//		logger.info("Referer- "+ request.getHeader("Referer"));
-		//		String referer = request.getHeader("Referer");
-		
-		logger.debug("loginwithJqueryAttemptPost2(): Recpcha form resuest- "+ request.getParameter("g-recaptcha-response"));
 
-		logger.debug("loginwithJqueryAttemptPost2(): Fetching after login url- "+ login.getReturnUrl() + " OTPMIT - "+ login.isOtpSubmit());
+    @RequestMapping(value = "/login2.do", method = RequestMethod.POST)
+    @ResponseBody
+    public String loginwithJqueryAttemptPost2(@ModelAttribute("login") @Valid Login login,ModelMap model, BindingResult bindingResult,HttpServletRequest request,HttpServletResponse response, HttpSession session) {
+	logger.info("@@@@ Inside Login do loginwithJqueryAttemptPost2().. /login2.do");	
+	//		logger.info("Referer- "+ request.getHeader("Referer"));
+	//		String referer = request.getHeader("Referer");
 
-		String ip = CommonTask.getClientSystemIp(request);
+	logger.debug("loginwithJqueryAttemptPost2(): Recpcha form resuest- "+ request.getParameter("g-recaptcha-response"));
 
-		if(bindingResult.hasErrors()){
-			logger.info("loginwithJqueryAttemptPost2(): Error in login form");
-			//			model.addAttribute("error", "Invalid form data");
-			model.addAttribute("error", bindingResult.getFieldError().getDefaultMessage());
-			return "Invalid form data!";
-		}
-		if(request.getParameter("g-recaptcha-response")==""){
-			logger.info("loginwithJqueryAttemptPost2(): Security token not checked");
-			model.addAttribute("error", "Please check the security verification");
-			return "Security Captcha token missing!";
-		}else{
-			if(!GoogleSecurity.verifyRecaptcha(request.getParameter("g-recaptcha-response"), "N", ip, request.getRequestURL().toString())){
-				logger.warn("loginwithJqueryAttemptPost2(): Security token validation failed");
-				model.addAttribute("error", "Security token validation failed!");
-				return "Captcha validation failed!";
-			}
-		}
-		logger.info("loginwithJqueryAttemptPost2(): Session id during login- "+ session.getId() + " :mobile : "+ login.getUsermobile());
-		//		logger.info("Beginning attemptAuthentication() from IP- "+ request.getRemoteHost()+ "/"+request.getHeader("X-Forwarded-for"));
-		logger.debug("loginwithJqueryAttemptPost2(): OTP login check- "+ login.isOtpLogin());
+	logger.debug("loginwithJqueryAttemptPost2(): Fetching after login url- "+ login.getReturnUrl() + " OTPMIT - "+ login.isOtpSubmit());
 
-		String returnUrl="";
-		String referer = (String) session.getAttribute("returnSite");
-		logger.debug("loginwithJqueryAttemptPost2(): login2.do referer- "+ referer);
-		//		returnUrl = redirectUrlAfterLogin(referer);
+	String ip = CommonTask.getClientSystemIp(request);
 
-		//		RestClient client = new RestClient();
-		ResponseEntity<String> responseEntity = null;
-
-
-		if(!login.isOtpSubmit()){
-
-			if(login.isOtpLogin()){
-				//			Process for OTP login
-				try{
-
-					//			Check if user exists and fetch email id
-
-					responseEntity = profileRestClientService.validateuserIdAndGetMail(login.getUsermobile());
-					String[] userStatus = responseEntity.getBody().toString().split(",");
-
-					logger.info(Arrays.asList(userStatus));
-					if(userStatus[0].equalsIgnoreCase("VALID")){
-						if(!userStatus[1].equals("NO_EMAIL")){
-							String resultotp= bseRestClientService.otpGeneration(login.getUsermobile());
-							logger.debug("loginwithJqueryAttemptPost2(): RECEIVED OTP RESPONSE: "+ resultotp);
-							if(resultotp.contains("OTP")){
-								//				Trigger mail 
-								session.setAttribute("OTP", resultotp.split("=")[1]);
-								try {
-									mailSenderInterface.loginOTPMail(login.getUsermobile(), resultotp.split("=")[1], userStatus[1], "5");
-									smsSenderInterface.sendOtp(login.getUsermobile(), resultotp.split("=")[1], "5", null);
-									//									returnUrl="OTP_SENT";
-								} catch (InterruptedException e) {
-									logger.error("Failed to send mail for OTP- ",e);
-								}
-
-								returnUrl="OTP_SENT";
-								login.setOtpSubmit(true);
-
-							}
-						}else{
-							returnUrl = "No email to OTP. Kindly contact admin";
-						}
-					}else{
-						returnUrl = "Invalid user id";
-					}
-
-				}catch(HttpStatusCodeException  e){
-					logger.error("loginwithJqueryAttemptPost2(): BSESERVICE LOGIN OTP service connection ailure - " ,e);
-					if(e.getRawStatusCode()==HttpStatus.UNAUTHORIZED.value())
-						returnUrl= "Invalid userid or password";
-					else if(e.getRawStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR.value())
-						returnUrl="Unable to connect to service";
-					else if(e.getRawStatusCode() == HttpStatus.NOT_FOUND.value())
-						returnUrl="Service url down or not found!";
-					else if(e.getRawStatusCode() == HttpStatus.LOCKED.value())
-						returnUrl="Service url down or not found!";
-					else {
-						returnUrl="Internal error. Please try after sometime";
-					}
-					//				returnUrl = Integer.toString(e.getRawStatusCode());
-				}catch(Exception e){
-					logger.error("loginwithJqueryAttemptPost2(): BSESERVICE LOGIN OTP Error while trying to generate OTP",e);
-					model.addAttribute("error", "Unable to process request currently");
-					returnUrl="Internal error. Kindly contact admin";
-				}
-
-			}else{
-				//				Direct login process with userid-password
-				try{
-
-					responseEntity= profileRestClientService.login(login.getUsermobile(), login.getUserpassword(), ip);
-					//			model.addAttribute("token",response.getHeaders().get("Authorization").get(0));
-					//			model.addAttribute("loggedInUser",response.getHeaders().get("fname").get(0).split(" ")[0]);
-					logger.info("loginwithJqueryAttemptPost2(): Session id during login- "+ session.getId());
-					
-					if(responseEntity.getHeaders().get("fname")!=null){
-						session.setAttribute("loggedSession", responseEntity.getHeaders().get("fname").get(0).split(" ")[0]);
-					}
-					session.setAttribute("token", responseEntity.getHeaders().get("Authorization").get(0));
-					session.setAttribute("userid", responseEntity.getHeaders().get("userid").get(0));
-					
-					if(responseEntity.getHeaders().get("email")!=null){
-						session.setAttribute("email",responseEntity.getHeaders().get("email")!=null?responseEntity.getHeaders().get("email").get(0):"");
-					}
-					if(responseEntity.getHeaders().get("pan")!=null){
-						session.setAttribute("pan",responseEntity.getHeaders().get("pan").get(0));
-					}
-					
-					//					Set session for other applciations
-					//					RestClientApps.setAllAppSession( response.getHeaders().get("userid").get(0), response.getHeaders().get("email").get(0), response.getHeaders().get("fname").get(0).split(" ")[0], response.getHeaders().get("Authorization").get(0));
-
-					try{
-						/*ServletContext servletContext =request.getSession().getServletContext().getContext("/{applicationContextRoot}");
-					servletContext.setAttribute("loggedSession", response.getHeaders().get("fname").get(0).split(" ")[0]);
-					servletContext.setAttribute("token", response.getHeaders().get("Authorization").get(0));
-					servletContext.setAttribute("userid", response.getHeaders().get("userid").get(0));
-					servletContext.setAttribute("email",response.getHeaders().get("email").get(0));*/
-
-						logger.info("loginwithJqueryAttemptPost2(): Setting session in cookie for customer- "+ responseEntity.getHeaders().get("userid").get(0));	
-
-
-						response.addCookie(setSessionCookie("loggedSession", responseEntity.getHeaders().get("fname").get(0).split(" ")[0]));
-						//						response.addCookie(setSessionCookie("token", URLEncoder.encode(responseEntity.getHeaders().get("Authorization").get(0), "UTF-8")));
-						response.addCookie(setSessionCookie("userid", responseEntity.getHeaders().get("userid").get(0)));
-						
-						if(responseEntity.getHeaders().get("email")!=null){
-							response.addCookie(setSessionCookie("email", responseEntity.getHeaders().get("email").get(0)));
-						}
-						if(responseEntity.getHeaders().get("pan")!=null){
-						    response.addCookie(setSessionCookie("pan", CommonTask.encryptPassword(responseEntity.getHeaders().get("pan").get(0))));
-						}
-
-						logger.info("Setting session in cookie for customer is complete.");
-					}catch(Exception e){
-						//						System.out.println("Error setting cookie in session..");
-						logger.error("Error setting cookie in session..",e);
-					}
-
-					logger.info(responseEntity.getHeaders().get("Authorization").get(0));
-					returnUrl="SUCCESS";
-				}catch(HttpStatusCodeException  e){
-					logger.error("loginwithJqueryAttemptPost2(): Login failure - " ,e.getMessage());
-					if(e.getRawStatusCode()==HttpStatus.UNAUTHORIZED.value()) 
-						returnUrl= "Invalid userid or password";
-					else if(e.getRawStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR.value())
-						returnUrl="Unable to connect to server";
-					else if(e.getRawStatusCode() == HttpStatus.NOT_FOUND.value())
-						returnUrl="Service url down or not found!";
-					else if(e.getRawStatusCode() == HttpStatus.LOCKED.value())
-						returnUrl="Account is locked. Kindly get in touch with our support team to unlock your account.";
-					else{
-						returnUrl="Internal error. Please try after some time or contact admin if prolem persist.";
-					}
-				}catch(Exception e){
-					logger.error("Error while trying to set cookie after login",e);
-					model.addAttribute("error", "Unable to process request currently");
-					returnUrl="Internal error. Kindly contact admin";
-				}
-			}
-
-		}else{
-			//			OTP process verification
-
-
-			/*String otpFromSession = (String) session.getAttribute("OTP");
-			if(otpFromSession!=null){
-				if(session.getAttribute("OTP").toString().equalsIgnoreCase(login.getOtpVal())){
-					resultotp2="Entered Otp is valid";
-					session.removeAttribute("OTP");
-				}
-
-			}else{
-				resultotp2="OTP_INVALIDATED";
-			}*/
-
-			//			Verify OTP verification
-
-			String resultotp2="OTP_INVALID";
-
-			try{
-				if(!login.getUsermobile().isEmpty() && !login.getOtpVal().isEmpty()){
-					logger.info("Process OTP submit verfication for mobile number- "+ login.getUsermobile());
-					resultotp2= bseRestClientService.otpverify(login.getUsermobile(), login.getOtpVal());
-
-
-					logger.info("OTP validation respond- "+ resultotp2);
-					if(resultotp2.equalsIgnoreCase("Entered Otp is valid")){
-						//				Generate login session
-
-						try {
-							responseEntity= profileRestClientService.otpLogin(login,ip);
-							if(responseEntity.getBody().toString().equalsIgnoreCase("SUCCESS")){
-								session.setAttribute("loggedSession", responseEntity.getHeaders().get("fname").get(0).split(" ")[0]);
-								//						response.addCookie(setSessionCookie("token", URLEncoder.encode(responseEntity.getHeaders().get("Authorization").get(0), "UTF-8")));
-								session.setAttribute("token", responseEntity.getHeaders().get("Authorization").get(0));
-								session.setAttribute("userid", responseEntity.getHeaders().get("userid").get(0));
-//								session.setAttribute("email",responseEntity.getHeaders().get("email").get(0));
-								if(responseEntity.getHeaders().get("email")!=null){
-									session.setAttribute("email",responseEntity.getHeaders().get("email")!=null?responseEntity.getHeaders().get("email").get(0):"");
-								}
-								
-								if(responseEntity.getHeaders().get("pan")!=null){
-									session.setAttribute("pan",responseEntity.getHeaders().get("pan").get(0));
-								}
-								logger.info(responseEntity.getHeaders().get("Authorization").get(0));
-
-
-								try{
-									/*ServletContext servletContext =request.getSession().getServletContext().getContext("/{applicationContextRoot}");
-							servletContext.setAttribute("loggedSession", response.getHeaders().get("fname").get(0).split(" ")[0]);
-							servletContext.setAttribute("token", response.getHeaders().get("Authorization").get(0));
-							servletContext.setAttribute("userid", response.getHeaders().get("userid").get(0));
-							servletContext.setAttribute("email",response.getHeaders().get("email").get(0));*/
-
-									logger.info("Setting session in cookie for customer after OTP validation- "+ responseEntity.getHeaders().get("userid").get(0));	
-									Cookie ssokCookie = new Cookie("loggedSession", responseEntity.getHeaders().get("fname").get(0).split(" ")[0]);
-									ssokCookie.setPath("/");
-									// adding the cookie to the HttpResponse
-									response.addCookie(setSessionCookie("loggedSession", responseEntity.getHeaders().get("fname").get(0).split(" ")[0]));
-									//							response.addCookie(setSessionCookie("token", responseEntity.getHeaders().get("Authorization").get(0)));
-									response.addCookie(setSessionCookie("userid", responseEntity.getHeaders().get("userid").get(0)));
-									response.addCookie(setSessionCookie("email",responseEntity.getHeaders().get("email").get(0)));
-									if(responseEntity.getHeaders().get("pan")!=null){
-									    response.addCookie(setSessionCookie("pan", CommonTask.encryptPassword(responseEntity.getHeaders().get("pan").get(0))));
-									}
-
-									logger.info("Setting session in cookie for customer is complete after OTP validation.");
-								}catch(Exception e){
-									logger.error("Error setting cookie in session..",e);
-								}
-
-								returnUrl="SUCCESS";
-							}else{
-								returnUrl="OTP_LOGIN_FAIL";
-							}
-						}catch(HttpStatusCodeException  e){
-							logger.error("loginwithJqueryAttemptPost2(): Login failure during OTP authentication generation - " ,e.getMessage());
-							if(e.getRawStatusCode()==HttpStatus.UNAUTHORIZED.value()) 
-								returnUrl= "Invalid userid or password";
-							else if(e.getRawStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR.value())
-								returnUrl="Unable to connect to server";
-							else if(e.getRawStatusCode() == HttpStatus.NOT_FOUND.value())
-								returnUrl="Service url down or not found!";
-							else if(e.getRawStatusCode() == HttpStatus.LOCKED.value())
-								returnUrl="Account is locked. Kindly get in touch with our support team to unlock your account.";
-							else{
-								returnUrl="Internal error. Please try after some time or contact admin if prolem persist.";
-							}
-						} catch (JsonProcessingException e) {
-							logger.error("Failed to parse data",e);
-							returnUrl="OTP_VALID_FAIL";
-						}catch(Exception e){
-							returnUrl="OTP_VALID_FAIL";
-							logger.error("Failed to process OTP login",e);
-						}
-						//			model.addAttribute("token",response.getHeaders().get("Authorization").get(0));
-						//			model.addAttribute("loggedInUser",response.getHeaders().get("fname").get(0).split(" ")[0]);
-					}else{
-						returnUrl="OTP_INVALID";
-					}
-				}else{
-					returnUrl="Missing reqiored data!";
-				}
-			}catch(HttpServerErrorException e){
-				logger.error("loginwithJqueryAttemptPost(): Error processing OTP verification prorcess: ", e.getStatusCode(),e);
-			}
-			catch(Exception e){
-				logger.error("loginwithJqueryAttemptPost(): Error with OTP verification.",e);
-			}
-
-
-		}
-
-		model.addAttribute("error", "1st Attempt..");
-		logger.info("Returning to URL- "+ returnUrl);
-		return returnUrl;
-
+	if(bindingResult.hasErrors()){
+	    logger.info("loginwithJqueryAttemptPost2(): Error in login form");
+	    //			model.addAttribute("error", "Invalid form data");
+	    model.addAttribute("error", bindingResult.getFieldError().getDefaultMessage());
+	    return "Invalid form data!";
 	}
+	if(request.getParameter("g-recaptcha-response")==""){
+	    logger.info("loginwithJqueryAttemptPost2(): Security token not checked");
+	    model.addAttribute("error", "Please check the security verification");
+	    return "Security Captcha token missing!";
+	}else{
+	    if(!GoogleSecurity.verifyRecaptcha(request.getParameter("g-recaptcha-response"), "N", ip, request.getRequestURL().toString())){
+		logger.warn("loginwithJqueryAttemptPost2(): Security token validation failed");
+		model.addAttribute("error", "Security token validation failed!");
+		return "Captcha validation failed!";
+	    }
+	}
+	logger.info("loginwithJqueryAttemptPost2(): Session id during login- "+ session.getId() + " :mobile : "+ login.getUsermobile());
+	//		logger.info("Beginning attemptAuthentication() from IP- "+ request.getRemoteHost()+ "/"+request.getHeader("X-Forwarded-for"));
+	logger.debug("loginwithJqueryAttemptPost2(): OTP login check- "+ login.isOtpLogin());
+
+	String returnUrl="";
+	String referer = (String) session.getAttribute("returnSite");
+	logger.debug("loginwithJqueryAttemptPost2(): login2.do referer- "+ referer);
+	//		returnUrl = redirectUrlAfterLogin(referer);
+
+	//		RestClient client = new RestClient();
+	ResponseEntity<String> responseEntity = null;
 
 
+	if(!login.isOtpSubmit()){
 
-	@RequestMapping(value = "/otpverify.do", method = RequestMethod.POST)
-	@ResponseBody
-	public String loginbyotp(@ModelAttribute("otpForm") @Valid Login login,ModelMap model, BindingResult bindingResult,HttpServletRequest request, HttpSession session) {
-
-		logger.info("@@@@ Inside OTP Login verfiy  do..");	
-		//		logger.info("Referer- "+ request.getHeader("Referer"));
-		//		String referer = request.getHeader("Referer");
-		//		System.out.println("Recpcha form resuest- "+ request.getParameter("g-recaptcha-response"));
-
-		String ip = CommonTask.getClientSystemIp(request);
-
-		if(bindingResult.hasErrors()){
-			logger.info("Error in login form");
-			//			model.addAttribute("error", "Invalid form data");
-			model.addAttribute("error", bindingResult.getFieldError().getDefaultMessage());
-			return "FORM_ERROR";
-		}
-		if(request.getParameter("g-recaptcha-response")==""){
-			logger.info("Security token not checked");
-			model.addAttribute("error", "Please check the security verification");
-			return "login";
-		}else{
-			if(!GoogleSecurity.verifyRecaptcha(request.getParameter("g-recaptcha-response"), "N", ip, request.getRequestURL().toString())){
-				logger.warn("Security token validation failed");
-				model.addAttribute("error", "Security token validation failed!");
-				return "login";
-			}
-		}
-
-		//		logger.info("Beginning attemptAuthentication() from IP- "+ request.getRemoteHost()+ "/"+request.getHeader("X-Forwarded-for"));
-		logger.info("OTP login check for mobile: "  + login.getUsermobile() +  " : OTP login check- "+ login.isOtpLogin() );
-
-		String returnUrl="";
-		String referer = (String) session.getAttribute("returnSite");
-		logger.info("Login2 referrer- "+ referer);
-		returnUrl = redirectUrlAfterLogin(referer,request);
-
-		//		RestClient client = new RestClient();
-		ResponseEntity<String> response = null;
-
-
+	    if(login.isOtpLogin()){
+		//			Process for OTP login
 		try{
-			response= profileRestClientService.otpLogin(login,CommonTask.getClientSystemIp(request));
+
+		    //			Check if user exists and fetch email id
+
+		    responseEntity = profileRestClientService.validateuserIdAndGetMail(login.getUsermobile());
+		    String[] userStatus = responseEntity.getBody().toString().split(",");
+
+		    logger.info(Arrays.asList(userStatus));
+		    if(userStatus[0].equalsIgnoreCase("VALID")){
+			if(!userStatus[1].equals("NO_EMAIL")){
+			    String resultotp= bseRestClientService.otpGeneration(login.getUsermobile());
+			    logger.debug("loginwithJqueryAttemptPost2(): RECEIVED OTP RESPONSE: "+ resultotp);
+			    if(resultotp.contains("OTP")){
+				//				Trigger mail 
+				session.setAttribute("OTP", resultotp.split("=")[1]);
+				try {
+				    mailSenderInterface.loginOTPMail(login.getUsermobile(), resultotp.split("=")[1], userStatus[1], "5");
+				    smsSenderInterface.sendOtp(login.getUsermobile(), resultotp.split("=")[1], "5", null);
+				    //									returnUrl="OTP_SENT";
+				} catch (InterruptedException e) {
+				    logger.error("Failed to send mail for OTP- ",e);
+				}
+
+				returnUrl="OTP_SENT";
+				login.setOtpSubmit(true);
+
+			    }
+			}else{
+			    returnUrl = "No email to OTP. Kindly contact admin";
+			}
+		    }else{
+			returnUrl = "Invalid user id";
+		    }
+
+		}catch(HttpStatusCodeException  e){
+		    logger.error("loginwithJqueryAttemptPost2(): BSESERVICE LOGIN OTP service connection ailure - " ,e);
+		    if(e.getRawStatusCode()==HttpStatus.UNAUTHORIZED.value())
+			returnUrl= "Invalid userid or password";
+		    else if(e.getRawStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR.value())
+			returnUrl="Unable to connect to service";
+		    else if(e.getRawStatusCode() == HttpStatus.NOT_FOUND.value())
+			returnUrl="Service url down or not found!";
+		    else if(e.getRawStatusCode() == HttpStatus.LOCKED.value())
+			returnUrl="Service url down or not found!";
+		    else {
+			returnUrl="Internal error. Please try after sometime";
+		    }
+		    //				returnUrl = Integer.toString(e.getRawStatusCode());
+		}catch(Exception e){
+		    logger.error("loginwithJqueryAttemptPost2(): BSESERVICE LOGIN OTP Error while trying to generate OTP",e);
+		    model.addAttribute("error", "Unable to process request currently");
+		    returnUrl="Internal error. Kindly contact admin";
+		}
+
+	    }else{
+		//				Direct login process with userid-password
+		try{
+
+		    responseEntity= profileRestClientService.login(login.getUsermobile(), login.getUserpassword(), ip);
+		    logger.info("loginwithJqueryAttemptPost2(): Session id during login- "+ session.getId());
+		    setloggedsessiondata(session, responseEntity);
+		    try{
+			setloggedsessioncookie(response, responseEntity);
+		    }catch(Exception e){
+			logger.error("Error setting session cookie ..",e);
+		    }
+
+		    logger.info(responseEntity.getHeaders().get("Authorization").get(0));
+		    returnUrl="SUCCESS";
+		}catch(HttpStatusCodeException  e){
+		    logger.error("loginwithJqueryAttemptPost2(): Login failure - " ,e.getMessage());
+		    if(e.getRawStatusCode()==HttpStatus.UNAUTHORIZED.value()) 
+			returnUrl= "Invalid userid or password";
+		    else if(e.getRawStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR.value())
+			returnUrl="Unable to connect to server";
+		    else if(e.getRawStatusCode() == HttpStatus.NOT_FOUND.value())
+			returnUrl="Service url down or not found!";
+		    else if(e.getRawStatusCode() == HttpStatus.LOCKED.value())
+			returnUrl="Account is locked. Kindly get in touch with our support team to unlock your account.";
+		    else{
+			returnUrl="Internal error. Please try after some time or contact admin if prolem persist.";
+		    }
+		}catch(Exception e){
+		    logger.error("Error while trying to set cookie after login",e);
+		    model.addAttribute("error", "Unable to process request currently");
+		    returnUrl="Internal error. Kindly contact admin";
+		}
+	    }
+
+	}else{
+
+	    String resultotp2="OTP_INVALID";
+
+	    try{
+		if(!login.getUsermobile().isEmpty() && !login.getOtpVal().isEmpty()){
+		    logger.info("Process OTP submit verfication for mobile number- "+ login.getUsermobile());
+		    resultotp2= bseRestClientService.otpverify(login.getUsermobile(), login.getOtpVal());
+
+
+		    logger.info("OTP validation respond- "+ resultotp2);
+		    if(resultotp2.equalsIgnoreCase("Entered Otp is valid")){
+			//				Generate login session
+
+			try {
+			    responseEntity= profileRestClientService.otpLogin(login,ip);
+			    if(responseEntity.getBody().toString().equalsIgnoreCase("SUCCESS")){
+				logger.debug("Authorization token - "+ responseEntity.getHeaders().get("Authorization").get(0));
+				
+				
+				setloggedsessiondata(session, responseEntity);
+				    try{
+					setloggedsessioncookie(response, responseEntity);
+				    }catch(Exception e){
+					logger.error("Error setting session cookie ..",e);
+				    }
+				
+				
+				/*session.setAttribute("loggedSession", responseEntity.getHeaders().get("fname").get(0).split(" ")[0]);
+				session.setAttribute("token", responseEntity.getHeaders().get("Authorization").get(0));
+				session.setAttribute("userid", responseEntity.getHeaders().get("userid").get(0));
+				if(responseEntity.getHeaders().get("email")!=null){
+				    session.setAttribute("email",responseEntity.getHeaders().get("email")!=null?responseEntity.getHeaders().get("email").get(0):"");
+				}
+				if(responseEntity.getHeaders().get("pan")!=null){
+				    session.setAttribute("pan",responseEntity.getHeaders().get("pan").get(0));
+				}*/
+				
+				
+
+				/*
+								try{
+				//				    adding the cookie to the HttpResponse
+								    logger.info("Setting session in cookie for customer after OTP validation- "+ responseEntity.getHeaders().get("userid").get(0));	
+								    Cookie ssokCookie = new Cookie("loggedSession", responseEntity.getHeaders().get("fname").get(0).split(" ")[0]);
+								    ssokCookie.setPath("/");
+								    response.addCookie(setSessionCookie("loggedSession", responseEntity.getHeaders().get("fname").get(0).split(" ")[0]));
+								    response.addCookie(setSessionCookie("userid", responseEntity.getHeaders().get("userid").get(0)));
+								    response.addCookie(setSessionCookie("email",responseEntity.getHeaders().get("email").get(0)));
+				
+								    Cookie sessioncookie = new Cookie("token", responseEntity.getHeaders().get("Authorization").get(0));
+								    sessioncookie.setMaxAge(300);
+								    response.addCookie(sessioncookie);
+				
+								    if(responseEntity.getHeaders().get("pan")!=null){
+									response.addCookie(setSessionCookie("pan", CommonTask.encryptText(responseEntity.getHeaders().get("pan").get(0))));
+								    }
+				
+								    logger.info("Setting session in cookie for customer is complete after OTP validation.");
+								}catch(Exception e){
+								    logger.error("Error setting cookie in session..",e);
+								}
+				*/
+				returnUrl="SUCCESS";
+			    }else{
+				returnUrl="OTP_LOGIN_FAIL";
+			    }
+			}catch(HttpStatusCodeException  e){
+			    logger.error("loginwithJqueryAttemptPost2(): Login failure during OTP authentication generation - " ,e.getMessage());
+			    if(e.getRawStatusCode()==HttpStatus.UNAUTHORIZED.value()) 
+				returnUrl= "Invalid userid or password";
+			    else if(e.getRawStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR.value())
+				returnUrl="Unable to connect to server";
+			    else if(e.getRawStatusCode() == HttpStatus.NOT_FOUND.value())
+				returnUrl="Service url down or not found!";
+			    else if(e.getRawStatusCode() == HttpStatus.LOCKED.value())
+				returnUrl="Account is locked. Kindly get in touch with our support team to unlock your account.";
+			    else{
+				returnUrl="Internal error. Please try after some time or contact admin if prolem persist.";
+			    }
+			} catch (JsonProcessingException e) {
+			    logger.error("Failed to parse data",e);
+			    returnUrl="OTP_VALID_FAIL";
+			}catch(Exception e){
+			    returnUrl="OTP_VALID_FAIL";
+			    logger.error("Failed to process OTP login",e);
+			}
 			//			model.addAttribute("token",response.getHeaders().get("Authorization").get(0));
 			//			model.addAttribute("loggedInUser",response.getHeaders().get("fname").get(0).split(" ")[0]);
-			if(response.getBody().equalsIgnoreCase("SUCCESS")){
-				
-				if(response.getHeaders().get("fname")!=null){
-					session.setAttribute("loggedSession", response.getHeaders().get("fname").get(0).split(" ")[0]);
-				}
-				
-				session.setAttribute("token", response.getHeaders().get("Authorization").get(0));
-				
-				session.setAttribute("userid", response.getHeaders().get("userid").get(0));
-				
-				if(response.getHeaders().get("email")!=null){
-					session.setAttribute("email",response.getHeaders().get("email").get(0));
-				}
-			}else{
-
-			}
-			logger.info(response.getHeaders().get("Authorization").get(0));
-		}
-		catch(HttpStatusCodeException  e){
-			logger.error("Connection failure - " + e.getStatusCode());
-			if(e.getRawStatusCode()==401)
-				model.addAttribute("error", "Invalid userid or password");
-			if(e.getRawStatusCode() == 500)
-				model.addAttribute("error", "Unable to connect to server");
-			if(e.getRawStatusCode() == 404)
-				model.addAttribute("error", "Service url not found");
-			returnUrl="login";
-		}catch(Exception e){
-			logger.error("Error while trying to login",e);
-			model.addAttribute("error", "Unable to process request currently");
-			returnUrl="login";
-		}
-
-		model.addAttribute("error", "1st Attempt..");
-		logger.info("Returning to URL- "+ returnUrl);
-		return returnUrl;
-	}
-
-
-	@RequestMapping(value = "/logout", method = RequestMethod.GET)
-	public String logout(ModelMap model, HttpServletRequest request,HttpServletResponse response, HttpSession session) {
-		//logger.info("@@@@ Inside Login..");
-		logger.info("@@@@ LogoutController @@@@");
-
-		session.removeAttribute("loggedSession");
-		session.removeAttribute("token");
-		session.removeAttribute("userid");
-		session.removeAttribute("email");
-		session.invalidate();
-		try{
-			logger.info("Clear logging data from cookie...");
-			Cookie ssokCookie = new Cookie("loggedSession", "");
-			ssokCookie.setMaxAge(0);
-			ssokCookie.setPath("/");
-			response.addCookie(ssokCookie);
-
-			ssokCookie = new Cookie("email", "");
-			ssokCookie.setMaxAge(0);
-			ssokCookie.setPath("/");
-			response.addCookie(ssokCookie);
-
-			ssokCookie = new Cookie("userid", "");
-			ssokCookie.setMaxAge(0);
-			ssokCookie.setPath("/");
-
-			response.addCookie(ssokCookie);
-
-			logger.info("Cookie unset complete for user");
-
-
-		}catch(Exception e){
-			System.out.println("Error removing session data from cookie during logout..");
-
-		}
-
-
-		//		RestClientApps.logoutAllApplication("", "", "", "");
-		return "redirect:/";
-	}
-
-	@RequestMapping(value = "/logout", method = RequestMethod.POST)
-	public String logoutPost(ModelMap model, HttpSession session) {
-		//logger.info("@@@@ Inside Login..");
-		return "redirect:/logout";
-	}
-
-
-
-	@RequestMapping(value = "/forgotPassword", method = RequestMethod.GET)
-	public String forgotPasswordDisplay(Model map) {
-		//logger.info("@@@@ Inside Login..");
-		logger.info("@@@@ ForgotPasswordController @@@@");
-		map.addAttribute("forgotPasswordForm", new ForgotPassword());
-		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
-
-		return "forgotPassword";
-	}
-
-	@RequestMapping(value = "/forgotPassword.do", method = RequestMethod.GET)
-	public String forgotPasswordGetSubmit(ModelMap model) {
-		return "redirect:/forgotPassword";
-	}
-
-	@RequestMapping(value = "/forgotPassword.do", method = RequestMethod.POST)
-	public String forgotPasswordSubmit(@ModelAttribute("forgotPasswordForm") @Valid ForgotPassword forgotPasswordForm, BindingResult bindingResult, Model model, HttpServletRequest request, HttpServletResponse resp) {
-		logger.info("@@@@ Forgot password request submit POSTController.. /forgotPassword.do");
-
-		if(bindingResult.hasErrors()){
-			logger.info("Error in forgotpassword form- "+ bindingResult.getFieldError());
-			model.addAttribute("error", bindingResult.getFieldError().getDefaultMessage());
-			return "forgotPassword";
-		}
-		if(request.getParameter("g-recaptcha-response")==""){
-			logger.info("Security token not checked");
-			model.addAttribute("error", "Please check the security verification");
-			return "forgotPassword";
+		    }else{
+			returnUrl="OTP_INVALID";
+		    }
 		}else{
-			if(!GoogleSecurity.verifyRecaptcha(request.getParameter("g-recaptcha-response"), "Y", CommonTask.getClientSystemIp(request), request.getRequestURL().toString())){
-				logger.warn("Security token validation failed");
-				model.addAttribute("error", "Security token validation failed!");
-				return "forgotPassword";
-			}
+		    returnUrl="Missing reqiored data!";
 		}
-		
-		//		RestClient client = new RestClient();
-		ResponseEntity<String> response = null;
-		try {
-			logger.info("Beginning process to request password change process for mobile..." + forgotPasswordForm.getUsermobile());
-			response = profileRestClientService.forgotPassword(forgotPasswordForm);
-			logger.info("Forgot password change response for mobile:  "+forgotPasswordForm.getUsermobile() +" : " + response.getBody());
-			//			logger.info(response.getHeaders());
-			model.addAttribute("success", "Password reset mail sent on registered email id.");
-		}catch(HttpStatusCodeException  e){
-			logger.error("Forgot password httpexception - ",e.getStatusCode(),e);
-			model.addAttribute("error", "Unable to process request curretnly");
-		} catch (JsonProcessingException e) {
-			logger.error("Forgot password JSONProcessing exception - ",e);
-			model.addAttribute("error","Invalid form data");
-		}catch(Exception e){
-			logger.error("Forgot password handling exception - ",e);
-			model.addAttribute("error","Error processing request");
+	    }catch(HttpServerErrorException e){
+		logger.error("loginwithJqueryAttemptPost(): Error processing OTP verification prorcess: ", e.getStatusCode(),e);
+	    }
+	    catch(Exception e){
+		logger.error("loginwithJqueryAttemptPost(): Error with OTP verification.",e);
+	    }
+
+
+	}
+
+	model.addAttribute("error", "1st Attempt..");
+	logger.info("Returning to URL- "+ returnUrl);
+	return returnUrl;
+
+    }
+
+    protected void resetcookiesesiionvalue(HttpSession session, HttpServletResponse response) {
+	if(session.getAttribute("token")!=null) {
+	    try {
+		response.addCookie(setSessionCookie("token", URLEncoder.encode(session.getAttribute("token").toString(),StandardCharsets.UTF_8.toString()),true));
+	    } catch (UnsupportedEncodingException e) {
+		logger.error("Error resetting token value in cookie",e);
+	    }
+	}
+    }
+    
+    protected void setloggedsessioncookie(HttpServletResponse response, ResponseEntity<String> responseEntity) {
+	logger.info("loginwithJqueryAttemptPost2(): Setting session in cookie for customer- "+ responseEntity.getHeaders().get("userid").get(0));	
+
+	if(responseEntity.getHeaders().get("fname")!=null){
+	    response.addCookie(setSessionCookie("loggedSession", responseEntity.getHeaders().get("fname").get(0).split(" ")[0],false));
+//	    response.setHeader("Set-Cookie", "loggedSession="+responseEntity.getHeaders().get("fname").get(0)+" ;HttpOnly;Path=/; SameSite=strict; max-age=7200");
+	}
+	if(responseEntity.getHeaders().get("email")!=null){
+	    response.addCookie(setSessionCookie("email", responseEntity.getHeaders().get("email").get(0),false));
+//	    response.setHeader("Set-Cookie", "email="+responseEntity.getHeaders().get("email").get(0)+" ;HttpOnly;Path=/; SameSite=strict; max-age=7200");
+	}
+	
+	if(responseEntity.getHeaders().get("userid")!=null){
+	    response.addCookie(setSessionCookie("userid", responseEntity.getHeaders().get("userid").get(0),false));
+//	    response.setHeader("Set-Cookie", "userid="+responseEntity.getHeaders().get("userid").get(0)+" ;HttpOnly;Path=/; SameSite=strict; max-age=7200");
+	}
+	
+	if(responseEntity.getHeaders().get("pan")!=null){
+	    response.addCookie(setSessionCookie("pan", CommonTask.encryptText(responseEntity.getHeaders().get("pan").get(0)),true));
+	}
+
+	try {
+	    response.addCookie(setSessionCookie("token", URLEncoder.encode(responseEntity.getHeaders().get("Authorization").get(0),StandardCharsets.UTF_8.toString()),true));
+	    
+	    
+	} catch (UnsupportedEncodingException e) {
+	    logger.error("Error setting token in cookie",e);
+	}
+
+	logger.info("Setting session in cookie for customer is complete.");
+    }
+
+
+    protected void setloggedsessiondata(HttpSession session, ResponseEntity<String> responseEntity) {
+	if(responseEntity.getHeaders().get("fname")!=null){
+	    session.setAttribute("loggedSession", responseEntity.getHeaders().get("fname").get(0).split(" ")[0]);
+	}
+	session.setAttribute("token", responseEntity.getHeaders().get("Authorization").get(0));
+	session.setAttribute("userid", responseEntity.getHeaders().get("userid").get(0));
+
+	if(responseEntity.getHeaders().get("email")!=null){
+	    session.setAttribute("email",responseEntity.getHeaders().get("email")!=null?responseEntity.getHeaders().get("email").get(0):"");
+	}
+	if(responseEntity.getHeaders().get("pan")!=null){
+	    session.setAttribute("pan",responseEntity.getHeaders().get("pan").get(0));
+	}
+    }
+
+
+
+    @RequestMapping(value = "/otpverify.do", method = RequestMethod.POST)
+    @ResponseBody
+    public String loginbyotp(@ModelAttribute("otpForm") @Valid Login login,ModelMap model, BindingResult bindingResult,HttpServletRequest request, HttpSession session) {
+
+	logger.info("@@@@ Inside OTP Login verfiy  do..");	
+	//		logger.info("Referer- "+ request.getHeader("Referer"));
+	//		String referer = request.getHeader("Referer");
+	//		System.out.println("Recpcha form resuest- "+ request.getParameter("g-recaptcha-response"));
+
+	String ip = CommonTask.getClientSystemIp(request);
+
+	if(bindingResult.hasErrors()){
+	    logger.info("Error in login form");
+	    //			model.addAttribute("error", "Invalid form data");
+	    model.addAttribute("error", bindingResult.getFieldError().getDefaultMessage());
+	    return "FORM_ERROR";
+	}
+	if(request.getParameter("g-recaptcha-response")==""){
+	    logger.info("Security token not checked");
+	    model.addAttribute("error", "Please check the security verification");
+	    return "login";
+	}else{
+	    if(!GoogleSecurity.verifyRecaptcha(request.getParameter("g-recaptcha-response"), "N", ip, request.getRequestURL().toString())){
+		logger.warn("Security token validation failed");
+		model.addAttribute("error", "Security token validation failed!");
+		return "login";
+	    }
+	}
+
+	//		logger.info("Beginning attemptAuthentication() from IP- "+ request.getRemoteHost()+ "/"+request.getHeader("X-Forwarded-for"));
+	logger.info("OTP login check for mobile: "  + login.getUsermobile() +  " : OTP login check- "+ login.isOtpLogin() );
+
+	String returnUrl="";
+	String referer = (String) session.getAttribute("returnSite");
+	logger.info("Login2 referrer- "+ referer);
+	returnUrl = redirectUrlAfterLogin(referer,request);
+
+	//		RestClient client = new RestClient();
+	ResponseEntity<String> response = null;
+
+
+	try{
+	    response= profileRestClientService.otpLogin(login,CommonTask.getClientSystemIp(request));
+	    //			model.addAttribute("token",response.getHeaders().get("Authorization").get(0));
+	    //			model.addAttribute("loggedInUser",response.getHeaders().get("fname").get(0).split(" ")[0]);
+	    if(response.getBody().equalsIgnoreCase("SUCCESS")){
+
+		if(response.getHeaders().get("fname")!=null){
+		    session.setAttribute("loggedSession", response.getHeaders().get("fname").get(0).split(" ")[0]);
 		}
 
-		//		model.addAttribute("forgotPasswordForm", forgotPasswordForm);
+		session.setAttribute("token", response.getHeaders().get("Authorization").get(0));
 
+		session.setAttribute("userid", response.getHeaders().get("userid").get(0));
+
+		if(response.getHeaders().get("email")!=null){
+		    session.setAttribute("email",response.getHeaders().get("email").get(0));
+		}
+	    }else{
+
+	    }
+	    logger.info(response.getHeaders().get("Authorization").get(0));
+	}
+	catch(HttpStatusCodeException  e){
+	    logger.error("Connection failure - " + e.getStatusCode());
+	    if(e.getRawStatusCode()==401)
+		model.addAttribute("error", "Invalid userid or password");
+	    if(e.getRawStatusCode() == 500)
+		model.addAttribute("error", "Unable to connect to server");
+	    if(e.getRawStatusCode() == 404)
+		model.addAttribute("error", "Service url not found");
+	    returnUrl="login";
+	}catch(Exception e){
+	    logger.error("Error while trying to login",e);
+	    model.addAttribute("error", "Unable to process request currently");
+	    returnUrl="login";
+	}
+
+	model.addAttribute("error", "1st Attempt..");
+	logger.info("Returning to URL- "+ returnUrl);
+	return returnUrl;
+    }
+
+
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    public String logout(ModelMap model, HttpServletRequest request,HttpServletResponse response, HttpSession session) {
+	//logger.info("@@@@ Inside Login..");
+	logger.info("@@@@ LogoutController @@@@");
+
+	session.removeAttribute("loggedSession");
+	session.removeAttribute("token");
+	session.removeAttribute("userid");
+	session.removeAttribute("email");
+	session.invalidate();
+	try{
+	    logger.info("Clear logging data from cookie...");
+	    Cookie ssokCookie = new Cookie("loggedSession", "");
+	    ssokCookie.setMaxAge(0);
+	    ssokCookie.setPath("/");
+	    response.addCookie(ssokCookie);
+
+	    ssokCookie = new Cookie("email", "");
+	    ssokCookie.setMaxAge(0);
+	    ssokCookie.setPath("/");
+	    response.addCookie(ssokCookie);
+
+	    ssokCookie = new Cookie("userid", "");
+	    ssokCookie.setMaxAge(0);
+	    ssokCookie.setPath("/");
+	    
+	    ssokCookie = new Cookie("token", "");
+	    ssokCookie.setMaxAge(0);
+	    ssokCookie.setPath("/");
+
+	    response.addCookie(ssokCookie);
+
+	    logger.info("Cookie unset complete for user");
+
+
+	}catch(Exception e){
+	    System.out.println("Error removing session data from cookie during logout..");
+
+	}
+
+
+	//		RestClientApps.logoutAllApplication("", "", "", "");
+	return "redirect:/";
+    }
+
+    @RequestMapping(value = "/logout", method = RequestMethod.POST)
+    public String logoutPost(ModelMap model, HttpSession session) {
+	//logger.info("@@@@ Inside Login..");
+	return "redirect:/logout";
+    }
+
+
+
+    @RequestMapping(value = "/forgotPassword", method = RequestMethod.GET)
+    public String forgotPasswordDisplay(Model map) {
+	//logger.info("@@@@ Inside Login..");
+	logger.info("@@@@ ForgotPasswordController @@@@");
+	map.addAttribute("forgotPasswordForm", new ForgotPassword());
+	map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
+
+	return "forgotPassword";
+    }
+
+    @RequestMapping(value = "/forgotPassword.do", method = RequestMethod.GET)
+    public String forgotPasswordGetSubmit(ModelMap model) {
+	return "redirect:/forgotPassword";
+    }
+
+    @RequestMapping(value = "/forgotPassword.do", method = RequestMethod.POST)
+    public String forgotPasswordSubmit(@ModelAttribute("forgotPasswordForm") @Valid ForgotPassword forgotPasswordForm, BindingResult bindingResult, Model model, HttpServletRequest request, HttpServletResponse resp) {
+	logger.info("@@@@ Forgot password request submit POSTController.. /forgotPassword.do");
+
+	if(bindingResult.hasErrors()){
+	    logger.info("Error in forgotpassword form- "+ bindingResult.getFieldError());
+	    model.addAttribute("error", bindingResult.getFieldError().getDefaultMessage());
+	    return "forgotPassword";
+	}
+	if(request.getParameter("g-recaptcha-response")==""){
+	    logger.info("Security token not checked");
+	    model.addAttribute("error", "Please check the security verification");
+	    return "forgotPassword";
+	}else{
+	    if(!GoogleSecurity.verifyRecaptcha(request.getParameter("g-recaptcha-response"), "Y", CommonTask.getClientSystemIp(request), request.getRequestURL().toString())){
+		logger.warn("Security token validation failed");
+		model.addAttribute("error", "Security token validation failed!");
 		return "forgotPassword";
+	    }
+	}
+
+	//		RestClient client = new RestClient();
+	ResponseEntity<String> response = null;
+	try {
+	    logger.info("Beginning process to request password change process for mobile..." + forgotPasswordForm.getUsermobile());
+	    response = profileRestClientService.forgotPassword(forgotPasswordForm);
+	    logger.info("Forgot password change response for mobile:  "+forgotPasswordForm.getUsermobile() +" : " + response.getBody());
+	    //			logger.info(response.getHeaders());
+	    model.addAttribute("success", "Password reset mail sent on registered email id.");
+	}catch(HttpStatusCodeException  e){
+	    logger.error("Forgot password httpexception - ",e.getStatusCode(),e);
+	    model.addAttribute("error", "Unable to process request curretnly");
+	} catch (JsonProcessingException e) {
+	    logger.error("Forgot password JSONProcessing exception - ",e);
+	    model.addAttribute("error","Invalid form data");
+	}catch(Exception e){
+	    logger.error("Forgot password handling exception - ",e);
+	    model.addAttribute("error","Error processing request");
+	}
+
+	//		model.addAttribute("forgotPasswordForm", forgotPasswordForm);
+
+	return "forgotPassword";
+    }
+
+
+    @RequestMapping(value = "/contact", method = RequestMethod.GET)
+    public String contact( Model map, HttpServletRequest request, HttpSession session) {
+	logger.info("@@@@ ContactController @@@@");
+
+	ContactUsForm contactForm =new ContactUsForm();
+	//		String 
+	map.addAttribute("contactForm", contactForm);
+	map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
+
+	return "contact";
+    }
+
+    @RequestMapping(value = "/contact.do", method = RequestMethod.GET)
+    public String contactDo( ModelMap model) {
+
+	logger.info("@@@@ ContactDoController @@@@");
+	return "redirect:/contact";
+    }
+
+    @RequestMapping(value = "/contact.do", method = RequestMethod.POST)
+    public String contactRequestSubmit(@ModelAttribute("contactForm") ContactUsForm contactForm,Model model) {
+	//logger.info("@@@@ Inside Login..");
+	logger.info("@@@@ ContactDoController @@@@");
+	//		RestClient client = new RestClient();
+	ResponseEntity<String> response = null;
+	try {
+	    response = profileRestClientService.contactUs(contactForm);
+	    logger.info(response.getBody());
+	    //			logger.info(response.getHeaders());
+	    model.addAttribute("success", response.getBody());
+	    model.addAttribute("contactForm", new ContactUsForm());
+	}catch(HttpStatusCodeException  e){
+	    logger.info("test failure - " + e.getStatusCode());
+	    model.addAttribute("error", "Unable to process request curretnly");
+	} catch (JsonProcessingException e) {
+	    model.addAttribute("error","Invalid form data");
+	}catch(Exception e){
+	    model.addAttribute("error","Error processing request");
 	}
 
 
-	@RequestMapping(value = "/contact", method = RequestMethod.GET)
-	public String contact( Model map, HttpServletRequest request, HttpSession session) {
-		logger.info("@@@@ ContactController @@@@");
-
-		ContactUsForm contactForm =new ContactUsForm();
-		//		String 
-		map.addAttribute("contactForm", contactForm);
-		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
-
-		return "contact";
-	}
-
-	@RequestMapping(value = "/contact.do", method = RequestMethod.GET)
-	public String contactDo( ModelMap model) {
-
-		logger.info("@@@@ ContactDoController @@@@");
-		return "redirect:/contact";
-	}
-
-	@RequestMapping(value = "/contact.do", method = RequestMethod.POST)
-	public String contactRequestSubmit(@ModelAttribute("contactForm") ContactUsForm contactForm,Model model) {
-		//logger.info("@@@@ Inside Login..");
-		logger.info("@@@@ ContactDoController @@@@");
-		//		RestClient client = new RestClient();
-		ResponseEntity<String> response = null;
-		try {
-			response = profileRestClientService.contactUs(contactForm);
-			logger.info(response.getBody());
-			//			logger.info(response.getHeaders());
-			model.addAttribute("success", response.getBody());
-			model.addAttribute("contactForm", new ContactUsForm());
-		}catch(HttpStatusCodeException  e){
-			logger.info("test failure - " + e.getStatusCode());
-			model.addAttribute("error", "Unable to process request curretnly");
-		} catch (JsonProcessingException e) {
-			model.addAttribute("error","Invalid form data");
-		}catch(Exception e){
-			model.addAttribute("error","Error processing request");
-		}
-
-
-		return "contact";
-	}
+	return "contact";
+    }
 
 
 
 
-	/*	@RequestMapping(value = "/terms-conditions", method = RequestMethod.GET)
+    /*	@RequestMapping(value = "/terms-conditions", method = RequestMethod.GET)
 	public String getTermsConditions(Model map) {
 		//logger.info("@@@@ Inside Login..");
 		logger.info("@@@@ Terms & conditions Controller @@@@");
@@ -881,122 +899,129 @@ public class HomeController {
 		return "privacy-policy";
 	}*/
 
-	@RequestMapping(value = "/terms-of-use", method = RequestMethod.GET)
-	public String termsOfUse(Model map) {
-		//logger.info("@@@@ Inside Login..");
-		logger.info("@@@@ Terms of user controller @@@@");
-		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
-		return "terms-of-use";
-	}
+    @RequestMapping(value = "/terms-of-use", method = RequestMethod.GET)
+    public String termsOfUse(Model map) {
+	//logger.info("@@@@ Inside Login..");
+	logger.info("@@@@ Terms of user controller @@@@");
+	map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
+	return "terms-of-use";
+    }
 
 
-	@RequestMapping(value = "/campaignsignup.do", method = RequestMethod.GET)
-	@ResponseBody
-	public String campaignSingup(@RequestParam("mobile") String mobile,@RequestParam("email") String email, @RequestParam("location") String location,@RequestParam("agree") String agree, HttpServletRequest request, HttpSession session) {
-		//logger.info("@@@@ Inside Login..");
-		logger.info("@@@@ CampaignSignupController @@@@");
+    @RequestMapping(value = "/campaignsignup.do", method = RequestMethod.GET)
+    @ResponseBody
+    public String campaignSingup(@RequestParam("mobile") String mobile,@RequestParam("email") String email, @RequestParam("location") String location,@RequestParam("agree") String agree, HttpServletRequest request, HttpSession session) {
+	//logger.info("@@@@ Inside Login..");
+	logger.info("@@@@ CampaignSignupController @@@@");
 
-		CampaignSignupForm campaign = new CampaignSignupForm();
-		session.setAttribute("campaignsubmitted", 1);
-		ClientSystemDetails details= CommonTask.getClientSystemDetails(request);
+	CampaignSignupForm campaign = new CampaignSignupForm();
+	session.setAttribute("campaignsubmitted", 1);
+	ClientSystemDetails details= CommonTask.getClientSystemDetails(request);
 
-		try{
-			if(!mobile.isEmpty()){
-				campaign.setMobile(mobile);
-				campaign.setEmail(email);
-				campaign.setLocation(location);
-				campaign.setUserrequestingagent(details.getClientBrowser());
-				campaign.setUsersystemip(details.getClientIpv4Address());
-				campaign.setTimeStamp(new Date());
-				campaign.setAgree(agree);
+	try{
+	    if(!mobile.isEmpty()){
+		campaign.setMobile(mobile);
+		campaign.setEmail(email);
+		campaign.setLocation(location);
+		campaign.setUserrequestingagent(details.getClientBrowser());
+		campaign.setUsersystemip(details.getClientIpv4Address());
+		campaign.setTimeStamp(new Date());
+		campaign.setAgree(agree);
 
-				databaseEntryManager.saveCampaignEntry(campaign);
-
-
-				// CAll to send mail from rest api
-				//				RestClient client = new RestClient();
-				ResponseEntity<String> response = null;
-				try {
-					response = profileRestClientService.campaignSingUp(campaign);
-					logger.debug("Campaign mail send response- "+ response.getBody());
-
-				}catch(HttpStatusCodeException  e){
-					logger.info("test failure - " + e.getStatusCode());
-				} catch (JsonProcessingException e) {
-				}catch(Exception e){
-				}
-
-			}}catch(Exception e){
-				logger.error("Unable to save campaign data-"+ e.getMessage());
-			}
-
-		return "SUCCESS";
-	}
+		databaseEntryManager.saveCampaignEntry(campaign);
 
 
-	@RequestMapping(value = "/closewindow", method = RequestMethod.GET)
-	public void windowClose(HttpServletRequest request,HttpServletResponse response, HttpSession session) {
-		logger.info("Window closed... clear all session...");
-		session.removeAttribute("loggedSession");
-		session.removeAttribute("token");
-		session.removeAttribute("userid");
-		session.removeAttribute("email");
+		// CAll to send mail from rest api
+		//				RestClient client = new RestClient();
+		ResponseEntity<String> response = null;
+		try {
+		    response = profileRestClientService.campaignSingUp(campaign);
+		    logger.debug("Campaign mail send response- "+ response.getBody());
 
-		try{
-			/*logger.info("Clear loggin data from servlet context...");
+		}catch(HttpStatusCodeException  e){
+		    logger.info("test failure - " + e.getStatusCode());
+		} catch (JsonProcessingException e) {
+		}catch(Exception e){
+		}
+
+	    }}catch(Exception e){
+		logger.error("Unable to save campaign data-"+ e.getMessage());
+	    }
+
+	return "SUCCESS";
+    }
+
+
+    @RequestMapping(value = "/closewindow", method = RequestMethod.GET)
+    public void windowClose(HttpServletRequest request,HttpServletResponse response, HttpSession session) {
+	logger.info("Window closed... clear all session...");
+	session.removeAttribute("loggedSession");
+	session.removeAttribute("token");
+	session.removeAttribute("userid");
+	session.removeAttribute("email");
+
+	try{
+	    /*logger.info("Clear loggin data from servlet context...");
 			ServletContext servletContext =request.getSession().getServletContext().getContext("/{applicationContextRoot}");
 			servletContext.removeAttribute("loggedSession");
 			servletContext.removeAttribute("token");
 			servletContext.removeAttribute("userid");
 			servletContext.removeAttribute("email");*/
 
-			Cookie ssokCookie = new Cookie("loggedSession", "");
-			ssokCookie.setMaxAge(0);
-			ssokCookie.setPath("/");
-			response.addCookie(ssokCookie);
+	    Cookie ssokCookie;
+	    /* ssokCookie = new Cookie("loggedSession", "");
+	    ssokCookie.setMaxAge(0);
+	    ssokCookie.setPath("/");
+	    response.addCookie(ssokCookie);
+	    
+	    ssokCookie = new Cookie("email", "");
+	    ssokCookie.setMaxAge(0);
+	    ssokCookie.setPath("/");
+	    response.addCookie(ssokCookie);
+	    
+	    ssokCookie = new Cookie("userid", "");
+	    ssokCookie.setMaxAge(0);
+	    ssokCookie.setPath("/");*/
+	    
+	    ssokCookie = new Cookie("token", "");
+	    ssokCookie.setMaxAge(0);
+	    ssokCookie.setPath("/");
+	    /* 
+	    ssokCookie = new Cookie("mf_user", "");
+	    ssokCookie.setMaxAge(0);
+	    ssokCookie.setPath("/");*/
 
-			ssokCookie = new Cookie("email", "");
-			ssokCookie.setMaxAge(0);
-			ssokCookie.setPath("/");
-			response.addCookie(ssokCookie);
-
-			ssokCookie = new Cookie("userid", "");
-			ssokCookie.setMaxAge(0);
-			ssokCookie.setPath("/");
+	    response.addCookie(ssokCookie);
 
 
 
-			response.addCookie(ssokCookie);
-
-
-
-		}catch(Exception e){
-			System.out.println("Error removing session data from cookie during window close..");
-
-		}
-		session.invalidate();
-
+	}catch(Exception e){
+	    System.out.println("Error removing session data from cookie during window close..");
 
 	}
-
-	@ModelAttribute("blogList")
-	public Map<String, String> getBlogList() {
-		Map<String, String> investmentType = new HashMap<String, String>();
-		investmentType.put("why-insurance", "Why insurance?");
-		investmentType.put("all-about-life-insurance", "All About Life Insurance");
-		return investmentType;
-	}
-	@ModelAttribute("contactType")
-	public Map<String, String> getContactType() {
-		Map<String, String> contactType = new HashMap<String, String>();
-		contactType.put("Feedback", "Feedback");
-		contactType.put("Customer Service", "Customer Service");
-		contactType.put("Suggestions", "Suggestions");
-		return contactType;
-	}
+	session.invalidate();
 
 
-	/*	public static void main(String[] args){
+    }
+
+    @ModelAttribute("blogList")
+    public Map<String, String> getBlogList() {
+	Map<String, String> investmentType = new HashMap<String, String>();
+	investmentType.put("why-insurance", "Why insurance?");
+	investmentType.put("all-about-life-insurance", "All About Life Insurance");
+	return investmentType;
+    }
+    @ModelAttribute("contactType")
+    public Map<String, String> getContactType() {
+	Map<String, String> contactType = new HashMap<String, String>();
+	contactType.put("Feedback", "Feedback");
+	contactType.put("Customer Service", "Customer Service");
+	contactType.put("Suggestions", "Suggestions");
+	return contactType;
+    }
+
+
+    /*	public static void main(String[] args){
 		try {
 			logger.info(InetAddress.getLocalHost().getHostAddress());
 		} catch (UnknownHostException e) {
@@ -1006,66 +1031,63 @@ public class HomeController {
 	}*/
 
 
-	@RequestMapping(value = "/downloadPDF", method = RequestMethod.GET)
-	public ModelAndView downloadExcel() {
-		// create some sample data
-		System.out.println("PDF view");
-		List<Folios> folioList = new ArrayList<Folios>();
-		Folios f1 = new Folios();
-		f1.setFolio_No("sdfsdfsd");
-		f1.setInvestorName("adadad");
+    @RequestMapping(value = "/downloadPDF", method = RequestMethod.GET)
+    public ModelAndView downloadExcel() {
+	// create some sample data
+	System.out.println("PDF view");
+	List<Folios> folioList = new ArrayList<Folios>();
+	Folios f1 = new Folios();
+	f1.setFolio_No("sdfsdfsd");
+	f1.setInvestorName("adadad");
 
-		// return a view which will be resolved by an excel view resolver
-		return new ModelAndView("pdfView", "folioList", folioList);
-	}
+	// return a view which will be resolved by an excel view resolver
+	return new ModelAndView("pdfView", "folioList", folioList);
+    }
 
 
-	@RequestMapping(value = "/mailer/unsubscribe", method = RequestMethod.GET)
-	public ModelAndView unsubscribeUserFormMailer(@Param("id") String emailid,@Param("c") String mailer_categorym,HttpServletRequest request, HttpServletResponse response) {
-		// create some sample data
-		logger.info("Unsubscribe user from mailer request received");
-		EmailUnsubscribeForm unsubscribeform = new EmailUnsubscribeForm();
+    @RequestMapping(value = "/mailer/unsubscribe", method = RequestMethod.GET)
+    public ModelAndView unsubscribeUserFormMailer(@Param("id") String emailid,@Param("c") String mailer_categorym,HttpServletRequest request, HttpServletResponse response) {
+	// create some sample data
+	logger.info("Unsubscribe user from mailer request received");
+	EmailUnsubscribeForm unsubscribeform = new EmailUnsubscribeForm();
 
-		// return a view which will be resolved by an excel view resolver
-		return new ModelAndView("email-unsubscribe", "unsubscribeform", unsubscribeform);
-	}
+	// return a view which will be resolved by an excel view resolver
+	return new ModelAndView("email-unsubscribe", "unsubscribeform", unsubscribeform);
+    }
 
-	@RequestMapping(value = "/mailer/unsubscribe.do", method = RequestMethod.POST)
-	public String unsubscribeUserFormMailerDo(@ModelAttribute("unsubscribeform") EmailUnsubscribeForm form, HttpServletRequest request, HttpServletResponse response, RedirectAttributes attrs) {
-		// create some sample data
-		logger.info("Unsubscribe user from mailer request received do controller");
+    @RequestMapping(value = "/mailer/unsubscribe.do", method = RequestMethod.POST)
+    public String unsubscribeUserFormMailerDo(@ModelAttribute("unsubscribeform") EmailUnsubscribeForm form, HttpServletRequest request, HttpServletResponse response, RedirectAttributes attrs) {
+	// create some sample data
+	logger.info("Unsubscribe user from mailer request received do controller");
 
-		attrs.addAttribute("emailid", form.getEmail());
-		return "redirect:/mailer/unsubscribe-complete";
-	}
+	attrs.addAttribute("emailid", form.getEmail());
+	return "redirect:/mailer/unsubscribe-complete";
+    }
 
-	@RequestMapping(value = "/mailer/unsubscribe-complete", method = RequestMethod.GET)
-	public String unsubscribeUserFormMailerDo(@ModelAttribute("emailid") String emailid, Model map, HttpServletRequest request, HttpServletResponse response) {
-		// create some sample data
-		logger.info("Unsubscribe user from mailer request complete for - "+ emailid);
+    @RequestMapping(value = "/mailer/unsubscribe-complete", method = RequestMethod.GET)
+    public String unsubscribeUserFormMailerDo(@ModelAttribute("emailid") String emailid, Model map, HttpServletRequest request, HttpServletResponse response) {
+	// create some sample data
+	logger.info("Unsubscribe user from mailer request complete for - "+ emailid);
 
-		map.addAttribute("emailid", emailid);
-		return "email-unsubscribe-complete";
-	}
+	map.addAttribute("emailid", emailid);
+	return "email-unsubscribe-complete";
+    }
 
-	private Cookie setSessionCookie(String cookieName, String cookieValue){
-		logger.info("Setting session cookie- "+ cookieName);
-		Cookie ssoCookie = new Cookie(cookieName,cookieValue);
-		ssoCookie.setPath("/");
-		//		String httpOnly = env.getProperty("server.session.cookie.http-only");
-		//		System.out.println(httpOnly.equalsIgnoreCase("true")?"HTTPONLY": "NOT HTTPO");
-		// adding the cookie to the HttpResponse
-		//		System.out.println(env.getProperty("server.session.cookie.http-only"));
-		ssoCookie.setMaxAge(Integer.valueOf(env.getProperty("server.session.cookie.max-age")));
-		ssoCookie.setSecure(env.getProperty("server.session.cookie.secure").equalsIgnoreCase("true")?true:false);
-		ssoCookie.setHttpOnly(env.getProperty("server.session.cookie.http-only").equalsIgnoreCase("true")?true:false);
-		//		ssoCookie.setDomain(env.getProperty("server.session.cookie.domain"));
-		return ssoCookie;
-	}
+    private Cookie setSessionCookie(String cookieName, String cookieValue, boolean httponly){
+	logger.info("Setting session cookie- "+ cookieName);
+	Cookie ssoCookie = new Cookie(cookieName,cookieValue);
+	ssoCookie.setPath("/");
+	ssoCookie.setMaxAge(Integer.valueOf(env.getProperty("server.session.cookie.max-age")));
+	ssoCookie.setSecure(env.getProperty("server.session.cookie.secure").equalsIgnoreCase("true")?true:false);
+	ssoCookie.setHttpOnly(httponly);
+	ssoCookie.setDomain(env.getProperty("server.session.cookie.domain"));
+	ssoCookie.setComment(";SameSite=Strict");
+	return ssoCookie;
+    }
 
 
 
-	/*	private Map<String, String> blogLinks(){
+    /*	private Map<String, String> blogLinks(){
 		Map<String, String> blogs = new HashMap<String,String>();
 		blogs.put("Why Insuracne??", "/products/blogs/why-insurance");
 		blogs.put("All about life insurance", "/products/blogs/why-insurance");
@@ -1074,9 +1096,9 @@ public class HomeController {
 
 
 	}
-	 */
+     */
 
-	/*@RequestMapping(value = "/products/error", method = RequestMethod.GET)
+    /*@RequestMapping(value = "/products/error", method = RequestMethod.GET)
 	    public ModelAndView renderErrorPage(HttpServletRequest httpRequest) {
 
 	        ModelAndView errorPage = new ModelAndView("errorPage");

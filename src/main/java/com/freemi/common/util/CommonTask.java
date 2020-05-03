@@ -89,7 +89,11 @@ public class CommonTask {
 		return Long.toString((Math.abs(UUID.randomUUID().getMostSignificantBits())));
 	}
 	
-	 public static String encryptPassword(String plaintext){
+	public static String generateRegistryTransactionID(){
+		return "R-" + Long.toString((Math.abs(UUID.randomUUID().getMostSignificantBits()))).substring(0, 10);
+	}
+	
+	 public static String encryptText(String plaintext){
 		TextEncryptor t = Encryptors.text(CommonConstants.ENCRYPTION_SECUENCE, CommonConstants.ENCRYPTION_SALT);
 		String s="NA";
 		try {
@@ -100,7 +104,7 @@ public class CommonTask {
 		return s;
 	}
 	 
-	 public static String decryptPassword(String encryptedText){
+	 public static String decryptText(String encryptedText){
 		TextEncryptor t = Encryptors.text(CommonConstants.ENCRYPTION_SECUENCE, CommonConstants.ENCRYPTION_SALT);
 		
 		String s="NA";

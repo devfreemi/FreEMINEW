@@ -568,14 +568,15 @@ background: linear-gradient(to right, #1CB5E0, #000046); W3C, IE 10+/ Edge, Fire
 }
 
 .purchase-form {
-	background: aliceblue;
-	padding: 15px;
-	font-size: 12px;
+	margin: auto;
+    box-shadow: 0 0 5px 0px #a8a3a3;
+    border-radius: 5px;
 }
 
 .purchase-form h5 {
 	border-bottom: 1px solid;
 	color: #ef513f;
+	font-weight: 400;
 }
 
 .col-form-label {

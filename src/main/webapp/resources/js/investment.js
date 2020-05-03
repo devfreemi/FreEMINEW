@@ -1,6 +1,6 @@
+//console.log = function(){};
 var mfdatapulled=false;
 var mfdatainprogress=false;
-//console.log = function(){};
 
 function AdditionalPurchase(folio,code,type,rtaAgent,productCode){
 	if(folio == 'NEW'){
@@ -31,6 +31,7 @@ function completePendingPayments(){
 		},
 		async: true,
 		datatype: "json",
+		contentType: "application/json",
 		beforeSend: function() {
 			showtaskProgress("pendinglink");
 		}
@@ -238,7 +239,7 @@ function createmfdataView(result){
 
 //		Add some text to the new cells:
 
-		cell1.innerHTML =  "<img src=\"https:\/\/resources.freemi.in\/products\/resources\/images\/partnerlogo\/mf\/"+data[i].amcicon+"\" class=\"img-fluid\" style=\"width: 3rem; float: left;\" >" +data[i].fundName ;
+		cell1.innerHTML =  "<img src=\"https:\/\/resources.freemi.in\/products\/resources\/images\/partnerlogo\/mf\/"+data[i].amcicon+"\" class=\"img-fluid mr-2\" style=\"width: 3rem; float: left;\" >" +data[i].fundName ;
 		cell2.innerHTML = Number(data[i].collaboratedAmount).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
 
 		if(Number(data[i].collaboratedMarketValue)>Number(data[i].collaboratedAmount) ){
@@ -252,7 +253,7 @@ function createmfdataView(result){
 			cell3.innerHTML = "<span class='grey-text'>"+convertNumberToIndianFormat(Number(data[i].collaboratedMarketValue).toFixed(2))+"</span>";
 		}
 
-		cell4.innerHTML = "<a class=\"\" data-toggle=\"collapse\" href=\"#collapse"+i+"\" role=\"button\" aria-expanded=\"false\" aria-controls=\"collapse"+i+"\"> <span class=\"fas fa-chevron-right\" id=\"rotate\"></span></a>";
+		cell4.innerHTML = "<a class=\"collapsed\" data-toggle=\"collapse\" href=\"#collapse"+i+"\" role=\"button\" aria-expanded=\"false\" aria-controls=\"collapse"+i+"\"> <span class=\"fas fa-chevron-down\" id=\"rotate\"></span></a>";
 
 		var innerrow = table.insertRow();
 		var cell11 = innerrow.insertCell(0);
@@ -337,7 +338,7 @@ function createmfdataView(result){
 			amcfoliodesc.insertCell(5).appendChild(div2);
 
 			var button1 = document.createElement("button");
-			button1.setAttribute("class","btn btn-secondary dropdown-toggle btn-sm");
+			button1.setAttribute("class","btn btn-secondary dropdown-toggle btn-sm ");
 			button1.setAttribute("data-toggle","dropdown");
 			button1.setAttribute("aria-haspopup","true");
 			button1.setAttribute("aria-expanded","false");

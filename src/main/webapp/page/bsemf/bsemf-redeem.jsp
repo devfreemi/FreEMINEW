@@ -46,6 +46,6 @@
 	<jsp:include page="./disclaimer.jsp"></jsp:include>
 </body>
 
-<script src="<c:url value="${contextPath}/resources/js/bseredeem.js" />" async="async"></script>
+<script src="<c:url value="${contextPath}/resources/js/bseredeem.js" />" async="true"></script>
 
 </html>

@@ -10,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Proxy;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -29,6 +31,12 @@ public class SelectMFFund implements Serializable {
 	@NotEmpty(message="Client ID not found.")
 	@Column(name="CLIENT_ID")
 	private String clientID;
+	
+	@Column(name="PRODUCT_TYPE")
+	private String producttype="MUTUAL_FUND";
+	
+	@Column(name="PRODUCT_REFERENCE_ID")
+	private String productrefid;
 	
 	@NotEmpty(message="Scheme code is missing.")
 	@Column(name="SCHEME_CODE")
@@ -66,7 +74,8 @@ public class SelectMFFund implements Serializable {
 	@Transient
 	@Column(name="")
 	private String schemeType;
-	
+
+	@NotNull(message= "Please provide investment amount") @Min(value = 100,message = "Minimum investment amount is Rs.100")
 	@Column(name="INVEST_AMOUNT")
 	private double investAmount;
 	
@@ -118,7 +127,7 @@ public class SelectMFFund implements Serializable {
 	private String bseRefNo;
 	
 	@Column(name="SIP_MANDATE_CATEGORY")
-	private String mandateType="";
+	private String mandateType="I";
 	
 	@Column(name="MANDATE_ID")
 	private String mandateId;
@@ -494,6 +503,22 @@ public class SelectMFFund implements Serializable {
 
 	public static long getSerialversionuid() {
 	    return serialVersionUID;
+	}
+
+	public String getProducttype() {
+	    return producttype;
+	}
+
+	public void setProducttype(String producttype) {
+	    this.producttype = producttype;
+	}
+
+	public String getProductrefid() {
+	    return productrefid;
+	}
+
+	public void setProductrefid(String productrefid) {
+	    this.productrefid = productrefid;
 	}
 	
 	

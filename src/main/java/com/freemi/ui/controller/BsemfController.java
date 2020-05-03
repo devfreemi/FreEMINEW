@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import javax.websocket.server.PathParam;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
@@ -32,6 +33,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mobile.device.Device;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -85,6 +87,9 @@ import com.freemi.services.interfaces.BseEntryManager;
 import com.freemi.services.interfaces.InvestmentConnectorBseInterface;
 import com.freemi.services.interfaces.MailSenderInterface;
 import com.freemi.services.interfaces.ProfileRestClientService;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.mysql.fabric.xmlrpc.base.Array;
 
 @Controller
 @Scope("session")
@@ -150,7 +155,7 @@ public class BsemfController {
 
 		session.setAttribute("NEXT_URL", "/mutual-funds/purchase");
 		redirectAttrs.addAttribute("ref", URLEncoder.encode(request.getRequestURL().toString(), StandardCharsets.UTF_8.toString()));
-		returnUrl = "redirect:/login?mf=00&id="+ CommonTask.encryptPassword(selectedFund.getMobile()); // Already existing customer, just login and fetch customer details
+		returnUrl = "redirect:/login?mf=00&id="+ CommonTask.encryptText(selectedFund.getMobile()); // Already existing customer, just login and fetch customer details
 		customertype="EXISTING";
 		redirectAttrs.addFlashAttribute("uid", selectedFund.getMobile());
 
@@ -197,7 +202,7 @@ public class BsemfController {
 			returnUrl = "redirect:/mutual-funds/register?mf=01";
 			customertype="LOGGED_NEW_CUSTOMER";
 		    } else {
-			returnUrl = "redirect:/login?mf=01&id="+ CommonTask.encryptPassword(selectedFund.getMobile()); // User exist in LDAP, so just need to register MF profile, do not create profile
+			returnUrl = "redirect:/login?mf=01&id="+ CommonTask.encryptText(selectedFund.getMobile()); // User exist in LDAP, so just need to register MF profile, do not create profile
 			customertype="LOGGED_NEW_CUSTOMER";
 		    }
 
@@ -1233,9 +1238,14 @@ public class BsemfController {
 		    logger.info("purchaseBseMfAfterLogin(): Total emdandates fetched-  " + mandate.size());
 		    if (mandate.size() > 0 && mandate.get(0).isMandateComplete()) {
 			logger.info("purchaseBseMfAfterLogin(): Emandate found for current customer.");
-			selectedFund.setMandateType(mandate.get(0).getMandateType());
+			selectedFund.setMandateType("I");
 			selectedFund.seteMandateRegRequired(false);
 			selectedFund.setMandateId(mandate.get(0).getMandateId());
+			List<String> manadates = new ArrayList<String>(); 
+			for(int i=0;i<mandate.size();i++) {
+			    manadates.add(mandate.get(i).getMandateId());
+			}
+			map.addAttribute("allmandates", manadates);
 		    } else {
 			logger.info("purchaseBseMfAfterLogin(): No emnadate found for customer..");
 			selectedFund.seteMandateRegRequired(true);
@@ -1273,8 +1283,8 @@ public class BsemfController {
 	    map.addAttribute("GETDATA", "S");
 
 	    map.addAttribute("paymentMethod", InvestFormConstants.bsePaymentMethod);
-	    map.addAttribute("calendarmonths", InvestFormConstants.bseInvestMonths);
-	    map.addAttribute("sipyear", InvestFormConstants.bseInvestStartYear);
+//	    map.addAttribute("calendarmonths", InvestFormConstants.bseInvestMonths);
+//	    map.addAttribute("sipyear", InvestFormConstants.bseInvestStartYear);
 	    map.addAttribute("selectedFund", selectedFund);
 
 	} catch (Exception e) {
@@ -1303,40 +1313,39 @@ public class BsemfController {
 	logger.info("@@ BSE MF STAR purchase confirm controller @@");
 	String returnUrl = "redirect:/mutual-funds/bse-transaction-status";
 	map.addAttribute("GETDATA", "S");
-
-	logger.info("purchaseConfirmPost(): Client ID - " + selectedFund.getClientID());
-	logger.info("purchaseConfirmPost(): Pay first install? " + selectedFund.isPayFirstInstallment());
+	logger.info("purchaseConfirmPost(): Client ID - " + selectedFund.getClientID() + " : mobile- "+ selectedFund.getMobile());
+	
 	TransactionStatus transationResult = new TransactionStatus();
 	String mandateId = "";
 	boolean mandareGenerated = false;
-
+	map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
+	
 	if (bindResult.hasErrors()) {
 	    map.addAttribute("errormsg", bindResult.getFieldError().getDefaultMessage());
 	    map.addAttribute("paymentMethod", InvestFormConstants.bsePaymentMethod);
-	    map.addAttribute("calendarmonths", InvestFormConstants.bseInvestMonths);
-	    map.addAttribute("sipyear", InvestFormConstants.bseInvestStartYear);
 	    map.addAttribute("selectedFund", selectedFund);
 
 	    return "bsemf/bse-mf-purchase";
 	}
+	
+	try {
+	
+	if( session.getAttribute("token")!=null && session.getAttribute("userid")!=null && session.getAttribute("userid").toString().equalsIgnoreCase(selectedFund.getMobile())) {
 
-	logger.info("Selected scheme code for purchase- " + selectedFund.getSchemeCode());
+	logger.info("Selected scheme type- " +selectedFund.getInvCategory() + " --> (G)"+   selectedFund.getSchemeCode() + " ->(R) "+ selectedFund.getReinvSchemeCode());
 
-
-	//		Check customer status before carrying out transaction - 
+//	Check customer status before carrying out transaction - 
 	String profileStatus=bseEntryManager.investmentProfileStatus(selectedFund.getMobile());
 	logger.info("purchaseConfirmPost(): Profile status of customer- "+ selectedFund.getMobile() + " : "+ profileStatus);
 
 	if(profileStatus.equals("PROFILE_READY")) {
 
 	    map.addAttribute("REG_COMPLETE", "Y");
+	    selectedFund.setSchemeOptionType(selectedFund.getInvCategory());
 
 	    // set sip date if chosen
 	    // boolean f = Integer.valueOf(selectedFund.getSipStartMonth())<10;
 	    if (selectedFund.getInvestype().equalsIgnoreCase("SIP")) {
-
-		// logger.info(combineDate);
-		// validate date if prioor to today -todo
 
 		try {
 		    String combineDate = (selectedFund.getSipDate().length() == 1 ? "0" + selectedFund.getSipDate(): selectedFund.getSipDate())
@@ -1350,13 +1359,9 @@ public class BsemfController {
 		    logger.error("Failed to convert date to required format for SIP.", e);
 		    map.addAttribute("errormsg", "Failed to process the date!");
 		    map.addAttribute("paymentMethod", InvestFormConstants.bsePaymentMethod);
-		    map.addAttribute("calendarmonths", InvestFormConstants.bseInvestMonths);
-		    map.addAttribute("sipyear", InvestFormConstants.bseInvestStartYear);
 		    map.addAttribute("selectedFund", selectedFund);
 		    return "bsemf/bse-mf-purchase";
 		}
-		// selectedFund.setNoOfInstallments(60); //Default SIP installments to 5 years
-		// -- todo dynamic
 		logger.info("Is emandate registration required?- " + selectedFund.iseMandateRegRequired());
 		// Get MANDATE ID
 		if (selectedFund.iseMandateRegRequired()) {
@@ -1372,25 +1377,11 @@ public class BsemfController {
 				+ selectedFund.getClientID() + " .Mandate ID generater-"
 				+ emandateResponse.getResponseCode());
 			redirectAttrs.addFlashAttribute("EMANDATE_STATUS", "S");
-			/*
-						} else {
-							logger.info("Failed to generate emandate...");
-							// redirectAttrs.addFlashAttribute("EMANDATE_STATUS", "F");
-							map.addAttribute("errormsg","Mandate registration failed for- " + emandateResponse.getRemarks());
-							map.addAttribute("paymentMethod", InvestFormConstants.bsePaymentMethod);
-							map.addAttribute("calendarmonths", InvestFormConstants.bseInvestMonths);
-							map.addAttribute("sipyear", InvestFormConstants.bseInvestStartYear);
-							map.addAttribute("selectedFund", selectedFund);
-							return "bsemf/bse-mf-purchase";
-						}*/
 		    } else {
 			logger.info("emandate response is null... Returning to confirm page with error..");
 			redirectAttrs.addFlashAttribute("EMANDATE_STATUS", "F");
 			map.addAttribute("errormsg","Mandate registration failed for- " + (emandateResponse!=null?emandateResponse.getRemarks():"No response" ));
-//			map.addAttribute("errormsg","Error processing your mandate. SIP registration aborted. Kindly try again.");
 			map.addAttribute("paymentMethod", InvestFormConstants.bsePaymentMethod);
-			map.addAttribute("calendarmonths", InvestFormConstants.bseInvestMonths);
-			map.addAttribute("sipyear", InvestFormConstants.bseInvestStartYear);
 			map.addAttribute("selectedFund", selectedFund);
 			return "bsemf/bse-mf-purchase";
 		    }
@@ -1398,22 +1389,22 @@ public class BsemfController {
 		    transationResult.setEmandateStatusCode(emandateResponse.getStatusCode());
 		    transationResult.setEmandateRegisterRemark(emandateResponse.getRemarks());
 		} else {
-		    logger.info("Emandate not required. Skipping the request. Get existing mandate ID for client."
-			    + selectedFund.getClientID());
-		    mandateId = bseEntryManager.getEmdandateDetails(selectedFund.getMobile(), selectedFund.getClientID(),
+		    
+		    logger.info("Emandate not required. Skipping the request. Get existing mandate ID for client." + selectedFund.getClientID());
+			    /*
+			    mandateId = bseEntryManager.getEmdandateDetails(selectedFund.getMobile(), selectedFund.getClientID(),
 			    selectedFund.getMandateType(), null);
-		    logger.info("Exisitng mandate ID for client- " + mandateId);
-		    if (mandateId == null) {
-			map.addAttribute("errormsg", "Unable to fetch your registered mandate details..");
-			map.addAttribute("paymentMethod", InvestFormConstants.bsePaymentMethod);
-			map.addAttribute("calendarmonths", InvestFormConstants.bseInvestMonths);
-			map.addAttribute("sipyear", InvestFormConstants.bseInvestStartYear);
-			map.addAttribute("selectedFund", selectedFund);
-			return "bsemf/bse-mf-purchase";
-		    } else {
-			redirectAttrs.addFlashAttribute("EMANDATE_STATUS", "AVAILABLE");
-		    }
-
+			    logger.info("Exisitng mandate ID for client- " + mandateId);
+			    if (mandateId == null) {
+			    map.addAttribute("errormsg", "Unable to fetch your registered mandate details..");
+			    map.addAttribute("paymentMethod", InvestFormConstants.bsePaymentMethod);
+			    map.addAttribute("selectedFund", selectedFund);
+			    return "bsemf/bse-mf-purchase";
+			    } else {
+			    redirectAttrs.addFlashAttribute("EMANDATE_STATUS", "AVAILABLE");
+			    }*/
+		    mandateId = selectedFund.getMandateId();
+		    logger.info("Mandate ID form form- "+ mandateId);
 		}
 
 	    } else {
@@ -1427,6 +1418,7 @@ public class BsemfController {
 
 		if (selectedFund.getInvestype().equalsIgnoreCase("SIP")) {
 		    logger.info("Transaction is SIP based...");
+		    logger.info("purchaseConfirmPost(): Pay first install? " + selectedFund.isPayFirstInstallment());
 		    if ((selectedFund.iseMandateRegRequired() && mandareGenerated)
 			    || (!selectedFund.iseMandateRegRequired())) {
 			logger.info("Processing SIP order ...");
@@ -1434,7 +1426,7 @@ public class BsemfController {
 			transationResult = bseEntryManager.savetransactionDetails(selectedFund, mandateId);
 			logger.info("Customer purchase transaction status for SIP- " + transationResult.getSuccessFlag());
 		    } else {
-			logger.info("Skippiing transation process as failed to generate EMANDATE...");
+			logger.info("Skipping transation process as failed to generate EMANDATE...");
 		    }
 		} else {
 		    logger.info("Transaction is LUMSUM BASED. Carry out transaction staright forward..");
@@ -1445,7 +1437,6 @@ public class BsemfController {
 
 		    try {
 			// Trigger transaction mailer
-
 			MFCustomers userDetails = bseEntryManager.getCustomerInvestFormData(
 				session.getAttribute("userid") != null ? session.getAttribute("userid").toString()
 					: selectedFund.getMobile());
@@ -1493,12 +1484,8 @@ public class BsemfController {
 
 		logger.error("Unable to save customer transaction request", e);
 
-		// redirectAttrs.addAttribute("TRANS_STATUS", "N");
-
 		map.addAttribute("errormsg", "Internal error! Kindly contact admin to help resolve your issue.");
 		map.addAttribute("paymentMethod", InvestFormConstants.bsePaymentMethod);
-		map.addAttribute("calendarmonths", InvestFormConstants.bseInvestMonths);
-		map.addAttribute("sipyear", InvestFormConstants.bseInvestStartYear);
 		map.addAttribute("selectedFund", selectedFund);
 		return "bsemf/bse-mf-purchase";
 
@@ -1509,18 +1496,23 @@ public class BsemfController {
 	}else {
 
 	    logger.info("Customer profile is not yet ready for transaction. Need to complete Profile first");
-
-	    map.addAttribute("errormsg", "Profile registration is not complete. Transaction prohibited.");
-
+	    map.addAttribute("REG_COMPLETE", "N");
+	    map.addAttribute("errormsg", "Your Mutual Account registration is not complete. Visit your dashboard and complete your registration to be enable to transact");
 	    map.addAttribute("paymentMethod", InvestFormConstants.bsePaymentMethod);
-	    map.addAttribute("calendarmonths", InvestFormConstants.bseInvestMonths);
-	    map.addAttribute("sipyear", InvestFormConstants.bseInvestStartYear);
 	    map.addAttribute("selectedFund", selectedFund);
 	    return "bsemf/bse-mf-purchase";
 	}
+	}else {
+	    logger.info("BSE purchase session data and form mobile no mismatches. Request denied. "+ selectedFund.getMobile() + " -->session user --> "+ session.getAttribute("userid")!=null?session.getAttribute("userid").toString():"NULL");
+	    map.addAttribute("errormsg", "Mobile no mismatch for logged in user");
+	    returnUrl ="bsemf/bse-mf-purchase";
+	}
 
-
-
+	}catch(Exception e) {
+	    logger.error("ERROR PROCESSING PURCHASE: ",e );
+	    map.addAttribute("errormsg", "Error processing request. Please try after again.");
+	    returnUrl ="bsemf/bse-mf-purchase";
+	}
 	return returnUrl;
 
     }
@@ -2197,7 +2189,7 @@ public class BsemfController {
 
     @RequestMapping(value = "/mutual-funds/bse-transaction-complete", method = RequestMethod.GET)
     public String bseMFTransactionCallback(@RequestParam("orderid") String orderid,
-	    @RequestParam("client") String clientCode, Model map, HttpServletRequest request,
+	    @RequestParam("client") String clientid, Model map, HttpServletRequest request,
 	    HttpServletResponse response, HttpSession session) {
 
 	logger.info("bseMFTransactionCallback(): @@ BSE MF STAR purchase confirm controller after callback @@");
@@ -2208,6 +2200,8 @@ public class BsemfController {
 	 * logger.info("No session found for requesting user. Invalidating request");
 	 * returnUrl="redirect:/login"; }else{
 	 */
+	String clientCode = CommonTask.decryptText(clientid);
+	
 	if (orderid.equalsIgnoreCase("")) {
 	    logger.info("bseMFTransactionCallback(): Parameters data not found");
 	    returnUrl = "redirect:/";
@@ -2235,7 +2229,7 @@ public class BsemfController {
 	    // session.removeAttribute("purchaseForm");
 
 	    // session.invalidate();
-
+	    map.addAttribute("orderno", orderid);
 	    map.addAttribute("TRANS_STATUS", "COMPLETE");
 	    map.addAttribute("ORDER_STATUS", res.get(1));
 	}
@@ -2268,13 +2262,12 @@ public class BsemfController {
 	    if (transStatus.equalsIgnoreCase("Y") || transStatus.equalsIgnoreCase("SF")) {
 		logger.info("Proceeding to generate pay url for order id - " + transReport.getBseOrderNoFromResponse());
 		BseOrderPaymentRequest orderUrl = new BseOrderPaymentRequest();
-		orderUrl.setClientCode(clienCode);
+		orderUrl.setClientCode(CommonTask.encryptText(clienCode));
 		orderUrl.setMemberCode(CommonConstants.BSE_MEMBER_ID);
-		// orderUrl.setLogOutURL("http://localhost:8080/products/mutual-funds/bse-transaction-complete");
-
+	
 		Base64 base64 = new Base64();
 		String encodedClientCode = new String(base64.encode(clienCode.getBytes()));
-
+	
 		String callbackUrl = URI.create(request.getRequestURL().toString()).resolve(request.getContextPath())
 			.toString()
 			+ "/mutual-funds/bse-transaction-complete?orderid="
@@ -2283,10 +2276,10 @@ public class BsemfController {
 					: "NA");
 		logger.info("Callback url for payment- " + callbackUrl);
 		orderUrl.setLogOutURL(callbackUrl);
-		// orderUrl.setLogOutURL(Base64.encodeBase64String(callbackUrl.getBytes()));
 		BseOrderPaymentResponse orderUrlReponse = investmentConnectorBseInterface.getPaymentUrl(orderUrl);
 		map.addAttribute("orderUrl", orderUrlReponse);
 	    }
+	    
 	    logger.info("Emdanate status in case of SIP -" + emandateStatus);
 	    map.addAttribute("TRANS_STATUS", transStatus);
 	    map.addAttribute("TRANS_ID", transId);
@@ -2296,10 +2289,12 @@ public class BsemfController {
 	    map.addAttribute("TRANS_TYPE", transyType);
 	    map.addAttribute("FIRST_PAY", firstPayRequire);
 	    map.addAttribute("TRANSACTION_REPORT", transReport);
-
+	
 	    map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 	}
-
+	
+//	map.addAttribute("TRANS_STATUS", "Y");
+	
 	logger.info("bseMFTransactionStatus(): Return url- "+ returnUrl);
 	return returnUrl;
     }
@@ -2565,19 +2560,57 @@ public class BsemfController {
 
     }
     
-//    	map.addAttribute("holingNature", InvestFormConstants.holdingMode);
-//	map.addAttribute("dividendPayMode", InvestFormConstants.dividendPayMode);
-//	map.addAttribute("occupation", InvestFormConstants.occupationList);
-//	map.addAttribute("bankNames", InvestFormConstants.bankNames);
-//	map.addAttribute("accountTypes", InvestFormConstants.accountTypes);
-//	map.addAttribute("states", InvestFormConstants.states);
-//	map.addAttribute("wealthSource", InvestFormConstants.fatcaWealthSource);
-//	map.addAttribute("incomeSlab", InvestFormConstants.fatcaIncomeSlab);
-//	map.addAttribute("politicalView", InvestFormConstants.fatcaPoliticalView);
-//	map.addAttribute("occupationType", InvestFormConstants.fatcaOccupationType);
-//	map.addAttribute("nomineeRelation", InvestFormConstants.nomineeRelation);
-//	map.addAttribute("addressType", InvestFormConstants.fatcaAddressType);
+    
+//    @Scheduled(cron = "0 0 7 * * ?")
+    @RequestMapping(value = "/processallotmentstatement/{datedifference}", method = RequestMethod.GET)
+    @ResponseBody
+    public String getallotmentstatement(@PathVariable("datedifference") String datediff, Model map,
+	    HttpServletRequest request, HttpServletResponse response, HttpSession session,
+	    RedirectAttributes redirectAttributes) {
 
+	String str = allotmentstatementcall(datediff);
+
+
+	return  str;
+
+    }
+    
+    @Scheduled(cron = "0 0 23 * * ?")
+    public void scheduledgetallotmentstatement() {
+	allotmentstatementcall("0");
+    }
+
+
+    protected String allotmentstatementcall(String datediff) {
+	logger.info("getallotmentstatement(): Request received to process allotment statement for datediff: "+ datediff);
+	BseApiResponse resp = new BseApiResponse();
+	SimpleDateFormat dtfmt = new SimpleDateFormat("dd/MM/yyyy");
+	String str="NA";
+	
+	try {
+	    String todate = dtfmt.format(new Date());
+	    Calendar cal =Calendar.getInstance();
+	    cal.setTime(new Date());
+	    cal.add(Calendar.DAY_OF_MONTH, (-1)* Integer.valueOf(datediff!=null?datediff:"1"));
+	    String fromdate = dtfmt.format(cal.getTime());
+	    
+	    if(cal.after(todate)) {
+		logger.info("From date is future date, rquested rejetced");
+		str="FUTURE DATE Rejected.";
+	    }else {
+		logger.info("Querying: "+ fromdate + " --> "+ todate);
+		resp = bseEntryManager.extractAllotmentstatement(fromdate, todate, "VALID", "All", "All");
+		str = resp.getResponseCode() + " -> "+ resp.getRemarks();
+	    }
+	    
+	}catch(Exception e) {
+	    logger.error("Error Processing: ",e);
+	    str = e.getMessage();
+	}
+	return str;
+    }
+
+    
     @ModelAttribute("taxStatus")
     public Map<String, String> getTaxStatus() {
 	return  InvestFormConstants.taxStatus;
@@ -2659,6 +2692,15 @@ public class BsemfController {
     {
 	return InvestFormConstants.fatcaAddressType; 
     }
+    
+    @ModelAttribute("calendarmonths")
+    public Map<Integer, String> getcalendarmonths() {
+	return InvestFormConstants.bseInvestMonths;
+    }
+    @ModelAttribute("sipyear")
+    public Map<Integer, String> getsipyear() {
+	return InvestFormConstants.bseInvestStartYear;
+    }
 
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
@@ -2695,8 +2737,6 @@ public class BsemfController {
 	ModelAndView view = new ModelAndView(returnUrl);
 	return view;
     }
-
-
 
 
 

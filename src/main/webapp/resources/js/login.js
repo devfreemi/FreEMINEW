@@ -1,3 +1,4 @@
+//console.log = function() {}
 var otpsubmit=false;
 
 //jQuery time
@@ -9,7 +10,7 @@ var distance = 300000;
 var tokenexpired= false;
 
 function formOnLoad(){
-
+	$('input:checkbox').prop('checked', false);
 	validateForm();
 
 }
@@ -111,7 +112,7 @@ function submitLogin(e){
 			async: true,
 			datatype: "json",
 			beforeSend: function() {
-				disableButon();
+				displayprogress();
 			}
 		});
 
@@ -145,9 +146,16 @@ function submitLogin(e){
 
 		request.always(function(msg){
 //			console.log("first step request done- "+msg);
-			$("#loginspin").hide();
-			$("#loginbasic").show();
+			/*$("#loginspin").hide();
+			$("#loginbasic").show();*/
+//			$("#loginbasic").html("<i class='fas fa-lock'></i> Login</span>");
 			$("#loginsubmit").prop("disabled", false);
+			 /*if ($("#loginbasic").is(':checked')) {
+				  $("#loginbasic").html("<i class='fas fa-lock'></i> Get OTP</span>");
+			  }else{
+				  $("#loginbasic").html("<i class='fas fa-lock'></i> Login</span>");
+			  }*/
+			 loginfieldvalue("otplogin");
 		});
 
 	}else{
@@ -177,7 +185,7 @@ function submitLogin(e){
 			async: true,
 			datatype: "json",
 			beforeSend: function() {
-				disableButon();
+				displayprogress();
 			}
 		});
 
@@ -216,8 +224,9 @@ function submitLogin(e){
 
 			if(msg!='SUCCESS'){
 				$("#loginsubmit").prop("disabled", false);
-				$("#loginspin").hide();
-				$("#loginbasic").show();
+				/*$("#loginspin").hide();
+				$("#loginbasic").show();*/
+				  loginfieldvalue("otplogin");
 			}
 		});
 	}
@@ -256,9 +265,10 @@ function countDownTimer(){
 
 }
 
-function disableButon(){
-	$("#loginbasic").hide();
-	$("#loginspin").show();
+function displayprogress(){
+	/*$("#loginbasic").hide();
+	$("#loginspin").show();*/
+	$("#loginbasic").html("Please wait <i class='fas fa-spinner fa-spin'>");
 	$("#loginsubmit").prop("disabled", true);
 
 }
@@ -274,3 +284,20 @@ input.addEventListener("keyup", function(event) {
 	  }
 	});
 
+$('#otplogin').click(function() {
+//	console.log($(this).attr('id'));
+	loginfieldvalue($(this).attr('id'));
+	});
+
+function loginfieldvalue(elementname){
+//	console.log(elementname);
+	if(otpsubmit){
+		 $("#loginbasic").html("<i class='fas fa-lock'></i> Login</span>");
+	}else{
+	if ($("#"+elementname).is(':checked')) {
+		  $("#loginbasic").html("<i class='fas fa-lock'></i> Get OTP</span>");
+	  }else{
+		  $("#loginbasic").html("<i class='fas fa-lock'></i> Login</span>");
+	  }
+	}
+}

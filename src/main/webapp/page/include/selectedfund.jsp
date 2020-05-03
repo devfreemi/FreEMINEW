@@ -1,7 +1,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!-- Modal -->
-<div class="modal fade" id="myModal" role="dialog"
+<div class="modal fade" id="selectfundmodal" role="dialog"
 	style="padding-right: 0;">
 	<div class="modal-dialog">
 
@@ -63,16 +63,16 @@
 
 						<div class="btn-group btn-group-sm btn-group-toggle"
 							data-toggle="buttons" id="radioamount" style="padding-left: 2.5rem;">
-							<label class="btn btn-info active"> <input type="radio"
+							<label class="btn btn-info active" for="option1"> <input type="radio"
 								value="2000" name="options" id="option1" autocomplete="off">
 								2,000
-							</label> <label class="btn btn-info"> <input type="radio"
+							</label> <label class="btn btn-info" for="option2"> <input type="radio"
 								name="options" value="5000" id="option2" autocomplete="off">
 								5,000
-							</label> <label class="btn btn-info"> <input type="radio"
+							</label> <label class="btn btn-info" for="option3"> <input type="radio"
 								name="options" value="10000" id="option3" autocomplete="off">
 								10,000
-							</label> <label class="btn btn-info"> <input type="radio"
+							</label> <label class="btn btn-info" for="option4"> <input type="radio"
 								name="options" value="15000" id="option4" autocomplete="off">
 								15,000
 							</label>
@@ -111,7 +111,7 @@
 					</div>
 				</div>
 				<div class="modal-footer">
-					<form:button type="submit" class="btn rgba(244, 67, 54, 0.7) rgba-red-strong btn-sm btn-block">BUY NOW <i
+					<form:button type="submit" class="btn rgba(244, 67, 54, 0.7) rgba-red-strong btn-sm btn-block text-white" id="selectfundbtn">BUY NOW <i
 							class="fas fa-shopping-cart"></i>
 					</form:button>
 				</div>

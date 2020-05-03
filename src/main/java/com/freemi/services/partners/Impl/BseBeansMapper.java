@@ -2,6 +2,7 @@ package com.freemi.services.partners.Impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -24,6 +25,7 @@ import com.freemi.entity.bse.BseSipOrderEntry;
 import com.freemi.entity.bse.BseXipISipOrderEntry;
 import com.freemi.entity.database.UserBankDetails;
 import com.freemi.entity.investment.MFCustomers;
+import com.freemi.entity.investment.Allotmentstatement;
 import com.freemi.entity.investment.BseOrderEntryResponse;
 import com.freemi.entity.investment.SelectMFFund;
 
@@ -658,6 +660,110 @@ public class BseBeansMapper {
 	}
 
 	return response;
+    }
+
+
+    public static List<Allotmentstatement> allotmentstatementdata(String apiResponse){
+
+	List<Allotmentstatement> statement=null;
+	Allotmentstatement record;
+	SimpleDateFormat dbfmt = new SimpleDateFormat("yyyy-mm-dd");
+	SimpleDateFormat bsefmt1 = new SimpleDateFormat("dd/mm/yyyy");
+	try{
+	    if(apiResponse!=null && !apiResponse.isEmpty()) {
+
+		List<String> data = Arrays.asList(apiResponse.split("\\|"));
+
+		if(data.get(0).equals(CommonConstants.TASK_SUCCESS_S)) {
+		    logger.info("Allotment statement has data to proceed..");
+			int counter=0;
+			statement = new ArrayList<Allotmentstatement>();
+//			record = new Allotmentstatement();
+			
+			List<String> parseddata = new ArrayList<String>();
+			List<List<String>> accumulateddata = new ArrayList<List<String>>();
+			for(int i=2;i<data.size();i++) {
+			    
+			    counter+=1;
+			    parseddata.add(data.get(i));
+//			    System.out.print(data.get(i) + "-");
+			    if(counter%32==0) {
+				//   		        counter=1;
+				logger.info("Pasrsed line- "+ parseddata);
+				accumulateddata.add(parseddata);
+				parseddata = new ArrayList<String>();
+			    }
+			}
+			
+			logger.info("Total allotment statement records of the day-  "+ accumulateddata.size());
+			for(int j=0;j<accumulateddata.size();j++) {
+			    record = new Allotmentstatement();
+			    List<String> ex= accumulateddata.get(j);
+			    record.setAmountcheck(Double.valueOf(ex.get(0)));
+			    record.setAllottednav(Double.valueOf(ex.get(1)));
+			    record.setFoliono(ex.get(2));
+			    record.setSchemecode(ex.get(3));
+			    record.setAmount(Double.valueOf(ex.get(4)));
+			    record.setClientcode(ex.get(5));
+			    record.setAllottedunit(Double.valueOf(ex.get(6)));
+			    record.setBeneficiaryid(ex.get(7));
+			    record.setDpcflag(ex.get(8));
+			    record.setOrdertype(ex.get(9));
+			    record.setDptrans(ex.get(10));
+			    record.setMembercode(ex.get(11));
+			    record.setSettno(ex.get(12));
+			    record.setSetttype(ex.get(13));
+			    record.setEuin(ex.get(14));
+			    record.setSubordertype(ex.get(15));
+			    record.setEuindecl(ex.get(16));
+			    record.setInternalrefno(ex.get(17));
+			    record.setKycflag(ex.get(18));
+			    record.setRemarks(ex.get(19));
+			    record.setOrdertype2(ex.get(20));
+			    record.setSipregnno(ex.get(21));
+			    try {
+				record.setSipregndate(dbfmt.parse(dbfmt.format(bsefmt1.parse(ex.get(22)))));
+			    }catch(Exception e) {
+				logger.error("Allotmentstatemenet: Error parsing SIP reg date: ",e.getMessage());
+				record.setSipregndate(null);
+			    }
+			    
+			    record.setSubbrcode(ex.get(23));
+			    try {
+//				record.setOrderdate(dbfmt.parse(dbfmt.format(bsefmt.parse(ex.get(24)))));
+				record.setOrderdate(dbfmt.parse(ex.get(24)));
+			    }catch(Exception e) {
+				logger.error("Allotmentstatemenet: Error parsing order date: ",e.getMessage());
+				record.setOrderdate(null);
+			    }
+			    
+			    record.setRtaschemecode(ex.get(25));
+			    record.setValidflag(ex.get(26));
+			    record.setRtatransno(ex.get(27));
+			    record.setBeneficiary2(ex.get(28));
+			    try {
+//				record.setReportdate(dbfmt.parse(dbfmt.format(bsefmt.parse(ex.get(29)))));
+				record.setReportdate(dbfmt.parse(ex.get(29)));
+			    }catch(Exception e) {
+				logger.error("Allotmentstatemenet: Error parsing report date: ",e.getMessage());
+				record.setReportdate(null);
+			    }
+			    record.setIsin(ex.get(30));
+			    record.setQty(ex.get(31));
+			    statement.add(record);
+			}
+			 logger.info("Finished parsing allotment statement. Total records- "+ statement.size());
+		}else {
+		    logger.info("No records to process...");
+		}
+	    }else {
+		logger.info("Allotmentb statement response is blank. ");
+	    }
+	}catch(Exception e){
+	    logger.error("emandateRegResponseToBean(): Error while parsing BSE api response",e);
+	}
+
+	return statement;
     }
 
     /*	public static void main(String[] args ){

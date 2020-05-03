@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -371,7 +372,21 @@ public class ProfileManageController{
 		double totalAsset= 0.0;
 		double totalmarketVal= 0.0;
 		List<MfCollatedFundsView> listFunds = new ArrayList<MfCollatedFundsView>();
-
+		
+		try {
+		    Cookie[] cookies = request.getCookies();
+		    
+		     
+		    for (Cookie aCookie : cookies) {
+		        String name = aCookie.getName();
+		        String value = aCookie.getValue();
+		        System.out.println(name + " -> "+ value);
+		      
+		    }
+		}catch(Exception e) {
+		    logger.error("Error reading cookie",e);
+		}
+		
 		if(session.getAttribute("token") == null){
 			try {
 				returnurl="redirect:/login?ref="+ URLEncoder.encode(request.getRequestURL().toString(), StandardCharsets.UTF_8.toString());

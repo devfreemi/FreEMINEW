@@ -27,5 +27,7 @@ public interface BseRestClientService {
 	public String fatcaDeclaration(BseFatcaForm form);
 	public String panStatusCheck(String panNumber);
 	public String uploadAOF(BseAOFUploadRequest form);
+	public String getallotmentstatement(String fromdate, String todate, String orderstatus,
+		    String ordertype, String settlementtype);
 
 }

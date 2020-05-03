@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,6 +35,7 @@ import com.freemi.entity.bse.BseRegistrationMFD;
 import com.freemi.entity.bse.BseXipISipOrderEntry;
 import com.freemi.entity.database.UserBankDetails;
 import com.freemi.entity.investment.MFCustomers;
+import com.freemi.entity.investment.Allotmentstatement;
 import com.freemi.entity.investment.BseOrderEntryResponse;
 import com.freemi.entity.investment.SelectMFFund;
 import com.freemi.services.interfaces.BseRestClientService;
@@ -223,7 +225,7 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
     @Override
     public String BseOrderPaymentStatus(String clientId, String orderNo) {
 	logger.info("Get payment status fro payment order- "+ orderNo);
-	String response = "";
+	String response = "101|Failed to check status";
 	BseOrderPaymentResponse orderResponse = new BseOrderPaymentResponse();
 	if(env.getProperty(CommonConstants.BSE_ENABLED).equalsIgnoreCase("Y")){
 	    try{
@@ -395,6 +397,26 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 	    bseOrderResp.setBsereMarks("INV_DISABLED");
 	}
 	return bseOrderResp;
+    }
+
+    @Override
+    public List<Allotmentstatement> getAllotmentstatement(String fromdate, String todate, String orderstatus, String ordertype,
+	    String settlementtype) {
+	
+	List<Allotmentstatement> responsedata = null;
+	try {
+	    
+	    String response = bseRestClientService.getallotmentstatement(fromdate, todate, orderstatus, ordertype, settlementtype);
+	    if(response!=null ) {
+		responsedata= BseBeansMapper.allotmentstatementdata(response);
+	    }else {
+		logger.info("No respond to process..");
+	    }
+	}catch(Exception e) {
+	    logger.error("getAllotmentstatement(): Error processing request",e);
+	}
+	
+	return responsedata;
     }
 
     /*

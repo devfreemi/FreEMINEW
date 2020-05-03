@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,7 +29,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
-import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -49,10 +49,10 @@ import com.freemi.entity.general.RegistryChildEducation;
 import com.freemi.entity.general.RegistryOfficeExpense;
 import com.freemi.entity.general.RegistryRetirement;
 import com.freemi.entity.general.RegistryTravel;
-import com.freemi.entity.general.RegistryWish;
 import com.freemi.entity.investment.MFInvestForm;
 import com.freemi.entity.investment.MFInvestmentDates;
 import com.freemi.entity.investment.RegistryFunds;
+import com.freemi.entity.investment.RegistryWish;
 import com.freemi.services.interfaces.FreemiServiceInterface;
 import com.freemi.services.interfaces.ProfileRestClientService;
 
@@ -80,10 +80,10 @@ public class ProductsController {
 	public String registerUserGet(Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 		//logger.info("@@@@ Inside Login..");
 		logger.info("@@@@ Register page @@@@");
-		if(session.getAttribute("token") == null){
-		map.addAttribute("registerForm", new Registerform());
 		
 		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
+		if(session.getAttribute("token") == null){
+		    map.addAttribute("registerForm", new Registerform());
 		return "register";
 		}else{
 			logger.info("User session is already detected. Preventing another attempt of register.");
@@ -101,15 +101,17 @@ public class ProductsController {
 		logger.info("@@@@ Inside Register do registerUser()..");
 		
 		if(bindingResult.hasErrors()){
-			logger.info("Error in register form for user-  "+ registerForm.getMobile() + " : "+ registerForm.getEmail() +" : Error -" + bindingResult.getFieldError().getDefaultMessage());
+			logger.info("REGISTRATION FORM VALIDATION ERROR : user -  "+ registerForm.getMobile() + " : "+ registerForm.getEmail() +" : Error -" + bindingResult.getFieldError().getDefaultMessage());
 			model.addAttribute("error", bindingResult.getFieldError().getDefaultMessage());
 			model.addAttribute("registerForm", new Registerform());
 			return "register";
 		}
 		
+		try {
 		registerForm.setFullName(registerForm.getFname() + " "+ registerForm.getLname());
 		
 		HttpClientResponse httpResponse =  profileRestClientService.registerUser(registerForm,CommonTask.getClientSystemDetails(request));
+		logger.info("REGISTRATION STATUS : "+ registerForm.getMobile() + " : "+ httpResponse.getRetrunMessage() );
 		
 		if(httpResponse.getResponseCode() == CommonConstants.HTTP_CLIENT_CALL_SUCCESS) {
 			model.addAttribute("success",httpResponse.getRetrunMessage());
@@ -117,6 +119,11 @@ public class ProductsController {
 		}else {
 			model.addAttribute("error", httpResponse.getRetrunMessage());
 			model.addAttribute("registerForm", registerForm);
+		}
+		}catch(Exception e) {
+		    logger.error("REGISTRATION ERROR - Error processing registration request.",e);
+		    model.addAttribute("error","Failed to prrocess. Kindly try again.");
+		    model.addAttribute("registerForm", registerForm);
 		}
 		
 		return "register";
@@ -129,8 +136,51 @@ public class ProductsController {
 	}
 
 	@RequestMapping(value = "/registry", method = RequestMethod.GET)
-	public String registryReplaced(ModelMap model, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
-		return "redirect:/registry-mutual-funds";
+	public String registryReplaced(ModelMap map, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+//		return "redirect:/registry-mutual-funds";
+	    
+	   try{
+	List<ProductSchemeDetail> productlist = productSchemeDetailService.findForRegistryBirthDay();
+	List<ProductSchemeDetail> taxsavingSchemelist = productSchemeDetailService.findForTaxSaving();
+	List<ProductSchemeDetail> travelSchemelist = productSchemeDetailService.findForTravel();
+	
+	List<ProductSchemeDetail> birthDaytlist = new ArrayList<ProductSchemeDetail>();
+	List<ProductSchemeDetail> annivesarylist = new ArrayList<ProductSchemeDetail>();
+	List<ProductSchemeDetail> taxsavinglist = new ArrayList<ProductSchemeDetail>();
+	if(productlist.size() > 4) {
+		birthDaytlist = new ArrayList<ProductSchemeDetail>(productlist.subList(0, 4));
+	}else {
+		birthDaytlist = new ArrayList<ProductSchemeDetail>(productlist.subList(0, productlist.size()));
+	}
+	
+	if(taxsavingSchemelist.size() > 4) {
+		taxsavinglist = new ArrayList<ProductSchemeDetail>(taxsavingSchemelist.subList(0, 4));
+	}else {
+		taxsavinglist = new ArrayList<ProductSchemeDetail>(taxsavingSchemelist.subList(0, taxsavingSchemelist.size()));
+	}
+	
+	if(travelSchemelist.size() > 4) {
+		annivesarylist = new ArrayList<ProductSchemeDetail>(travelSchemelist.subList(0, 4));
+	}else {
+		annivesarylist = new ArrayList<ProductSchemeDetail>(travelSchemelist.subList(0, travelSchemelist.size()));
+	}
+	map.addAttribute("DATA", "Y");
+	map.addAttribute("productlist", birthDaytlist);
+	map.addAttribute("annivesarylist", annivesarylist);
+	map.addAttribute("taxsavinglist", taxsavinglist);
+	
+	}catch(Exception e){
+	logger.error("RegistryController - Failed to get data",e);
+	map.addAttribute("DATA","N");
+	map.addAttribute("error", "Failed to get funds. Please try again");
+	}
+	
+	logger.info("@@@@ RegistryController Data Load Comleted @@@@");
+
+	map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
+//	return "registry/registry-home";
+	return "registry3";
+	    
 	}
 
 
@@ -451,7 +501,8 @@ public class ProductsController {
 		return "registry-mutual-funds";
 	}
 	 */
-
+	
+	
 
 	@RequestMapping(value = "/registry-mutual-funds/registry-wish", method = RequestMethod.GET)
 	public String registryWishDisplay(@RequestParam(value="category") String category, @RequestParam(value="type") String type, @RequestParam(value="schemeId") Long schemeId, Model model) {
@@ -628,7 +679,7 @@ public class ProductsController {
 		funds.setReturnThreeMonths(""+pdetails.getPReturn_3M());
 		funds.setReturnSixMonths(""+pdetails.getPReturn_6M());
 		//funds.setReturnThreeMonths("6.763");
-		funds.setMonthlySavings(registryWish.getAmount());
+		funds.setMonthlySavings(Integer.toString(registryWish.getAmount()));
 		funds.setInvestType(registryWish.getInvestType());
 
 		//fundsList.add(funds);
@@ -646,7 +697,7 @@ public class ProductsController {
 			System.out.println(wishDate.getMonthValue());
 			System.out.println(wishDate.getYear());
 			MFInvestmentDates wishDates = new MFInvestmentDates();
-			wishDates.setInvFrequency(registryWish.getTenure());
+			wishDates.setInvFrequency(Integer.toString(registryWish.getTenure()));
 			wishDates.setSipPeriodToMonth(Integer.toString(wishDate.getMonthValue()));
 			wishDates.setSipPeriodToYear(Integer.toString(wishDate.getYear()));
 			mfInvestForm.setMfInvestDates(wishDates);

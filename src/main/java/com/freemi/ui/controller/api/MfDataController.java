@@ -11,7 +11,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,8 +23,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.freemi.common.util.CommonConstants;
 import com.freemi.entity.bse.BseOrderPaymentResponse;
 import com.freemi.entity.investment.MfNavData;
+import com.freemi.entity.investment.RegistryFunds;
 import com.freemi.entity.investment.TransactionStatus;
 import com.freemi.services.interfaces.BseEntryManager;
+import com.freemi.services.interfaces.RegistryManager;
 import com.google.gson.Gson;
 
 @RestController
@@ -36,6 +37,9 @@ public class MfDataController {
 
     @Autowired
     BseEntryManager bseEntryManager;
+    
+    @Autowired
+    RegistryManager registryManager;
 
     @PostMapping(value = "/navdata/{isin}", produces = "application/json")
     //    @CrossOrigin(origins = "https://www.freemi.in")
@@ -72,7 +76,7 @@ public class MfDataController {
 	//		return navhistorydata;
     }
 
-    @RequestMapping(value = "/mutual-funds/pending-payments", method = RequestMethod.POST ,consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @RequestMapping(value = "/mutual-funds/pending-payments", method = RequestMethod.POST)
     public String bsePendingPayments(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 
 	logger.info("@@ BSE MF STAR pending payments clearance @@");
@@ -142,6 +146,25 @@ public class MfDataController {
 	logger.info("bseCancekSIP(): Return response- " + responseData);
 	return responseData;
     }
-
+    
+    
+    @RequestMapping(value = "/registry/get-registry-funds", method = RequestMethod.POST)
+    @ResponseBody
+    public Object getregistryfunds(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+    
+    List<RegistryFunds> registryfunds=null;
+    String result=null;
+    try {
+        registryfunds=  registryManager.getRegistryfunds(null, null);
+        result = new Gson().toJson(registryfunds);
+    //	    System.out.println("Total- "+ re);
+    }catch(Exception e) {
+        logger.error("Error getting registry funds",e);
+    }
+    
+    return result;
+    }
+    
+    
 
 }

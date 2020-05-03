@@ -10,13 +10,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Login to FreEMI portal and get access to your dash-board and transactions</title>
+<title>Login to FreEMI portal and get access to your dash-board
+	and transactions</title>
 <meta http-equiv="cache-control" content="max-age=0" />
 <meta http-equiv="cache-control" content="no-cache" />
 <meta http-equiv="expires" content="0" />
-<meta name="keywords" content="freemi login, Sign up for free Online Mutual Fund account, Get best health insurance by signup, get Instant credit by signup" />
+<meta name="keywords"
+	content="freemi login, Sign up for free Online Mutual Fund account, Get best health insurance by signup, get Instant credit by signup" />
 
-<meta name="description" content="Login to your FreEMI account and view your transactions, wishes completed" />
+<meta name="description"
+	content="Login to your FreEMI account and view your transactions, wishes completed" />
 
 <meta name="robots" content="index, follow">
 <meta name="googlebot" content="index, follow" />
@@ -24,10 +27,14 @@
 
 <link rel="canonical" href=" https://www.freemi.in/products/login" />
 <jsp:include page="include/bootstrap.jsp"></jsp:include>
-<link href="<c:url value="${contextcdn}/resources/css/login.component.css"/>" rel="stylesheet">
-<link href="<c:url value="${contextcdn}/resources/css/styles.css"/>" rel="stylesheet">
-<link href="<c:url value="${contextcdn}/resources/css/animate.css"/>" type="text/css" rel="stylesheet">
-<script src="<c:url value="${contextcdn}/resources/js/login.js" />" type="text/javascript" defer="defer"></script>
+<link
+	href="<c:url value="${contextcdn}/resources/css/login.component.css"/>"
+	rel="stylesheet">
+<link href="<c:url value="${contextcdn}/resources/css/styles.css"/>"
+	rel="stylesheet">
+<link href="<c:url value="${contextcdn}/resources/css/animate.css"/>"
+	type="text/css" rel="stylesheet">
+
 
 <style>
 .timer_style {
@@ -38,6 +45,12 @@
 	/* font-family: monospace; */
 	font-size: 16px;
 }
+
+@media screen and (max-width: 320px) {
+ .signupbtnclass, .loginbtnclass  {
+ 	padding: .5rem 1.6rem;
+    font-size: .84rem;
+ }
 </style>
 </head>
 <body class="login_design" onload="formOnLoad();">
@@ -45,124 +58,121 @@
 	<jsp:include page="include/header.jsp"></jsp:include>
 	<div class="container" style="min-height: 100vh; padding-top: 30px;">
 
-		<div class="freemi-logo">
-			<img src="<c:url value="${contextcdn}/resources/images/f.png"/>"
-				class="img-fluid" style="height: 50px;">
+		<!-- login form -->
+		<div class="mt-4">
+			<h1 class="login_header" id="ht">Login to your Account</h1>
 		</div>
 
-		<!-- login form -->
-		<div><h1 class="login_header" id="ht">Login to your Account</h1></div>
-
-		<div class="row">
+		<div class="row p-1">
 			<div class="col-md-6 col-lg-6 form_div animated fadeInLeft"
 				style="margin: auto; background: #ffffffe3;">
-					
-					
-					<div>
-						<span id="infomsg" style="color: green; font-weight: 400; font-size: 13px;">${info }</span>
-					</div>
-					
-					<div>
-						<span id="loginmsg" style="color: #ff7623; font-weight: 400; font-size: 13px;"></span>
-					</div>
-				
+
+
+				<div>
+					<span id="infomsg"
+						style="color: green; font-weight: 400; font-size: 13px;">${info }</span>
+				</div>
+
+				<div>
+					<span id="loginmsg"
+						style="color: #ff7623; font-weight: 400; font-size: 13px;"></span>
+				</div>
+
 				<div id="loginFormBox">
-				<form:form method="POST" commandName="login"
-					onsubmit="return submitLogin(event);">
-					<%-- action="${pageContext.request.contextPath}/login.do" --%>
+					<form:form method="POST" commandName="login"
+						onsubmit="return submitLogin(event);">
+						<%-- action="${pageContext.request.contextPath}/login.do" --%>
 
-					<div class="md-form mb-1">
-						<i class="fas fa-mobile-alt prefix" style="padding-left: 5px;color: #5a5a5a;"
-							id="mobico"></i>
-						<form:input type="text" style="padding-left: 5px;"
-							id="validationCustomUsername"
-							class="form-control form-control-sm" path="usermobile"
-							 pattern="[0-9]{10}" maxlength="10"
-							autocomplete="off" placeholder="Mobile number"></form:input>
-						<!-- <label for="validationCustomUsername">Mobile number</label> -->
-					</div>
-					<span id="msg1" style="font-size: 11px;"></span>
+						<div class="md-form mb-1">
+							<i class="fas fa-mobile-alt prefix"
+								style="padding-left: 5px; color: #5a5a5a;" id="mobico"></i>
+							<form:input type="text" style="padding-left: 5px;"
+								id="validationCustomUsername"
+								class="form-control form-control-sm" path="usermobile"
+								pattern="[0-9]{10}" maxlength="10" autocomplete="off"
+								placeholder="Mobile number"></form:input>
+							<!-- <label for="validationCustomUsername">Mobile number</label> -->
+						</div>
+						<span id="msg1" style="font-size: 11px;"></span>
 
 
-					<div class="md-form" id="passbox">
-						<i class="fas fa-lock prefix" id="passico" style="color: #5a5a5a;"></i>
-						<form:input type="password" style="padding-left: 5px;"
-							class="form-control form-control-sm" path="userpassword"
-							id="validationPassword" maxlength="24"
-							autocomplete="off" placeholder="Your password"></form:input>
-						<small id="msg2" style="font-size: 10px;padding-left:2.5rem;color: #f33c3c;"></small>
-					</div>
+						<div class="md-form" id="passbox">
+							<i class="fas fa-lock prefix" id="passico"
+								style="color: #5a5a5a;"></i>
+							<form:input type="password" style="padding-left: 5px;"
+								class="form-control form-control-sm" path="userpassword"
+								id="validationPassword" maxlength="24" autocomplete="off"
+								placeholder="Your password"></form:input>
 
-					<div class="md-form form-group mt-0 animated fadeIn " id="otpbox"
-						style="display: none;">
-						<img
-							src="<c:url value="${contextcdn}/resources/images/otp-service.svg"/>"
-							class="img-fluid prefix" style="height: 2rem;" alt="OTP">
-						<form:input type="text" style="padding-left: 5px;" pattern="[0-9]*"
-							class="form-control form-control-sm mr-sm-3" path="otpVal"
-							id="validationOTP" maxlength="6"
-							autocomplete="off" placeholder="OTP"
-							aria-describedby="validationOTP"></form:input>
-						<!-- <small id="validationPassword" class="text-muted">Resend </small> -->
-						<!-- <label for="validationPassword">Your password</label> -->
-						<div class="timer_style">
-							<span id="timer"></span>
+							<small class="d-flex justify-content-start" id="msg2"
+								style="font-size: 10px; padding-left: 2.5rem; color: #f33c3c;"></small>
+							<small class="d-flex justify-content-end"><a
+								class="password_reset mb-0"
+								href="${pageContext.request.contextPath}/forgotPassword">Forgot
+									Password? </a></small>
 						</div>
 
-					</div>
+						<div class="md-form form-group mt-0 animated fadeIn " id="otpbox"
+							style="display: none;">
+							<img
+								src="<c:url value="${contextcdn}/resources/images/otp-service.svg"/>"
+								class="img-fluid prefix" style="height: 2rem;" alt="OTP">
+							<form:input type="text" style="padding-left: 5px;"
+								pattern="[0-9]*" class="form-control form-control-sm mr-sm-3"
+								path="otpVal" id="validationOTP" maxlength="6"
+								autocomplete="off" placeholder="OTP"
+								aria-describedby="validationOTP"></form:input>
 
-					<div class="form-group row" id="otpChoice">
-						<label for="otplogin"
-							class="col-2 col-md-1 col-lg-1 col-form-label"><i
-							class="fas fa-sms" style="font-size: 24px;color: #5a5a5a;"></i></label>
-						<div
-							class="col-8 col-md-8 col-lg-8 custom-control custom-checkbox"
-							style="margin-top: 7px; font-weight: 500; color: #ea6f25;">
+							<div class="row">
+								<div
+									class="col-6 white-text #ef5350 red lighten-1 text-center p-1"
+									style="margin: auto; border-radius: 3px;">
+									<span id="timer"></span>
+								</div>
+
+							</div>
+
+						</div>
+
+						<div class="custom-control custom-checkbox mb-4" style="padding-left: 0px;"  id="otpChoice">
+							<img src="<c:url value="${contextcdn}/resources/images/sms-32.svg"/>" class="img-fluid prefix" style="height: 2rem;margin-right: 2rem;" alt="OTP">
 							<form:checkbox path="otpLogin" class="custom-control-input"
 								id="otplogin"></form:checkbox>
-							<label class="custom-control-label" for="otplogin">Login
-								by OTP</label>
+							 <label class="custom-control-label" for="otplogin">Login By OTP
+								</label>
 						</div>
-					</div>
-					
-					<form:hidden path="returnUrl"/>
-					<form:hidden path="otpSubmit" id="otpsubmitstat"/>
+						
+						<form:hidden path="returnUrl" />
+						<form:hidden path="otpSubmit" id="otpsubmitstat" />
 
-					<div class="row">
-						<div class="col-md-12 col-lg-12">
-							<a class="password_reset"
-								href="${pageContext.request.contextPath}/forgotPassword">Forgot
-								Password? </a>
-						</div>
-					</div>
-
-					<!-- <div style="margin-bottom: 20px;">
+						<!-- <div style="margin-bottom: 20px;">
 						<div class="g-recaptcha" data-sitekey="6LdvUoQUAAAAADk77XVS_YlkPTluN9EYCawk1xo6"></div>
 					</div> -->
-					<div class="login_buttons">
-						<button type="submit" id="loginsubmit"
-							class="btn btn-sm btn-block blue-gradient white-text">
-							<span id="loginbasic" style="display: block;"><i class="fas fa-lock"></i> Login</span><span id="loginspin" style="display: none;">Please wait <i class="fas fa-spinner fa-spin"></i></span>
-						</button>
-
-						<a href="${pageContext.request.contextPath}/register"
-							style="text-decoration: none; margin-top: 10px">
-							<button type="button"
-								class="btn btn-sm btn-block purple-gradient white-text"
-								style="text-decoration: none;">
-								<i class="fas fa-user-plus"></i> Sign Up
+						<div class="login_buttons text-center">
+							<button type="submit" id="loginsubmit"
+								class="btn blue-gradient white-text loginbtnclass">
+								<span id="loginbasic"><i class="fas fa-lock"></i> Login</span>
 							</button>
-						</a>
-					</div>
-				</form:form>
+
+							<a href="${pageContext.request.contextPath}/register"
+								style="text-decoration: none; margin-top: 10px">
+								<button type="button" class="btn purple-gradient white-text signupbtnclass"  id="signupbtn"
+									style="text-decoration: none;">
+									<i class="fas fa-user-plus"></i> Sign Up
+								</button>
+							</a>
+						</div>
+					</form:form>
 				</div>
-				
-				
-				
+
+
+
 			</div>
 		</div>
 
 	</div>
 	<!-- <script src='https://www.google.com/recaptcha/api.js'></script> -->
+	<script src="<c:url value="${contextcdn}/resources/js/login.js" />"
+	type="text/javascript" defer="defer"></script>
 </body>
 </html>

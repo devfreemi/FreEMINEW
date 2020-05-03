@@ -766,6 +766,42 @@ public class InvestFormConstants {
 
 	}
     };
+    
+    public static Map<String,String> registryTransaporttype = new LinkedHashMap<String,String>(){
+	private static final long serialVersionUID = 1L;
+
+	{
+	    	put("Bike", "Bike");
+		put("Car", "Car");
+		put("Taxi-Hailing App", "Taxi-Hailing App");
+		put("Auto", "Auto");
+		put("Bus", "Bus");
+		put("Shuttle", "Shuttle");
+		put("Train", "Train");
+	}
+    };
+    
+    public static Map<String,String> registryOfficeRole = new LinkedHashMap<String,String>(){
+	private static final long serialVersionUID = 1L;
+
+	{
+	    	put("Officer", "Officer");
+		put("Executive", "Executive");
+		put("Manager", "Manager");
+		put("Management", "Management");
+		put("Others", "Others");
+	}
+    };
+    
+    public static Map<String,String> registryInvestmentype = new LinkedHashMap<String,String>(){
+   	private static final long serialVersionUID = 1L;
+
+   	{
+   	    	put("SIPT", "SIP based on your target amount");
+   		put("SIPM", "SIP based contribution");
+   		put("TARGET_PLAN", "Target Plan");
+   	}
+       };
 
 
 }

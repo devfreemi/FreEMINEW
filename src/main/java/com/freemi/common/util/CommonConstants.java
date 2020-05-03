@@ -7,7 +7,7 @@ public class CommonConstants {
 
 //	Service URL Properties
 	public static final String URL_SERVICE_PROFILE="url.service.profile";
-	
+	public static final String URL_SERVICE_MF_BSE="url.service.mf.bse";
 	public static final String URL_SERVICE_MAHINDRA_FD="url.service.fd.mahindra";
 	
 //	Environment properties
@@ -99,6 +99,13 @@ public class CommonConstants {
 	public static final Integer NO_ACTION=104;
 	public static final Integer TASK_INVALID=105;
 	
+	public static final String TASK_SUCCESS_S="100";
+	public static final String TASK_FAILURE_S="101";
+	public static final String TASK_UPDATED_S="102";
+	public static final String TASK_SKIPPED_S="103";
+	public static final String NO_ACTION_S="104";
+	public static final String TASK_INVALID_S="105";
+	
 	public static final Integer TASK_API_RESPONSE_SUCCESS=110;
 	public static final Integer TASK_API_RESPONSE_ERROR=111;
 	
@@ -145,6 +152,7 @@ public class CommonConstants {
 			add("/products/mutual-funds/pending-payments");
 			add("/products/mutual-funds/cancelOrder.do");
 			add("/products/fixed-deposit-renew");
+//			add("/products/registry-planner-purchase");
 		}
 	};
 	

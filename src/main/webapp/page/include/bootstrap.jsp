@@ -33,6 +33,25 @@ body{
 }
 </style>
 <script>
-function clearSessionData(){window.sessionStorage.clear()}document.addEventListener("DOMContentLoaded",function(){let e=[].slice.call(document.querySelectorAll("img.lazy"));let n=!1;const t=function(){!1===n&&(n=!0,setTimeout(function(){e.forEach(function(n){n.getBoundingClientRect().top<=window.innerHeight&&n.getBoundingClientRect().bottom>=0&&"none"!==getComputedStyle(n).display&&(n.src=n.dataset.src,n.classList.remove("lazy"),0===(e=e.filter(function(e){return e!==n})).length&&(document.removeEventListener("click",t),document.removeEventListener("scroll",t),window.removeEventListener("resize",t),window.removeEventListener("orientationchange",t)))}),n=!1},200))};document.addEventListener("click",t),document.addEventListener("scroll",t),window.addEventListener("resize",t),window.addEventListener("orientationchange",t)});
+function clearSessionData() {
+    window.sessionStorage.clear();
+    $.post( "/products/closewindow", function( data ) {
+    	  console.log(data);
+    	});
+}
+document.addEventListener("DOMContentLoaded", function() {
+    let e = [].slice.call(document.querySelectorAll("img.lazy"));
+    let n = !1;
+    const t = function() {
+        !1 === n && (n = !0, setTimeout(function() {
+            e.forEach(function(n) {
+                n.getBoundingClientRect().top <= window.innerHeight && n.getBoundingClientRect().bottom >= 0 && "none" !== getComputedStyle(n).display && (n.src = n.dataset.src, n.classList.remove("lazy"), 0 === (e = e.filter(function(e) {
+                    return e !== n
+                })).length && (document.removeEventListener("click", t), document.removeEventListener("scroll", t), window.removeEventListener("resize", t), window.removeEventListener("orientationchange", t)))
+            }), n = !1
+        }, 200))
+    };
+    document.addEventListener("click", t), document.addEventListener("scroll", t), window.addEventListener("resize", t), window.addEventListener("orientationchange", t)
+});
 </script>
 
