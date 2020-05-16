@@ -113,6 +113,12 @@
 <a href="https://www.freemi.in/emi-calculator/" class="sub-footer-link-style">EMI Calculator</a> 
 </p>
 
+<!-- Savings -->
+<p class="mb-0 pt-2"><span class="sub-footer-title">Savings</span>
+<a href="https://www.freemi.in/fixed-deposit/" class="sub-footer-link-style">Fixed Deposit</a>  <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/fixed-deposit/mahindra-fixed-deposit/" class="sub-footer-link-style">Mahindra Finance Fixed Deposit</a> 
+</p>
+
 <!-- @@@@@@@@@@@ disclaimers @@@@@@@@@@@@@ -->
 
 

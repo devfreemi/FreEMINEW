@@ -8,7 +8,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>My Dashboard</title>
 
 <jsp:include page="include/bootstrap.jsp"></jsp:include>
 <link
@@ -30,12 +30,6 @@
 <script type="text/javascript"
 	src="https://cdn.datatables.net/buttons/1.5.4/js/buttons.html5.min.js"></script>
 
-<script type="text/javascript">
-	var FILE_UPLOAD = $
-	{
-		FILE_IPLOAD
-	};
-</script>
 
 <style>
 table td {

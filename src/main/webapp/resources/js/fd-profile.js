@@ -30,9 +30,10 @@ function reuploadkycdoc(applicationno, mobile) {
 
 function getmahindrafdpaymentstatus(applicationno, mobile) {
 //	console.log("Order staus for id- " + clientId + " : " + orderNo);
-	$.post("/products/api/fd/mahindraapplpaymentstatus", {
+	$.post("/products/api/fixed-deposit/mahindraapplpaymentstatus", {
 		"appl_no" : applicationno,
-		"mobile" : mobile
+		"mobile" : mobile,
+		"NBFC" : "MAHINDRA"
 	}, function(data, status) {
 
 		console.log(data);

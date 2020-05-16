@@ -45,6 +45,15 @@ background: linear-gradient(to left, #1CB5E0, #000046); /* W3C, IE 10+/ Edge, Fi
         </div>
       </li>
        <li class="nav-item dropdown" style="display: -webkit-inline-box;">
+     
+        <a class="nav-link dropdown-toggle" id="link11" data-toggle="dropdown" aria-haspopup="true"
+          aria-expanded="false">Savings
+        </a>
+        <div class="dropdown-menu dropdown-secondary" aria-labelledby="link11">
+          <a class="dropdown-item" href="https://www.freemi.in/fixed-deposit/mahindra-fixed-deposit/">Mahindra Finance Fixed Deposit</a>
+        </div>
+      </li>
+       <li class="nav-item dropdown" style="display: -webkit-inline-box;">
     
         <a class="nav-link dropdown-toggle" id="link3" data-toggle="dropdown" aria-haspopup="true"
           aria-expanded="false">Credit Cards
@@ -53,7 +62,7 @@ background: linear-gradient(to left, #1CB5E0, #000046); /* W3C, IE 10+/ Edge, Fi
           <a class="dropdown-item" href="https://www.freemi.in/credit-card/">Apply for Credit Card</a>
         </div>
       </li>
-      <li class="nav-item dropdown" style="display: -webkit-inline-box;">
+      <!-- <li class="nav-item dropdown" style="display: -webkit-inline-box;">
      
         <a class="nav-link dropdown-toggle" id="link4" data-toggle="dropdown" aria-haspopup="true"
           aria-expanded="false">Insurance
@@ -63,7 +72,7 @@ background: linear-gradient(to left, #1CB5E0, #000046); /* W3C, IE 10+/ Edge, Fi
           <a class="dropdown-item" href="https://www.freemi.in/health-insurance/">Health Insurance</a>
           <a class="dropdown-item" href="https://www.freemi.in/car-insurance/">Car Insurance</a>
         </div>
-      </li>
+      </li> -->
        <li class="nav-item dropdown" style="display: -webkit-inline-box;">
      
         <a class="nav-link dropdown-toggle" id="link5" data-toggle="dropdown" aria-haspopup="true"

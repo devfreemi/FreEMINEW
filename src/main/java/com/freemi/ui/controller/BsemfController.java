@@ -268,8 +268,8 @@ public class BsemfController {
 		investForm.setMobile(session.getAttribute("userid").toString());
 		investForm.setEmail(session.getAttribute("email").toString());
 		try {
-		    ResponseEntity<String> profresponse =  profileRestClientService.getProfileData(session.getAttribute("userid").toString(), session.getAttribute("token").toString(), CommonTask.getClientSystemDetails(request).getClientIpv4Address());
-		    UserProfileLdap userDetails = new ObjectMapper().readValue(profresponse.getBody(), UserProfileLdap.class);
+		    UserProfileLdap userDetails =  profileRestClientService.getProfileData(session.getAttribute("userid").toString(), session.getAttribute("token").toString(), CommonTask.getClientSystemDetails(request).getClientIpv4Address());
+//		    UserProfileLdap userDetails = new ObjectMapper().readValue(profresponse.getBody(), UserProfileLdap.class);
 		    investForm.setFname(userDetails.getFname());
 		    investForm.setLname(userDetails.getLname());
 		    if(userDetails.getPan()!=null) {

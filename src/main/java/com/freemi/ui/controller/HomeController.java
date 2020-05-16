@@ -727,11 +727,6 @@ public class HomeController {
 	//logger.info("@@@@ Inside Login..");
 	logger.info("@@@@ LogoutController @@@@");
 
-	session.removeAttribute("loggedSession");
-	session.removeAttribute("token");
-	session.removeAttribute("userid");
-	session.removeAttribute("email");
-	session.invalidate();
 	try{
 	    logger.info("Clear logging data from cookie...");
 	    Cookie ssokCookie = new Cookie("loggedSession", "");
@@ -747,20 +742,32 @@ public class HomeController {
 	    ssokCookie = new Cookie("userid", "");
 	    ssokCookie.setMaxAge(0);
 	    ssokCookie.setPath("/");
+	    response.addCookie(ssokCookie);
 	    
 	    ssokCookie = new Cookie("token", "");
 	    ssokCookie.setMaxAge(0);
 	    ssokCookie.setPath("/");
-
+	    response.addCookie(ssokCookie);
+	    
+	    ssokCookie = new Cookie("pan", "");
+	    ssokCookie.setMaxAge(0);
+	    ssokCookie.setPath("/");
 	    response.addCookie(ssokCookie);
 
 	    logger.info("Cookie unset complete for user");
 
 
 	}catch(Exception e){
-	    System.out.println("Error removing session data from cookie during logout..");
+	   logger.error("Error removing session data from cookie during logout..",e);
 
 	}
+	
+	session.removeAttribute("loggedSession");
+	session.removeAttribute("token");
+	session.removeAttribute("userid");
+	session.removeAttribute("email");
+	session.removeAttribute("pan");
+	session.invalidate();
 
 
 	//		RestClientApps.logoutAllApplication("", "", "", "");

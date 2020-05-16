@@ -22,7 +22,7 @@ function MFRedeem(folio,code,type,rtaAgent,productCode){
 
 
 function completePendingPayments(){
-	
+
 	request = $.ajax({
 		url: "/products/api/mutual-funds/pending-payments",
 		method: "POST",
@@ -60,7 +60,7 @@ function completePendingPayments(){
 	request.always(function(msg){
 		completetaskProgress("pendinglink","COMPLETE PENDING PAYMENTS");
 	});
-	
+
 }
 
 function cancelOrder(schemeCode,orderno,type,category,transactionId){
@@ -125,7 +125,7 @@ $(document).ready(function(){
 });*/
 
 function getMFPortfolioData(mobile,profileStatus) {
-//	console.log("Get Profile Data as requested- "+mobile);
+	console.log("Get Profile Data as requested- "+mobile);
 
 	if(profileStatus === 'PROFILE_READY'){
 		if(!mfdatapulled){
@@ -155,7 +155,7 @@ function getMFPortfolioData(mobile,profileStatus) {
 					async: true,
 					datatype: "json",
 					beforeSend: function() {
-						showprogress();
+						showprogress("msgmfapi");
 						mfdatainprogress=true;
 					}
 				});
@@ -205,7 +205,7 @@ function getMFPortfolioData(mobile,profileStatus) {
 				console.log("Populate stored data");
 				$("#msgmfapi").html("");
 				createmfdataView(storedmfdata);
-				
+
 			}
 
 		}
@@ -329,7 +329,7 @@ function createmfdataView(result){
 				amccell5.innerHTML ="<span class='grey-text'>"+ convertNumberToIndianFormat(Number(data[i].karvyFolioList[j].marketValue).toFixed(2))+"</span>";
 			}
 			amccell5.setAttribute("valign","middle");
-			
+
 //			convertNumberToIndianFormat(Number(data.marketvalue).toFixed(2))
 
 //			console.log(data[i].karvyFolioList[j]);
@@ -438,7 +438,7 @@ function getMfData(profileStatus,pan,mobile){
 						$("#inval").text(result);
 						result= convertNumberToIndianFormat(Number(data.marketvalue).toFixed(2));
 						$("#marketval").text(result);
-						
+
 					}
 				}
 
@@ -473,9 +473,7 @@ function getMfData(profileStatus,pan,mobile){
 
 }
 
-function showprogress(){
-	$("#msgmfapi").html("<div style=\"text-align: center;margin-bottom: 3rem;\"><img alt=\"Fetching your portfolio\" src=\"https://resources.freemi.in/products/resources/images/invest/progress2.gif\">");
-}
+
 
 function displayMfFetchProgress(){
 	$("#inval").html("<i class=\"fas fa-spinner fa-spin\"></i>");
@@ -499,13 +497,13 @@ function convertNumberToIndianFormat(value){
 	x=x.toString();
 	var afterPoint = '';
 	if(x.indexOf('.') > 0)
-	   afterPoint = x.substring(x.indexOf('.'),x.length);
+		afterPoint = x.substring(x.indexOf('.'),x.length);
 	x = Math.floor(x);
 	x=x.toString();
 	var lastThree = x.substring(x.length-3);
 	var otherNumbers = x.substring(0,x.length-3);
 	if(otherNumbers != '')
-	    lastThree = ',' + lastThree;
+		lastThree = ',' + lastThree;
 	var res = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree + afterPoint;
 //	console.log(res);
 	return res;
@@ -513,11 +511,11 @@ function convertNumberToIndianFormat(value){
 
 
 $(document).ready(function(){
-	  $("form").submit(function(e){
-		  e.preventDefault();
-	    console.log("Submitted");
-	    
-	    request = $.ajax({
+	$("form").submit(function(e){
+		e.preventDefault();
+		console.log("Submitted");
+
+		request = $.ajax({
 			url: "/products/api/mutual-funds/cancel-sip",
 			method: "POST",
 			data: JSON.stringify({
@@ -547,7 +545,7 @@ $(document).ready(function(){
 				$("#cancelresponse").text("Invalid data");
 			}else{
 				$("#cancelresponse").text(msg);
-				
+
 			}
 
 		});
@@ -561,8 +559,271 @@ $(document).ready(function(){
 			$("#cancelsubmitbtn").html("Cancel SIP");
 			$('#cancelsubmitbtn').removeAttr('disabled');
 		});
-	    
-	    
-	  });
+
+
 	});
+});
+
+
+
+
+function getfdbalance(mobileno,pan){
+	fdapifundcall(mobileno,pan,'BALANCE');
+}
+
+function calculatefdtotals(result){
+	console.log("Call received to generate balance view.." + result)
+	var msg = result;
+	if(msg!='undefined' || msg != undefined){
+	if(msg==="NO_SESSION"){
+		$("#balancecheckid").html("View Balance");
+		$("#fdfetchmsg").text("Invalid session. Kindly login again.");
+	}else if(msg==="NO_PAN"){
+		$("#balancecheckid").html("View Balance");
+		$("#fdfetchmsg").text("Invalid request. ");
+	}else if(msg==="NO_DATA"){
+		$("#balancecheckid").html("View Balance");
+		$("#fdfetchmsg").text("No savings found!");
+		$("#balancecheckid").html("View Balance");
+	}else if(msg==="INAVLID_REQUEST" || msg === 'INTERNAL_ERROR' || msg === 'API_ERROR'){
+		$("#balancecheckid").html("View Balance");
+		$("#fdfetchmsg").text("Request could not be processed.");
+	}else{
+		$("#fdfetchmsg").text("");
+		
+		var data = JSON.parse(result);
+		console.log("Tranasaction Data- " +data.length + " -> " + data);
+		let amount=0;
+		let matured=0;
+		for (var i = 0; i < data.length; i++) {
+			var x= data[i];
+			amount+=x.PRINC_AMT;
+			matured+=x.MATU_AMT;
+		}
+		
+		$("#balancedata").html("<div class='row animated fadeIn'><div class='col-6'>" +
+				"<h6>TOTAL FD SAVINGS</h6></div><div class='col-6'><h5><i class='fas fa-rupee-sign'> </i> <span id='totalfdprincipal'>"+convertNumberToIndianFormat(amount)+" </span></h5></div></div>" +
+				"<div class='row animated fadeIn'><div class='col-6'>" +
+				"<h6>TOTAL MATURITY</h6></div><div class='col-6'><h5><i class='fas fa-rupee-sign'> </i> <span id='totalfdmaurity'>"+convertNumberToIndianFormat(matured)+"</span></h5></div></div>");
+	}
+	}else{
+		$("#balancecheckid").html("View Balance");
+		$("#fdfetchmsg").text("Unable to process request.");
+	}
+}
+
+function getfixeddepositdata(mobileno,pan){
+
+	console.log("Call receivedfor FD fetch...")
+
+	fdapifundcall(mobileno,pan,'CREATEVIEW');
+
+	/*	console.log("Response from api- "+ msg);
+		if(msg=="NO_SESSION"){
+			$("#fdfetch").html("Session expired. Please login again");
+		}else if(msg==="NO_PAN"){
+		}else if(msg==="NO_DATA"){
+			$("#fdfetch").html("<a href=\"/fixed-deposit\"><button class=\"btn btn-sm\"><img src=\"https://resources.freemi.in/products/resources/images/invest/investment4.png\" class=\"img-fluid\" style=\"height: 2rem;\"> Start Saving</button> </a>");
+		}else if(msg==="INAVLID_REQUEST"){
+			$("#fdfetch").html("Failed to process request. Please contact admin if issue persist.");
+		}else if(msg==="INTERNAL_ERROR" || msg==="API_ERROR"){
+			$("#fdfetch").html("Error processing request. Please try again after sometime");
+		}else{
+			let result1=JSON.stringify(msg);
+			if (typeof(Storage) !== "undefined") {
+				window.sessionStorage.setItem("fdfolios",result1);
+			} 
+			console.log(msg);
+
+			createfddataView(result1);
+		}
+	 */
+
+
+}
+
+
+function fdapifundcall(mobileno,pan,postcallfunc){
+	var apiresponse;
+	var fdtempdata=sessionStorage.getItem("fdfolios");
+	if(fdtempdata == null){
+		request = $.ajax({
+			url: "/products/api/fixed-deposit/get-fd-portfolios",
+			method: "POST",
+			data: {
+				"mobile" : mobileno,
+				"pan" : pan
+			},
+			async: true,
+			datatype: "json",
+			beforeSend: function() {
+				if(postcallfunc==='BALANCE'){
+						$("#balancecheckid").html("Processing <i class=\"fas fa-spinner fa-spin\"></i>");
+				}else{
+					showprogress("fdfetch");
+				}
+			}
+		});
+		request.done(function(msg) {
+			console.log("RECEIVED- "+ msg)
+			apiresponse = msg;
+			//let result1=JSON.stringify(msg);
+			if(msg=="NO_SESSION" || msg==="NO_PAN" || msg==="NO_DATA" || msg==="INAVLID_REQUEST" || msg === 'INTERNAL_ERROR' || msg === 'API_ERROR'){
+				console.log("Response not success..")
+			}else{
+				apiresponse=JSON.stringify(msg);
+				if (typeof(Storage) !== "undefined") {
+					window.sessionStorage.setItem("fdfolios",apiresponse);
+				}
+			}
+
+			if(postcallfunc==='BALANCE'){
+				calculatefdtotals(apiresponse);
+			}else if(postcallfunc==='CREATEVIEW'){
+				createfddataView(apiresponse);
+			}
+		});
+		request.fail(function(jqXHR, textStatus) {
+			console.log("Failed to fetch your data. Please try after sometime: " + textStatus);
+			apiresponse="API_ERROR";
+		});
+
+		request.always(function(msg){
+			console.log("Request complete..")
+			if(postcallfunc==='BALANCE'){
+				$("#balancecheckid").html("View Balance");
+		}else{
+//			progresscomplete("fdfetch");
+		}
+			
+		});
+	}else{
+		apiresponse = fdtempdata;
+
+		if(postcallfunc==='BALANCE'){
+			calculatefdtotals(apiresponse);
+		}else if(postcallfunc==='CREATEVIEW'){
+			createfddataView(apiresponse);
+		}
+	}
+
+
+
+}
+
+
+function createfddataView(result){
+	console.log("Request received to generate folio view...");
+	$("#fddatabody").children().remove();
+	
+	if(result=="NO_SESSION"){
+		$("#fdfetch").html("Session expired. Please login again");
+	}else if(result==="NO_PAN"){
+		$("#fdfetch").html("PAN record not present. Please csontact admin if you carried out transaction.");
+	}else if(result==="NO_DATA"){
+		$("#fdfetch").html("<p>No savings record.</p><a href=\"/fixed-deposit/\"><button class=\"btn btn-sm btn-default\"><img src=\"https://resources.freemi.in/products/resources/images/invest/investment4.png\" class=\"img-fluid\" style=\"height: 2rem;\"> Start Saving</button> </a>");
+	}else if(result==="INAVLID_REQUEST"){
+		$("#fdfetch").html("Failed to process request. Please contact admin if issue persist.");
+	}else if(result==="INTERNAL_ERROR" || result==="API_ERROR"){
+		$("#fdfetch").html("Error processing request. Please try again after sometime");
+	}else{
+
+		var data = JSON.parse(result);
+		console.log("Tranasaction Data- " +data.length + " -> " + data);
+
+		var table = document.getElementById("fddatabody");
+		table.setAttribute("class","animated fadeIn");
+		console.log("Total records- " + data.length + " -> "+ data);
+		for (var i = 0; i < data.length; i++) {
+			/*    console.log(jsonData[i]); */
+
+			var x= data[i];
+
+			var row = table.insertRow();
+			var cell1 = row.insertCell(0);
+			var cell2 = row.insertCell(1);
+			var cell3 = row.insertCell(2);
+			var cell4 = row.insertCell(3);
+			var cell5 = row.insertCell(4);
+			var cell6 = row.insertCell(5);
+			var cell7 = row.insertCell(6);
+
+//			Add some text to the new cells:
+
+			cell1.innerHTML =  "<img src=\"https:\/\/resources.freemi.in\/products\/resources\/images\/invest\/mahindra-finance-icon.png\" class=\"img-fluid mr-2\" >";
+			cell2.innerHTML = x.FOLIO;
+			cell3.innerHTML =  x.FDR_NO;
+			cell4.innerHTML = x.APL_NO;
+			cell5.innerHTML = convertNumberToIndianFormat(x.PRINC_AMT);
+			cell6.innerHTML = convertNumberToIndianFormat(x.MATU_AMT) +"<br>" + "<small class='text-muted'>(On "+x.MATU_DATE+")</small>";
+			cell7.innerHTML = "<span class=\"text-danger\" type=\"button\" style=\"font-size: 12px; color: #238019; font-weight: 600;\" data-toggle='modal' " +
+			"data-fdrno='"+x.FDR_NO + "'" +
+			"data-appl='"+x.APL_NO + "'" +
+			"data-folio='"+x.FOLIO +"'" +
+			"data-invname='"+x.INVESTOR_NAME +"'" +
+			"data-fdrdate='"+x.FDR_DATE +"'" +
+			"data-principal='"+x.PRINC_AMT +"'" +
+			"data-maturity='"+x.MATU_AMT +"'" +
+			"data-maturitydate='"+x.MATU_DATE +"'" +
+			"data-schemetype='"+x.SCHEMETYPE_CODE +"'" +
+			"data-tenure='"+x.PERIOD_MM +"'" +
+			"data-intrate='"+x.INT_RATE +"'" +
+			"data-renewaleligibility='"+x.RENEWAL_ELIGIBILITY +"'" +
+			"data-comments='"+x.CONDITIONAL_REASON +"'" +
+			"' data-target='#fddetailsmodal'> Details</button>";
+
+		}
+		
+		progresscomplete("fdfetch");
+	}
+}
+
+
+function showprogress(elementid){
+	$("#"+elementid).html("<div style=\"text-align: center;margin-bottom: 3rem;\"><img alt=\"Fetching your portfolio\" src=\"https://resources.freemi.in/products/resources/images/invest/progress2.gif\">");
+}
+
+function progresscomplete(elementid){
+	$("#"+elementid).html("");
+}
+
+$("#fddetailsmodal").on('show.bs.modal', function(event) {
+//	console.log("Modal called")
+	$("#nbscid").text("Mahindra Finance");
+	if ($(event.relatedTarget).attr("data-fdrno") != undefined) {
+		$("#fdrnoid").text($(event.relatedTarget).attr("data-fdrno"));
+	}
+	if ($(event.relatedTarget).attr("data-invname") != undefined) {
+		$("#invnameid").text($(event.relatedTarget).attr("data-invname"));
+	}
+	if ($(event.relatedTarget).attr("data-fdrdate") != undefined) {
+		$("#purchasedateid").text($(event.relatedTarget).attr("data-fdrdate"));
+	}
+	if ($(event.relatedTarget).attr("data-principal") != undefined) {
+		$("#principalamntid").text(convertNumberToIndianFormat($(event.relatedTarget).attr("data-principal")));
+	}
+	if ($(event.relatedTarget).attr("data-schemetype") != undefined) {
+		let type = $(event.relatedTarget).attr("data-schemetype");
+		if(type =='C'){
+			$("#schemetypeid").text("Cumulative");
+		}else if(type =='NC'){
+			$("#schemetypeid").text("Non Cumulative");
+		}else{
+			$("#schemetypeid").text(type);
+		}
+	}
+	if ($(event.relatedTarget).attr("data-tenure") != undefined) {
+		$("#fdtenureid").text($(event.relatedTarget).attr("data-tenure") + " months");
+	}
+	if ($(event.relatedTarget).attr("data-intrate") != undefined) {
+		$("#purchaserateid").text($(event.relatedTarget).attr("data-intrate"));
+	}
+	if ($(event.relatedTarget).attr("data-maturity") != undefined) {
+		$("#maturityamountid").text(convertNumberToIndianFormat($(event.relatedTarget).attr("data-maturity")));
+	}
+	if ($(event.relatedTarget).attr("data-maturitydate") != undefined) {
+		$("#maturitydate").text($(event.relatedTarget).attr("data-maturitydate"));
+	}
+
+});
 

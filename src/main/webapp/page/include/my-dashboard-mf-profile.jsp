@@ -29,7 +29,7 @@
 	</table>
 	
 	<div style="text-align: center;">
-	<span id="msgmfapi"><img alt="Fetching your portfolio" class="img-fluid" style="margin: auto;" src="/products/resources/images/invest/progress2.gif"></span>
+	<span id="msgmfapi"><button class="btn btn-sm btn-secondary" onclick="getMFPortfolioData(<%=session.getAttribute("userid").toString()%>,'${PROFILE_STATUS}');">Fetch your Portfolio</button></span>
 	</div>
 	<div style="overflow-x: auto;"></div>
 </div>

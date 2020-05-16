@@ -15,6 +15,7 @@ import com.freemi.entity.general.ProfilePasswordChangeForm;
 import com.freemi.entity.general.Registerform;
 import com.freemi.entity.general.ResetPassword;
 import com.freemi.entity.general.UserProfile;
+import com.freemi.entity.general.UserProfileLdap;
 
 @Component
 public interface ProfileRestClientService {
@@ -35,7 +36,7 @@ public interface ProfileRestClientService {
 	
 	public ResponseEntity<String> forgotPassword(ForgotPassword forgotPasswordForm) throws JsonProcessingException;
 	
-	public ResponseEntity<String> getProfileData(String userid, String token, String requestingIp) throws JsonProcessingException;
+	public UserProfileLdap getProfileData(String userid, String token, String requestingIp) throws JsonProcessingException;
 	
 	public ResponseEntity<String> updateProfileData(UserProfile profileData,String userid, String token, String requestingIp) throws JsonProcessingException;
 	

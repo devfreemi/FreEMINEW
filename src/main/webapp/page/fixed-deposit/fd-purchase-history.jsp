@@ -15,14 +15,10 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="description" content="Mutual Fund Transaction page" />
 <meta name="robots" content="index,nofollow" />
-<link
-	href="<c:url value="${contextcdn}/resources/css/bseinvestmentform.css"/>"
-	rel="stylesheet">
-<link href="<c:url value="${contextcdn}/resources/css/pace-theme.css"/>"
-	rel="stylesheet">
+<link href="<c:url value="${contextcdn}/resources/css/pace-theme.css"/>" rel="stylesheet">
 <script src="<c:url value="${contextcdn}/resources/js/pace.min.js" />"></script>
 
-<jsp:include page="../include/mdbstyle.jsp"></jsp:include>
+<jsp:include page="../include/bootstrap.jsp"></jsp:include>
 
 <link
 	href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css"
@@ -75,9 +71,7 @@ table.dataTable thead th, table.dataTable thead td {
 				<c:choose>
 					<c:when test="${PURCHASE_LIST =='ID_NOT_FOUND' }">
 						<div>
-							<h5 style="color: #e24c67; font-family: serif;">You do not
-								seem registered for investment to view this page.</h5>
-							<h5>Get Registered here</h5>
+							<h5 style="color: #e24c67; font-family: serif;">No Savings details found</h5>
 							<span>*If you think you have already invested, kindly
 								contact admin</span>
 						</div>
@@ -92,9 +86,9 @@ table.dataTable thead th, table.dataTable thead td {
 						<h5 style="color: #2793e2; font-family: serif;">No purchase
 							history found</h5>
 						<div style="text-align: center;">
-							<a href="/products/fixed-deposit"><button
+							<a href="/fixed-deposit"><button
 									class="btn btn-sm btn-info">
-									Make your 1<sup>st</sup>Investment
+									Make your 1<sup>st</sup>Savings
 								</button></a>
 						</div>
 					</c:when>
@@ -119,7 +113,7 @@ table.dataTable thead th, table.dataTable thead td {
 										<th scope="col">MATURITY AMOUNT</th>
 										<th scope="col">MATURITY DATE</th>
 										<th scope="col">Payment Complete?</th>
-										<th scope="col">ACTION</th>
+										<!-- <th scope="col">ACTION</th> -->
 									</tr>
 								</thead>
 								<tbody
@@ -138,7 +132,8 @@ table.dataTable thead th, table.dataTable thead td {
 											<td></td>
 											<td></td>
 											<td>${listVar.ispaymentcomplete }</td>
-											<td style="text-align: center;">
+											
+											<%-- <td style="text-align: center;">
 												
 												<div class="btn-group">
 													<button type="button"
@@ -169,7 +164,7 @@ table.dataTable thead th, table.dataTable thead td {
 															Retry KYC upload</button>
 													</div>
 												</div>
-											</td>
+											</td> --%>
 										</tr>
 									</c:forEach>
 
@@ -197,7 +192,6 @@ table.dataTable thead th, table.dataTable thead td {
 			"columns": [
 			    { "orderable": false },
 			  /*   { "orderable": false }, */
-			    null,
 			    null,
 			    null,
 			    null,

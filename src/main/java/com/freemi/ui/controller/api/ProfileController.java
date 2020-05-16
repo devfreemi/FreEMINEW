@@ -30,6 +30,7 @@ import com.freemi.entity.general.LoginResponse;
 import com.freemi.entity.general.MfCollatedFundsView;
 import com.freemi.entity.general.Registerform;
 import com.freemi.entity.general.UserProfile;
+import com.freemi.entity.general.UserProfileLdap;
 import com.freemi.entity.investment.MFKarvyFundsView;
 import com.freemi.entity.investment.MfAllInvestorValueByCategory;
 import com.freemi.services.interfaces.BseEntryManager;
@@ -160,7 +161,8 @@ public class ProfileController {
 	//		RestClient client = new RestClient();
 	ResponseEntity<String> response = null;
 
-	UserProfile profile=null;
+//	UserProfile profile=null;
+	UserProfileLdap profile =null;
 	String mobile=request.getHeader("mobile");
 	String token=request.getHeader("Authorization");
 	String ip=request.getHeader("requestingIp");
@@ -169,8 +171,8 @@ public class ProfileController {
 	    logger.error("Processing request for profile data fetch for user- " + mobile);
 
 	    try {
-		response = profileRestClientService.getProfileData(mobile, token,ip);
-		profile = new ObjectMapper().readValue(response.getBody(), UserProfile.class);
+		profile = profileRestClientService.getProfileData(mobile, token,ip);
+//		profile = new ObjectMapper().readValue(response.getBody(), UserProfile.class);
 
 	    }catch(HttpStatusCodeException  e){
 		logger.error("Error fetching profile data via api request" + e.getStatusCode());

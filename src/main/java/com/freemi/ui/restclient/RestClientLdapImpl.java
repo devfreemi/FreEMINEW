@@ -33,6 +33,7 @@ import com.freemi.entity.general.Registerform;
 import com.freemi.entity.general.ResetPassword;
 import com.freemi.entity.general.SessionToken;
 import com.freemi.entity.general.UserProfile;
+import com.freemi.entity.general.UserProfileLdap;
 import com.freemi.services.interfaces.ProfileRestClientService;
 import com.google.gson.JsonObject;
 
@@ -244,17 +245,26 @@ public class RestClientLdapImpl implements ProfileRestClientService {
 	}
 
 	@Override
-	public ResponseEntity<String> getProfileData(String userid, String token, String requestingIp) throws JsonProcessingException{
+	public UserProfileLdap getProfileData(String userid, String token, String requestingIp) throws JsonProcessingException{
 		final String url = env.getProperty(CommonConstants.URL_SERVICE_PROFILE) + "/getProfileData";
 		RestTemplate restTemplate = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
+		UserProfileLdap userDetails = null;
+		try {
+		
 		headers.set("Authorization", token);
 		headers.set("requestingIp", requestingIp);
 		headers.set("mobile", userid);
 		String useridfromSession = "{userProfileID: "+userid+"}";
 
 		HttpEntity<String> entity = new HttpEntity<String>(useridfromSession,headers);
-		return restTemplate.postForEntity(url, entity,  String.class);
+		userDetails= restTemplate.postForObject(url, entity,  UserProfileLdap.class);
+		
+		}catch(Exception e) {
+		    logger.info("Error fetching profile data",e);
+		}
+		
+		return userDetails;
 	}
 
 	@Override
