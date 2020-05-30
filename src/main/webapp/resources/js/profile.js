@@ -1,3 +1,4 @@
+console.log = function(){};
 function formOnLoad(){
 	document.getElementById("changebutton").style.display="block";
 	document.getElementById("passwordchangeform").style.display="none";
@@ -174,7 +175,7 @@ $( "#kycupdateformid" ).on( "submit", function( e ) {
 	var data1 = new FormData(form);
 	console.log(data1);
 	request = $.ajax({
-		url : "http://localhost:8080/products/api/fixed-deposit/updatekycdoc",
+		url : "/products/api/fixed-deposit/updatekycdoc",
 		method : "POST",
 		enctype: 'multipart/form-data',
 		processData: false,  // Important!
@@ -230,7 +231,7 @@ $( "#viewmfdkycdoc" ).on( "click", function( e ) {
 		url : "/products/api/fixed-deposit/get-fd-kyc-documents",
 		method : "POST",
 		async : true,
-		data: {"mobile":"9051472645"},
+		data: {"mobile": $("#customermobileval").val()},
 		timeout: 600000,
 		beforeSend : function() {
 			//disableChangePassButton();

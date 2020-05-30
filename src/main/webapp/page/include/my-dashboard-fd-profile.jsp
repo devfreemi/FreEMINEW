@@ -22,6 +22,7 @@
 				<th scope="col">Application No</th>
 				<th scope="col">Principal (Rs.)</th>
 				<th scope="col">Maturity</th>
+				<th scope="col">Status</th>
 				<th scope="col">Action</th>
 			</tr>
 		</thead>

@@ -15,17 +15,17 @@ import org.hibernate.annotations.Proxy;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@Entity
+/*@Entity
 @Table(name="mahindra_fd_list")
-@Proxy(lazy=false)
+@Proxy(lazy=false)*/
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MahindraFDListItem implements Serializable {
 private static final long serialVersionUID = 1L;
 	
-	@Column(name = "SL_NO")
-	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	private Integer serial;
+    /*@Column(name = "SL_NO")
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    private Integer serial;*/
 	
 	
 	@JsonProperty("FOLIO")
@@ -95,19 +95,27 @@ private static final long serialVersionUID = 1L;
 	@JsonProperty("CONDITIONAL_REASON")
 	@Column(name = "CONDITIONAL")
 	private String conditional;
-
+	
+	@JsonProperty("DEP_STATUS_CODE")
+	@Column(name = "STATUS_CODE")
+	private String statusCode;
+	
+	@JsonProperty("DEP_STATUS_DESC")
+	@Column(name = "STATUS_DESC")
+	private String statusDesc;
+	
 	
 	@Column(name = "FETCH_DATE")
 	private Date fetchDate;
 	
 	
-	public Integer getSerial() {
-		return serial;
-	}
-
-	public void setSerial(Integer serial) {
-		this.serial = serial;
-	}
+    /*public Integer getSerial() {
+    	return serial;
+    }
+    
+    public void setSerial(Integer serial) {
+    	this.serial = serial;
+    }*/
 
 	public String getFolio() {
 		return folio;
@@ -245,6 +253,26 @@ private static final long serialVersionUID = 1L;
 
 	public void setFetchDate(Date fetchDate) {
 		this.fetchDate = fetchDate;
+	}
+
+	public String getStatusCode() {
+	    return statusCode;
+	}
+
+	public void setStatusCode(String statusCode) {
+	    this.statusCode = statusCode;
+	}
+
+	public String getStatusDesc() {
+	    return statusDesc;
+	}
+
+	public void setStatusDesc(String statusDesc) {
+	    this.statusDesc = statusDesc;
+	}
+
+	public static long getSerialversionuid() {
+	    return serialVersionUID;
 	}
 	
 }

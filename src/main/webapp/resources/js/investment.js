@@ -597,8 +597,10 @@ function calculatefdtotals(result){
 		let matured=0;
 		for (var i = 0; i < data.length; i++) {
 			var x= data[i];
-			amount+=x.PRINC_AMT;
-			matured+=x.MATU_AMT;
+			if(x.DEP_STATUS_CODE == 'L'){
+				amount+=x.PRINC_AMT;
+				matured+=x.MATU_AMT;
+			}
 		}
 		
 		$("#balancedata").html("<div class='row animated fadeIn'><div class='col-6'>" +
@@ -747,6 +749,7 @@ function createfddataView(result){
 			var cell5 = row.insertCell(4);
 			var cell6 = row.insertCell(5);
 			var cell7 = row.insertCell(6);
+			var cell8 = row.insertCell(7);
 
 //			Add some text to the new cells:
 
@@ -756,7 +759,8 @@ function createfddataView(result){
 			cell4.innerHTML = x.APL_NO;
 			cell5.innerHTML = convertNumberToIndianFormat(x.PRINC_AMT);
 			cell6.innerHTML = convertNumberToIndianFormat(x.MATU_AMT) +"<br>" + "<small class='text-muted'>(On "+x.MATU_DATE+")</small>";
-			cell7.innerHTML = "<span class=\"text-danger\" type=\"button\" style=\"font-size: 12px; color: #238019; font-weight: 600;\" data-toggle='modal' " +
+			cell7.innerHTML = x.DEP_STATUS_DESC;
+			cell8.innerHTML = "<span class=\"text-danger\" type=\"button\" style=\"font-size: 12px; color: #238019; font-weight: 600;\" data-toggle='modal' " +
 			"data-fdrno='"+x.FDR_NO + "'" +
 			"data-appl='"+x.APL_NO + "'" +
 			"data-folio='"+x.FOLIO +"'" +

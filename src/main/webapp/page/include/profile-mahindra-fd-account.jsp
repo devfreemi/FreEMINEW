@@ -1,7 +1,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <section class="mahindra-account-display">
-	<h4>Mahindra FD KYC Documents</h4>
-	<div class="row mx-auto">
+	<h5>Mahindra Finance FD KYC Documents</h5>
+	<div class="row mx-auto mb-3">
 		<button type="button"
 			class="btn btn-sm btn-default"  id="viewmfdkycdoc">View
 			Documents</button>
@@ -31,7 +31,7 @@
 							<form id="kycupdateformid" name="mfdkycdcupdateform"
 								enctype="multipart/form-data">
 								
-								<input type="hidden" name="mobile" value="${mobile }">
+								<input type="hidden" name="mobile" value="${mobile }" id="customermobileval">
 								
 								<div class="md-form mb-1 mt-1">
 									<input type="file" class="custom-file-input reuploadimage"

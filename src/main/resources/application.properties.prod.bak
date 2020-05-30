@@ -112,7 +112,7 @@ mfregistration.bse.mail.support=Y
 #Whether to send mail to support team when any trasnaction error happens
 error.general.transaction.mail.support=Y
 
-################################# BACKEND SERVICE API URL ##################################
+################################# BACKEND SERVICE API URL - PROD ##################################
 
-url.service.fd.mahindra=http://localhost:8050/freemiservices/api/mahindrafd
-#url.service.fd.mahindra=http://localhost:6080/freemiservices-0.0.1-SNAPSHOT/api/mahindrafd
+#url.service.fd.mahindra=https://service.freemi.in/freemiservices
+url.service.fd.mahindra=http://172.26.2.56:8090/freemiservices-0.0.1-SNAPSHOT
