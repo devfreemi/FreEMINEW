@@ -109,8 +109,10 @@
 
 <p class="mb-0 pt-2"><span class="sub-footer-title">Financial Tools:</span>
 <a href="https://www.freemi.in/products/tax-calculator/" class="sub-footer-link-style">Tax Calculator</a>  <span class="pipe-style">|</span>
-<a href="https://www.freemi.in/mutual-funds/sip-calculator/" class="sub-footer-link-style">SIP Calculator</a> <span class="pipe-style">|</span>
-<a href="https://www.freemi.in/emi-calculator/" class="sub-footer-link-style">EMI Calculator</a> 
+<a href="https://www.freemi.in/sip-calculator/" class="sub-footer-link-style">SIP Calculator</a> <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/emi-calculator/" class="sub-footer-link-style">EMI Calculator</a> <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/marriage-calculator/" class="sub-footer-link-style">Marriage Calculator</a> <span class="pipe-style">|</span>
+<a href="https://www.freemi.in/retirement-planning-calculator/" class="sub-footer-link-style">Retirement Calculator</a> 
 </p>
 
 <!-- Savings -->

@@ -79,9 +79,11 @@ background: linear-gradient(to left, #1CB5E0, #000046); /* W3C, IE 10+/ Edge, Fi
           aria-expanded="false">Calculators
         </a>
         <div class="dropdown-menu dropdown-secondary" aria-labelledby="link5">
+          <a class="dropdown-item" href="https://www.freemi.in/sip-calculator/">SIP Calculator</a>
+          <a class="dropdown-item" href="https://www.freemi.in/emi-calculator/">EMI Calculator</a>
+          <a class="dropdown-item" href="https://www.freemi.in/marriage-calculator/">Marriage Calculator</a>
+          <a class="dropdown-item" href="https://www.freemi.in/retirement-planning-calculator/">Retirement Calculator</a>
           <a class="dropdown-item" href="https://www.freemi.in/products/tax-calculator">Tax Calculator</a>
-          <a class="dropdown-item" href="https://www.freemi.in/mutual-funds/sip-calculator">SIP Calculator</a>
-          <a class="dropdown-item" href="https://www.freemi.in/loans/emi-calculator">EMI Calculator</a>
         </div>
       </li>
       

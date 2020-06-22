@@ -721,7 +721,7 @@ function createfddataView(result){
 	if(result=="NO_SESSION"){
 		$("#fdfetch").html("Session expired. Please login again");
 	}else if(result==="NO_PAN"){
-		$("#fdfetch").html("PAN record not present. Please csontact admin if you carried out transaction.");
+		$("#fdfetch").html("PAN record not present. Please contact admin if you carried out transaction.");
 	}else if(result==="NO_DATA"){
 		$("#fdfetch").html("<p>No savings record.</p><a href=\"/fixed-deposit/\"><button class=\"btn btn-sm btn-default\"><img src=\"https://resources.freemi.in/products/resources/images/invest/investment4.png\" class=\"img-fluid\" style=\"height: 2rem;\"> Start Saving</button> </a>");
 	}else if(result==="INAVLID_REQUEST"){

@@ -143,7 +143,7 @@ public class RestClientLdapImpl implements ProfileRestClientService {
 
 			}
 		}catch(HttpStatusCodeException  e){
-			logger.error("registerUser(): Fregistration failed for Link failure - ", e.getStatusCode());
+			logger.error("registerUser(): registration failed for Link failure - ", e);
 			httpClientResponse.setResponseCode(CommonConstants.HTTP_CLIENT_CALL_FAIL);
 			httpClientResponse.setRetrunMessage("Unable to process request currently");
 
