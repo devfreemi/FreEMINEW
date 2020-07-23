@@ -59,6 +59,7 @@ background: linear-gradient(to left, #1CB5E0, #000046); /* W3C, IE 10+/ Edge, Fi
           aria-expanded="false">Credit Cards
         </a>
         <div class="dropdown-menu dropdown-secondary" aria-labelledby="link3">
+        <a class="dropdown-item" href="https://www.freemi.in/icici-bank/icici-bank-credit-card/">Apply for ICICI Credit Card</a>
           <a class="dropdown-item" href="https://www.freemi.in/credit-card/">Apply for Credit Card</a>
         </div>
       </li>

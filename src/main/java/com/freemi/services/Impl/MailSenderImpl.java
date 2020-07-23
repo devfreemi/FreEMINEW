@@ -28,6 +28,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 import com.freemi.common.util.CommonConstants;
+import com.freemi.database.interfaces.EmailBounceCrudRepository;
+import com.freemi.entity.database.EmailBounceReport;
 import com.freemi.entity.general.Mail;
 import com.freemi.entity.investment.MFCustomers;
 import com.freemi.entity.investment.MFinitiatedTrasactions;
@@ -43,6 +45,9 @@ public class MailSenderImpl implements MailSenderInterface {
 
 	@Autowired
 	private JavaMailSender javaMailSender;
+	
+	@Autowired
+	EmailBounceCrudRepository emailBounceCrudRepository;
 
 	//	@Autowired
 	//	EmailBounceReportCrudRepository emailBounceReportCrudRepository;
@@ -168,14 +173,18 @@ public class MailSenderImpl implements MailSenderInterface {
 
 				//				Check if mail ID is in bounce List
 				//				if(!emailBounceReportCrudRepository.existsByBouncedMailId(mail.getTo().toLowerCase())) {
-
-				javaMailSender.send(message);
-				logger.info("Mail sent for- "+ mail.getTo().toLowerCase());
+				
+				if(emailBounceCrudRepository.existsByBouncedmailid(mail.getTo().toLowerCase())) {
+					logger.warn("MAIL ID is found in bounce list. Skipping sending mail to - "+ mail.getTo().toLowerCase());
+				}else {
+					javaMailSender.send(message);
+					logger.info("Mail sent for- "+ mail.getTo().toLowerCase());
+				}
 				/*}else {
 					logger.info("Mail is found in bounce list. Mail not triggered for email ID- "+ mail.getTo().toLowerCase());
 				}*/
 			}else{
-				logger.info("Mail service is disabled currently. SKipping mail trigger.");
+				logger.info("Mail service is disabled currently. Skipping mail trigger.");
 			}
 		}catch(Exception e){
 			logger.error("Failed to send mail to : "+ mail.getTo()+"\n",e);
@@ -401,6 +410,24 @@ public class MailSenderImpl implements MailSenderInterface {
 			logger.error("notifyTransactionErrorToAdmin(): Error processing mailing task.", e);
 		}
 	    
+	}
+
+	@Override
+	public void emailbouncereportcapture(EmailBounceReport bouncereport) {
+		
+		try {
+			emailBounceCrudRepository.save(bouncereport);
+			logger.info("Inserting to DB AWS Bounce report complete..");
+			/*
+			 * if(emailBounceCrudRepository.existsByBouncedmailid(bouncereport.
+			 * getBouncedmailid().toLowerCase())) { logger.info("EMAIL ID bounced earlier");
+			 * }
+			 */
+			
+		}catch(Exception e) {
+			logger.error("Failed to save AWS bounce report to DB",e);
+		}
+		
 	}
 
 	/*

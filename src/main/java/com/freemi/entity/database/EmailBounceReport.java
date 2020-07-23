@@ -21,22 +21,29 @@ public class EmailBounceReport implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name = "SL_NO")
 	private Long serialno;
 	
-	@Column(name="NOTIFICATION_TYPE")
-	private String notificationType;
+	@Column(name="BOUNCE_TYPE")
+	private String bouncetype;
+	
+	@Column(name="BOUNCE_SUB_TYPE")
+	private String bouncesubtype;
 	
 	@Column(name="ERROR_CODE")
-	private String errorCode;
+	private String errorcode;
 	
 	@Column(name="MAIL_TRIGGER_SOURCE_IP")
-	private String mailTriggerSourceIp;
+	private String mailtriggersourceip;
 	
-	@Column(name="SOURCE_MAIL_ID")
-	private String sourceMailId;
+	@Column(name="BOUNCE_FROM_MAIL_ID")
+	private String sourcemailid;
 	
 	@Column(name="DESTINATION_MAIL_ID")
-	private String bouncedMailId;
+	private String bouncedmailid;
+	
+	@Column(name = "AWS_ACCOUNT_ID")
+	private String awsaccountid;
 	
 	@Column(name="TIMESTAMP")
 	private Date timestamp;
@@ -49,44 +56,60 @@ public class EmailBounceReport implements Serializable {
 		this.serialno = serialno;
 	}
 
-	public String getNotificationType() {
-		return notificationType;
+	public String getBouncetype() {
+		return bouncetype;
 	}
 
-	public void setNotificationType(String notificationType) {
-		this.notificationType = notificationType;
+	public void setBouncetype(String bouncetype) {
+		this.bouncetype = bouncetype;
 	}
 
-	public String getErrorCode() {
-		return errorCode;
+	public String getBouncesubtype() {
+		return bouncesubtype;
 	}
 
-	public void setErrorCode(String errorCode) {
-		this.errorCode = errorCode;
+	public void setBouncesubtype(String bouncesubtype) {
+		this.bouncesubtype = bouncesubtype;
 	}
 
-	public String getMailTriggerSourceIp() {
-		return mailTriggerSourceIp;
+	public String getErrorcode() {
+		return errorcode;
 	}
 
-	public void setMailTriggerSourceIp(String mailTriggerSourceIp) {
-		this.mailTriggerSourceIp = mailTriggerSourceIp;
+	public void setErrorcode(String errorcode) {
+		this.errorcode = errorcode;
 	}
 
-	public String getSourceMailId() {
-		return sourceMailId;
+	public String getMailtriggersourceip() {
+		return mailtriggersourceip;
 	}
 
-	public void setSourceMailId(String sourceMailId) {
-		this.sourceMailId = sourceMailId;
+	public void setMailtriggersourceip(String mailtriggersourceip) {
+		this.mailtriggersourceip = mailtriggersourceip;
 	}
 
-	public String getBouncedMailId() {
-		return bouncedMailId;
+	public String getSourcemailid() {
+		return sourcemailid;
 	}
 
-	public void setBouncedMailId(String bouncedMailId) {
-		this.bouncedMailId = bouncedMailId;
+	public void setSourcemailid(String sourcemailid) {
+		this.sourcemailid = sourcemailid;
+	}
+
+	public String getBouncedmailid() {
+		return bouncedmailid;
+	}
+
+	public void setBouncedmailid(String bouncedmailid) {
+		this.bouncedmailid = bouncedmailid;
+	}
+
+	public String getAwsaccountid() {
+		return awsaccountid;
+	}
+
+	public void setAwsaccountid(String awsaccountid) {
+		this.awsaccountid = awsaccountid;
 	}
 
 	public Date getTimestamp() {
@@ -100,6 +123,8 @@ public class EmailBounceReport implements Serializable {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
+
+	
 	
 	
 }

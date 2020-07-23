@@ -2,6 +2,7 @@ package com.freemi.services.interfaces;
 
 import org.springframework.stereotype.Service;
 
+import com.freemi.entity.database.EmailBounceReport;
 import com.freemi.entity.investment.MFCustomers;
 import com.freemi.entity.investment.MFinitiatedTrasactions;
 import com.freemi.entity.investment.SelectMFFund;
@@ -19,4 +20,7 @@ public interface MailSenderInterface {
 	
 	
 	public void notifyTransactionErrorToAdmin(Object data1, String message, String requesteddata, String errorType, String subcategory, String customerid, String name);
+	
+	public void emailbouncereportcapture(EmailBounceReport bouncereport);
+	
 }
