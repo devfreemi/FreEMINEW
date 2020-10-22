@@ -6,39 +6,64 @@
 <head>
 <jsp:include page="include/bootstrap.jsp"></jsp:include>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>FreEMI Terms of use - NTACTUS FINANCIAL SERVICES PVT. LTD</title>
+<title>Terms of use | FreEMI</title>
+<meta name="description"
+	content="FreEMI Terms of use, FreEMI a market digital place. Invest in mutual funds, avail personal loan. APlly for credit card and get instant approval." />
+<meta name="keywords"
+	content="Instant Personal Loan, Personal Loan interest rates, Personal Loan online apply, Lowest interest rate Personal Loan, Instant Personal Loan online, Low interest Personal Loans, Personal Loan interest rates in all banks, best personal loans, personal loan application, personal loan for cibil defaulter." />
+<meta name="robots" content="index, follow">
+
 <link rel="canonical"
 	href=" https://www.freemi.in/products/terms-of-use" />
-<link
-	href="<c:url value="${contextcdn}/resources/css/terms-conditions.component.css"/>"
-	rel="stylesheet">
-<link href="<c:url value="${contextcdn}/resources/css/styles.css"/>"
-	rel="stylesheet">
-<link href="<c:url value="${contextcdn}/resources/css/homePage.css"/>"
-	rel="stylesheet">
-<link href="<c:url value="${contextcdn}/resources/css/animate.css"/>"
-	type="text/css" rel="stylesheet">
 
+
+ <link href="<c:url value="${contextcdn}/resources/css/styles.css"/>"
+	rel="stylesheet">
 <script src="<c:url value="${contextcdn}/resources/js/common.js" />"></script>
 <style type="text/css">
 h5 {
 	font-weight: 500;
 }
+
+.background_curve{
+background-color: #c1ebff;
+    background-image: -webkit-linear-gradient(108deg, #ffffff 50%, #59b0ff 50%);
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}
 </style>
 
 </head>
-<body class="back_set">
+<body>
 	<div class='thetop'></div>
 	<jsp:include page="include/header.jsp"></jsp:include>
-	<div class="container freemi_container">
-		<div class="terms_header">
-			<h1 class="terms_header_style">Terms of Use</h1>
-		</div>
-		<div class="terms_topic">
-			<h5>Terms of Use</h5>
+	
+	<section class="background_curve pt-5 mb-5" style="height: 100vh;">
+	<div class="container z-depth-3 text-muted small white mb-5" style="height: 80vh; overflow-y: scroll;">
+		
+		<div class="text-center text-primary p-4">
+			<h5 class="mb-0">Terms of Use</h5>
 		</div>
 
-		<div class="terms_contents_general">
+		<div style="">
 
 			<p>
 				This Agreement sets forth the terms and conditions that apply to the
@@ -383,11 +408,13 @@ h5 {
 		</div>
 
 	</div>
+	</section>
 	<div class='scrolltop'>
 		<div class='scroll icon bounceIn'>
 			<i class="fa fa-4x fa-angle-up" style="font-size: 30px;"></i>
 		</div>
 	</div>
+	<jsp:include page="include/sub-footer.jsp"></jsp:include>
 	<jsp:include page="include/footer.jsp"></jsp:include>
 </body>
 </html>

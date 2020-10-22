@@ -729,33 +729,48 @@ public class HomeController {
 
 	try{
 	    logger.info("Clear logging data from cookie...");
+	    String domain = env.getProperty("server.session.cookie.domain");
+	    
 	    Cookie ssokCookie = new Cookie("loggedSession", "");
 	    ssokCookie.setMaxAge(0);
 	    ssokCookie.setPath("/");
+	    ssokCookie.setDomain(domain);
 	    response.addCookie(ssokCookie);
 
 	    ssokCookie = new Cookie("email", "");
 	    ssokCookie.setMaxAge(0);
 	    ssokCookie.setPath("/");
+	    ssokCookie.setDomain(domain);
 	    response.addCookie(ssokCookie);
 
 	    ssokCookie = new Cookie("userid", "");
 	    ssokCookie.setMaxAge(0);
 	    ssokCookie.setPath("/");
+	    ssokCookie.setDomain(domain);
 	    response.addCookie(ssokCookie);
 	    
 	    ssokCookie = new Cookie("token", "");
 	    ssokCookie.setMaxAge(0);
 	    ssokCookie.setPath("/");
+	    ssokCookie.setDomain(domain);
 	    response.addCookie(ssokCookie);
 	    
 	    ssokCookie = new Cookie("pan", "");
 	    ssokCookie.setMaxAge(0);
 	    ssokCookie.setPath("/");
+	    ssokCookie.setDomain(domain);
 	    response.addCookie(ssokCookie);
-
+	    
+	    ssokCookie = new Cookie("mf_user", "");
+	    ssokCookie.setMaxAge(0);
+	    ssokCookie.setPath("/");
+	    ssokCookie.setDomain(domain);
+	    response.addCookie(ssokCookie);
+	    
 	    logger.info("Cookie unset complete for user");
-
+	    
+	    
+	    
 
 	}catch(Exception e){
 	   logger.error("Error removing session data from cookie during logout..",e);

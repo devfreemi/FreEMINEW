@@ -2262,11 +2262,12 @@ public class BsemfController {
 	    if (transStatus.equalsIgnoreCase("Y") || transStatus.equalsIgnoreCase("SF")) {
 		logger.info("Proceeding to generate pay url for order id - " + transReport.getBseOrderNoFromResponse());
 		BseOrderPaymentRequest orderUrl = new BseOrderPaymentRequest();
-		orderUrl.setClientCode(CommonTask.encryptText(clienCode));
+//		orderUrl.setClientCode(CommonTask.encryptText(clienCode));
+		orderUrl.setClientCode(clienCode);
 		orderUrl.setMemberCode(CommonConstants.BSE_MEMBER_ID);
 	
 		Base64 base64 = new Base64();
-		String encodedClientCode = new String(base64.encode(clienCode.getBytes()));
+		String encodedClientCode = new String(base64.encode(CommonTask.encryptText(clienCode).getBytes()));
 	
 		String callbackUrl = URI.create(request.getRequestURL().toString()).resolve(request.getContextPath())
 			.toString()

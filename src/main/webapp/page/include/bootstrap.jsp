@@ -6,6 +6,7 @@
 <meta name="Copyright" content="Copyright 2018 @ freemi.in" />
 <meta name="author" content="https://www.freemi.in" />
 <link rel="icon" type="image/x-icon" href="/products/resources/images/favicon.ico">
+
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
 <link href="https://resources.freemi.in/mdbtheme/4.8.10/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://resources.freemi.in/mdbtheme/4.8.10/css/mdb.min.css" rel="stylesheet">

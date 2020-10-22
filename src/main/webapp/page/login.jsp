@@ -117,7 +117,7 @@
 							<img
 								src="<c:url value="${contextcdn}/resources/images/otp-service.svg"/>"
 								class="img-fluid prefix" style="height: 2rem;" alt="OTP">
-							<form:input type="text" style="padding-left: 5px;"
+							<form:input type="tel" style="padding-left: 5px;"
 								pattern="[0-9]*" class="form-control form-control-sm mr-sm-3"
 								path="otpVal" id="validationOTP" maxlength="6"
 								autocomplete="off" placeholder="OTP"

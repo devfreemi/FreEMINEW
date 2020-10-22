@@ -98,7 +98,7 @@ public class ProductsController {
 
 	@RequestMapping(value = "/register.do", method = RequestMethod.POST)
 	public String registerUserPost(@ModelAttribute("registerForm") @Valid Registerform registerForm, BindingResult bindingResult, ModelMap model, HttpServletRequest request, HttpServletResponse response) {
-		logger.info("@@@@ Inside Register do registerUser()..");
+		logger.info("@@@@ Inside Register do registerUser().. " + request.getHeader("user-agent"));
 		
 		if(bindingResult.hasErrors()){
 			logger.info("REGISTRATION FORM VALIDATION ERROR : user -  "+ registerForm.getMobile() + " : "+ registerForm.getEmail() +" : Error -" + bindingResult.getFieldError().getDefaultMessage());

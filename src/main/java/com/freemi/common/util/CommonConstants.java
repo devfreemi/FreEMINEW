@@ -161,6 +161,7 @@ public class CommonConstants {
 	public static final String TIMESTAMP_FORMAT_SNS_REPORT ="yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
 	
 
-	
+	public static final String BASE_ICCS_URL = "api.iccs.baseurl";
+	public static final String ICCS_AUTH_TOKEN = "api.iccs.auth.token";
 	
 }

@@ -29,7 +29,7 @@ background: linear-gradient(to left, #1CB5E0, #000046); /* W3C, IE 10+/ Edge, Fi
         <div class="dropdown-menu dropdown-secondary" aria-labelledby="link1">
           <a class="dropdown-item" href="https://www.freemi.in/personal-loan/">Personal Loan</a>
           <a class="dropdown-item" href="https://www.freemi.in/business-loan/">Business Loan</a>
-          <a class="dropdown-item" href="https://www.freemi.in/home-loan/">Home Loan</a>
+          <a class="dropdown-item" href="https://www.freemi.in/faircent/">P2P Lending</a>
         </div>
       </li>
       <li class="nav-item dropdown" style="display: -webkit-inline-box;">

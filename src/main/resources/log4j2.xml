@@ -9,7 +9,7 @@
 	
 		<!-- Rolling File Appender -->
 		<RollingFile name="FileAppender" fileName="D:/logs/PRODUCTS/freemiweb.log"
-			filePattern="D:/logs/PRODUCTS/freemiweb-%d{yyyy-MM-dd}-%i.log">
+			filePattern="D:/logs/PRODUCTS/BACKUP/%d{yyyy}/%d{MMM}/freemiweb-%d{yyyy-MM-dd}-%i.log">
 			<PatternLayout>
 				<Pattern>${LOG_PATTERN}</Pattern>
 			</PatternLayout>
