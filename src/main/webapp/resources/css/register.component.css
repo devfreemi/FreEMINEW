@@ -292,3 +292,10 @@ form > div > label {
     }
 }
 
+.input-button-position{
+	position: fixed;
+    margin-top: -42px;
+    left: 80%;
+	
+}
+

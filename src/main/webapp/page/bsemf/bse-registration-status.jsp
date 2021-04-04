@@ -24,6 +24,7 @@
 </style>
 </head>
 <body>
+<jsp:include page="/page/include/GoogleBodyTag.jsp"></jsp:include>
 	<jsp:include page="../include/header.jsp"></jsp:include>
 	<div class="container-fluid" style="margin-bottom: 10rem;">
 		<nav aria-label="breadcrumb">

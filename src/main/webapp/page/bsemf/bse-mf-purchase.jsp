@@ -1,7 +1,6 @@
 <%@page import="java.util.Date"%>
 <%@page import="java.util.Calendar"%>
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-	pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
 
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
@@ -13,7 +12,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <jsp:include page="../include/bootstrap.jsp"></jsp:include>
 <meta name="description" content="" />
-<meta name="robots" content="index,nofollow" />
+<meta name="robots" content="noindex,follow" />
 <%-- <link
 	href="<c:url value="${contextcdn}/resources/css/bseinvestmentform.css"/>"
 	rel="stylesheet"> --%>
@@ -25,6 +24,7 @@
 <script src="<c:url value="${contextcdn}/resources/js/pace.min.js" />"></script>
 </head>
 <body>
+<jsp:include page="/page/include/GoogleBodyTag.jsp"></jsp:include>
 	<jsp:include page="../include/header.jsp"></jsp:include>
 
 	<div class="container">

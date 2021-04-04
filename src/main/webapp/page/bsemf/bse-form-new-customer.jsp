@@ -12,7 +12,7 @@
 
 <meta name="description"
 	content="Fill up the form to complete your investment if you are an e-KYC verified customer" />
-<meta name="robots" content="index,nofollow" />
+<meta name="robots" content="noindex,follow" />
 
 <jsp:include page="../include/bootstrap.jsp"></jsp:include>
 <link
@@ -50,7 +50,7 @@
 </script>
 
 <body onload="nextPrev(0);">
-
+<jsp:include page="/page/include/GoogleBodyTag.jsp"></jsp:include>
 	<jsp:include page="../include/header.jsp"></jsp:include>
 	<div class="container-fluid" style="margin-bottom: 4rem;">
 

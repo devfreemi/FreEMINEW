@@ -53,6 +53,7 @@ import com.freemi.entity.investment.MFInvestForm;
 import com.freemi.entity.investment.MFInvestmentDates;
 import com.freemi.entity.investment.RegistryFunds;
 import com.freemi.entity.investment.RegistryWish;
+import com.freemi.services.interfaces.EKYCValidation;
 import com.freemi.services.interfaces.FreemiServiceInterface;
 import com.freemi.services.interfaces.ProfileRestClientService;
 
@@ -75,15 +76,20 @@ public class ProductsController {
 
 	@Autowired
 	private Environment env;
+	
+	@Autowired
+	EKYCValidation ekycValidation;
 
 	@RequestMapping(value = "/register", method = RequestMethod.GET)
 	public String registerUserGet(Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 		//logger.info("@@@@ Inside Login..");
-		logger.info("@@@@ Register page @@@@");
+		logger.info(request.getRequestURI() + " -"+ request.getSession().getId());
 		
-		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
+		Registerform register = new Registerform();
+		register.setSessionid(session.getId());
+		
 		if(session.getAttribute("token") == null){
-		    map.addAttribute("registerForm", new Registerform());
+		    map.addAttribute("registerForm", register);
 		return "register";
 		}else{
 			logger.info("User session is already detected. Preventing another attempt of register.");
@@ -98,31 +104,43 @@ public class ProductsController {
 
 	@RequestMapping(value = "/register.do", method = RequestMethod.POST)
 	public String registerUserPost(@ModelAttribute("registerForm") @Valid Registerform registerForm, BindingResult bindingResult, ModelMap model, HttpServletRequest request, HttpServletResponse response) {
-		logger.info("@@@@ Inside Register do registerUser().. " + request.getHeader("user-agent"));
+		logger.info("@@@@ Inside Register do registerUser().. " + request.getHeader("user-agent") + " - " + request.getSession().getId());
 		
+		registerForm.setOtp(null);
 		if(bindingResult.hasErrors()){
 			logger.info("REGISTRATION FORM VALIDATION ERROR : user -  "+ registerForm.getMobile() + " : "+ registerForm.getEmail() +" : Error -" + bindingResult.getFieldError().getDefaultMessage());
-			model.addAttribute("error", bindingResult.getFieldError().getDefaultMessage());
+			model.addAttribute("message", bindingResult.getFieldError().getDefaultMessage());
 			model.addAttribute("registerForm", new Registerform());
 			return "register";
 		}
 		
+		
+		if(!ekycValidation.mobilenoverifiedduringregistration(registerForm.getSessionid(), registerForm.getMobile(), "REGISTRATION")) {
+			logger.info("Mobile no not verified...");
+			model.addAttribute("message", "Mobile no. verification required.");
+			registerForm.setOtpverified("N");
+			model.addAttribute("registerForm", registerForm);
+			return "register";
+		}
+		
+		
 		try {
 		registerForm.setFullName(registerForm.getFname() + " "+ registerForm.getLname());
+		registerForm.setRegistrationref("DIRECT");
 		
 		HttpClientResponse httpResponse =  profileRestClientService.registerUser(registerForm,CommonTask.getClientSystemDetails(request));
 		logger.info("REGISTRATION STATUS : "+ registerForm.getMobile() + " : "+ httpResponse.getRetrunMessage() );
 		
 		if(httpResponse.getResponseCode() == CommonConstants.HTTP_CLIENT_CALL_SUCCESS) {
-			model.addAttribute("success",httpResponse.getRetrunMessage());
+			model.addAttribute("message",httpResponse.getRetrunMessage());
 			model.addAttribute("registerForm", new Registerform());
 		}else {
-			model.addAttribute("error", httpResponse.getRetrunMessage());
+			model.addAttribute("message", httpResponse.getRetrunMessage());
 			model.addAttribute("registerForm", registerForm);
 		}
 		}catch(Exception e) {
 		    logger.error("REGISTRATION ERROR - Error processing registration request.",e);
-		    model.addAttribute("error","Failed to prrocess. Kindly try again.");
+		    model.addAttribute("message","Failed to prrocess. Kindly try again.");
 		    model.addAttribute("registerForm", registerForm);
 		}
 		
@@ -177,7 +195,6 @@ public class ProductsController {
 	
 	logger.info("@@@@ RegistryController Data Load Comleted @@@@");
 
-	map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 //	return "registry/registry-home";
 	return "registry3";
 	    
@@ -265,7 +282,6 @@ public class ProductsController {
 		map.addAttribute("personalLoan", personalLoan);
 		map.addAttribute("homeLoan", homeLoan);
 		map.addAttribute("creditCard", creditCard);
-		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 
 		logger.info("@@@@ FreemiController @@@@");
 		return "loans";
@@ -385,7 +401,6 @@ public class ProductsController {
 			logger.info("Status of loan request -" + requestStatus);
 			map.addAttribute("REQUESTSUCCESS",requestStatus);
 			map.addAttribute("requestmessage",requestmessage);
-			map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 		}
 		//		return returnUrl;
 		return view;
@@ -408,7 +423,6 @@ public class ProductsController {
 	public String fsecureDisplay(Model map) {
 		//logger.info("@@@@ Inside Login..");
 		map.addAttribute("fsecureForm", new FSecure());
-		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 		logger.info("@@@@ FsecureController @@@@");
 		return "fsecure-insurance";
 	}
@@ -547,7 +561,7 @@ public class ProductsController {
 		registryWish.setSchemeId(schemeId);
 		model.addAttribute("registryWishForm", registryWish);
 		model.addAttribute("schemeId", schemeId);
-		model.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
+		
 		logger.info("@@@@ RegistryWishController :: schemeId"+schemeId);
 		return "registry-wish";
 	}
@@ -709,7 +723,7 @@ public class ProductsController {
 		model.addAttribute("mfInvestForm", mfInvestForm);
 		model.addAttribute("aadhaarotp", new AadhaarOTP());
 		model.addAttribute("showAadhaar", false);
-		model.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
+		
 		return "mfekyc";
 	}
 
@@ -923,7 +937,9 @@ public class ProductsController {
 		return transportType;
 	}
 
-
+	@ModelAttribute("contextcdn") String contextcdn() {
+		return env.getProperty(CommonConstants.CDN_URL);
+	}
 
 
 	/*	public static void main(String[] args) throws ParseException{

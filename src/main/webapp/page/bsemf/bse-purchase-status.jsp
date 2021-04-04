@@ -9,9 +9,10 @@
 <title>FreEMI Mutual Fund Purchase Status</title>
 
 <meta name="description" content="" />
-<meta name="robots" content="index,nofollow" />
+<meta name="robots" content="noindex,follow" />
 
 <jsp:include page="../include/bootstrap.jsp"></jsp:include>
+<jsp:include page="../include/GoogleHeadTag.jsp"></jsp:include>
 <link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet">
 <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 <link href="<c:url value="${contextcdn}/resources/css/bseinvestmentform.css"/>" rel="stylesheet">
@@ -27,6 +28,7 @@
 
 <body >
 	<jsp:include page="../include/header.jsp"></jsp:include>
+	<jsp:include page="../include/GoogleBodyTag.jsp"></jsp:include>
 	<div class="container">
 
 		<section class="purchase_status" style="margin-bottom: 5rem;">

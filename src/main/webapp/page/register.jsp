@@ -6,22 +6,29 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <html>
 <head>
-<meta name="keywords"
-	content="freemi signup, freemi register, investment portal" />
+<meta name="keywords" content="freemi signup, freemi register, investment portal" />
 <link rel="canonical" href=" https://www.freemi.in/products/register" />
-
-<meta name="title" content="Sign up" />
+<meta name="title" content="New to FreEMI? Get registered today." />
 <meta name="description" content="Get registered to FreEMI and invest to fill your goals. Apply for personal loans, business loan, credit cards, health insurance, motor insurance, etc. Purchase mutual funds, invest through SIP." />
-<meta name="robots" content="follow,index" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="robots" content="index, follow">
+<meta name="googlebot" content="index, follow" />
+<meta name="bingbot" content="index, follow" />
+
 <jsp:include page="include/bootstrap.jsp"></jsp:include>
+
 <link
 	href="<c:url value="${contextcdn}/resources/css/register.component.css"/>"
 	rel="stylesheet">
-<link href="<c:url value="${contextcdn}/resources/css/styles.css"/>"
-	rel="stylesheet">
-<link href="<c:url value="${contextcdn}/resources/css/animate.css"/>"
-	type="text/css" rel="stylesheet">
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<%-- <link href="<c:url value="${contextcdn}/resources/css/styles.css"/>"
+	rel="stylesheet"> --%>
+
+<link
+	href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css"
+	rel="stylesheet" />
+<script
+	src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 <title>New to FreEMI? Get registered today.</title>
 <style type="text/css">
 @media screen and (max-width: 320px) {
@@ -33,7 +40,7 @@
 </style>
 
 </head>
-<body class="login_design" onload="formOnLoad();">
+<body class="login_design">
 	<jsp:include page="include/GoogleBodyTag.jsp"></jsp:include>
 	<jsp:include page="include/header.jsp"></jsp:include>
 	<div class="container" style="min-height: 400px; padding-top: 30px;">
@@ -50,30 +57,11 @@
 		<div class="row p-1">
 			<div class="col-md-6 col-lg-6 form_div animated fadeInRight"
 				style="margin: auto; background: #ffffffe3;">
-				<div>
-					<form:errors path="*" cssClass="error" element="div" />
-				</div>
-				<div class="row">
-					<c:choose>
+				<div class="row mx-auto">
+					<div class="col-md-12 col-lg-12 alert text-danger" role="alert">
+								<span id="displaymsg">${message}</span>
+					</div>
 
-						<c:when test="${not empty success }">
-							<div class="col-md-12 col-lg-12">
-								<div class="alert alert-primary" role="alert">
-									<span> ${success}</span>
-								</div>
-							</div>
-						</c:when>
-						<c:when test="${not empty error }">
-							<div class="col-md-12 col-lg-12">
-								<div class="alert alert-danger" role="alert">
-									<span>${error}</span>
-								</div>
-							</div>
-						</c:when>
-						<c:otherwise>
-							<span></span>
-						</c:otherwise>
-					</c:choose>
 					<!--  -->
 
 				</div>
@@ -107,13 +95,18 @@
 
 					<div class="md-form mt-1">
 						<i class="fas fa-mobile-alt prefix" id="mobico"></i>
-						<form:input type="text" style="padding-left: 5px;"
+						<form:input type="tel" style="padding-left: 5px;"
 							id="registermobile" class="form-control form-control-sm"
 							path="mobile" pattern="[0-9]*" maxlength="10" autocomplete="off"
-							placeholder="10-digit mobile number"></form:input>
+							placeholder="10-digit mobile number"></form:input><button type="button" class="btn btn-sm btn-deep-orange p-2 input-button-position" id="send-otp-btn"><span id="otptext">Get OTP</span></button>
 					</div>
 
 
+					<div class="md-form col-md-6 mx-auto text-center d-none" id="otpblock">
+						<form:input type="text" style="padding-left: 5px;" id="otpbox"
+							class="form-control form-control-sm mb-0" path="otp" maxlength="6"
+							autocomplete="off" placeholder="Enter OTP"></form:input><button type="button" class="btn btn-sm btn-deep-orange p-2" id="verify-otp-btn"><span id="otpverify">Verify</span> </button>
+					</div>
 					<div class="md-form">
 						<i class="fas fa-envelope prefix" id="mailico"></i>
 						<form:input type="text" style="padding-left: 5px;" id="useremail"
@@ -130,6 +123,9 @@
 						<small id="msg2"
 							style="font-size: 10px; padding-left: 2.5rem; color: #f33c3c;"></small>
 					</div>
+					
+					<form:hidden path="sessionid"/>
+					<form:hidden path="otpverified"/>
 
 					<div class="text-center mb-2">
 						<button type="submit" id="registerSubmit"
@@ -161,5 +157,9 @@
 
 	</div>
 </body>
+<script type="text/javascript">
+	var basepathdata = '<c:out value='${pageContext.request.contextPath}'></c:out>';
+</script>
 <script src="<c:url value="${contextcdn}/resources/js/register.js" />"></script>
+
 </html>

@@ -75,7 +75,7 @@ public class SelectMFFund implements Serializable {
 	@Column(name="")
 	private String schemeType;
 
-	@NotNull(message= "Please provide investment amount") @Min(value = 100,message = "Minimum investment amount is Rs.100")
+	@NotNull(message= "Please provide investment amount") /* @Min(value = 100,message = "Minimum investment amount is Rs.100") */
 	@Column(name="INVEST_AMOUNT")
 	private double investAmount;
 	

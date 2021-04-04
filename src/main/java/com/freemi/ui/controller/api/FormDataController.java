@@ -20,15 +20,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.freemi.entity.database.EmailBounceReport;
-import com.freemi.services.interfaces.ApiFormCaptureInterface;
 import com.freemi.services.interfaces.MailSenderInterface;
 
 @RestController
 @RequestMapping("/api")
 public class FormDataController {
 
-	@Autowired
-	ApiFormCaptureInterface apiFormCaptureInterface;
 	
 	@Autowired
 	MailSenderInterface mailSenderInterface;
@@ -36,8 +33,8 @@ public class FormDataController {
 	private static final Logger logger = LogManager.getLogger(FormDataController.class);
 
 
-	@PostMapping(value="/blog/advisorsupport")
-	@CrossOrigin(origins="*")
+//	@PostMapping(value="/blog/advisorsupport")
+//	@CrossOrigin(origins="*")
 	@ResponseBody
 	public String captureAdvisorSupport(@RequestBody String blogData, BindingResult result, HttpServletRequest request, HttpServletResponse httpResponse){
 		logger.info("Request received to process Form data");

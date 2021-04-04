@@ -7,9 +7,10 @@
 <html>
 <head>
 <title>Contact Us</title>
-
+<jsp:include page="include/bootstrap.jsp"></jsp:include>
 </head>
 <body class="back_set">
+<jsp:include page="/page/include/GoogleBodyTag.jsp"></jsp:include>
 <!--  Include Header -->
    <jsp:include page="include/header.jsp"></jsp:include>
     <jsp:include page="include/banner_contactus.jsp"></jsp:include>  

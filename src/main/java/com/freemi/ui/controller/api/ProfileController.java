@@ -2,6 +2,7 @@ package com.freemi.ui.controller.api;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -13,10 +14,13 @@ import javax.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -29,12 +33,12 @@ import com.freemi.entity.general.Login;
 import com.freemi.entity.general.LoginResponse;
 import com.freemi.entity.general.MfCollatedFundsView;
 import com.freemi.entity.general.Registerform;
-import com.freemi.entity.general.UserProfile;
 import com.freemi.entity.general.UserProfileLdap;
 import com.freemi.entity.investment.MFKarvyFundsView;
 import com.freemi.entity.investment.MfAllInvestorValueByCategory;
 import com.freemi.services.interfaces.BseEntryManager;
 import com.freemi.services.interfaces.ProfileRestClientService;
+import com.freemi.services.interfaces.SmsSenderInterface;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -45,12 +49,9 @@ public class ProfileController {
 
     @Autowired
     ProfileRestClientService profileRestClientService; 
-
-    /*    @Autowired
-    MahindraFDServiceInterface mahindraFDServiceInterface;*/
-
-    //	@Autowired
-    //	private Environment environment;
+    
+    @Autowired
+    SmsSenderInterface smsSenderInterface;
 
     @Autowired
     BseEntryManager bseEntryManager;
@@ -118,7 +119,8 @@ public class ProfileController {
 	    registerForm = new ObjectMapper().readValue(request.getInputStream(), Registerform.class);
 
 	    logger.info("Login request for user id via api- "+ registerForm.getMobile());
-
+	    registerForm.setRegistrationref("VIA_API");
+	    
 
 	    //			RestClient client = new RestClient();
 	    HttpClientResponse httpResponse =  profileRestClientService.registerUser(registerForm,CommonTask.getClientSystemDetails(request));
@@ -283,7 +285,7 @@ public class ProfileController {
 			List<MfAllInvestorValueByCategory> allMFFunds= null;
 			List<MfAllInvestorValueByCategory> categorykarvyFunds= null;
 			List<MFKarvyFundsView> karvyview = new ArrayList<MFKarvyFundsView>();
-			logger.info("Search for ALL related folios for customer.");
+			logger.info("Search for ALL related folios for customer- "+ mobile);
 			List<String> uniquefundShort = new ArrayList<String>();
 			allMFFunds = bseEntryManager.getCustomersAllFoliosByCategory(mobile, null);
 
@@ -410,8 +412,85 @@ public class ProfileController {
 
     }
 
+    
+    
+    @RequestMapping(value = "/send-otp", method = RequestMethod.POST)
+	public @ResponseBody String sendOTP(@RequestBody HashMap<String, String> params, HttpServletRequest request,HttpServletResponse response, HttpSession session) {
+		
+    	String referrer =request.getHeader(HttpHeaders.REFERER);
+    	logger.info("POST  "+ request.getRequestURI()+ " : start : sendOTP(). Referer- " + referrer);
+		String smssendstatus="NA";
+		String module = params.get("module");
+		String mobile = params.get("mobile");
+		String submodule = params.get("submodule");
+		String sessionid = params.get("sessionid");
+		JsonObject jsonresponse = new JsonObject();
+		
+		
+		if(sessionid==null || sessionid.isEmpty() || submodule == null || submodule.isEmpty()) {
+			jsonresponse.addProperty("statuscode", "1");
+	    	jsonresponse.addProperty("msg", "Invalid mobile no");
+	    	return jsonresponse.toString();
+		}
+		
+		if(mobile==null || mobile.length()!=10) {
+			jsonresponse.addProperty("statuscode", "1");
+	    	jsonresponse.addProperty("msg", "Session ID missing. Kindly refresh the page");
+	    	return jsonresponse.toString();
+		}
+		
+		try {
+			
+			
+			logger.info("Generate OTP request for mobile no: "+ mobile +  " : module: "+ module + " - session ID- "+ sessionid);
+			smssendstatus = smsSenderInterface.sendmobnoverifyotp(mobile, 5,"PRODUCTS",submodule,referrer,sessionid);
+		    logger.info("OTP request response- "+ smssendstatus);
+		    if(smssendstatus.equalsIgnoreCase("SUCCESS")){
+		    	jsonresponse.addProperty("statuscode", "0");
+		    	jsonresponse.addProperty("msg", "SUCCESS");
+		    }else {
+		    	jsonresponse.addProperty("statuscode", "1");
+		    	if(smssendstatus.equalsIgnoreCase("INVALID_MODULE")) {
+		    		jsonresponse.addProperty("msg", "Invalid reference. Plaese contact admin if issue persists.");
+		    	}else if(smssendstatus.equalsIgnoreCase("RETRY")) {
+		    		jsonresponse.addProperty("msg", "OTP Generation failed. Please try again.");
+		    	}else {
+		    		jsonresponse.addProperty("msg", "Internal error. Please try after sometime.");
+		    	}
+		    	
+		    }
+		    
+		} catch (Exception ex) {
+			logger.error("Error geenrating Registration process OTP"+ request.getRequestURI()+ " : Exception calling backend ",ex);
+			smssendstatus = "ERROR";
+			jsonresponse.addProperty("statuscode", "1");
+	    	jsonresponse.addProperty("msg", "Internal error. Please try after sometime.");
+		}
+		
+		return jsonresponse.toString();
+	}
 
-   
+    @RequestMapping(value = "/verify-otp", method = RequestMethod.POST)
+	public @ResponseBody String verifyOTP(@RequestBody HashMap<String, String> params, HttpServletRequest request,HttpServletResponse response, HttpSession session) {
+		logger.info("POST  "+ request.getRequestURI()+ " : start : verifyOTP() from -" + request.getHeader(HttpHeaders.REFERER));
+		String smssendstatus="NA";
+		String module = params.get("module");
+		String mobile = params.get("mobile");
+		String otpdata = params.get("otpinfo");
+		String submodule = params.get("submodule");
+		String sessionid = params.get("sessionid");
+		
+		try {
+			logger.info("Generate OTP request for mobile no: "+ mobile +  " : module: "+ module + "sessionid from session- "+ session.getId());
+			smssendstatus = smsSenderInterface.verifyotp(mobile, 5, otpdata,"REGISTRATION",submodule, request.getHeader(HttpHeaders.REFERER),sessionid,null);
+		    logger.info("OTP request response- "+ smssendstatus);
+		} catch (Exception ex) {
+			logger.error("Error geenrating ICICI CC card OTP"+ request.getRequestURI()+ " : Exception calling backend ",ex);
+			smssendstatus = "ERROR";
+		}
+		
+		return smssendstatus;
+	}
 
 
 

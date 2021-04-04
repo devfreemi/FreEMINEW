@@ -15,11 +15,8 @@
 <meta http-equiv="cache-control" content="max-age=0" />
 <meta http-equiv="cache-control" content="no-cache" />
 <meta http-equiv="expires" content="0" />
-<meta name="keywords"
-	content="freemi login, Sign up for free Online Mutual Fund account, Get best health insurance by signup, get Instant credit by signup" />
-
-<meta name="description"
-	content="Login to your FreEMI account and view your transactions, wishes completed" />
+<meta name="keywords" content="freemi login, Sign up for free Online Mutual Fund account, Get best health insurance by signup, get Instant credit by signup" />
+<meta name="description" content="Login to your FreEMI account and view your transactions, wishes completed" />
 
 <meta name="robots" content="index, follow">
 <meta name="googlebot" content="index, follow" />

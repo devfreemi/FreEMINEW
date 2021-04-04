@@ -314,7 +314,6 @@ public class BsemfController {
 	}
 
 	map.addAttribute("mfInvestForm", investForm);
-	map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 
 	logger.info("registerUser(): Get device platform during MF registration -" + device.getDevicePlatform());
 
@@ -1006,7 +1005,6 @@ public class BsemfController {
 	    }
 	}
 	map.addAttribute("selectFund", fundChoice);
-	map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 	String returnUrl = "bsemf/top-performing-funds";
 
 	return returnUrl;
@@ -1058,7 +1056,6 @@ public class BsemfController {
 
 	map.addAttribute("fundsexplorer", funds);
 	map.addAttribute("selectFund", fundChoice);
-	map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 
 	return returnUrl;
 
@@ -1099,7 +1096,6 @@ public class BsemfController {
 
 	map.addAttribute("fundsexplorer", funds);
 	map.addAttribute("selectFund", fundChoice);
-	map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 
 	return returnUrl;
 
@@ -1163,8 +1159,8 @@ public class BsemfController {
 		    }
 
 		    logger.info("purchaseBseMfAfterLogin(): Search for customer portfolio for details: "
-			    + selectedFund.getAmcCode() + " :PAN : " + customerData.get(0).getClientID()
-			    + " : RTA Agent: " + selectedFund.getRtaAgent());
+			    + selectedFund.getSchemeCode()  + " :CLIENT ID : " + customerData.get(0).getClientID()
+			    + " : RTA Agent: " + selectedFund.getRtaAgent() + " PAN: "+ selectedFund.getPan());
 
 		    customerPortfolios = bseEntryManager.getSelectedAmcPortfolio(selectedFund.getSchemeCode(),
 			    selectedFund.getPan(), selectedFund.getRtaAgent());
@@ -1318,7 +1314,6 @@ public class BsemfController {
 	TransactionStatus transationResult = new TransactionStatus();
 	String mandateId = "";
 	boolean mandareGenerated = false;
-	map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 	
 	if (bindResult.hasErrors()) {
 	    map.addAttribute("errormsg", bindResult.getFieldError().getDefaultMessage());
@@ -1621,7 +1616,6 @@ public class BsemfController {
 
 	map.addAttribute("purchaseForm", purchaseForm);
 	map.addAttribute("data", purchasedata);
-	map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 	return returnUrl;
     }
 
@@ -1882,7 +1876,6 @@ public class BsemfController {
 	}
 
 	map.addAttribute("mfRedeemForm", redeemForm);
-	map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 	// return returnUrl;
 
 	return returnUrl;
@@ -2008,7 +2001,6 @@ public class BsemfController {
 	    }
 
 	}
-	map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 	logger.info("Returning to url after redeem process complete- " + returnUrl);
 	return returnUrl;
 
@@ -2062,7 +2054,6 @@ public class BsemfController {
 	}
 
 	map.addAttribute("mfCencelForm", orderCancelForm);
-	map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 	return returnUrl;
     }
 
@@ -2182,7 +2173,6 @@ public class BsemfController {
 	    map.addAttribute("error", "Failed to process your cancel request. Please try again.");
 	    returnUrl = "bsemf/bsemf-cancel-order";
 	}
-	map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 	return returnUrl;
 
     }
@@ -2239,7 +2229,6 @@ public class BsemfController {
 	logger.info(
 		"bseMFTransactionCallback(): Checking order payment status after redirected from BSE callback url for orderid- "
 			+ orderid);
-	map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 	return returnUrl;
     }
 
@@ -2291,7 +2280,6 @@ public class BsemfController {
 	    map.addAttribute("FIRST_PAY", firstPayRequire);
 	    map.addAttribute("TRANSACTION_REPORT", transReport);
 	
-	    map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 	}
 	
 //	map.addAttribute("TRANS_STATUS", "Y");
@@ -2343,7 +2331,6 @@ public class BsemfController {
 	    returnUrl = "redirect:/login";
 	}
 
-	map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 	return returnUrl;
     }
 
@@ -2380,7 +2367,6 @@ public class BsemfController {
 	    }
 	}
 
-	map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 
 	return returnFlag;
     }
@@ -2392,7 +2378,6 @@ public class BsemfController {
 	String returnUrl = "bsemf/bsemf-fatca";
 
 	map.addAttribute("fatcaform", fatcaForm);
-	map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 	return returnUrl;
     }
 
@@ -2445,7 +2430,6 @@ public class BsemfController {
 	    }
 	}
 
-	map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 	return returnUrl;
     }
 
@@ -2702,6 +2686,10 @@ public class BsemfController {
     public Map<Integer, String> getsipyear() {
 	return InvestFormConstants.bseInvestStartYear;
     }
+    
+    @ModelAttribute("contextcdn") String contextcdn() {
+		return env.getProperty(CommonConstants.CDN_URL);
+	}
 
 
     @ExceptionHandler(MissingServletRequestParameterException.class)

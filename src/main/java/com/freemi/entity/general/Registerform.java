@@ -10,6 +10,8 @@ import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Component
 public class Registerform implements Serializable {
 
@@ -40,6 +42,14 @@ public class Registerform implements Serializable {
 	private String requestingip;
 	private String clientbrowserdetails;
 	private String mobileimei;
+	
+	@JsonIgnore
+	private String otp;
+	
+	private String otpverified="N";
+	
+	@JsonIgnore
+	private String sessionid;
 	
 	public String getFullName() {
 	    return fullName;
@@ -106,6 +116,26 @@ public class Registerform implements Serializable {
 	}
 	public void setMobileimei(String mobileimei) {
 	    this.mobileimei = mobileimei;
+	}
+	
+	public String getOtp() {
+		return otp;
+	}
+	public void setOtp(String otp) {
+		this.otp = otp;
+	}
+	
+	public String getOtpverified() {
+		return otpverified;
+	}
+	public void setOtpverified(String otpverified) {
+		this.otpverified = otpverified;
+	}
+	public String getSessionid() {
+		return sessionid;
+	}
+	public void setSessionid(String sessionid) {
+		this.sessionid = sessionid;
 	}
 	public static long getSerialversionuid() {
 	    return serialVersionUID;

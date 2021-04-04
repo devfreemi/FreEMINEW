@@ -1,6 +1,11 @@
 package com.freemi.services.interfaces;
 
-public interface EKYCValidation {
+import org.springframework.stereotype.Service;
 
+public interface EKYCValidation {
+	
+	public boolean mobilenoverifiedduringregistration(String sesisonid, String mobileno, String submodule);
+	
+	
 
 }

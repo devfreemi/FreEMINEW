@@ -504,7 +504,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
     @Override
     public List<String> getSelectedAmcPortfolio(String schemeCode, String pan,String rtaAgent) {
 	// TODO Auto-generated method stub
-	logger.info("Querying to find exisitng portfolios for selected AMC for clientID- "+ pan);
+	logger.info("Querying to find exisitng portfolios for selected AMC for PAN- "+ pan + " :schemecode- "+ schemeCode);
 	List<String> portfolios = null;
 	/*
 	 * if(rtaAgent.equalsIgnoreCase("CAMS")){
