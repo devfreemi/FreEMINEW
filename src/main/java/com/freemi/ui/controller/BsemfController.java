@@ -1947,8 +1947,7 @@ public class BsemfController {
 		fundTransaction.setClientIp(systemDetails.getClientIpv4Address());
 		fundTransaction.setClientBrowser(systemDetails.getClientBrowser());
 
-		logger.info("Redemption amount selected- "
-			+ (redeemForm.isRedeemAll() ? "REDEEM ALL" : redeemForm.getRedeemAmounts() * (-1)));
+		logger.info("Redemption amount selected- " + (redeemForm.isRedeemAll() ? "REDEEM ALL" : redeemForm.getRedeemAmounts() * (-1)));
 
 		fundTransaction.setRedeemAll(redeemForm.isRedeemAll() ? "Y" : "N");
 

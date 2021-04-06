@@ -2,8 +2,12 @@ package com.freemi.services.Impl;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import javax.annotation.PostConstruct;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,6 +27,7 @@ import com.freemi.common.util.CommonConstants;
 import com.freemi.database.interfaces.OtpvalidationCrudRepository;
 import com.freemi.entity.database.Mobileotpverifier;
 import com.freemi.services.interfaces.SmsSenderInterface;
+import com.freemi.ui.restclient.RestclientSmsSenderImpl;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -35,18 +40,32 @@ public class SmsSenderImpl implements SmsSenderInterface {
 
 	@Autowired
 	OtpvalidationCrudRepository otpvalidationCrudRepository;
+	
+	@Autowired
+	RestclientSmsSenderImpl restclientSmsSenderImpl;
 
-	private static final Integer EXPIRE_MINS = 1;
+	private static Integer EXPIRE_MINS = 5;
 	private LoadingCache<String, String> otpCache;
 
-
-	public SmsSenderImpl(){ 
-		super(); 
+	/*
+	 * public SmsSenderImpl(){ // super();
+	 * 
+	 * }
+	 */
+	
+	@PostConstruct
+    public void postConstruct() {
 		logger.info("Gnerate cache"); 
+		try {
+			EXPIRE_MINS = Integer.valueOf(env.getProperty("sms.otp.validity"));
+		}catch(Exception e) {
+			logger.error("Failed to convert value");
+		}
+		logger.info("EXPIRE-minute- "+ EXPIRE_MINS);
 		otpCache = CacheBuilder.newBuilder(). expireAfterWrite(EXPIRE_MINS, TimeUnit.MINUTES).build(new CacheLoader<String, String>() { 
 			public String
 			load(String key) { return ""; } }); 
-	}
+    }
 
 
 	private static final Logger logger = LogManager.getLogger(SmsSenderImpl.class);
@@ -54,7 +73,8 @@ public class SmsSenderImpl implements SmsSenderInterface {
 	@Override
 	@Async
 	public void sendOtp(String mobile, String otp, String validyTime, String other) {
-		logger.info("Send OTP to mobile number- "+ mobile);
+		logger.info("Send OTP to mobile number for login- "+ mobile);
+		/*
 		if(env.getProperty(com.freemi.common.util.CommonConstants.SMS_SEND_ENABLED).equalsIgnoreCase("Y")){
 			if(mobile!=null){
 				String message= otp + " is your OTP to login to your FreEMI Account. The otp is valid for "+ validyTime + " minute(s). Do not share OTP for security reasons.";
@@ -65,6 +85,13 @@ public class SmsSenderImpl implements SmsSenderInterface {
 		}else{
 			logger.info("SMS sending disabled. Skipping process...");
 		}
+		*/
+		Map<String, String> msgdata = new HashMap<String,String>();
+		msgdata.put("otpval", otp);
+		msgdata.put("var", String.valueOf(EXPIRE_MINS));
+		
+		restclientSmsSenderImpl.sendsmsviaflow(mobile, "606aef141ed7d80dd2159b88", null, msgdata, null, null, null);
+		
 		logger.info("Sending SMS process complete");
 
 	}
@@ -136,9 +163,15 @@ public class SmsSenderImpl implements SmsSenderInterface {
 
 					otpCache.put(otpkey, otp);
 					logger.info("OTP generated and placed in DB and cache for- " + otpkey);
-
+					
+					Map<String, String> msgdata = new HashMap<String,String>();
+					msgdata.put("otp", otp);
+					msgdata.put("var", String.valueOf(EXPIRE_MINS));
+					
+					restclientSmsSenderImpl.sendsmsviaflow(mobile, "606aefefd9d15c5e4515a4e0", null, msgdata, null, null, null);
+					
 				}else {	
-					logger.error("Correct length OTP not generated.. Need to retry");
+					logger.error("Incorrect length OTP not generated.. Need to retry");
 					response="RETRY";
 				}
 			}catch(Exception e){

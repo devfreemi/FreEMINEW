@@ -70,15 +70,15 @@ url.service.profile=http://localhost:8090/freemibackend
 ldap.user.registration.enabled=Y
 
 ###################################################################################################################
-####################################   SMS SERVICE    ##################################
+####################################   SMS SERVICE - MSG91 FLOW BASED   ##################################
 sms.server.send.enabled=Y
-sms.server.baseurl=http://api.msg91.com/api/sendhttp.php
-provider_authkey=226887AtytaYHrFyrM5b56ad54
-sms.sender=FREEMI
-sms.route.transactional=4
-sms.route.promotional=1
-
-#SMS - Transactional
+sms.server.baseurl=https://api.msg91.com/api/v5/flow/
+sms.provider.authkey=226887AtytaYHrFyrM5b56ad54
+sms.sender.id=FREEMI
+########## Messages moved to OpenAPI ##############3333
+#sms.route.transactional=4
+#sms.route.promotional=1
+sms.otp.validity=5;
 
 ###################################################################################################################
 
