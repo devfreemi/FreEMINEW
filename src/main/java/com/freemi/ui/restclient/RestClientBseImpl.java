@@ -376,9 +376,9 @@ public class RestClientBseImpl implements BseRestClientService {
 			}else{
 				//				returnRes = "101|FAILED: AMOUNT SHOULD NOT BE BLANK";
 				//				returnRes = "101|FAILED: INVALID CLIENT ACCOUNT NUMBER";
-//				returnRes = "100|RECORD SAVED SUCCESSFULLY";
+				returnRes = "100|RECORD SAVED SUCCESSFULLY";
 //				returnRes = "101|FAILED: INVALID ADDRESS TYPE";
-			    	returnRes ="101|FAILED: INVALID DATE OF BIRTH FORMAT MM/DD/YYYY";
+//			    	returnRes ="101|FAILED: INVALID DATE OF BIRTH FORMAT MM/DD/YYYY";
 			}
 
 		} catch (JsonProcessingException e) {

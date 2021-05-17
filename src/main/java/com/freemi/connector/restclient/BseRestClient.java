@@ -3,6 +3,7 @@ package com.freemi.connector.restclient;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -55,7 +56,7 @@ public class BseRestClient implements BseEntryManager {
     public static final String AUTH_TOKEN="Basic YWRtaW46UGFzc3dvcmQx";
     
     @Override
-    public String saveCustomerDetails(MFCustomers customerForm, String customerType, String customerlogged,
+    public BseApiResponse saveCustomerDetails(MFCustomers customerForm, String customerType, String customerlogged,
 	    String initiatedmobileid) {
 	final String url = env.getProperty(CommonConstants.URL_SERVICE_MF_BSE) + "/api/transaction/capture-registration-request";
 	logger.info(url);
@@ -72,19 +73,25 @@ public class BseRestClient implements BseEntryManager {
 	    HttpEntity<Object> entity = new HttpEntity<Object>(customerForm,headers);
 	    result =  restTemplate.postForObject(url, entity, BseApiResponse.class);
 	    flag = result.getRemarks();
+	    
+	    
 	}catch(Exception e) {
 	    logger.error("Error processing request..",e);
 	    flag="Service not responding currently. Please try again";
+	    result = new BseApiResponse();
+	    result.setResponseCode(CommonConstants.TASK_FAILURE_S);
+	    result.setRemarks(flag);
 	}
 	
-	return flag;
+	return result;
     }
 
     @Override
-    public BseApiResponse saveFatcaDetails(MFCustomers fatcaForm, String flag1, String dateformat) {
+    public /*BseApiResponse*/ BseApiResponse saveFatcaDetails(MFCustomers fatcaForm, String flag1, String dateformat,String clientcode) {
 	final String url = env.getProperty(CommonConstants.URL_SERVICE_MF_BSE) + "/api/transaction/capture-fatca-registration";
 	logger.info(url);
 	RestTemplate restTemplate = new RestTemplate();
+	BseApiResponse response = new BseApiResponse();
 	BseApiResponse result = null;
 	try {
 	    HttpHeaders headers = new HttpHeaders();	
@@ -98,7 +105,9 @@ public class BseRestClient implements BseEntryManager {
 	    result.setResponseCode("Service not responding currently. Please try again");
 	}
 	
-	return result;
+//	return result;
+//	NOTE - This response needs to be worked on
+	return response;
     }
 
     @Override
@@ -790,10 +799,11 @@ public class BseRestClient implements BseEntryManager {
     }
 
     @Override
-    public BseAOFUploadResponse uploadAOFForm(String pan, String aoffolderLocation, String clientCode) {
+    public BseApiResponse uploadAOFForm(String pan, String aoffolderLocation,String logolocation, String clientCode,MFCustomers investForm) {
 	final String url = env.getProperty(CommonConstants.URL_SERVICE_MF_BSE) + "/api/transaction/send-aof-to-bse";
 	logger.info(url);
 	RestTemplate restTemplate = new RestTemplate();
+	BseApiResponse response =new BseApiResponse();
 	BseAOFUploadResponse result = null;
 	try {
 	    HttpHeaders headers = new HttpHeaders();	
@@ -809,8 +819,8 @@ public class BseRestClient implements BseEntryManager {
 	    result.setStatusCode(CommonConstants.TASK_FAILURE_S);
 	    result.setStatusMessage("Services not responding currently");
 	}
-	
-	return result;
+//	NOTE - This reponse need to worked on as on 28-04-2021. Correct response
+	return response;
     }
 
     
@@ -863,5 +873,15 @@ public class BseRestClient implements BseEntryManager {
 	// TODO Auto-generated method stub
 	return null;
     }
+
+	@Override
+	public Map<String, String> getbseregistrationstatus(String mobile, String pan, String customeruniqid,
+			String clientcode) {
+		
+		return null;
+	}
+
+
+	
 
 }

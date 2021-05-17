@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.CopyUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import com.freemi.common.util.BseAOFGenerator;
 import com.freemi.common.util.BseRelatedActions;
 import com.freemi.common.util.CommonConstants;
 import com.freemi.common.util.InvestFormConstants;
@@ -64,6 +66,7 @@ import com.freemi.entity.investment.BsemfTransactionHistory;
 import com.freemi.entity.investment.MFCamsFolio;
 import com.freemi.entity.investment.MFCamsValueByCategroy;
 import com.freemi.entity.investment.MFCustomers;
+import com.freemi.entity.investment.MFFatcaDeclareForm;
 import com.freemi.entity.investment.MFKarvyValueByCategory2;
 import com.freemi.entity.investment.MFNominationForm;
 import com.freemi.entity.investment.MFinitiatedTrasactions;
@@ -162,255 +165,261 @@ public class BseEntryServiceImpl implements BseEntryManager {
     private static final Logger logger = LogManager.getLogger(BseEntryServiceImpl.class);
 
     @Override
-    public String saveCustomerDetails(MFCustomers customerForm, String customerType, String customerlogged, String initiatedid) {
-	logger.info("saveCustomerDetails(): Begin registration process for customer PAN- "+ customerForm.getPan1() + " :mobile: "+ customerForm.getMobile() + " : customer type- "+ customerType + " : LOGGED: "+ customerlogged);
-	String flag = "SUCCESS";
-	String customerid ="";
-	boolean registerCustomerToBse = false;
-	boolean transactionfailed = false;
+    public BseApiResponse saveCustomerDetails(MFCustomers customerForm, String customerType, String customerlogged, String initiatedid) {
+    	logger.info("saveCustomerDetails(): Begin registration process for customer PAN- "+ customerForm.getPan1() + " :mobile: "+ customerForm.getMobile() + " : customer type- "+ customerType + " : LOGGED: "+ customerlogged);
+    	String flag = CommonConstants.TASK_SUCCESS_S;
+    	String customerid ="";
+    	boolean registerCustomerToBse = false;
+    	boolean transactionfailed = false;
+    	BseApiResponse response = new BseApiResponse();
+
+    	SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy-mm-dd");
+    	SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("dd/mm/yyyy");
+    	String bseregistrattioncomplete="N";
 
 
-	SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy-mm-dd");
-	SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("dd/mm/yyyy");
+    	//		if(bseCustomerCrudRespository.existsByPan1(customerForm.getPan1())){
+    	if(bseCustomerCrudRespository.existsByMobileAndAccountActive(customerForm.getMobile(),"Y")){
+    		logger.info("Account already exist with given mobile number.. Request data should be updated only if new customer ");
+    		String registeredpan = bseCustomerCrudRespository.getCustomerPanNumberFromMobileAndActive(customerForm.getMobile(), "Y");
+    		logger.info("Registered PAN - "+ registeredpan);
+    		if( (!registeredpan.equalsIgnoreCase(customerForm.getPan1()) && bseCustomerCrudRespository.existsByPan1(customerForm.getPan1())) || (profileRestClientService.isPanExisitngForOthers(customerForm.getMobile(), customerForm.getPan1()).equals("Y")) ) {
+    			logger.info("Registered PAN different than submitted. PAN already found to be existing. Duplicate PAN entry disallowed..");
+    			flag="PAN_DUPLICATE";
+    			registerCustomerToBse = false;
+    		}else {
 
 
-	//		if(bseCustomerCrudRespository.existsByPan1(customerForm.getPan1())){
-	if(bseCustomerCrudRespository.existsByMobileAndAccountActive(customerForm.getMobile(),"Y")){
-	    logger.info("Account already exist with given mobile number.. Request data should be updated only if new customer ");
+    			//			Check account registered at BSE end. IF status is no, only try to push existing customer details to BSE
+    			//			String bseRegisterStatus = bseCustomerCrudRespository.getBseRegistrationStatus(registeredpan);
+    			String bseRegisterStatus = bseCustomerCrudRespository.getBseRegistrationStatusByMobile(customerForm.getMobile(),"Y");
 
-	    String registeredpan = bseCustomerCrudRespository.getCustomerPanNumberFromMobileAndActive(customerForm.getMobile(), "Y");
-	    logger.info("Registered PAN - "+ registeredpan);
-	    if( (!registeredpan.equalsIgnoreCase(customerForm.getPan1()) && bseCustomerCrudRespository.existsByPan1(customerForm.getPan1())) || (profileRestClientService.isPanExisitngForOthers(customerForm.getMobile(), customerForm.getPan1()).equals("Y")) ) {
-		logger.info("Registered PAN different than submitted. PAN already found to be existing. Duplicate PAN entry disallowed..");
-		flag="PAN_DUPLICATE";
-		registerCustomerToBse = false;
-	    }else {
+    			logger.info("BSE registration status retrieved - "+ bseRegisterStatus);
 
+    			if(bseRegisterStatus!=null && bseRegisterStatus.equals("Y")){
+    				logger.info("Customer already registered both at FREEMI and BSE");
+    				flag="EXIST";
+    			} else{
+    				logger.info("Customer registered at FREEMI but BSE registration not complete. Update current data and try to register at BSE end only with current details");
+    				//				System.out.println("line- "+customerForm.getBankDetails().getSerialNo());
+    				//			    customerid= bseCustomerCrudRespository.getClientIdFromPan(customerForm.getPan1());
+    				customerid= bseCustomerCrudRespository.getClientIdFromMobile(customerForm.getMobile());
 
-		//			Check account registered at BSE end. IF status is no, only try to push existing customer details to BSE
-		//			String bseRegisterStatus = bseCustomerCrudRespository.getBseRegistrationStatus(registeredpan);
-		String bseRegisterStatus = bseCustomerCrudRespository.getBseRegistrationStatusByMobile(customerForm.getMobile(),"Y");
+    				customerForm.setClientID(customerid);
+    				customerForm.getBankDetails().setClientID(customerid);
+    				customerForm.getAddressDetails().setClientID(customerid);
+    				customerForm.getNominee().setClientID(customerid);
+    				customerForm.getFatcaDetails().setClientID(customerid);
 
-		logger.info("BSE registration status retrieved - "+ bseRegisterStatus);
+    				logger.info("Search for exisiting record to update : " + customerForm.getMobile() + " : "+ customerForm.getPan1());
 
-		if(bseRegisterStatus!=null && bseRegisterStatus.equals("Y")){
-		    logger.info("Customer already registered both at FREEMI and BSE");
-		    flag="EXIST";
-		} else{
-		    logger.info("Customer registered at FREEMI but BSE registration not complete. Update current data and try to register at BSE end only with current details");
-		    //				System.out.println("line- "+customerForm.getBankDetails().getSerialNo());
-		    //			    customerid= bseCustomerCrudRespository.getClientIdFromPan(customerForm.getPan1());
-		    customerid= bseCustomerCrudRespository.getClientIdFromMobile(customerForm.getMobile());
+    				//			    MFCustomers toUpdateForm = bseCustomerCrudRespository.getByMobileAndPan1AndAccountActive(customerForm.getMobile(),customerForm.getPan1(),"Y");
+    				MFCustomers toUpdateForm = bseCustomerCrudRespository.getByMobileAndAccountActive(customerForm.getMobile(),"Y");
 
-		    customerForm.setClientID(customerid);
-		    customerForm.getBankDetails().setClientID(customerid);
-		    customerForm.getAddressDetails().setClientID(customerid);
-		    customerForm.getNominee().setClientID(customerid);
-		    customerForm.getFatcaDetails().setClientID(customerid);
+    				logger.debug("TO UPDATE BSE  data - "+ toUpdateForm);
+    				mapUpdatedCustomerMfData(customerForm,toUpdateForm);
+    				bseCustomerCrudRespository.saveAndFlush(toUpdateForm);
+    				logger.info("Customer current details saved/updated in database...");
+    				registerCustomerToBse = true;
+    			}
 
-		    logger.info("Search for exisiting record to update : " + customerForm.getMobile() + " : "+ customerForm.getPan1());
+    		}
 
-		    //			    MFCustomers toUpdateForm = bseCustomerCrudRespository.getByMobileAndPan1AndAccountActive(customerForm.getMobile(),customerForm.getPan1(),"Y");
-		    MFCustomers toUpdateForm = bseCustomerCrudRespository.getByMobileAndAccountActive(customerForm.getMobile(),"Y");
+    	}else{
+    		logger.info("Mobile no is not found in database in active status.. Process with new registration");
 
-		    logger.debug("TO UPDATE BSE  data - "+ toUpdateForm);
-		    mapUpdatedCustomerMfData(customerForm,toUpdateForm);
-		    bseCustomerCrudRespository.saveAndFlush(toUpdateForm);
-		    logger.info("Customer current details saved/updated in database...");
-		    registerCustomerToBse = true;
-		}
+    		if( bseCustomerCrudRespository.existsByPan1(customerForm.getPan1()) || (profileRestClientService.isPanExisitngForOthers(customerForm.getMobile(), customerForm.getPan1()).equals("Y") ) ) {
+    			//			if(bseCustomerCrudRespository.existsByPan1andAccountActive(customerForm.getPan1(),"Y")) {
+    			logger.info("PAN already found to be existing. Duplicate PAN entry disallowed..");
+    			flag="PAN_DUPLICATE";
+    			registerCustomerToBse = false;
+    		}else {
 
-	    }
+    			//Generate client ID
+    			int loop =1;
 
-	}else{
-	    logger.info("Mobile no is not found in database in active status.. Process with new registration");
+    			do{
+    				customerid=BseRelatedActions.generateID(customerForm.getInvName(), customerForm.getPan1(), null, customerForm.getMobile(),loop++);
+    				logger.info("Generated BSE Client ID for mobile- "+customerForm.getMobile() + " : "+ customerid);
+    			}while(bseCustomerCrudRespository.existsByClientID(customerid));
 
+    			logger.info("Final Generated login ID for customer with PAN - "+customerForm.getPan1()+ " : " + customerid);
+    			customerForm.setClientID(customerid);
+    			customerForm.getBankDetails().setClientID(customerid);
+    			customerForm.getAddressDetails().setClientID(customerid);
+    			customerForm.getNominee().setClientID(customerid);
+    			customerForm.getFatcaDetails().setClientID(customerid);
+    			customerForm.setRegistrationTime(new Date());
+    			logger.info("Transaction started to save BSE customer registration data for generated client ID - " + customerid);
 
-	    if( bseCustomerCrudRespository.existsByPan1(customerForm.getPan1()) || (profileRestClientService.isPanExisitngForOthers(customerForm.getMobile(), customerForm.getPan1()).equals("Y") ) ) {
-		//			if(bseCustomerCrudRespository.existsByPan1andAccountActive(customerForm.getPan1(),"Y")) {
-		logger.info("PAN already found to be existing. Duplicate PAN entry disallowed..");
-		flag="PAN_DUPLICATE";
-		registerCustomerToBse = false;
-	    }else {
+//    			MFCustomers customerCopy = customerForm;
+    			
+    			//			Convert date to db format
+    			logger.info("saveCustomerDetails(): Convert DOB Format: "+ customerForm.getCustomerdob());
+    			try {
+    				Date date1 = simpleDateFormat2.parse(customerForm.getCustomerdob());
+    				String bseFormatDob = simpleDateFormat1.format(date1);
+    				logger.info("DOB field converted to DB format- "+ bseFormatDob);
+    				customerForm.setInvDOB(bseFormatDob);
+    			} catch (ParseException e) {
+    				logger.error("saveCustomerDetails(): failed to convert date. Leaving date to default format. ",e);
 
-		//Generate client ID
-		int loop =1;
+    			}
 
-		do{
-		    customerid=BseRelatedActions.generateID(customerForm.getInvName(), customerForm.getPan1(), null, customerForm.getMobile(),loop++);
-		    logger.info("Generated BSE Client ID for mobile- "+customerForm.getMobile() + " : "+ customerid);
-		}while(bseCustomerCrudRespository.existsByClientID(customerid));
+    			bseCustomerCrudRespository.saveAndFlush(customerForm);
+    			//		bseCustomerCrudRespository.flush();
+    			registerCustomerToBse = true;
+    			logger.info("Customer record saved successfully to database");
 
-		logger.info("Final Generated login ID for customer with PAN - "+customerForm.getPan1()+ " : " + customerid);
-		customerForm.setClientID(customerid);
-		customerForm.getBankDetails().setClientID(customerid);
-		customerForm.getAddressDetails().setClientID(customerid);
-		customerForm.getNominee().setClientID(customerid);
-		customerForm.getFatcaDetails().setClientID(customerid);
-		customerForm.setRegistrationTime(new Date());
-		logger.info("Transaction started to save BSE customer registration data for generated client ID - " + customerid);
+    		}
 
-		MFCustomers customerCopy = customerForm;
-		//			Convert date to db format
-		logger.info("saveCustomerDetails(): Convert DOB Format: "+ customerCopy.getInvDOB());
-		try {
-		    Date date1 = simpleDateFormat2.parse(customerCopy.getInvDOB());
-		    String bseFormatDob = simpleDateFormat1.format(date1);
-		    logger.info("DOB field converted to DB format- "+ bseFormatDob);
-		    customerCopy.setInvDOB(bseFormatDob);
-		} catch (ParseException e) {
-		    logger.error("saveCustomerDetails(): failed to convert date. Leaving date to default format. ",e);
+    	}
+    	
+    	if(registerCustomerToBse){
+    		logger.info("Customer registered at FREEMI portal. Begin to push customer details at BSE end");
+    		String bseResponse = investmentConnectorBseInterface.saveCustomerRegistration(customerForm, null);
 
-		}
+    		if(bseResponse.equalsIgnoreCase("SUCCESS")){
+    			bseregistrattioncomplete="Y";
+    		}else{
+    			logger.info("Failed to push customer details to BSE platform. Failure reason- "+ bseResponse);
+    			flag = bseResponse;
+    			transactionfailed =true;
+    		}
 
-		bseCustomerCrudRespository.save(customerCopy);
-		bseCustomerCrudRespository.flush();
-		registerCustomerToBse = true;
-		logger.info("Customer record saved successfully to database");
+    		logger.info("Update Registration status in DB - "+ bseregistrattioncomplete);
+    		try{
+    			logger.info("Updating BSE registration status to database...");
+    			bseCustomerCrudRespository.updateBseRegistrationStatusAndRegistrationResponse(customerid, bseResponse,bseregistrattioncomplete);
 
-	    }
-
-	}
-	String success="N";
-	if(registerCustomerToBse){
-	    logger.info("Customer registered at FREEMI portal. Begin to push customer details at BSE end");
-	    String bseResponse = investmentConnectorBseInterface.saveCustomerRegistration(customerForm, null);
-
-	    if(bseResponse.equalsIgnoreCase("SUCCESS")){
-		//User registration successful at BSE portal
-		success="Y";
-
-
-	    }else{
-		logger.info("Failed to push customer details to BSE platform. Failure reason- "+ bseResponse);
-		flag = bseResponse;
-		transactionfailed =true;
-	    }
-
-	    logger.info("Update Registraion status in DB - "+ success);
-	    try{
-		logger.info("Updating BSE registation status to database...");
-		//					bseCustomerCrudRespository.updateBseRegistrationStatus(customerid);
-		bseCustomerCrudRespository.updateBseRegistrationStatusAndRegistrationResponse(customerid, bseResponse,success);
+    		}catch(Exception e){
+    			logger.error("Failed to update customer BSE registration status to database, notify admin",e);
+    			mailSenderInterface.notifyTransactionErrorToAdmin(null, flag, null, "Mutual Fund Transaction", "Account Registration- internal error : " + e.getLocalizedMessage(), customerForm.getMobile(), customerForm.getInvName());
+    		}
+    		logger.info("Customer registration status updated successfully");
 
 
-		/*//					Call FATCADeclaration
-					fatcaResponse = investmentConnectorBseInterface.fatcaDeclaration(customerForm, null);
-					if(fatcaResponse.getResponseCode().equalsIgnoreCase("100")){
-						bseCustomerFATCACrudRepository.updateFatcaDeclarationStatus(true, customerid);
-					}else{
-						bseCustomerFATCACrudRepository.updateFatcaDeclarationStatus(false, customerid);
-					}*/
+    	}
 
-	    }catch(Exception e){
-		logger.error("Failed to update customer registration status to database, notify admin");
-	    }
-	    logger.info("Customer registration status updated successfully");
+    	if(transactionfailed) {
+    		logger.info("BSE Registration failed... Notify admin by email");
+    		mailSenderInterface.notifyTransactionErrorToAdmin(null, flag, null, "Mutual Fund Transaction", "Account Registration failed", customerForm.getMobile(), customerForm.getInvName());
+    	}
 
+    	if(flag.equalsIgnoreCase(CommonConstants.TASK_SUCCESS_S)) {
+    		response.setResponseCode(CommonConstants.TASK_SUCCESS_S);
+    		response.setRemarks("BSE account registration successul");
+    	}else {
+    		response.setResponseCode(CommonConstants.TASK_FAILURE_S);
+    		if (flag.equalsIgnoreCase("EXIST")) {
+    			response.setRemarks("Customer already exist with given PAN no.");
+    		} else if (flag.equalsIgnoreCase("PAN_DUPLICATE")) {
+    			response.setRemarks("PAN already registered. Kindly contact admin in case of discrepancy.");
+    		}else if (flag.equalsIgnoreCase("MOBILE_DUPLICATE")) {
+    			response.setRemarks("Mobile no already registered. Login to complete registration.");
+    		} else if (flag.equalsIgnoreCase("BSE_CONN_FAIL")) {
+    			response.setRemarks("BSE endpoint connection failure!");
+    		} else {
+    			response.setRemarks(flag);
+    		}
+    	}
 
-	}
-
-	if(transactionfailed) {
-	    logger.info("BSE Registration failed... Notify admin by email");
-	    mailSenderInterface.notifyTransactionErrorToAdmin(null, flag, null, "Mutual Fund Transaction", "Account Registraion failed", customerForm.getMobile(), customerForm.getInvName());
-	}
-
-	return flag;
+    	return response;
     }
 
     @Override
     public TransactionStatus savetransactionDetails(SelectMFFund selectedMFFund, String mandateId) {
-	logger.info("BSE TRANSCTION ... Process...");
-	
-	boolean transactionfailed = false;
-	//Save details to database, process to BSE, update database with response
-	TransactionStatus transStatus = new TransactionStatus();
-	BseOrderEntryResponse bseResult =null;
-	try{
-	    selectedMFFund.setOrderPlaceTime(new Date());
+    	logger.info("BSE TRANSCTION ... Process...");
 
-	    //Generate BSE related ref no
-	    StringBuffer ref = new StringBuffer();
-	    if(selectedMFFund.getTransactionType().equals("CXL")){
-		logger.info("Order cancellation request received for previous transaction ID- "+ selectedMFFund.getTransactionID());
-		ref.append("C").append(selectedMFFund.getClientID().substring(6)).append(Calendar.getInstance().getTimeInMillis());
-	    }else if(selectedMFFund.getTransactionType().equals("REDEEM")){
-		ref.append("R").append(selectedMFFund.getClientID().substring(6)).append(Calendar.getInstance().getTimeInMillis());
-	    }else if(selectedMFFund.getTransactionType().equals("MOD")){
-		ref.append("M").append(selectedMFFund.getClientID().substring(6)).append(Calendar.getInstance().getTimeInMillis());
-	    }else{
-		ref.append("P").append(selectedMFFund.getClientID().substring(6)).append(Calendar.getInstance().getTimeInMillis());
-	    }
-	    selectedMFFund.setBseRefNo(ref.toString());
+    	boolean transactionfailed = false;
+    	//Save details to database, process to BSE, update database with response
+    	TransactionStatus transStatus = new TransactionStatus();
+    	BseOrderEntryResponse bseResult =null;
+    	try{
+    		selectedMFFund.setOrderPlaceTime(new Date());
 
-	    logger.info("New transaction request received of category:  "+selectedMFFund.getTransactionType()+" .Generated Transaction reference ID: "+ selectedMFFund.getTransactionID());
+    		//Generate BSE related ref no
+    		StringBuffer ref = new StringBuffer();
+    		if(selectedMFFund.getTransactionType().equals("CXL")){
+    			logger.info("Order cancellation request received for previous transaction ID- "+ selectedMFFund.getTransactionID());
+    			ref.append("C").append(selectedMFFund.getClientID().substring(6)).append(Calendar.getInstance().getTimeInMillis());
+    		}else if(selectedMFFund.getTransactionType().equals("REDEEM")){
+    			ref.append("R").append(selectedMFFund.getClientID().substring(6)).append(Calendar.getInstance().getTimeInMillis());
+    		}else if(selectedMFFund.getTransactionType().equals("MOD")){
+    			ref.append("M").append(selectedMFFund.getClientID().substring(6)).append(Calendar.getInstance().getTimeInMillis());
+    		}else{
+    			ref.append("P").append(selectedMFFund.getClientID().substring(6)).append(Calendar.getInstance().getTimeInMillis());
+    		}
+    		selectedMFFund.setBseRefNo(ref.toString());
 
-	    //		Generate BSE transaction Reference no
-	    Date date = new Date();
-	    StringBuffer transNumber = new StringBuffer();
-	    transNumber.append((new SimpleDateFormat("yyyyMMdd").format(date))).append(CommonConstants.BSE_MEMBER_ID);
-	    long counter= getCurrentDayNextTransCount(date);
-	    for(int i=1;i<(6-Long.toString(counter).length());i++){
-		transNumber.append("0");
-	    }
-	    transNumber.append(Long.toString(counter));
+    		logger.info("New transaction request received of category:  "+selectedMFFund.getTransactionType()+" .Generated Transaction reference ID: "+ selectedMFFund.getTransactionID());
 
-	    logger.info("Requesting BSE to register transaction for client id- : "+ selectedMFFund.getClientID() + " : Transaction code: "+ transNumber.toString()+ ": Scheme code: "+ selectedMFFund.getSchemeCode() + " : Amount: "+ selectedMFFund.getInvestAmount());
+    		//		Generate BSE transaction Reference no
+    		Date date = new Date();
+    		StringBuffer transNumber = new StringBuffer();
+    		transNumber.append((new SimpleDateFormat("yyyyMMdd").format(date))).append(CommonConstants.BSE_MEMBER_ID);
+    		long counter= getCurrentDayNextTransCount(date);
+    		for(int i=1;i<(6-Long.toString(counter).length());i++){
+    			transNumber.append("0");
+    		}
+    		transNumber.append(Long.toString(counter));
 
-	    //Call BSE
+    		logger.info("Requesting BSE to register transaction for client id- : "+ selectedMFFund.getClientID() + " : Transaction code: "+ transNumber.toString()+ ": Scheme code: "+ selectedMFFund.getSchemeCode() + " : Amount: "+ selectedMFFund.getInvestAmount());
 
-	    bseResult = investmentConnectorBseInterface.processCustomerTransactionbsaRequest(selectedMFFund, transNumber.toString(),mandateId);
+    		//Call BSE
 
-	    logger.info("Status of requested transaction - "+ bseResult.getSuccessFlag());
+    		bseResult = investmentConnectorBseInterface.processCustomerTransactionbsaRequest(selectedMFFund, transNumber.toString(),mandateId);
 
-	    if(bseResult.getSuccessFlag().equalsIgnoreCase("0")){
+    		logger.info("Status of requested transaction - "+ bseResult.getSuccessFlag());
 
-		if(CommonConstants.BSE_SAVE_TRANSACTION.equalsIgnoreCase("Y")){
-		    logger.info("Transaction is successful. Saving transaction request to Database");
-		    try{
-			selectedMFFund = bseTransCrudRepository.saveAndFlush(selectedMFFund);
-			logger.info("Save transaction response from BSE to database");
-			bseOrderEntryResponseRepository.saveAndFlush(bseResult);
-		    }catch(Exception e){
-			logger.error("BSE transaction is successful but failed to save data to dabtabase for transaction ID: "+ selectedMFFund.getTransactionID(),e);
-		    }
+    		if(bseResult.getSuccessFlag().equalsIgnoreCase("0")){
 
-		}else{
-		    logger.info("BSE_SAVE_TRANSACTION is disabled. Trsansaction not saved  to databse.");
-		    //		    transactionfailed =true;
+    			if(CommonConstants.BSE_SAVE_TRANSACTION.equalsIgnoreCase("Y")){
+    				logger.info("Transaction is successful. Saving transaction request to Database");
+    				try{
+    					selectedMFFund = bseTransCrudRepository.saveAndFlush(selectedMFFund);
+    					logger.info("Save transaction response from BSE to database");
+    					bseOrderEntryResponseRepository.saveAndFlush(bseResult);
+    				}catch(Exception e){
+    					logger.error("BSE transaction is successful but failed to save data to dabtabase for transaction ID: "+ selectedMFFund.getTransactionID(),e);
+    				}
 
-		}
+    			}else{
+    				logger.info("BSE_SAVE_TRANSACTION is disabled. Trsansaction not saved  to databse.");
+    				//		    transactionfailed =true;
 
-		transStatus.setSuccessFlag("S");
-		transStatus.setStatusMsg(bseResult.getBsereMarks());
-		transStatus.setBseOrderNoFromResponse(bseResult.getOrderNoOrSipRegNo());
+    			}
 
-	    }else if (bseResult.getSuccessFlag().equalsIgnoreCase(CommonConstants.BSE_API_SERVICE_DISABLED)){
-		logger.info("Transaction disabled. Reason- "+bseResult.getBsereMarks());
-		transStatus.setSuccessFlag("D");
-		transStatus.setStatusMsg(bseResult.getBsereMarks());
-	    }else{
-		logger.info("Transaction has failed. Transaction declined from saving to database. Reason- "+bseResult.getBsereMarks());
-		transStatus.setSuccessFlag("F");
-		transStatus.setStatusMsg(bseResult.getBsereMarks()!=null?bseResult.getBsereMarks():bseResult.getSuccessFlag());
-		transactionfailed = true;
-	    }
+    			transStatus.setSuccessFlag("S");
+    			transStatus.setStatusMsg(bseResult.getBsereMarks());
+    			transStatus.setBseOrderNoFromResponse(bseResult.getOrderNoOrSipRegNo());
 
-	}catch(Exception e){
-	    logger.error("Failed to save transaction Details for MF Purchase",e);
-	    if(bseResult.getSuccessFlag().equalsIgnoreCase("0")){
-		transStatus.setSuccessFlag("SF");		// success in 
-		transStatus.setStatusMsg("Transaction successful in BSE but failed to save at FREEMI.");
-		transactionfailed = true;
-	    }
-	}
+    		}else if (bseResult.getSuccessFlag().equalsIgnoreCase(CommonConstants.BSE_API_SERVICE_DISABLED)){
+    			logger.info("Transaction disabled. Reason- "+bseResult.getBsereMarks());
+    			transStatus.setSuccessFlag("D");
+    			transStatus.setStatusMsg(bseResult.getBsereMarks());
+    		}else{
+    			logger.info("Transaction has failed. Transaction declined from saving to database. Reason- "+bseResult.getBsereMarks());
+    			transStatus.setSuccessFlag("F");
+    			transStatus.setStatusMsg(bseResult.getBsereMarks()!=null?bseResult.getBsereMarks():bseResult.getSuccessFlag());
+    			transactionfailed = true;
+    		}
 
-	if(transactionfailed) {
-	    logger.info("Transaction failed... Notify admin by email");
-	    mailSenderInterface.notifyTransactionErrorToAdmin(null, transStatus.getStatusMsg(), null, "Mutual Fund Transaction", "Purcahse failure", selectedMFFund.getMobile(), selectedMFFund.getInvestorName());
-	}
+    	}catch(Exception e){
+    		logger.error("Failed to save transaction Details for MF Purchase",e);
+    		if(bseResult.getSuccessFlag().equalsIgnoreCase("0")){
+    			transStatus.setSuccessFlag("SF");		// success in 
+    			transStatus.setStatusMsg("Transaction successful in BSE but failed to save at FREEMI.");
+    			transactionfailed = true;
+    		}
+    	}
 
-	return transStatus;
+    	if(transactionfailed) {
+    		logger.info("Transaction failed... Notify admin by email");
+    		mailSenderInterface.notifyTransactionErrorToAdmin(null, transStatus.getStatusMsg(), null, "Mutual Fund Transaction", "Purcahse failure", selectedMFFund.getMobile(), selectedMFFund.getInvestorName());
+    	}
+
+    	return transStatus;
     }
 
 
@@ -661,8 +670,13 @@ public class BseEntryServiceImpl implements BseEntryManager {
 
     @Override
     public String getClientIdfromMobile(String mobile) {
-	// TODO Auto-generated method stub
-	return bseCustomerCrudRespository.getClientIdFromMobile(mobile);
+    	String clientcode=null;
+    	try {
+    		clientcode= bseCustomerCrudRespository.getClientIdFromMobile(mobile);
+    	}catch(Exception e) {
+    		logger.error("Failed to get customer clientcode for mobile- "+ mobile);
+    	}
+    	return clientcode;
     }
 
     @Override
@@ -1062,42 +1076,75 @@ public class BseEntryServiceImpl implements BseEntryManager {
     }
 
     @Override
-    public BseApiResponse saveFatcaDetails(MFCustomers customerForm,String flag1, String dateformat) {
-	//					Call FATCADeclaration
+    public BseApiResponse saveFatcaDetails(MFCustomers customerForm,String flag1, String dateformat,String clientcode) {
+    	//					Call FATCADeclaration
 
-	BseApiResponse fatcaResponse=null;
-	String clientId=null;
-	boolean transactionfailed=false;
+    	BseApiResponse fatcaResponse= new BseApiResponse();;
+//    	String clientId=null;
+    	boolean transactionfailed=false;
+    	int res=0;
 
-	logger.info("Request received to process FATCA details fro customer- "+ customerForm.getPan1());
-	if(bseCustomerCrudRespository.existsByMobileAndAccountActive(customerForm.getMobile(),"Y")){
-	    clientId = bseCustomerCrudRespository.getClientIdFromMobile(customerForm.getMobile());
-	    fatcaResponse = investmentConnectorBseInterface.fatcaDeclaration(customerForm, dateformat);
-	    logger.info("FATCA upload status from BSE for customer- "+clientId + " : "  + fatcaResponse.getResponseCode());
-	    try{
-		logger.info("Updating FATCA status to database for customer- "+ clientId);
-		if(fatcaResponse.getResponseCode().equalsIgnoreCase("100")){
-		    int res= bseCustomerFATCACrudRepository.updateFatcaDeclarationStatus(true,fatcaResponse.getRemarks(), clientId);
-		    logger.info("Returned FATCA status update to database for customer- "+ clientId + " : "+res);
-		} /*else if(fatcaResponse.getResponseCode().equalsIgnoreCase("100") && fatcaResponse.getRemarks().contains("101|FAILED: INVALID DATE OF BIRTH FORMAT MM/DD/YYYY") ) {
-		     logger.info("Try uploading FATCA again with the other date format...");
-		  }*/ else {
-		      int res= bseCustomerFATCACrudRepository.updateFatcaDeclarationStatus(false,fatcaResponse.getRemarks(), clientId);
-		      logger.info("Returned FATCA status update to database for customer- "+ clientId + " : "+res);
-		      transactionfailed=true;
-		  }
-	    }catch(Exception e){
-		logger.error("Failed to update FATCA status to database for customer- "+clientId ,e);
-	    }
+    	logger.info("Request received to process FATCA details for customer- "+ customerForm.getPan1() + "BSE registration status-  "+ flag1);
+    	try{
 
-	}
+    		if(bseCustomerCrudRespository.existsByMobileAndAccountActive(customerForm.getMobile(),"Y")){
+    			
+    			if(flag1==null) {
+    				logger.info("saveFatcaDetails() : Query DB to get BSERegiistration status");
+    				flag1 = bseCustomerCrudRespository.getBseRegistrationStatusByMobile(customerForm.getMobile(), "Y");
+    			}
+    			if(flag1.equalsIgnoreCase("Y")) {
+    				if(clientcode ==null) {
+    					logger.info("FATCA module did not receive clientcode. Looking for clientcode for mobile -"+ customerForm.getMobile());
+    					clientcode = bseCustomerCrudRespository.getClientIdFromMobile(customerForm.getMobile());
+    				}
+    				MFFatcaDeclareForm fatcadetails = bseCustomerFATCACrudRepository.findByClientID(clientcode);
+    				logger.info("FATCA upload status for customer- "+ customerForm.getMobile() + " -> "+ clientcode + " ->"+ fatcadetails.isFatcaUploaded());
+    				if(!fatcadetails.isFatcaUploaded()) {
+    					logger.info("Proceeding with FATCA upload.");
 
-	if(transactionfailed) {
-	    logger.info("BSE FATCA upload failed... Notify admin by email");
-	    mailSenderInterface.notifyTransactionErrorToAdmin(null, fatcaResponse.getRemarks(), null, "Mutual Fund Transaction", "FATCA Registraion failed", customerForm.getMobile(), customerForm.getInvName());
-	}
+    					fatcaResponse = investmentConnectorBseInterface.fatcaDeclaration(customerForm, dateformat);
+    					logger.info("FATCA upload status from BSE for customer- "+clientcode + " : "  + fatcaResponse.getResponseCode());
 
-	return fatcaResponse;
+    					logger.info("Updating FATCA status to database for customer- "+ clientcode);
+    					if(fatcaResponse.getResponseCode().equalsIgnoreCase("100")){
+    						res= bseCustomerFATCACrudRepository.updateFatcaDeclarationStatus(true,fatcaResponse.getRemarks(), clientcode);
+    						logger.info("Returned FATCA status update to database for customer- "+ clientcode + " : "+res);
+    					} else {
+    						res= bseCustomerFATCACrudRepository.updateFatcaDeclarationStatus(false,fatcaResponse.getRemarks(), clientcode);
+    						logger.info("Returned FATCA status update to database for customer- "+ clientcode + " : "+res);
+    						transactionfailed=true;
+    					}
+    					
+    				}else {
+    					logger.info("Skipping FATCA upload");
+    					fatcaResponse.setResponseCode("100");
+    					fatcaResponse.setRemarks("Fatca already uploaded. Duplicate request skipped for clientcode- "+ clientcode);
+    				}
+    			}else {
+    				logger.info("BSE REGISTRATION is not complete. Skipping fatca upload for customer- "+ customerForm.getMobile());
+    				fatcaResponse.setResponseCode("101");
+    				fatcaResponse.setRemarks("BSE customer registration not yet complete. Skipping FATCA upload request");
+    			}
+    		}else {
+    			logger.info("BSE registered account not found"+ customerForm.getMobile());
+    			fatcaResponse.setResponseCode("101");
+    			fatcaResponse.setRemarks("Customer not yet registered in portal. Skipping FATCA upload");
+    		}
+    		if(transactionfailed) {
+    			logger.info("BSE FATCA upload failed... Notify admin by email");
+    			mailSenderInterface.notifyTransactionErrorToAdmin(null, fatcaResponse.getRemarks(), null, "Mutual Fund Transaction", "FATCA Registraion failed", customerForm.getMobile(), customerForm.getInvName());
+    		}
+
+    	}catch(Exception e){
+    		logger.error("Failed to update FATCA status to database for customer- "+clientcode ,e);
+    		mailSenderInterface.notifyTransactionErrorToAdmin(null, fatcaResponse.getRemarks()+ " ->"+ e.getLocalizedMessage(), null, "Mutual Fund Transaction", "Exception caught during FATCA request process", customerForm.getMobile(), customerForm.getInvName());
+    		fatcaResponse.setResponseCode("101");
+    		fatcaResponse.setRemarks("Internal error. Admin notified.");
+    	}
+    	fatcaResponse.setStatusCode(Integer.toString(res));
+
+    	return fatcaResponse;
     }
 
     @Override
@@ -1269,12 +1316,13 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	//		toupdateForm.setInvDOB(customerForm);
 
 	try {
-	    Date date1 = simpleDateFormat2.parse(customerForm.getInvDOB());
+//	    Date date1 = simpleDateFormat2.parse(customerForm.getInvDOB());
+		Date date1 = simpleDateFormat2.parse(customerForm.getCustomerdob());
 	    String bseFormatDob = simpleDateFormat1.format(date1);
 	    logger.info("DOB field converted to DB format for record update- "+ bseFormatDob);
 	    toupdateForm.setInvDOB(bseFormatDob);
 	} catch (ParseException e) {
-	    logger.error("mapUpdatedCustomerMfData(): failed to convert date. Leaving date to default format. ",e.getMessage());
+	    logger.error("mapUpdatedCustomerMfData(): failed to convert date. Leaving date to default format. ",e);
 	    toupdateForm.setInvDOB(customerForm.getInvDOB());
 
 	}
@@ -1552,9 +1600,79 @@ public class BseEntryServiceImpl implements BseEntryManager {
     
 
     @Override
-    public BseAOFUploadResponse uploadAOFForm(String mobileNumber, String aoffolderLocation, String clientCode) {
-	
-	return investmentConnectorBseInterface.uploadAOFForm(mobileNumber, aoffolderLocation, clientCode);
+    public BseApiResponse uploadAOFForm(String mobileNumber, String aoffolderLocation,String logolocation, String clientCode,MFCustomers investForm) {
+
+    	logger.info("Request received to upload customer AOF form to BSE for mobile- "+ mobileNumber);
+    	String bseregistered="N";
+    	String fileName = investForm.getPan1() + ".pdf";
+    	String aofuploadstatus="N";
+    	BseApiResponse requestresult = new BseApiResponse();
+    	int databasesavesatatus=0;
+    	String bseuploadstatus="N";
+    	try {
+    		if(clientCode!=null) {
+    			logger.info("Checking AOF upload status from database for customer- "+ mobileNumber + " ->"+ clientCode);
+    			bseregistered= bseCustomerCrudRespository.getBseRegistrationAOFStatus(mobileNumber);
+    			aofuploadstatus = bseregistered.split(",")[1];
+    		}
+
+    		if(bseregistered.split(",")[0].equalsIgnoreCase("Y")) {
+    		if(aofuploadstatus.equalsIgnoreCase("Y")) {
+    			logger.info("AOF upload status is already comoplete. Skipping reupload for clientcode- "+ clientCode);
+    			requestresult.setResponseCode("998");
+    			requestresult.setRemarks("ALREDY_UPLOADED");
+    			requestresult.setStatusCode("1");
+    		}else {
+
+    			String flag1 = BseAOFGenerator.aofGenerator(investForm, fileName, logolocation, "VERIFIED", aoffolderLocation);
+    			logger.info("uploadsign(): Signed AOF file generation complete for customer- " + mobileNumber + "->" +investForm.getPan1() + "-> "+ clientCode + " -> "+ flag1);
+    			if (flag1.equalsIgnoreCase("SUCCESS")) {
+    				//			Send AOF to BSE
+//    				BseAOFUploadResponse aofresp1 = investmentConnectorBseInterface.uploadAOFFormtoBSE(mobileNumber, aoffolderLocation, clientCode);
+    				BseAOFUploadResponse aofresp1 = investmentConnectorBseInterface.uploadAOFFormtoBSE(investForm.getPan1(), aoffolderLocation, clientCode);
+        			logger.info("uploadAOFForm(): AOF upload status from BSE as received- " + aofresp1.getStatusMessage());
+        			requestresult.setResponseCode(aofresp1.getStatusCode());
+        			requestresult.setRemarks(aofresp1.getStatusMessage());
+        			if (
+        					aofresp1.getStatusCode().equalsIgnoreCase("100") || 
+        					(
+        							aofresp1.getStatusCode().equalsIgnoreCase("101")
+        					&& 
+        						(
+        							aofresp1.getStatusMessage().contains("Exception caught at Service Application")
+        							|| aofresp1.getStatusMessage().contains("PAN NO ALREADY APPROVED")
+        							|| aofresp1.getStatusMessage().contains("FAILED: IMAGE IS ALREADY AVAILABLE AND IMAGE STATUS IS PENDING")
+        						)
+        					)
+        				) {
+        				bseuploadstatus="Y";
+        			} else {
+        				bseuploadstatus="N";
+        			}
+//        			databasesavesatatus = bseCustomerCrudRespository.updateAofUploadStatus(mobileNumber,"N",aofresp1.getStatusMessage());
+        			databasesavesatatus = bseCustomerCrudRespository.updateAofUploadStatus(mobileNumber,bseuploadstatus,aofresp1.getStatusMessage());
+        			logger.info("uploadSignedAOFFile(): AOF upload status to database for mobile- "+mobileNumber + " -> status "+ bseuploadstatus+ " -> " + databasesavesatatus);
+
+    			}else {
+    				logger.info("AOF PDF file generation failed for mobile- +"+mobileNumber + ". SKipped uploading to BSE");
+    			}
+    			requestresult.setStatusCode(Integer.toString(databasesavesatatus));
+    		}
+    		}else {
+    			logger.info("BSE customer registration not complete, hence skipping AOF upload for customer- "+ mobileNumber + " -> "+ clientCode);
+    			requestresult.setResponseCode("997");
+    			requestresult.setRemarks("BSE_REGISTRATION_INCOMPLETE");
+    			requestresult.setStatusCode("1");
+    		}
+    	}catch(Exception e) {
+    		logger.error("Failed to process AOF status update to database",e);
+    		requestresult.setResponseCode("999");
+			requestresult.setRemarks("INTERNAL_ERROR");
+			requestresult.setStatusCode("0");
+    	}
+
+    	return requestresult;
+
     }
 
     @Override
@@ -1603,6 +1721,30 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	}
 	return response ;
     }
+
+    @Override
+    public Map<String, String> getbseregistrationstatus(String mobile, String pan, String customeruniqid,
+    		String clientcode) {
+    	logger.info("Get BSE registration status for mobile- "+ mobile);
+    	Map<String, String> result = new HashMap<String, String>();
+    	String aofUploadStatus = "";
+    	try{
+    		if(bseCustomerCrudRespository.existsByMobileAndAccountActive(mobile,"Y")){
+    			result.put("ACCOUNTEXIST", "Y");
+    			aofUploadStatus=bseCustomerCrudRespository.getBseRegistrationAOFStatus(mobile);
+    			logger.info("getbseregistrationstatus(): Customer BSE registration status- "+ aofUploadStatus);
+    			result.put("BSEREGISTER", aofUploadStatus.split(",")[0]);
+    			result.put("AOFUPLOAD", aofUploadStatus.split(",")[1]);
+    		}else{
+    			result.put("ACCOUNTEXIST", "N");
+    		}
+    	}catch(Exception e){
+    		logger.error("Failed to query database to get customer BSE upload status for customer- ",mobile, e);
+    		result.put("ACCOUNTEXIST", "E");
+    	}
+    	return result;
+    }
+
 
     /*		public static void main(String[] args){
 		//		System.out.println(new Random());

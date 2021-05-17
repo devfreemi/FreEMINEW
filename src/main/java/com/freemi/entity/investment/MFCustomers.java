@@ -22,7 +22,9 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Proxy;
 import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.freemi.common.util.CommonConstants;
 import com.freemi.entity.database.UserBankDetails;
 
@@ -68,9 +70,13 @@ public class MFCustomers implements Serializable {
 	@Column(name="INVESTOR_2")
 	private String applicant2="";
 	
-	@NotBlank(message="Date of birth is mandatory")
 	@Column(name="INVESTOR_DOB")
 	private String invDOB="";
+
+//	@NotEmpty(message="Date of birth is mandatory")
+	@JsonIgnore
+	@Transient
+	private String customerdob=""; 
 	
 	@NotBlank(message="Please provide your gender")
 	@Column(name="GENDER")
@@ -81,7 +87,7 @@ public class MFCustomers implements Serializable {
 	
 	@NotBlank(message="Provide your holding mode")
 	@Column(name="HOLDING_MODE")
-	private String holdingMode="";
+	private String holdingMode="SI";
 	
 	@Transient
 	@Column(name="")
@@ -158,7 +164,7 @@ public class MFCustomers implements Serializable {
 	private String fatcaStatus;
 	
 	@Column(name="TAX_STATUS")
-	private String taxStatus;
+	private String taxStatus="01";
 	
 	@Transient
 	@Column(name="")
@@ -805,6 +811,16 @@ public class MFCustomers implements Serializable {
 
 	public void setAofUploadResponse(String aofUploadResponse) {
 	    this.aofUploadResponse = aofUploadResponse;
+	}
+
+
+	public String getCustomerdob() {
+		return customerdob;
+	}
+
+
+	public void setCustomerdob(String customerdob) {
+		this.customerdob = customerdob;
 	}
 	
 }

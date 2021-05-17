@@ -79,7 +79,7 @@
 
 						<div class="form-group row mb-4">
 							<label for="schemeName" class="col-sm-5 col-form-label text-default">Fund
-								catrgory</label>
+								category</label>
 							<div class="col-sm-7">
 								<div
 									class="custom-control form-control-sm custom-checkbox custom-control-inline">

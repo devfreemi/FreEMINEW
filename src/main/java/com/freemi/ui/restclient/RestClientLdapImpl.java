@@ -371,19 +371,19 @@ public class RestClientLdapImpl implements ProfileRestClientService {
 		ResponseEntity<String> response = null;
 		final String url = env.getProperty(CommonConstants.URL_SERVICE_PROFILE) + "/linkmfaccountinfo/";
 		try {
-		RestTemplate restTemplate = new RestTemplate();
-		JsonObject form = new  JsonObject();
-		form.addProperty("mobile", mobile);
-		form.addProperty("pan", pan.toUpperCase());
-		form.addProperty("bseclientid", bseclientId);
+			RestTemplate restTemplate = new RestTemplate();
+			JsonObject form = new  JsonObject();
+			form.addProperty("mobile", mobile);
+			form.addProperty("pan", pan.toUpperCase());
+			form.addProperty("bseclientid", bseclientId);
 
-		HttpHeaders headers = new HttpHeaders();	
-		headers.set("authorization", ANONYMOUS_TOKEN);
-		HttpEntity<String> entity = new HttpEntity<String>(form.toString(),headers);
-		response= restTemplate.postForEntity(url, entity,  String.class);
-		logger.info("Updating profile with PAN no status- "+ response.getBody());
+			HttpHeaders headers = new HttpHeaders();	
+			headers.set("authorization", ANONYMOUS_TOKEN);
+			HttpEntity<String> entity = new HttpEntity<String>(form.toString(),headers);
+			response= restTemplate.postForEntity(url, entity,  String.class);
+			logger.info("Updating profile with PAN no status- "+ response.getBody());
 		}catch(Exception e) {
-		    logger.error("Error updating PAn to LDAP account ",e);
+			logger.error("Error updating PAN to LDAP account ",e);
 		}
 		return response;
 	}

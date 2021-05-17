@@ -59,6 +59,9 @@ public class SelectMFFund implements Serializable {
 	@Transient
 	private String amcCode;
 	
+	@Transient
+	private String amcimg;
+	
 	@Column(name="TRANSACTION_TYPE")
 	private String transactionType="PURCHASE";
 	
@@ -519,6 +522,14 @@ public class SelectMFFund implements Serializable {
 
 	public void setProductrefid(String productrefid) {
 	    this.productrefid = productrefid;
+	}
+
+	public String getAmcimg() {
+		return amcimg;
+	}
+
+	public void setAmcimg(String amcimg) {
+		this.amcimg = amcimg;
 	}
 	
 	

@@ -49,22 +49,29 @@ public class BseBeansMapper {
 	clientFregirationForm.setClientAppname1(registrationForm.getInvName());
 
 	//		Converting date format to BSE specific format dd/mm/yyyy
-	logger.info("InvestmentFormToBseBeans(): Received DOB format: "+ registrationForm.getInvDOB());
+	logger.info("InvestmentFormToBseBeans(): Received DOB format: "+ registrationForm.getCustomerdob());
+	
+	clientFregirationForm.setClientDob(registrationForm.getCustomerdob());
+	/*
 	try {
 
-	    Date date1 = simpleDateFormat1.parse(registrationForm.getInvDOB());
-	    String bseFormatDob = simpleDateFormat2.format(date1);
+	    Date date1 = simpleDateFormat2.parse(registrationForm.getCustomerdob());
+	    String bseFormatDob = simpleDateFormat1.format(date1);
 	    clientFregirationForm.setClientDob(bseFormatDob);
 	} catch (ParseException e) {
 	    logger.error("InvestmentFormToBseBeans(): failed to convert date. Setting the data as is format ",e.getMessage());
 	    clientFregirationForm.setClientDob(registrationForm.getInvDOB());
 
 	}
+	*/
 
 	System.out.println("After format DOB- "+ clientFregirationForm.getClientDob());
 	//		clientFregirationForm.setClientDob(registrationForm.getInvDOB());
 
-	clientFregirationForm.setClientGender(registrationForm.getGender());
+	if(registrationForm.getTaxStatus().equals("01") || registrationForm.getTaxStatus().equals("02") || registrationForm.getTaxStatus().equals("03")) {
+		clientFregirationForm.setClientGender(registrationForm.getGender());
+	}
+	
 	clientFregirationForm.setClientPan(registrationForm.getPan1());
 	clientFregirationForm.setClientType("P");			//P- Physical , D - Demat								// todo
 	clientFregirationForm.setClientAcctype1(registrationForm.getBankDetails().getAccountType());		// todo - convert to Sb from map
@@ -73,6 +80,8 @@ public class BseBeansMapper {
 	clientFregirationForm.setClientNeftIfsccode1(registrationForm.getBankDetails().getIfscCode().toUpperCase());						//todo
 	clientFregirationForm.setDefaultBankFlag("Y");
 	clientFregirationForm.setClientAdd1(registrationForm.getAddressDetails().getAddress1());
+	clientFregirationForm.setClientAdd2(registrationForm.getAddressDetails().getAddress2());
+	clientFregirationForm.setClientAdd3(registrationForm.getAddressDetails().getAddress3());
 	clientFregirationForm.setClientCity(registrationForm.getAddressDetails().getCity());
 	clientFregirationForm.setClientState(registrationForm.getAddressDetails().getState());	//todo - convert to code from map
 	clientFregirationForm.setClientPincode(registrationForm.getAddressDetails().getPinCode());
@@ -105,8 +114,9 @@ public class BseBeansMapper {
 	BseFatcaForm fatcaForm = new BseFatcaForm();
 
 	SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy-mm-dd");
-	SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat(dateformat!=null?dateformat:"dd/mm/yyyy");
-
+//	SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat(dateformat!=null?dateformat:"dd/mm/yyyy");
+	SimpleDateFormat simpleDateFormat3 = new SimpleDateFormat(dateformat!=null?dateformat:"mm/dd/yyyy");
+//
 	fatcaForm.setPAN_RP(registrationForm.getPan1());
 	fatcaForm.setINV_NAME(registrationForm.getInvName());
 
@@ -114,7 +124,7 @@ public class BseBeansMapper {
 	logger.info("InvestmentFormToBseFATCABeans(): Received DOB format- "+ registrationForm.getInvDOB());
 	try {
 	    Date date1 = simpleDateFormat1.parse(registrationForm.getInvDOB());
-	    String bseFormatDob = simpleDateFormat2.format(date1);
+	    String bseFormatDob = simpleDateFormat3.format(date1);
 	    fatcaForm.setDOB(bseFormatDob);
 	} catch (ParseException e) {
 	    logger.error("InvestmentFormToBseFATCABeans(): failed to convert date: Setting default format.",e.getMessage());
@@ -146,7 +156,7 @@ public class BseBeansMapper {
 	try {
 	    if(registrationForm.getFatcaDetails().getDateOfNetworth()!=null){
 		Date date1 = simpleDateFormat1.parse(registrationForm.getInvDOB());
-		String bseFormatDob = simpleDateFormat2.format(date1);
+		String bseFormatDob = simpleDateFormat3.format(date1);
 		fatcaForm.setNW_DATE(bseFormatDob);
 	    }
 	} catch (ParseException e) {
@@ -155,7 +165,24 @@ public class BseBeansMapper {
 
 	fatcaForm.setPEP_FLAG(registrationForm.getFatcaDetails().getPoliticalExposedPerson());
 	fatcaForm.setOCC_CODE(registrationForm.getOccupation());
-	fatcaForm.setOCC_TYPE(registrationForm.getFatcaDetails().getOccupationType());
+//	fatcaForm.setOCC_TYPE(registrationForm.getFatcaDetails().getOccupationType());
+	
+	List<String> servicelist = new ArrayList<String>();
+	servicelist.add("02");
+	servicelist.add("03");
+	servicelist.add("04");
+	servicelist.add("09");
+	servicelist.add("41");
+	servicelist.add("42");
+	servicelist.add("44");
+	
+	if(registrationForm.getOccupation().equals("01") || registrationForm.getOccupation().equals("43")) {
+		fatcaForm.setOCC_TYPE("B");
+	}else if(servicelist.contains(registrationForm.getOccupation())) {
+		fatcaForm.setOCC_TYPE("S");
+	}else {
+		fatcaForm.setOCC_TYPE("O");
+	}
 
 	fatcaForm.setEXCH_NAME(registrationForm.getFatcaDetails().getExchangeName());
 

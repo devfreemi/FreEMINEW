@@ -61,7 +61,7 @@
 
 						<div style="text-align: center;">
 							<button class="btn btn-sm #00695c teal darken-2 white-text"
-								id="sig-submitBtn" onclick="submitSign();">
+								id="sig-submitBtn" 	>
 								<span id="signtxt">Upload Signature</span> <span id="signingtxt"
 									style="display: none;">Submitting Signature <i
 									class="fas fa-spinner fa-spin"></i>

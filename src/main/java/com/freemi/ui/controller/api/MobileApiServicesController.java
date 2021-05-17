@@ -135,6 +135,8 @@ public class MobileApiServicesController {
     public Object bseCheckRegistrationstatus(@RequestBody HashMap<String, String> dataHashMap, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 
 	Map<String,String> responsedata=null;
+	
+	
 	try {
 	    if(dataHashMap.containsKey("mobile")) {
 		String mobile = (String) dataHashMap.get("mobile");
@@ -154,6 +156,7 @@ public class MobileApiServicesController {
 	String responseData = "SUCCESS";
 	boolean validationpass = true;
 	BseApiResponse apiresponse = new BseApiResponse();
+	BseApiResponse bseregisterresponse = new BseApiResponse();
 	if(bindingResult.hasErrors()){
 	    validationpass = false;
 	    logger.info("Invalid data passed- "+ bindingResult.getFieldError().getField()+ " -> " +bindingResult.getFieldError().getDefaultMessage());
@@ -224,21 +227,11 @@ public class MobileApiServicesController {
 		investForm.setSystemip(systemDet.getClientIpv4Address());
 		investForm.setSystemDetails(systemDet.getClientBrowser());
 
-		mfRegflag = bseEntryManager.saveCustomerDetails(investForm,"NEW_CUSTOMER","Y", "NA" );
-		if (!mfRegflag.equalsIgnoreCase("SUCCESS")) {
+		bseregisterresponse = bseEntryManager.saveCustomerDetails(investForm,"NEW_CUSTOMER","Y", "NA" );
+		if (bseregisterresponse.getResponseCode().equalsIgnoreCase(CommonConstants.TASK_SUCCESS_S)) {
 		    apiresponse.setStatusCode(Integer.toString(CommonConstants.TASK_FAILURE));
-		    apiresponse.setRemarks("");
-		    if (mfRegflag.equalsIgnoreCase("EXIST")) {
-			apiresponse.setRemarks("Customer already exist with given PAN no.");
-		    } else if (mfRegflag.equalsIgnoreCase("PAN_DUPLICATE")) {
-			apiresponse.setRemarks("PAN already registered. Kindly contact admin in case of discrepancy.");
-		    }else if (mfRegflag.equalsIgnoreCase("MOBILE_DUPLICATE")) {
-			apiresponse.setRemarks("Mobile no already registered. Login to complete registration.");
-		    } else if (mfRegflag.equalsIgnoreCase("BSE_CONN_FAIL")) {
-			apiresponse.setRemarks("BSE endpoint connection failure!");
-		    } else {
-			apiresponse.setRemarks(mfRegflag);
-		    }
+		    apiresponse.setRemarks(bseregisterresponse.getRemarks());
+		    
 		}else {
 
 		    logger.info("Registartion successful... Proceed with FATCA registartion...");
@@ -267,12 +260,14 @@ public class MobileApiServicesController {
 		    logger.info("Pushing customer FATCA details to BSE");
 		    BseApiResponse fatresponse = null;
 
-		    fatresponse = bseEntryManager.saveFatcaDetails(investForm,null,null);
+		    fatresponse = bseEntryManager.saveFatcaDetails(investForm,null,null,null);
 
+		    /*
 		    if(fatresponse.getResponseCode().equals("101") && fatresponse.getRemarks().contains("101|FAILED: INVALID DATE OF BIRTH FORMAT MM/DD/YYYY") ) {
 			logger.info("FATCA upload failed with default format. Try again with format mm/dd/yyyy");
 			fatresponse = bseEntryManager.saveFatcaDetails(investForm,null,"mm/dd/yyyy");
 		    }
+		    */
 
 		    if (fatresponse.getResponseCode().equals("100")) {
 			logger.info("registerBsepost(): FATCA save status to database and registration success. Set CUSTOMER_TYPE");
@@ -372,7 +367,7 @@ public class MobileApiServicesController {
 				if (result.equalsIgnoreCase("SUCCESS")) {
 
 				    logger.info("PROCEED WITH AOF SUBMIT....");
-				    BseAOFUploadResponse aofresp1 = investmentConnectorBseInterface.uploadAOFForm(investForm.getPan1(), env.getProperty(CommonConstants.BSE_AOF_GENERATION_FOLDR), investForm.getClientID());
+				    BseAOFUploadResponse aofresp1 = investmentConnectorBseInterface.uploadAOFFormtoBSE(investForm.getPan1(), env.getProperty(CommonConstants.BSE_AOF_GENERATION_FOLDR), investForm.getClientID());
 				    logger.info("bseUploadAOFSignature(): AOF upload status as received- " + aofresp1.getStatusMessage());
 				    if (aofresp1.getStatusCode().equalsIgnoreCase("100") || (aofresp1.getStatusCode() .equalsIgnoreCase("101") && (aofresp1.getStatusMessage().contains("Exception caught at Service Application")
 					    || aofresp1.getStatusMessage().contains("PAN NO ALREADY APPROVED")

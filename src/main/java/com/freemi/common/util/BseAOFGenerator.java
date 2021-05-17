@@ -30,7 +30,7 @@ public class BseAOFGenerator {
 	private static final Logger logger = LogManager.getLogger(BseAOFGenerator.class);
 
 	public static String aofGenerator(MFCustomers investForm,String fileName, String imageAbsPath, String kycStatus, String aofbasepath){
-
+		logger.info("Beginning process to generate AOF file - "+ (aofbasepath+fileName));
 		String flag = "SUCCESS";
 		PdfWriter writer = null;
 		Document document = new Document(PageSize.A4);
@@ -199,20 +199,21 @@ public class BseAOFGenerator {
 			SimpleDateFormat aofDateFormat = new SimpleDateFormat("dd-mm-yyyy");
 			String dobinFormat ="";
 			try {
-				dobinFormat = aofDateFormat.format(baseFormat2.parse(investForm.getInvDOB()));
+				logger.info("Date of birth- "+ investForm.getCustomerdob() + " -> "+ investForm.getInvDOB());
+//				dobinFormat = baseFormat.format(investForm.getInvDOB());
+				dobinFormat = baseFormat2.format(investForm.getCustomerdob());
 			}catch(Exception e) {
-				logger.error("AOF date format issue of DOB with format dd/mm/yyyy. ", e.getMessage());
+				logger.error("AOF date format issue of DOB with format dd/mm/yyyy. ", e);
 				try {
 					logger.info("Try Database format- yyyy-mm-dd");
 					dobinFormat = aofDateFormat.format(baseFormat.parse(investForm.getInvDOB()));
 				}catch(Exception e2) {
-					logger.info("Issue with 2nd format too. Set as date format...",e2);
+					logger.error("Issue with 2nd format too. Set as date format...",e2);
 					
 				}
 			}
 			cell11 = new PdfPCell(new Paragraph("Date of birth: "+ dobinFormat,f1));
 			table4.addCell(cell11);
-
 			document.add(table4);
 
 
@@ -1220,7 +1221,6 @@ public class BseAOFGenerator {
 		aofGenerator(m,"232323", "E:/BITBUCKET REPOSITORY/freemi/src/main/webapp/resources/images/freemi.png","VERIFIED","E:/AOF/");
 
 	}*/
-
-
-
+	
+	
 }

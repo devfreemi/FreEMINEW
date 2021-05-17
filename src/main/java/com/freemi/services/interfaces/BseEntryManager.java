@@ -2,6 +2,7 @@ package com.freemi.services.interfaces;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,8 +35,8 @@ import com.freemi.entity.investment.TransactionStatus;
 public interface BseEntryManager {
 	
 	//Customer records related crud operation
-	public String saveCustomerDetails(MFCustomers customerForm, String customerType, String customerlogged, String initiatedmobileid);
-	public BseApiResponse saveFatcaDetails(MFCustomers fatcaForm, String flag1, String dateformat);
+	public BseApiResponse saveCustomerDetails(MFCustomers customerForm, String customerType, String customerlogged, String initiatedmobileid);
+	public BseApiResponse saveFatcaDetails(MFCustomers fatcaForm, String flag1, String dateformat, String clientcode);
 	public String updateFatcaStatus(String clientId, String status, String responseCode, String message);
 	
 	public List<SelectMFFund> getMFOrderHistory(String customerId);
@@ -51,6 +52,7 @@ public interface BseEntryManager {
 	public boolean updateCustomerBankDetails(UserProfile investorData);
 	public boolean updateCustomerAddress(UserProfile investorData);
 	public String investmentProfileStatus(String mobileNumber);
+	public Map<String, String> getbseregistrationstatus(String mobile, String pan, String customeruniqid, String clientcode);
 	
 	public List<BseMandateDetails> getCustomerMandateDetails(String clientId, String accountNumber);
 	
@@ -112,7 +114,7 @@ public interface BseEntryManager {
 	
 	public String generateTransId();
 	
-	public BseAOFUploadResponse uploadAOFForm(String mobileNumber, String aoffolderLocation, String clientCode);
+	public BseApiResponse uploadAOFForm(String mobileNumber, String aoffolderLocation,String logolocation, String clientCode,MFCustomers investForm);
 	
 	public String BseOrderPaymentStatus(String clientid, String orderno);
 	

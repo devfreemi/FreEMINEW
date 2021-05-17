@@ -1120,7 +1120,7 @@ table.dataTable thead th, table.dataTable thead td {
 								+ $(event.relatedTarget).data("rscode"));
 						$("#reinvSchemeCode").val(
 								$(event.relatedTarget).data("rscode"));
-						$("#amcCode").val($(event.relatedTarget).data("rta"));
+						$("#amcCode").val($(event.relatedTarget).data("amccode"));
 
 					});
 </script>

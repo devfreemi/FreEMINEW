@@ -14,7 +14,7 @@ public class CommonConstants {
 	public static final String CDN_URL="link.content.cdn";
 	public static final String BSE_ENABLED="investment.bse.enabled";
 	public static final String BSE_AOF_GENERATION_FOLDR="investment.bse.aoffolder";
-	
+	public static final String BSE_AOF_LOGO_LOCATION="investment.bse.aoffile.logo";
 	
 //	@Value("${spring.mail.host}")
 	public static final String MAIL_SERVER_HOST="spring.mail.host";
@@ -136,6 +136,7 @@ public class CommonConstants {
 	
 	public static final int HTTP_CLIENT_CALL_SUCCESS= 100;
 	public static final int HTTP_CLIENT_CALL_FAIL= 101;
+	public static final int SERVICE_CATEGORY_DISABLED = 900;
 	
 	
 	public static List<String> protectedUrl = new ArrayList<String>(){
