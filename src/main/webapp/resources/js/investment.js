@@ -1,6 +1,8 @@
 //console.log = function(){};
 var mfdatapulled=false;
 var mfdatainprogress=false;
+var loanhandler=false;
+var statusobj;
 
 function AdditionalPurchase(folio,code,type,rtaAgent,productCode){
 	if(folio == 'NEW'){
@@ -511,7 +513,7 @@ function convertNumberToIndianFormat(value){
 
 
 $(document).ready(function(){
-	$("form").submit(function(e){
+	$("#sipcancelform").submit(function(e){
 		e.preventDefault();
 		console.log("Submitted");
 
@@ -781,6 +783,233 @@ function createfddataView(result){
 		progresscomplete("fdfetch");
 	}
 }
+
+
+/* ------------------------------------------------------------------------------------------------- */
+function gethdfcloanrequestlist(mobileno,pan){
+	console.log("Call receivedfor FD fetch...")
+	$("#loanreqmsg").html("");
+	loanapilistcall(mobileno,pan,'CREATEVIEW');
+}
+
+function loanapilistcall(mobileno,pan,postcallfunc){
+	var apiresponse;
+	var loantempdata=sessionStorage.getItem("loanrequestlist");
+	if(loantempdata == null){
+		request = $.ajax({
+			url: "/products/api/loan/get-hdfc-loan",
+			method: "POST",
+			data: {
+				"mobile" : mobileno,
+				"pan" : pan
+			},
+			async: true,
+			datatype: "json",
+			beforeSend: function() {
+				showprogress("loanfetch");
+			}
+		});
+		request.done(function(msg) {
+			
+			apiresponse = msg;
+			apiresponse=JSON.stringify(msg);
+//			console.log("RECEIVED- "+ apiresponse);
+			createloandataView(msg);				
+		});
+		request.fail(function(jqXHR, textStatus) {
+			console.log("Failed to fetch your data. Please try after sometime: " + textStatus);
+			apiresponse="API_ERROR";
+		});
+
+		request.always(function(msg){
+			console.log("Request complete..")
+//			progresscomplete("loanfetch");
+		});
+	}else{
+		apiresponse = loantempdata;
+
+		if(postcallfunc==='BALANCE'){
+//			calculatefdtotals(apiresponse);
+		}else if(postcallfunc==='CREATEVIEW'){
+			createloandataView(apiresponse);
+		}
+	}
+
+
+
+}
+
+
+function createloandataView(result){
+	console.log("Request received to display loan data");
+	$("#loanlistbody").children().remove();
+
+	if(result.status == "0"){
+		$("#loanfetch").html("<button class=\"btn btn-sm btn-secondary\" onclick=\"gethdfcloanrequestlist(reqid);\">Fetch your Loan Requests</button>");
+		if(result.msg=="NO_SESSION"){
+			$("#loanreqmsg").html("Session expired. Please login again");
+		}else if(result.msg==="NO_PAN"){
+			$("#loanreqmsg").html("PAN record not present. Please contact admin if you carried out transaction.");
+		}else if(result.msg==="NO_DATA"){
+			$("#loanreqmsg").html("<p>No loan request record.</p><a href=\"/fixed-deposit/\"><button class=\"btn btn-sm btn-primary\">Apply for HDFC Loan</button> </a>");
+		}else if(result.msg==="INAVLID_REQUEST"){
+			$("#loanreqmsg").html("Failed to process request. Please contact admin if issue persist.");
+		}else if(result.msg==="SERVICE_CONN_FAILURE"){
+			$("#loanreqmsg").html("Failed to fetch data. Please try after sometime.");
+		}else if(result.msg==="INTERNAL_ERROR" || result.msg==="API_ERROR"){
+			$("#loanreqmsg").html("Error processing request. Please try again after sometime");
+		}
+	}else{
+//		var data = JSON.parse(result);
+//		console.log("Tranasaction Data- " +data.data.length + " -> " + data.data);
+		if(result.data!=null && result.data.length > 0){
+		
+		var table = document.getElementById("loanlistbody");
+		table.setAttribute("class","animated fadeIn");
+//		console.log("Total records- " + data.data.length + " -> "+ data.data);
+		for (var i = 0; i < result.data.length; i++) {
+			/*    console.log(jsonData[i]); */
+
+			var x= result.data[i];
+			var row = table.insertRow();
+			var cell1 = row.insertCell(0);
+			var cell2 = row.insertCell(1);
+			var cell3 = row.insertCell(2);
+			var cell4 = row.insertCell(3);
+			var cell5 = row.insertCell(4);
+			var cell6 = row.insertCell(5);
+			var cell7 = row.insertCell(6);
+			var cell8 = row.insertCell(7);
+			var cell9 = row.insertCell(8);
+//			Add some text to the new cells:
+			
+			cell1.innerHTML =  "<img src=\"https:\/\/resources.freemi.in\/products\/resources\/images\/partnerlogo\/loans\/hdfc-bank.svg\" class=\"img-fluid mr-2\" style=\"height: 1rem\" >";
+			cell2.innerHTML = x[1];
+			cell3.innerHTML = x[0];
+			cell4.innerHTML = x[2];
+			cell5.innerHTML = "&#8377;"+convertNumberToIndianFormat(x[3]);
+			cell6.innerHTML = x[11];
+			cell7.innerHTML = x[8];
+			cell8.innerHTML = x[9];
+			
+			if(x[7] == 'Y'){
+				cell9.innerHTML = "<button class=\"btn btn-sm btn-success p-1 mt-0 loanact\" type=\"button\" style=\"font-size: 12px; width: 5rem;\" data-action='STAT' data-bank='HDFC' data-refno='"+x[0] +"' data-ackno='"+x[2] +"' data-applno='"+x[11] +"'> Status</button>";
+			}else if(x[7] == 'Incomplete'){
+				cell9.innerHTML = "<button class=\"btn btn-sm btn-primary p-1 mt-0 loanact\" type=\"button\" style=\"font-size: 12px; width: 5rem;\" data-action='COMP' data-bank='HDFC' data-refno='"+x[0] +"' data-ackno='"+x[2] +"' data-applno='"+x[2] +"'> Complete</button>";
+			}else{
+				cell9.innerHTML = "";
+			}
+		}
+		progresscomplete("loanfetch");
+		
+		} else{
+			$("#loanfetch").html("<a href=\"/hdfc-loan\" class=\"btn btn-sm btn-primary\"\">Apply HDFC Loan</button>");
+			$("#loanreqmsg").html("No loan history. Apply for personal loan  bank.");
+		}
+		
+	}
+}
+
+
+$(document.body).on('click', '.loanact' ,function(){
+	
+//    alert($(this).data('action') + " - " + $(this).data('refno') + "- " + $(this).data('ackno'));
+	if(!loanhandler){
+		loanhandler = true;
+		console.log("Clikced- "+ $(this) );	
+		if($(this).data('action') == 'STAT'){
+			getloanrequestcurrentstat($(this),$(this).data('bank'),$(this).data('refno'),$(this).data('ackno'),$(this).data('appno'),reqid);
+//			getloanrequestcurrentstat($(this))
+		}else if($(this).data('action') == 'COMP'){
+			completeloanrequest($(this),$(this).data('bank'),$(this).data('refno'),$(this).data('ackno'),$(this).data('appno'),reqid);
+		}else{
+			alert("Invalid action!")
+		}
+	}else{
+		alert("Last action is still under progress");
+	}
+	
+});
+
+
+function getloanrequestcurrentstat(event, bank,loanref, ackno, appno,mobileno){
+//function getloanrequestcurrentstat(event){
+	var apiresponse;
+	var temptext;
+	request = $.ajax({
+		url: "/products/api/loan/get-loan-status",
+		method: "POST",
+		data: {
+			"mobile" : mobileno,
+			"refno" : loanref,
+			"ackno" : ackno,
+			"appno" : appno,
+			"bank" : bank
+		},
+		async: true,
+		datatype: "json",
+		beforeSend: function() {
+//			showprogress("loanfetch");
+			temptext= event.text();
+			console.log(temptext);
+			event.html("Wait <i class=\"fas fa-spinner fa-spin\"></i>");
+		}
+	});
+	request.done(function(msg) {
+		apiresponse = msg;
+//		statusobj=apiresponse;
+		console.log("RECEIVED- "+ apiresponse);
+		createloanstatusview(msg);				
+	});
+	request.fail(function(jqXHR, textStatus) {
+		console.log("Failed to fetch your data. Please try after sometime: " + textStatus);
+		alert("Your request failed! Kindly try after sometime.");
+		apiresponse="API_ERROR";
+	});
+
+	request.always(function(msg){
+		console.log("Request complete..");
+		event.html(temptext);
+		loanhandler = false;
+	});
+
+	
+	
+}
+
+function completeloanrequest(event, bank,loanref, ackno, appno,mobileno){
+	console.log("Complete loan request post submit");
+	$('#completeloanreqmodal').modal('show');
+	$("#mobno").val(mobileno);
+	$("#reqbank").val(bank);
+	$("#ackno").val(ackno);
+	$("#applno").val(appno);
+	$("#action").val("COMPLETE_REQUEST");
+	$("#loanrefno").val(loanref);
+	$("#loanapplystatus").val("Incomplete")
+	
+}
+
+
+
+function createloanstatusview(msg){
+	$('#loanstatusmodal').modal('show');
+	if(msg.applicationstatus == 'Success'){
+		if(msg.loanstatus!=null){
+			$("#loancustomername").html(msg.loanstatus.getStatusEnquiryResponse.getStatusEnquiryResult.CUSTNAME);
+			$("#loanapplno").html(msg.applicaitonid);
+			$("#loanapplstatus").html(msg.loanstatus.getStatusEnquiryResponse.getStatusEnquiryResult.status);
+		}else{
+			$("loanstatusmsg").text("Status data could not fetched. Please try after sometime");
+		}
+	}else{
+		$("loanstatusmsg").text("The application was not successful.");
+	}
+	
+}
+
+
+/* --------------------------------------------------------------------------------------------------------- */
 
 
 function showprogress(elementid){

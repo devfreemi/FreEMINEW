@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +29,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freemi.common.util.CommonTask;
+import com.freemi.entity.general.Datarquestresponse;
 import com.freemi.entity.general.HttpClientResponse;
 import com.freemi.entity.general.Login;
 import com.freemi.entity.general.LoginResponse;
@@ -36,7 +38,9 @@ import com.freemi.entity.general.Registerform;
 import com.freemi.entity.general.UserProfileLdap;
 import com.freemi.entity.investment.MFKarvyFundsView;
 import com.freemi.entity.investment.MfAllInvestorValueByCategory;
+import com.freemi.entity.loan.Trackloanstatusapiresponse;
 import com.freemi.services.interfaces.BseEntryManager;
+import com.freemi.services.interfaces.HdfcService;
 import com.freemi.services.interfaces.ProfileRestClientService;
 import com.freemi.services.interfaces.SmsSenderInterface;
 import com.google.gson.Gson;
@@ -55,6 +59,9 @@ public class ProfileController {
 
     @Autowired
     BseEntryManager bseEntryManager;
+    
+    @Autowired
+    HdfcService hdfcService;
 
     private static final Logger logger = LogManager.getLogger(ProfileController.class);
 
@@ -197,8 +204,6 @@ public class ProfileController {
     @PostMapping(value="/mf/getmfportfoliototal")
     @ResponseBody
     public String apiMFBalance(HttpServletRequest request, HttpServletResponse httpResponse,HttpSession session){
-
-
 	logger.info("Request received to fectch profile data via api for mobile-" + request.getParameter("mobile"));
 	String result=null;
 	JsonObject jsonObject = null;
@@ -255,6 +260,7 @@ public class ProfileController {
 	logger.info("apiMFBalance(): Retrunung result- "+ result);
 	return result;
     }
+    
 
 
     @PostMapping(value="/mf/getmfprofileData")
@@ -491,6 +497,88 @@ public class ProfileController {
 		
 		return smssendstatus;
 	}
+    
+
+
+    @PostMapping(value="/loan/get-hdfc-loan")
+    @ResponseBody
+    public Datarquestresponse gethdfcloanrequesthistory(HttpServletRequest request, HttpServletResponse httpResponse,HttpSession session){
+    	logger.info("Request received to fetch HDFC loan application list via api for mobile-" + request.getParameter("mobile"));
+    	List<String[]> result = null;
+
+    	Datarquestresponse response = new Datarquestresponse();
+
+    	try {
+
+    		logger.info("gethdfcloanrequesthistory(): Requesting HDFC Loan application history" + request.getParameter("mobile"));
+
+    		String mobile=request.getParameter("mobile");
+
+    		if(session.getAttribute("token") == null || session.getAttribute("userid") == null){
+    			logger.info("gethdfcloanrequesthistory(): User session not found to process request..");
+    			response.setStatus("0");
+    			response.setMsg("NO_SESSION");
+    			return response;
+    		}else{
+    			if(mobile.equals(session.getAttribute("userid").toString())) {
+    				response = hdfcService.getrequestedloanhistory(mobile, null, null, null);
+    				logger.info("gethdfcloanrequesthistory(): Result received- "+ (result!=null?result.size():"No data") );
+    			}else {
+    				logger.info("gethdfcloanrequesthistory(): Passed mobile and sessio mobile data do not match");
+    				response.setStatus("0");
+    				response.setMsg("REQUEST_DENIED");
+    			}
+    		}
+    	}catch(Exception e) {
+    		logger.error("gethdfcloanrequesthistory(): Error processing request",e);
+    		response.setStatus("0");
+    		response.setMsg("INTERNAL_ERROR");
+    	}
+
+    	logger.info("gethdfcloanrequesthistory(): Retrunung result- "+ result);
+    	return response;
+    }
+    
+    
+
+    @PostMapping(value="/loan/get-loan-status")
+    @ResponseBody
+    public Trackloanstatusapiresponse getloanstatus(HttpServletRequest request, HttpServletResponse httpResponse,HttpSession session){
+    	logger.info("Request received to fetch loan status related to account mobile -" + request.getParameter("mobile"));
+
+    	Trackloanstatusapiresponse response = new Trackloanstatusapiresponse();
+
+    	try {
+
+    		logger.info("getloanstatus(): Requesting HDFC Loan application history" + request.getParameter("mobile"));
+
+    		String mobile= request.getParameter("mobile");
+    		String refno = request.getParameter("refno");
+    		String bank = request.getParameter("bank");
+    		
+    		if(session.getAttribute("token") == null || session.getAttribute("userid") == null){
+    			logger.info("getloanstatus(): User session not found to process request..");
+    			response.setApplicationstatus("NO_SESSION");
+    		}else if(mobile==null || refno==null || bank ==null) {
+    			logger.info("Minimum required data not received through API. Request rejected");
+    			response.setApplicationstatus("INVALID_DATA");
+    		} else{
+    			if(mobile.equals(session.getAttribute("userid").toString())) {
+    				response = (Trackloanstatusapiresponse) hdfcService.getloanstatus(mobile, refno, null, null, bank);
+    				logger.info("getloanstatus(): Result received- "+ response.getApplicationstatus());
+    			}else {
+    				logger.info("getloanstatus(): Passed mobile and session mobile data do not match");
+    				response.setApplicationstatus("REQUEST_DENIED");
+    			}
+    		}
+    	}catch(Exception e) {
+    		logger.error("getloanstatus(): Error processing request",e);
+    		response.setApplicationstatus("INTERNAL_ERROR");
+    	}
+
+    	return response;
+    }
+
 
 
 

@@ -165,4 +165,8 @@ public class CommonConstants {
 	public static final String BASE_ICCS_URL = "api.iccs.baseurl";
 	public static final String ICCS_AUTH_TOKEN = "api.iccs.auth.token";
 	
+	
+	public static final String HDFC_BACKEND_SERVICE_BASEURL_PROPERTIES = "backend.service.hdfc.baseurl";
+	public static final String HDFC_BACKEND_SERVICE_TEST_ENABLED="backend.service.hdfc.test.enabled";
+	
 }

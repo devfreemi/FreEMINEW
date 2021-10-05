@@ -29,7 +29,9 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.62/pdfmake.min.js" async="true"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.62/vfs_fonts.js" async="true"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.4/js/buttons.html5.min.js" async="true"></script>
-
+<script type="text/javascript">
+var reqid='<%=session.getAttribute("userid").toString()%>';
+</script>
 <style>
 table td {
 	font-size: 11px;
@@ -80,7 +82,7 @@ table th {
 								<div class="col-6">2</div>
 							</div> -->
 							<div class="row">
-								<div class="col-8">We will be available soon!</div>
+								<div class="col-8">Track your HDFC Personal Loan Status.</div>
 							</div>
 
 						</div>
@@ -225,14 +227,10 @@ table th {
 		</section>
 
 	</div>
-
+	
 	<jsp:include page="include/sub-footer.jsp"></jsp:include>
 	<jsp:include page="include/footer.jsp"></jsp:include>
-
+	<jsp:include page="include/loan-status-modal.jsp"></jsp:include>
 </body>
-<script
-	src="<c:url value="${contextcdn}/resources/js/signaturepanel.js" />"
-	defer="defer"></script>
-<script type="text/javascript">
-</script>
+<script src="<c:url value="${contextcdn}/resources/js/signaturepanel.js" />" defer="defer"></script>
 </html>

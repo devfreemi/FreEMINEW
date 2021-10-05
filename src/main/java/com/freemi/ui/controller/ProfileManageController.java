@@ -45,6 +45,7 @@ import com.freemi.entity.general.ProfilePasswordChangeForm;
 import com.freemi.entity.general.ResetPassword;
 import com.freemi.entity.general.UserProfile;
 import com.freemi.entity.general.UserProfileLdap;
+import com.freemi.entity.loan.Loanreqcompleteform;
 import com.freemi.services.interfaces.BseEntryManager;
 import com.freemi.services.interfaces.ProfileRestClientService;
 //import com.freemi.entity.investment.BseAllTransactionsView;
@@ -420,6 +421,8 @@ public class ProfileManageController{
 		}catch(Exception e) {
 			logger.error("Error while processing my-dashboard",e);
 		}
+		map.addAttribute("loanrequestcomplform",new Loanreqcompleteform());
+		
 		logger.info("Returning to page- "+ returnurl);
 		return returnurl;
 		//		return "my-dashboard";
