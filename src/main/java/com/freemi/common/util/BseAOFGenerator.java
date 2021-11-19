@@ -1,8 +1,12 @@
 package com.freemi.common.util;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
@@ -11,6 +15,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.freemi.entity.investment.BseAOFDocument;
 import com.freemi.entity.investment.MFCustomers;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
@@ -29,11 +34,12 @@ import com.itextpdf.text.pdf.PdfWriter;
 public class BseAOFGenerator {
 	private static final Logger logger = LogManager.getLogger(BseAOFGenerator.class);
 
-	public static String aofGenerator(MFCustomers investForm,String fileName, String imageAbsPath, String kycStatus, String aofbasepath){
+	public static BseAOFDocument aofGenerator(MFCustomers investForm,String fileName, String imageAbsPath, String kycStatus, String aofbasepath){
 		logger.info("Beginning process to generate AOF file - "+ (aofbasepath+fileName));
 		String flag = "SUCCESS";
 		PdfWriter writer = null;
 		Document document = new Document(PageSize.A4);
+		BseAOFDocument aoffilestatus = new BseAOFDocument();
 		try
 		{
 			writer = PdfWriter.getInstance(document, new FileOutputStream(aofbasepath+fileName));
@@ -1101,7 +1107,18 @@ public class BseAOFGenerator {
 		}
 		
 		logger.info("Returning AOF generation status- "+ flag);
-		return flag;
+		aoffilestatus.setFilegenerationstatus(flag);
+		
+		try {
+			Path filepath = Paths.get(aofbasepath+fileName);
+			if(Files.exists(filepath)) {
+				byte[] filearray = Files.readAllBytes(filepath);
+				aoffilestatus.setAofpdf(filearray);
+			}
+		}catch(Exception e) {
+			logger.info("Failed to read file",e);
+		}
+		return aoffilestatus;
 
 	}	
 

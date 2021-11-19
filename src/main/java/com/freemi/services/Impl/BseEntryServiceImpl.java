@@ -3,17 +3,18 @@ package com.freemi.services.Impl;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.CopyUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
@@ -25,6 +26,7 @@ import com.freemi.common.util.CommonConstants;
 import com.freemi.common.util.InvestFormConstants;
 import com.freemi.database.interfaces.AllotmentStmntCrudRepository;
 import com.freemi.database.interfaces.BseCamsByCategoryRepository;
+import com.freemi.database.interfaces.BseCustomerAOFRepository;
 import com.freemi.database.interfaces.BseCustomerAddressCrudRepository;
 import com.freemi.database.interfaces.BseCustomerBankDetailsCrudRespository;
 import com.freemi.database.interfaces.BseCustomerCrudRespository;
@@ -52,9 +54,12 @@ import com.freemi.entity.bse.BseOrderPaymentRequest;
 import com.freemi.entity.bse.BseOrderPaymentResponse;
 import com.freemi.entity.database.MfTopFundsInventory;
 import com.freemi.entity.database.UserBankDetails;
+import com.freemi.entity.general.Datarquestresponse;
+import com.freemi.entity.general.HttpClientResponse;
 import com.freemi.entity.general.UserProfile;
 import com.freemi.entity.investment.AddressDetails;
 import com.freemi.entity.investment.Allotmentstatement;
+import com.freemi.entity.investment.BseAOFDocument;
 import com.freemi.entity.investment.BseAllTransactionsView;
 import com.freemi.entity.investment.BseDailyTransCounter;
 import com.freemi.entity.investment.BseFundsScheme;
@@ -161,6 +166,12 @@ public class BseEntryServiceImpl implements BseEntryManager {
 
     @Autowired
     MailSenderInterface mailSenderInterface;
+    
+    @Autowired
+    BseCustomerAOFRepository bseaofepository;
+    
+    @Autowired
+    Environment env;
 
     private static final Logger logger = LogManager.getLogger(BseEntryServiceImpl.class);
 
@@ -250,6 +261,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
     			customerForm.getNominee().setClientID(customerid);
     			customerForm.getFatcaDetails().setClientID(customerid);
     			customerForm.setRegistrationTime(new Date());
+    			
     			logger.info("Transaction started to save BSE customer registration data for generated client ID - " + customerid);
 
 //    			MFCustomers customerCopy = customerForm;
@@ -808,27 +820,43 @@ public class BseEntryServiceImpl implements BseEntryManager {
     public String investmentProfileStatus(String mobileNumber) {
 	logger.info("Search for customer BSE ID");
 	String flag = "F";
-	String aofUploadStatus = "";
+//	String aofUploadStatus[] = null;
+	String[] aofUploadStatus;
+//	List<String[]> aofUploadStatus = null;
 	try{
 	    if(bseCustomerCrudRespository.existsByMobileAndAccountActive(mobileNumber,"Y")){
 		//				String registrationStatus = bseCustomerCrudRespository.getBseRegistrationStatus(mobileNumber);
 		//				logger.info("Customer BSE registration status- "+ registrationStatus);
 		//				if(registrationStatus.equalsIgnoreCase("Y")){
-		aofUploadStatus=bseCustomerCrudRespository.getBseRegistrationAOFStatus(mobileNumber);
-		logger.info("Customer BSE registration status- "+ aofUploadStatus);
-
-		if(aofUploadStatus.split(",")[0].equals("Y") && aofUploadStatus.split(",")[1].equals("Y")){
+	    String registrationStatus=bseCustomerCrudRespository.getBseRegistrationAOFStatus(mobileNumber);
+	    aofUploadStatus = registrationStatus.split(",");
+	    
+//		logger.info("Customer BSE registration status- "+ Arrays.asList(aofUploadStatus) + " ->" + aofUploadStatus[0]);
+//		String[] status = aofUploadStatus.get(0);
+		logger.info("Customer BSE registration status- "+ Arrays.asList(aofUploadStatus) + " ->" + aofUploadStatus[0]);
+		/*if(aofUploadStatus.split(",")[0].equals("Y") && aofUploadStatus.split(",")[1].equals("Y")){
 		    flag="PROFILE_READY";
 		}else if(aofUploadStatus.split(",")[0].equals("Y") && aofUploadStatus.split(",")[1].equals("N")){
 		    flag="AOF_PENDING";
+		}*/
+		
+		
+		if((aofUploadStatus[0]).equalsIgnoreCase("Y")) {
+			if(aofUploadStatus[2].equals("1")) {
+				if(( aofUploadStatus[4]).equalsIgnoreCase("Y")) {
+					flag="PROFILE_READY";
+				}else {
+					flag="AOF_PENDING";
+				}
+			}else {
+				flag="FATCA_AOF_PENDING";
+			}
+		}else{
+			flag="REGISTRATION_INCOMPLETE";
 		}
-		else{
-		    flag="REGISTRATION_INCOMPLETE";
-		}
-		logger.info("Customer registration aof upload status- "+ aofUploadStatus);
-		//				flag= aofUploadStatus;
+		
 	    }else{
-		flag="NOT_FOUND";
+	    	flag="NOT_FOUND";
 	    }
 	}catch(Exception e){
 	    logger.error("Failed to query database to get customer AOF upload status", e);
@@ -1476,18 +1504,24 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	try {
 	    if(bseCustomerCrudRespository.existsByMobileAndAccountActive(mobile, "Y")) {
 		status.put("EXISTS", "Y");
-		String bseregistered= bseCustomerCrudRespository.getBseRegistrationAOFStatus(mobile);
-		status.put("BSEREGISTERED", bseregistered.split(",")[0]);
-		status.put("AOFREGISTERED", bseregistered.split(",")[1]);
+		String queryresult = bseCustomerCrudRespository.getBseRegistrationAOFStatus(mobile); 
+		String[] bseregistered= queryresult.split(",");
+//		status.put("BSEREGISTERED", bseregistered.split(",")[0]);
+//		status.put("AOFREGISTERED", bseregistered.split(",")[1]);
+		status.put("BSEREGISTERED",  bseregistered[0]);
+		status.put("FATCAREGISTERED", bseregistered[2]);
+		status.put("AOFREGISTERED",  bseregistered[4]);
 	    }else {
 		status.put("EXISTS", "N");
 		status.put("BSEREGISTERED", "NA");
+		status.put("FATCAREGISTERED", "NA");
 		status.put("AOFREGISTERED", "NA");
 	    }
 	}catch(Exception e) {
 	    logger.error("Error querying to database..",e);
 	    status.put("EXISTS", "E");
 	    status.put("BSEREGISTERED", "NA");
+	    status.put("FATCAREGISTERED", "NA");
 	    status.put("AOFREGISTERED", "NA");
 	}
 	return status;
@@ -1603,7 +1637,8 @@ public class BseEntryServiceImpl implements BseEntryManager {
     public BseApiResponse uploadAOFForm(String mobileNumber, String aoffolderLocation,String logolocation, String clientCode,MFCustomers investForm) {
 
     	logger.info("Request received to upload customer AOF form to BSE for mobile- "+ mobileNumber);
-    	String bseregistered="N";
+//    	String bseregistered[] = null;
+    	String[] bseregistered =  null;
     	String fileName = investForm.getPan1() + ".pdf";
     	String aofuploadstatus="N";
     	BseApiResponse requestresult = new BseApiResponse();
@@ -1612,21 +1647,32 @@ public class BseEntryServiceImpl implements BseEntryManager {
     	try {
     		if(clientCode!=null) {
     			logger.info("Checking AOF upload status from database for customer- "+ mobileNumber + " ->"+ clientCode);
-    			bseregistered= bseCustomerCrudRespository.getBseRegistrationAOFStatus(mobileNumber);
-    			aofuploadstatus = bseregistered.split(",")[1];
+    			String queryresult = bseCustomerCrudRespository.getBseRegistrationAOFStatus(mobileNumber); 
+    			bseregistered= queryresult.split(",");
+//    			aofuploadstatus = bseregistered.split(",")[1];
+    			aofuploadstatus = bseregistered[4];
     		}
 
-    		if(bseregistered.split(",")[0].equalsIgnoreCase("Y")) {
+//    		if(bseregistered.split(",")[0].equalsIgnoreCase("Y")) {
+    		if(( bseregistered[0]).equalsIgnoreCase("Y")) {
     		if(aofuploadstatus.equalsIgnoreCase("Y")) {
     			logger.info("AOF upload status is already comoplete. Skipping reupload for clientcode- "+ clientCode);
     			requestresult.setResponseCode("998");
     			requestresult.setRemarks("ALREDY_UPLOADED");
     			requestresult.setStatusCode("1");
     		}else {
-
-    			String flag1 = BseAOFGenerator.aofGenerator(investForm, fileName, logolocation, "VERIFIED", aoffolderLocation);
-    			logger.info("uploadsign(): Signed AOF file generation complete for customer- " + mobileNumber + "->" +investForm.getPan1() + "-> "+ clientCode + " -> "+ flag1);
-    			if (flag1.equalsIgnoreCase("SUCCESS")) {
+//    			BseAOFDocument flag1 = null;
+    			BseAOFDocument flag1 = bseaofepository.findOneByClientid(clientCode);
+    			
+    			if(flag1 == null) {
+    				flag1 = BseAOFGenerator.aofGenerator(investForm, fileName, logolocation, "VERIFIED", aoffolderLocation);
+    				logger.info("uploadsign(): Signed AOF file generation complete for customer- " + mobileNumber + "->" +investForm.getPan1() + "-> "+ clientCode + " -> "+ flag1);
+    				if(flag1.getFilegenerationstatus().equalsIgnoreCase("SUCCESS")) {
+    					bseaofepository.save(flag1);
+    				}
+    			}
+    			
+    			if (flag1.getFilegenerationstatus().equalsIgnoreCase("SUCCESS")) {
     				//			Send AOF to BSE
 //    				BseAOFUploadResponse aofresp1 = investmentConnectorBseInterface.uploadAOFFormtoBSE(mobileNumber, aoffolderLocation, clientCode);
     				BseAOFUploadResponse aofresp1 = investmentConnectorBseInterface.uploadAOFFormtoBSE(investForm.getPan1(), aoffolderLocation, clientCode);
@@ -1727,14 +1773,17 @@ public class BseEntryServiceImpl implements BseEntryManager {
     		String clientcode) {
     	logger.info("Get BSE registration status for mobile- "+ mobile);
     	Map<String, String> result = new HashMap<String, String>();
-    	String aofUploadStatus = "";
+    	String[] aofUploadStatus = null;
     	try{
     		if(bseCustomerCrudRespository.existsByMobileAndAccountActive(mobile,"Y")){
     			result.put("ACCOUNTEXIST", "Y");
-    			aofUploadStatus=bseCustomerCrudRespository.getBseRegistrationAOFStatus(mobile);
+    			String queryresult = bseCustomerCrudRespository.getBseRegistrationAOFStatus(mobile); 
+    			aofUploadStatus= queryresult.split(",");
     			logger.info("getbseregistrationstatus(): Customer BSE registration status- "+ aofUploadStatus);
-    			result.put("BSEREGISTER", aofUploadStatus.split(",")[0]);
-    			result.put("AOFUPLOAD", aofUploadStatus.split(",")[1]);
+//    			result.put("BSEREGISTER", aofUploadStatus.split(",")[0]);
+//    			result.put("AOFUPLOAD", aofUploadStatus.split(",")[1]);
+    			result.put("BSEREGISTER", aofUploadStatus[0]);
+    			result.put("AOFUPLOAD", aofUploadStatus[4]);
     		}else{
     			result.put("ACCOUNTEXIST", "N");
     		}
@@ -1744,6 +1793,83 @@ public class BseEntryServiceImpl implements BseEntryManager {
     	}
     	return result;
     }
+
+	@Override
+	public Datarquestresponse checkifkeyregistered(String mobile, String pan, String searchtype, String filter1) {
+		
+		Datarquestresponse response = new Datarquestresponse();
+		try {
+		if( bseCustomerCrudRespository.existsByPan1(pan) || (profileRestClientService.isPanExisitngForOthers(mobile, pan).equals("Y") ) ) {
+			response.setStatus("1");;
+			response.setMsg("Pan already registered with alternate account.");
+		}else {
+			response.setStatus("0");
+			response.setMsg("Valid PAN");
+		}
+		}catch(Exception e) {
+			logger.error("checkifkeyregistered(): Failed to get submitted PAN details for verification",e);
+			response.setStatus("1");
+			response.setMsg("Internal error");
+		}
+		
+		return response;
+	}
+
+	@Override
+	public HttpClientResponse completemfregistration(String mobile) {
+
+		HttpClientResponse result = new HttpClientResponse();
+		try {
+			String clientCode = bseCustomerCrudRespository.getClientIdFromMobile(mobile);;
+			String panForAOfFile = bseCustomerCrudRespository.getCustomerPanNumberFromMobileAndActive(mobile, "Y");
+			// call api to upload pdf
+
+			String queryresult = bseCustomerCrudRespository.getBseRegistrationAOFStatus(mobile); 
+			String[] aofUploadStatus= queryresult.split(",");
+			logger.info("Current users registration status- "+ Arrays.asList(aofUploadStatus));
+			if(aofUploadStatus[4].equals("N")) {
+
+				logger.info("uploadSignedAOFFile(): Call API uploadAOFForm");
+				BseAOFUploadResponse aofresp1 = investmentConnectorBseInterface.uploadAOFFormtoBSE(panForAOfFile,
+						env.getProperty(CommonConstants.BSE_AOF_GENERATION_FOLDR), clientCode);
+				logger.info("uploadSignedAOFFile(): AOF upload status as received- " + aofresp1.getStatusMessage());
+				if (aofresp1.getStatusCode().equalsIgnoreCase("100") || (aofresp1.getStatusCode()
+						.equalsIgnoreCase("101")
+						&& (aofresp1.getStatusMessage().contains("Exception caught at Service Application")
+								|| aofresp1.getStatusMessage().contains("PAN NO ALREADY APPROVED")
+								|| aofresp1.getStatusMessage()
+								.contains("IMAGE IS ALREADY AVAILABLE AND IMAGE STATUS IS PENDING")))) {
+					String success = "Y";
+					String message = aofresp1.getStatusMessage();
+
+					int i = bseCustomerCrudRespository.updateAofUploadStatus(mobile,success,message);
+					result.setResponseCode(CommonConstants.TASK_SUCCESS);
+					result.setRetrunMessage("SUCCESS");
+
+					logger.info("uploadSignedAOFFile(): AOF upload status to database- " + i);
+				} else {
+
+					String success = "N";
+					String message = aofresp1.getStatusMessage();
+
+					result.setResponseCode(CommonConstants.TASK_FAILURE);
+					result.setRetrunMessage(message);
+
+					bseCustomerCrudRespository.updateAofUploadStatus(mobile,success,message);
+				}
+			}else {
+				logger.info("AOF already uploaded successfully. Prevernt reinitiate");
+				result.setResponseCode(CommonConstants.TASK_FAILURE);
+				result.setRetrunMessage("AOF upload already complete.");
+			}
+
+		}catch(Exception e) {
+			logger.error("completemfregistration(): Failed to process request",e);
+			result.setResponseCode(CommonConstants.TASK_FAILURE);
+			result.setRetrunMessage("Internal error");
+		}
+		return result;
+	}
 
 
     /*		public static void main(String[] args){

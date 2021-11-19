@@ -8,6 +8,9 @@ public class CommonConstants {
 //	Service URL Properties
 	public static final String URL_SERVICE_PROFILE="url.service.profile";
 	public static final String URL_SERVICE_MF_BSE="url.service.mf.bse";
+	
+	public static final String URL_SERVICE_MF_BSE_V1= "investment.bse.serviceurl";
+	public static final String URL_SERVICE_MF_BSE_UCC_REGISTRATION_V2= "url.service.mf.bse.ucc.registration";
 	public static final String URL_SERVICE_MAHINDRA_FD="url.service.fd.mahindra";
 	
 //	Environment properties
@@ -36,7 +39,7 @@ public class CommonConstants {
 	public static final String ENV_BIRLA_INVESTMENT_ENABLED="investment.api.birla.enabaled";
 //	public static final String INVESTMENT_ENABLED="Y";
 	
-	
+	public static final String URL_SERVICE_COMMUNICATION= "backend.service.communication.baseurl";
 	public static final String SUPPORT_TEAM_MAIL_ID = "mail.id.support.team";
 	public static final String MAIL_SUPPORT_TEAM_INVESTMENT_TRIGGER = "investment.bse.mail.support";
 	
@@ -118,7 +121,8 @@ public class CommonConstants {
 	public static final String GENERATE_PASSWORD_BY_FREEMI = "GENERATE_PASS_MF_REGISTER";
 	
 	
-	
+	public static final String OTP_CHECK = "sms.otp.check.enabled";
+	public static final String OTP_TEST_ENABLED = "otp.test.enabled";
 	
 	/*SMS RELATED CONSTANTS*/
 	
@@ -130,6 +134,9 @@ public class CommonConstants {
 	public static final String SMS_SENDER_ID = "sms.sender";
 	public static final String SERVICE_PROVIDER_AUTHKEY="provider_authkey";
 	public static final String SERVICE_PROVIDER_URL="sms.server.baseurl";
+	public static final String MSG91_API_URL = "msg91.api.url";
+	public static final String MSG91_API_AUTHKEY = "msg91.api.authkey";
+	public static final String MSG91_API_SENDERID = "msg91.api.senderid";
 	
 	
 	/*-----------------------------------------------------------------------------*/

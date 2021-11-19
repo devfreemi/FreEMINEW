@@ -1,5 +1,6 @@
 package com.freemi.ui.restclient;
 
+import java.io.File;
 import java.util.Calendar;
 
 import org.apache.logging.log4j.LogManager;
@@ -25,6 +26,7 @@ import com.freemi.entity.bse.BsePaymentStatus;
 import com.freemi.entity.bse.BseRegistrationMFD;
 import com.freemi.entity.bse.BseSipOrderEntry;
 import com.freemi.entity.bse.BseXipISipOrderEntry;
+import com.freemi.entity.bse.Uccregisterresponse;
 import com.freemi.services.interfaces.BseRestClientService;
 import com.google.gson.JsonObject;
 
@@ -42,7 +44,7 @@ public class RestClientBseImpl implements BseRestClientService {
 	public String otpGeneration(String userid){
 		logger.info("Beginning process to send generate OTP for Login to Portal..");
 
-		final String url = env.getProperty("investment.bse.serviceurl") + "/generateotp";
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_MF_BSE_V1) + "/generateotp";
 		//		ObjectMapper mapper = new ObjectMapper();
 		RestTemplate restTemplate = new RestTemplate();
 		String formdata = null;
@@ -73,7 +75,7 @@ public class RestClientBseImpl implements BseRestClientService {
 	public String otpverify(String userid,String otp){
 		logger.info("Beginning process to send reuest to bse service for OTP.. "+ userid);
 
-		final String url = env.getProperty("investment.bse.serviceurl") + "/validateotp";
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_MF_BSE_V1) + "/validateotp";
 		//		ObjectMapper mapper = new ObjectMapper();
 		RestTemplate restTemplate = new RestTemplate();
 		String formdata = null;
@@ -102,11 +104,12 @@ public class RestClientBseImpl implements BseRestClientService {
 		return returnRes;
 	}
 
+	@Deprecated
 	@Override
 	public String registerUser(BseRegistrationMFD form){
 		logger.info("registerUser() : Beginning process to send request to bse service for registration..");
 
-		final String url = env.getProperty("investment.bse.serviceurl") + "/createuser";
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_MF_BSE_V1) + "/createuser";
 		ObjectMapper mapper = new ObjectMapper();
 		RestTemplate restTemplate = new RestTemplate();
 		String formdata = null;
@@ -148,11 +151,67 @@ public class RestClientBseImpl implements BseRestClientService {
 	}
 
 	@Override
+	public String registeruserv2(BseRegistrationMFD form) {
+		logger.info("registeruserv2() : Beginning process to send request to bse service for registration..");
+		Uccregisterresponse response = new Uccregisterresponse();
+		
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_MF_BSE_UCC_REGISTRATION_V2) + "/ucc-register";
+		ObjectMapper mapper = new ObjectMapper();
+		RestTemplate restTemplate = new RestTemplate();
+		String formdata = null;
+//		ResponseEntity<?> response = null;
+		String returnRes="FAIL";
+		try {
+			formdata = mapper.writeValueAsString(form);
+			logger.info("registeruserv2(): REGISTER USER BSE:-" +formdata);
+			HttpHeaders headers = new HttpHeaders();
+			headers.set("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
+			HttpEntity<String> entity = new HttpEntity<String>(formdata,headers);
+
+			if(env.getProperty(CommonConstants.BSE_CALL_TEST_ENABLED).equalsIgnoreCase("N")){
+				response= restTemplate.postForObject(url, entity, Uccregisterresponse.class);
+//				returnRes=response.getBody().toString();
+				logger.info("registerUser() : Register Request Response- "+ mapper.writeValueAsString(response));
+				if(response.getStatus().equals("0"))
+				{ 
+					returnRes = "SUCCESS";
+				}else {
+					returnRes= response.getStatus() + "|"+ response.getRemarks();
+				}
+				 
+			}else{
+				//				returnRes = "SUCCESS";
+				/*
+				 * if(form.getClientDob()!="") returnRes =
+				 * "101|FAILED: INVALID DATE OF BIRTH OF INDIVIDUAL"; else returnRes =
+				 * "101|FAILED: DOB MANDATORY";
+				 */
+				returnRes = "SUCCESS";
+//			    returnRes="101|FAILED: INVALID DATE OF BIRTH OF INDIVIDUAL";
+//			    returnRes="100|RECORD INSERTED SUCCESSFULLY";
+				response.setStatus("0");
+				response.setRemarks("Success");
+				
+				
+			}
+
+
+		} catch (JsonProcessingException e) {
+			logger.error("registeruserv2(): Failed to write form data", e);
+			returnRes = "1|Error processing data";
+		}
+
+		return returnRes;
+		
+	}
+	
+	
+	@Override
 	public String purchaseRequestProcess(BseOrderEntry form){
 
 		logger.info("purchaseRequestProcess(): Process to send transaction request...");
 
-		final String url = env.getProperty("investment.bse.serviceurl") + "/orderlumpsum";
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_MF_BSE_V1) + "/orderlumpsum";
 		ObjectMapper mapper = new ObjectMapper();
 		RestTemplate restTemplate = new RestTemplate();
 		String formdata = null;
@@ -187,7 +246,7 @@ public class RestClientBseImpl implements BseRestClientService {
 	@Override
 	public String purchaseSIPRequestProcess(BseSipOrderEntry form){
 		logger.info("purchaseSIPRequestProcess(): Process to send SIP request...");
-		final String url = env.getProperty("investment.bse.serviceurl") + "/ordersip";
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_MF_BSE_V1) + "/ordersip";
 		ObjectMapper mapper = new ObjectMapper();
 		RestTemplate restTemplate = new RestTemplate();
 		String formdata = null;
@@ -223,7 +282,7 @@ public class RestClientBseImpl implements BseRestClientService {
 
 		logger.info("purchaseCancelXSIPISIPRequestProcess(): Process to send SIP request for type- "+ form.getTransactionCode());
 
-		final String url = env.getProperty("investment.bse.serviceurl") + "/orderxsip";
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_MF_BSE_V1) + "/orderxsip";
 		ObjectMapper mapper = new ObjectMapper();
 		RestTemplate restTemplate = new RestTemplate();
 		String formdata = null;
@@ -258,7 +317,7 @@ public class RestClientBseImpl implements BseRestClientService {
 	public String purchasePaymentLink(BseOrderPaymentRequest form){
 
 		logger.info("purchasePaymentLink(): Process to send request...");
-		final String url = env.getProperty("investment.bse.serviceurl") + "/orderpayment";
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_MF_BSE_V1) + "/orderpayment";
 		ObjectMapper mapper = new ObjectMapper();
 		RestTemplate restTemplate = new RestTemplate();
 		String formdata = null;
@@ -289,7 +348,7 @@ public class RestClientBseImpl implements BseRestClientService {
 	@Override
 	public String orderPaymentStatus(BsePaymentStatus form){
 		logger.info("orderPaymentStatus(): Process to send request...");
-		final String url = env.getProperty("investment.bse.serviceurl") + "/orderpaymentstatus";
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_MF_BSE_V1) + "/orderpaymentstatus";
 		ObjectMapper mapper = new ObjectMapper();
 		RestTemplate restTemplate = new RestTemplate();
 		String formdata = null;
@@ -320,7 +379,7 @@ public class RestClientBseImpl implements BseRestClientService {
 	@Override
 	public String eMandateRegistration(BseEMandateRegistration form){
 		logger.info("eMandateRegistration(): Process to send request...");
-		final String url = env.getProperty("investment.bse.serviceurl") + "/mandateregistration";
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_MF_BSE_V1) + "/mandateregistration";
 		ObjectMapper mapper = new ObjectMapper();
 		RestTemplate restTemplate = new RestTemplate();
 		String formdata = null;
@@ -356,7 +415,7 @@ public class RestClientBseImpl implements BseRestClientService {
 	@Override
 	public String fatcaDeclaration(BseFatcaForm form){
 		logger.info("fatcaDeclaration(): Process to send request...");
-		final String url = env.getProperty("investment.bse.serviceurl") + "/fatcaupload";
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_MF_BSE_V1) + "/fatcaupload";
 		ObjectMapper mapper = new ObjectMapper();
 		RestTemplate restTemplate = new RestTemplate();
 		String formdata = null;
@@ -393,7 +452,7 @@ public class RestClientBseImpl implements BseRestClientService {
 	@Override
 	public String panStatusCheck(String panNumber){
 		logger.info("panStatusCheck(): Process to send request...");
-		final String url = env.getProperty("investment.bse.serviceurl") + "/panstatus";
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_MF_BSE_V1) + "/panstatus";
 		RestTemplate restTemplate = new RestTemplate();
 		String returnRes="FAIL";
 
@@ -425,7 +484,7 @@ public class RestClientBseImpl implements BseRestClientService {
 	@Override
 	public String uploadAOF(BseAOFUploadRequest form){
 		logger.info("uploadAOF(): Process to send request...");
-		final String url = env.getProperty("investment.bse.serviceurl") + "/uploadAOF";
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_MF_BSE_V1) + "/uploadAOF";
 		ObjectMapper mapper = new ObjectMapper();
 		RestTemplate restTemplate = new RestTemplate();
 		String formdata = null;
@@ -461,7 +520,7 @@ public class RestClientBseImpl implements BseRestClientService {
 		String settlementtype) {
 	    
 	    logger.info("getallotmentstatement(): Process to send request...");
-		final String url = env.getProperty("investment.bse.serviceurl") + "/allotmentstatement";
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_MF_BSE_V1) + "/allotmentstatement";
 		logger.info("BSE client- "+ url);
 //		ObjectMapper mapper = new ObjectMapper();
 		RestTemplate restTemplate = new RestTemplate();
@@ -504,5 +563,6 @@ public class RestClientBseImpl implements BseRestClientService {
 		
 		return returnRes;
 	}
+	
 
 }

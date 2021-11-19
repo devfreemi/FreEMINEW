@@ -29,6 +29,8 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.62/pdfmake.min.js" async="true"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.62/vfs_fonts.js" async="true"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.4/js/buttons.html5.min.js" async="true"></script>
+
+
 <script type="text/javascript">
 var reqid='<%=session.getAttribute("userid").toString()%>';
 </script>
@@ -56,6 +58,67 @@ table th {
 	transform: rotate(-180deg);
 	transition-duration: 1s;
 }
+
+.container {
+  width: 100%;
+}
+
+.progressbar {
+  counter-reset: step;
+}
+.progressbar li {
+  list-style: none;
+  display: inline-block;
+  width: 30.33%;
+  position: relative;
+  text-align: center;
+  cursor: pointer;
+}
+.progressbar li:before {
+  /* content: counter(step); */
+  content: "✗";
+  counter-increment: step;
+  width: 30px;
+  height: 30px;
+  line-height : 30px;
+  border: 1px solid #ddd;
+  border-radius: 100%;
+  display: block;
+  text-align: center;
+  margin: 0 auto 10px auto;
+  background-color: #e8e8e8;
+}
+.progressbar li:after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  background-color: #ddd;
+  top: 15px;
+  left: -50%;
+  z-index : -1;
+  background-color: #e8e8e8;
+}
+.progressbar li:first-child:after {
+  content: none;
+}
+.progressbar li.active {
+   color: green;
+  font-weight: 400;
+}
+.progressbar li.active:before {
+  border-color: green;
+  background-color: green;
+  color: white;
+  content: "✓"
+} 
+.progressbar li.active + li:after {
+  background-color: green;
+}
+
+.custom-line-height{
+	line-height: 1 !important;
+
 </style>
 
 </head>
@@ -170,7 +233,7 @@ table th {
 
 		<section class="profile-status-section">
 
-			<jsp:include page="include/my-dashboard-mf-aof-status.jsp"></jsp:include>
+			<jsp:include page="include/my-dashboard-mf-aof-status2.jsp"></jsp:include>
 		</section>
 
 
@@ -232,5 +295,5 @@ table th {
 	<jsp:include page="include/footer.jsp"></jsp:include>
 	<jsp:include page="include/loan-status-modal.jsp"></jsp:include>
 </body>
-<script src="<c:url value="${contextcdn}/resources/js/signaturepanel.js" />" defer="defer"></script>
+<%-- <script src="<c:url value="${contextcdn}/resources/js/signaturepanel.js" />" defer="defer"></script> --%>
 </html>

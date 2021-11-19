@@ -54,7 +54,10 @@ public interface BseCustomerCrudRespository extends JpaRepository<MFCustomers, L
 	@Query("select c.bseregistrationSuccess from BseMFInvestForm c where c.mobile= :mobile and c.accountActive = :activestatus ")
 	public String getBseRegistrationStatusByMobile(@Param("mobile") String mobile, @Param("activestatus") String activestatus );
 	
-	@Query("select c.bseregistrationSuccess, c.aofuploadComplete from BseMFInvestForm c where c.mobile= :mobile and c.accountActive = 'Y'")
+//	@Query("select c.bseregistrationSuccess, c.aofuploadComplete from BseMFInvestForm c where c.mobile= :mobile and c.accountActive = 'Y'")
+	
+	@Query(value = "select c.BSE_REGISTRATION_SUCCESS, c.RESGISTRATION_RESPONSE,f.FATCA_DECLARE_UPLOAD_COMPLETE, f.UPLOAD_RESPONSE, c.AOF_UPLOAD_COMPLETE, c.AOF_UPLOAD_RESPONSE from bsemf_customers c, bsemf_customers_fatca_declaration f WHERE c.CLIENT_ID=f.CLIENT_ID and c.MOBILE_NO=:mobile and c.ACCOUNT_ACTIVE = 'Y';",nativeQuery = true)
+//	public List<Object[]> getBseRegistrationAOFStatus(@Param("mobile") String mobile);
 	public String getBseRegistrationAOFStatus(@Param("mobile") String mobile);
 	
 	@Transactional

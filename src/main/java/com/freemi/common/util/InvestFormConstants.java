@@ -238,50 +238,97 @@ public class InvestFormConstants {
 		private static final long serialVersionUID = 1L;
 
 		{
-			put("AN","ANDAMAN &amp; NICOBAR");
-			/*put("AO","ARMY OFFICER");*/
-			put("AP","ANDHRA PRADESH");
-			put("AR","ARUNACHAL PRADESH");
-			put("AS","ASSAM");
-			put("BH","BIHAR");
-			put("CG","CHHATTISGARH");
-			put("CH","CHANDIGARH");
-			put("DD","DIU AND DAMAN");
-			put("DL","DELHI");
-			put("DN","DADRA AND NAGAR HAVELI");
-			put("GO","GOA");
-			put("GU","GUJARAT");
-			put("HA","HARYANA");
-			put("HP","HIMACHAL PRADESH");
-			put("JH","JHARKHAND");
-			put("JK","JHARKHAND");
-			put("KA","KARNATAKA");
-			put("KE","KERALA");
-			put("KR","JAMMU &amp; KASHMIR");
-			put("LA","LAKSHWADEEP");
-			put("LD","LAKSHADWEEP");
-			put("MA","MAHARASHTRA");
-			put("ME","MEGHALAYA");
-			put("MI","MIZORAM");
-			put("MN","MANIPUR");
-			put("MP","MADHYA PRADESH");
-			put("NA","NAGALAND");
-			put("ND","NEW DELHI");
-			put("NG","NAGPUR");
-			put("OH","OTHERS");
-			put("OR","ORISSA");
-			put("PO","PONDICHERRY");
-			put("PU","PUNJAB");
-			put("RA","RAJASTHAN");
-			put("SI","SIKKIM");
-			put("SU","SURAT");
-			put("TG","TELANGANA");
-			put("TN","TAMIL NADU");
-			put("TR","TRIPURA");
-			put("UC","UTTARANCHAL");
-			put("UL","UTTARAKHAND");
-			put("UP","UTTAR PRADESH");
-			put("WB","WEST BENGAL");
+			put("AN","Andaman & Nicobar");
+			put("AP","Andhra Pradesh");
+			put("AR","Arunachal Pradesh");
+			put("AS","Assam");
+			put("BH","Bihar");
+			put("CG","Chhattisgarh");
+			put("CH","Chandigarh");
+			put("DD","Diu And Daman");
+			put("DL","Delhi");
+			put("DN","Dadra & Nagar Haveli");
+			put("GO","Goa");
+			put("GU","Gujarat");
+			put("HA","Haryana");
+			put("HP","Himachal Pradesh");
+			put("JH","Jharkhand");
+			put("JK","Jharkhand");
+			put("KA","Karnataka");
+			put("KE","Kerala");
+			put("KR","Jammu &Amp; Kashmir");
+			put("LA","Lakshwadeep");
+			put("LD","Lakshadweep");
+			put("MA","Maharashtra");
+			put("ME","Meghalaya");
+			put("MI","Mizoram");
+			put("MN","Manipur");
+			put("MP","Madhya Pradesh");
+			put("NA","Nagaland");
+			put("ND","New Delhi");
+			put("NG","Nagpur");
+			put("OH","Others");
+			put("OR","Orissa");
+			put("PO","Pondicherry");
+			put("PU","Punjab");
+			put("RA","Rajasthan");
+			put("SI","Sikkim");
+			put("SU","Surat");
+			put("TG","Telangana");
+			put("TN","Tamil Nadu");
+			put("TR","Tripura");
+			put("UC","Uttaranchal");
+			put("UL","Uttarakhand");
+			put("UP","Uttar Pradesh");
+			put("WB","West Bengal");
+		}
+	};
+	
+	
+	public static Map<String,String> hdfcstatekey = new TreeMap<String,String>(){
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		{
+			put("AN","48");
+			put("AP","2");
+			put("AR","3");
+			put("AS","4");
+			put("BH","5");
+			put("CG","28");
+			put("CH","36");
+			put("DD","53");
+			put("DL","6");
+			put("DN","29");
+			put("GO","7");
+			put("GU","8");
+			put("HA","9");
+			put("HP","10");
+			put("JH","26");
+			put("JK","26");
+			put("KA","12");
+			put("KE","13");
+			put("KR","11");
+			put("MA","1");
+			put("ME","40");
+			put("MI","16");
+			put("MN","15");
+			put("MP","14");
+			put("NA","17");
+			put("ND","6");
+			put("OR","18");
+			put("PO","19");
+			put("PU","20");
+			put("RA","21");
+			put("SI","31");
+			put("TG","87");
+			put("TN","22");
+			put("TR","23");
+			put("UP","24");
+			put("WB","25");
+			
 		}
 	};
 
@@ -513,6 +560,7 @@ public class InvestFormConstants {
 		private static final long serialVersionUID = 1L;
 
 		{
+			put("IN","India");
 			put("AD","Andorra");
 			put("AE","United Arab Emirates");
 			put("AF","Afghanistan");

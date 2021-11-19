@@ -35,9 +35,9 @@ public class MFNominationForm implements Serializable {
 	private String clientID;
 	
 	@Column(name="")
-	private String isNominate="N";
+	private String isNominate="Y";
 	
-	@Column(name="")
+	@Column(name="NOMINEE_NAME")
 	private String nomineeName="";
 	
 	@Transient
@@ -55,19 +55,19 @@ public class MFNominationForm implements Serializable {
 	@Transient
 	private String nomineeCountry="";
 	
-	@Transient
-	private String nomineePercentage="";
+	@Column(name="NOMINEE_PERCENTAGE")
+	private String nomineePercentage="100";
 	
 	@Transient
 	private String nomineeDOB="";
 	
-	@Column(name="")
+	@Column(name="NOMINEE_RELATION")
 	private String nomineeRelation="";
 	
-	@Transient
+	@Column(name="IS_MINOR")
 	private String isNomineeMinor="N";
 	
-	@Transient
+	@Column(name="GUARDIAN_NAME")
 	private String nomineeGuardian="";
 	
 	@OneToOne(fetch= FetchType.LAZY, optional=false, cascade=CascadeType.PERSIST)

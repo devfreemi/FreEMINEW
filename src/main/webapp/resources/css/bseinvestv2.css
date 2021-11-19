@@ -1,0 +1,451 @@
+.topic-style {
+	font-weight: 500;
+}
+
+.fddetailed .desc {
+	font-weight: 500;
+	color: #ff9235;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+h1 {
+	text-align: center;
+}
+
+/* input {
+  padding: 10px;
+  width: 100%;
+  font-size: 17px;
+  font-family: Raleway;
+  border: 1px solid #aaaaaa;
+} */
+
+/* Mark input boxes that gets an error on validation: */
+input.invalid {
+	background-color: #ffdddd;
+}
+
+/* Hide all steps by default: */
+.tab {
+	display: none;
+}
+
+/* button {
+  background-color: #4CAF50;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 17px;
+  font-family: Raleway;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+ */
+#prevBtn {
+	background-color: #bbbbbb;
+}
+
+/* Make circles that indicate the steps of the form: */
+.step {
+	height: 15px;
+	width: 15px;
+	margin: 0 2px;
+	background-color: #bbbbbb;
+	border: none;
+	border-radius: 50%;
+	display: inline-block;
+	opacity: 0.5;
+}
+
+.step.active {
+	opacity: 1;
+}
+
+/* Mark the steps that are finished and valid: */
+.step.finish {
+	background-color: #4CAF50;
+}
+
+.form-control {
+	font-weight: 500;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__placeholder
+	{
+	font-size: .8rem;
+	transform: translateY(8px);
+}
+
+.form-check-label {
+	font-weight: 300;
+	font-size: .8rem;
+}
+
+.buttonInside {
+	position: absolute;
+}
+
+.verifybtn {
+	background: transparent;
+	left: 90%;
+	position: relative;
+	cursor: pointer;
+	.
+	select2-selection__rendered
+	{
+	line-height
+	:
+	31px
+	!important;
+}
+
+.select2-container .select2-selection--single {
+	height: 35px !important;
+}
+
+.select2-selection__arrow {
+	height: 34px !important;
+}
+
+/* .select2size{
+	width: 100% !important;
+} */
+
+/* Custom Radio button  */
+* {
+	font-family: 'Roboto', sans-serif;
+}
+
+@
+keyframes click-wave { 0% {
+	height: 40px;
+	width: 40px;
+	opacity: 0.35;
+	position: relative;
+}
+
+100%
+{
+height
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+:
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+200
+px
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+;
+width
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+:
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+200
+px
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+;
+margin-left
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+:
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+-80
+px
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+;
+margin-top
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+:
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+-80
+px
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+;
+opacity
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+:
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+0;
+}
+}
+.option-input {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	-ms-appearance: none;
+	-o-appearance: none;
+	appearance: none;
+	position: relative;
+	top: 5.33333px;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	height: 20px;
+	width: 20px;
+	transition: all 0.15s ease-out 0s;
+	background: #cbd1d8;
+	border: none;
+	color: #fff;
+	cursor: pointer;
+	display: inline-block;
+	margin-right: 0.5rem;
+	outline: none;
+	position: relative;
+	z-index: 1000;
+}
+
+.option-input:hover {
+	background: #9faab7;
+}
+
+.option-input:checked {
+	background: #40e0d0;
+}
+
+.option-input:checked::before {
+	height: 20px;
+	width: 20px;
+	position: absolute;
+	content: '✔';
+	display: inline-block;
+	font-size: 12.66667px;
+	text-align: center;
+	line-height: 20px;
+}
+
+.option-input:checked::after {
+	-webkit-animation: click-wave 0.65s;
+	-moz-animation: click-wave 0.65s;
+	animation: click-wave 0.65s;
+	background: #40e0d0;
+	content: '';
+	display: block;
+	position: relative;
+	z-index: 100;
+}
+
+.option-input.radio {
+	border-radius: 50%;
+}
+
+.option-input.radio::after {
+	border-radius: 50%;
+}
+/* Custom Radio button  */

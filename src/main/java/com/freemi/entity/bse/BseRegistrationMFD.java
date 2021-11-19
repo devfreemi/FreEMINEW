@@ -9,198 +9,247 @@ public class BseRegistrationMFD implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	@JsonProperty
+	
+	
 	private String ClientCode="";
-	@JsonProperty
+	
 	private String ClientHolding="";
-	@JsonProperty
+	
 	private String ClientTaxstatu="";
-	@JsonProperty
+	
 	private String ClientOccupationcod="";
-	@JsonProperty
-	private String ClientAppname1="";
-	@JsonProperty
-	private String ClientAppname2="";
-	@JsonProperty
-	private String ClientAppname3="";
-	@JsonProperty
+	
+	private String ClientAppname1="";		//Deprecated in new API
+	private String applicant1fname="";
+	private String applicant1mname="";
+	private String applicant1lname="";
+	
 	private String ClientDob="";
-	@JsonProperty
+	
 	private String ClientGender="";
-	@JsonProperty
-	private String ClientGuardian="";
-	@JsonProperty
+	private String applicant1panexempt="";
+	private String applicant1panexemptcategory="";
+	
 	private String ClientPan="";
-	@JsonProperty
-	private String ClientNominee="";
-	@JsonProperty
-	private String ClientNomineeRelation="";
-	@JsonProperty
-	private String ClientGuardianpan="";
-	@JsonProperty
+	
 	private String ClientType="";
 	/**
 	mandatory if value is "D" in client type
 	*/
-	@JsonProperty
+	
 	private String ClientDefaultdp="";
 	/**
 	mandatory if value is "C" in client default DP */
-	@JsonProperty
+	
 	private String ClienCdsldpid="";
 	/**
 	mandatory if value is "C" in client default DP
 	*/
-	@JsonProperty
+	
 	private String ClientCdslcltid="";
 	/**
 	mandatory if value is "N" in client default DP */
-	@JsonProperty
+	
 	private String ClientNsdldpid="";
 	/**
 	mandatory if value is "N" in client default DP */
-	@JsonProperty
+	
 	private String ClientNsdlcltid="";
 	/**
 	mandatory for all the cases varchar2 SB/CB/NE/NO Account Type
 	*/
-	@JsonProperty
+	private String applicant1kyctype="";
+	private String applicant1ckycno="";
+	private String applicant1kraexemptno="";
+	
+	private String applicant1aadhaarupdated="";
+	private String paperlessflag="";
+	
+	
+	private String ClientAppname2="";		//Deprecated in new API
+	private String applicant2fname="";
+	private String applicant2mname="";
+	private String applicant2lname="";
+	private String applicant2dob="";
+	private String applicant2panexempt="";
+	private String applicant2panexemptcategory="";
+	private String applicant2kyctype="";
+	private String applicant2ckycno="";
+	private String applicant2kraexemptrefno="";
+	
+	
+	private String ClientAppname3="";		//Deprecated in new API
+	private String applicant3fname="";
+	private String applicant3mname="";
+	private String applicant3lname="";
+	private String applicant3dob="";
+	private String applicant3panexempt="";
+	private String applicant3panexemptcategory="";
+	private String applicant3kyctype="";
+	private String applicant3ckycno="";
+	private String applicant3kraexemptrefno="";
+	
+	//Guarfan details in case of minor nominee
+	
+	private String ClientGuardian="";		//Deprecated in new API	
+	private String guardianfname="";
+	private String guardianmname="";
+	private String guardianlanme="";
+	private String guardiandob="";
+	
+	private String ClientGuardianpan="";
+	private String guardianpanexempt="";
+	private String guardianpanexemptcateegory="";
+	private String guardiankyctype="";
+	private String guardianckycno="";
+	private String guardiankraexemptrefno="";
+	
+	//1st Nominee
+	
+	private String ClientNominee="";
+	
+	private String ClientNomineeRelation="";
+	private String nominee1applicable="";
+	private String nominee1minorflag="";
+	private String nominee1dob="";
+	private String nominee1guardianname="";
+	
 	private String ClientAcctype1="";
 	/**
 	mandatory for all the cases
 	*/
-	@JsonProperty
+	
 	private String ClientAccno1="";
 	/**
 	mandatory for all the cases */
-	@JsonProperty
+	
 	private String ClientMicrno1="";
 	/**
 	mandatory for all the cases */
-	@JsonProperty
+	
 	private String ClientNeftIfsccode1="";
 	/**
 	mandatory for all the cases -only one bank can be default bank */
-	@JsonProperty
+	
 	private String DefaultBankFlag="";
 	/**
 	mandatory for all the cases varchar2 SB/CB/NE/NO Account Type
 	*/
-	@JsonProperty
+	
 	private String ClientAcctype2="";
 	/**
 	mandatory for all the cases
 	*/
-	@JsonProperty
+	
 	private String ClientAccno2="";
 	/**
 	mandatory for all the cases */
-	@JsonProperty
+	
 	private String ClientMicrno2="";
 	/**
 	mandatory for all the cases */
-	@JsonProperty
+	
 	private String ClientNeftIfsccode2="";
 	/**
 	mandatory for all the cases -only one bank can be default bank */
-	@JsonProperty
+	
 	private String DefaultBankFlag2="";
 
 	/**
 	mandatory for all the cases varchar2 SB/CB/NE/NO Account Type
 	*/
-	@JsonProperty
+	
 	private String ClientAcctype3="";
 	/**
 	mandatory for all the cases
 	*/
-	@JsonProperty
+	
 	private String ClientAccno3="";
 	/**
 	mandatory for all the cases */
-	@JsonProperty
+	
 	private String ClientMicrno3="";
 	/**
 	mandatory for all the cases */
-	@JsonProperty
+	
 	private String ClientNeftIfsccode3="";
 	/**
 	mandatory for all the cases -only one bank can be default bank */
-	@JsonProperty
+	
 	private String DefaultBankFlag3="";
 	/**
 	mandatory for all the cases varchar2 SB/CB/NE/NO Account Type
 	*/
-	@JsonProperty
+	
 	private String ClientAcctype4="";
 	/**
 	mandatory for all the cases
 	*/
-	@JsonProperty
+	
 	private String ClientAccno4="";
 	/**
 	mandatory for all the cases */
-	@JsonProperty
+	
 	private String ClientMicrno4="";
 	/**
 	mandatory for all the cases */
-	@JsonProperty
+	
 	private String ClientNeftIfsccode4="";
 	/**
 	mandatory for all the cases -only one bank can be default bank */
-	@JsonProperty
+	
 	private String DefaultBankFlag4="";
 	/**
 	mandatory for all the cases varchar2 SB/CB/NE/NO Account Type
 	*/
-	@JsonProperty
+	
 	private String ClientAcctype5="";
 	/**
 	mandatory for all the cases
 	*/
-	@JsonProperty
+	
 	private String ClientAccno5="";
 	/**
 	mandatory for all the cases */
-	@JsonProperty
+	
 	private String ClientMicrno5="";
 	/**
 	mandatory for all the cases */
-	@JsonProperty
+	
 	private String ClientNeftIfsccode5="";
 	/**
 	mandatory for all the cases -only one bank can be default bank */
-	@JsonProperty
+	
 	private String DefaultBankFlag5="";
 	/**
 	mandatory for all the cases
 	*/
-	@JsonProperty
+	
 	private String ClientChequename5="";
 	
-	@JsonProperty
+	
 	private String ClientAdd1="";
-	@JsonProperty
+	
 	private String ClientAdd2="";
-	@JsonProperty
+	
 	private String ClientAdd3="";
-	@JsonProperty
+	
 	private String ClientCity="";
-	@JsonProperty
+	
 	private String ClientState="";
-	@JsonProperty
+	
 	private String ClientPincode="";
-	@JsonProperty
+	
 	private String ClientCountry="";
-	@JsonProperty
+	
 	private String ClientResiphone="";
-	@JsonProperty
+	
 	private String ClientResifax="";
-	@JsonProperty
+	
 	private String ClientOfficephone="";
-	@JsonProperty
+	
 	private String ClientOfficefax="";
-	@JsonProperty
+	
 	private String ClientEmail="";
 	/**
 	Communication Mode 
@@ -208,171 +257,41 @@ public class BseRegistrationMFD implements Serializable{
 	E :Electronic
 	M : MOBILE
 	*/
-	@JsonProperty
+	
 	private String ClientCommmode="";
 	/**01/02/03/04/05 **/
-	@JsonProperty
+	
 	private String ClientDivpaymode="";
-	@JsonProperty
+	
 	private String ClientPan2="";
-	@JsonProperty
+	
 	private String ClientPan3="";
-	@JsonProperty
+	
 	private String MapinNo="";
-	@JsonProperty
+	
 	private String Cm_foradd1="";
-	@JsonProperty
+	
 	private String Cm_foradd2="";
-	@JsonProperty
+	
 	private String Cm_foradd3="";
-	@JsonProperty
+	
 	private String Cm_forcity="";
-	@JsonProperty
+	
 	private String Cm_forpincode="";
-	@JsonProperty
+	
 	private String Cm_forstate="";
-	@JsonProperty
+	
 	private String Cm_forcountry="";
-	@JsonProperty
+	
 	private String Cm_forresiphone="";
-	@JsonProperty
+	
 	private String Cm_forresifax="";
-	@JsonProperty
+	
 	private String Cm_foroffphone="";
-	@JsonProperty
+	
 	private String Cm_forofffax="";
-	@JsonProperty
+	
 	private String Cm_mobile="";
-	
-	public BseRegistrationMFD() {
-		System.out.println("@@@ BseRegistrationMFD: Calling Default Construcctor @@@@");
-	}
-	
-	public BseRegistrationMFD(String ClientCode) {
-		System.out.println("@@@ BseRegistrationMFD: Calling Client Code Constractor @@@@");
-		this.ClientCode=ClientCode;
-	}
-	
-	public BseRegistrationMFD(String ClientCode, String ClientHolding, String ClientTaxstatu, String ClientOccupationcod, String ClientAppname1,
-			 String ClientDob, String ClientGender,String ClientPan, String ClientType,String ClientAcctype1,String ClientAccno1,String ClientMicrno1, String ClientNeftIfsccode1,
-			 String DefaultBankFlag,String ClientAdd1,String ClientCity,String ClientState,String ClientPincode,String ClientCountry,String ClientEmail,
-			 String ClientCommmode,String ClientDivpaymode,String Cm_mobile) {
-		System.out.println("@@@ BseRegistrationMFD: Calling mandatory Param Constractor @@@@");
-		this.ClientCode=ClientCode;
-		this.ClientHolding=ClientHolding;
-		this.ClientTaxstatu = ClientTaxstatu;		
-		this.ClientOccupationcod = ClientOccupationcod;
-		this.ClientAppname1 = ClientAppname1;		
-		this.ClientDob= ClientDob;
-		this.ClientGender = ClientGender;
-		this.ClientPan = ClientPan;
-	    this.ClientType=ClientType;		
-		this.ClientAcctype1=ClientAcctype1;
-		this.ClientAccno1=ClientAccno1;
-		this.ClientMicrno1=ClientMicrno1;
-		this.ClientNeftIfsccode1=ClientNeftIfsccode1;
-		this.DefaultBankFlag=DefaultBankFlag;		
-		this.ClientAdd1=ClientAdd1;		
-		this.ClientCity=ClientCity;
-		this.ClientState=ClientState;
-		this.ClientPincode=ClientPincode;
-		this.ClientCountry=ClientCountry;		
-		this.ClientEmail=ClientEmail;
-		this.ClientCommmode=ClientCommmode;
-		this.ClientDivpaymode=ClientDivpaymode;		
-		this.Cm_mobile=Cm_mobile;
-		
-		
-	}
-	public BseRegistrationMFD(String ClientCode, String ClientHolding, String ClientTaxstatu, String ClientOccupationcod, String ClientAppname1,
-			String ClientAppname2, String ClientAppname3, String ClientDob, String ClientGender, String ClientGuardian, String ClientPan, String ClientNominee,
-            String ClientNomineeRelation, String ClientGuardianpan,String ClientType,
-            String ClientDefaultdp, String ClienCdsldpid,String ClientCdslcltid,String ClientNsdldpid,String ClientNsdlcltid,String ClientAcctype1,String ClientAccno1,String ClientMicrno1,
-            String ClientNeftIfsccode1,String DefaultBankFlag,String ClientAcctype2,String ClientAccno2,String ClientMicrno2,String ClientNeftIfsccode2,String DefaultBankFlag2,
-            String ClientAcctype3,String ClientAccno3,String ClientMicrno3,String ClientNeftIfsccode3,String DefaultBankFlag3,String ClientAcctype4, String ClientAccno4,String ClientMicrno4,String ClientNeftIfsccode4,
-            String DefaultBankFlag4,String ClientAcctype5, String ClientAccno5,String ClientMicrno5,String ClientNeftIfsccode5,String DefaultBankFlag5,String ClientChequename5, String ClientAdd1,String ClientAdd2,String ClientAdd3,
-            String ClientCity,String ClientState,String ClientPincode,String ClientCountry,String ClientResiphone,String ClientResifax,String ClientOfficephone,String ClientOfficefax,String ClientEmail,String ClientCommmode,
-            String ClientDivpaymode,String ClientPan2,String ClientPan3,String MapinNo,String Cm_foradd1,String Cm_foradd2,String Cm_foradd3,String Cm_forcity,
-            String Cm_forpincode,String Cm_forstate,String Cm_forcountry,String Cm_forresiphone,String Cm_forresifax,String Cm_foroffphone,String Cm_forofffax,String Cm_mobile) {
-		this.ClientCode=ClientCode;
-		this.ClientHolding=ClientHolding;
-		this.ClientTaxstatu = ClientTaxstatu;		
-		this.ClientOccupationcod = ClientOccupationcod;
-		this.ClientAppname1 = ClientAppname1;
-		this.ClientAppname2= ClientAppname2;
-		this.ClientAppname3= ClientAppname3;
-		this.ClientDob= ClientDob;
-		this.ClientGender = ClientGender;
-		this.ClientGuardian=ClientGuardian;
-		this.ClientPan=ClientPan;
-		this.ClientNominee=ClientNominee;
-		this.ClientNomineeRelation = ClientNomineeRelation;
-		this.ClientGuardianpan=ClientGuardianpan;
-		this.ClientType=ClientType;
-		
-		this.ClientDefaultdp=ClientDefaultdp;
-		this.ClienCdsldpid=ClienCdsldpid;
-		this.ClientCdslcltid=ClientCdslcltid;
-		this.ClientNsdldpid=ClientNsdldpid;
-		this.ClientNsdlcltid=ClientNsdlcltid;
-		this.ClientAcctype1=ClientAcctype1;
-		this.ClientAccno1=ClientAccno1;
-		this.ClientMicrno1=ClientMicrno1;
-		this.ClientNeftIfsccode1=ClientNeftIfsccode1;
-		this.DefaultBankFlag=DefaultBankFlag;
-		this.ClientAcctype2=ClientAcctype2;
-		this.ClientAccno2=ClientAccno2;
-		this.ClientMicrno2=ClientMicrno2;
-		this.ClientNeftIfsccode2=ClientNeftIfsccode2;
-		this.DefaultBankFlag2=DefaultBankFlag2;
-		this.ClientAcctype3=ClientAcctype3;
-		this.ClientAccno3=ClientAccno3;
-		this.ClientMicrno3=ClientMicrno3;
-		this.ClientNeftIfsccode3=ClientNeftIfsccode3;		
-		this.DefaultBankFlag3=DefaultBankFlag3;
-		
-		this.ClientAcctype4=ClientAcctype4;
-		this.ClientAccno4=ClientAccno4;
-		this.ClientMicrno4=ClientMicrno4;
-		this.ClientNeftIfsccode4=ClientNeftIfsccode4;
-		this.DefaultBankFlag4=DefaultBankFlag4;
-		this.ClientAcctype5=ClientAcctype5;
-		this.ClientAccno5=ClientAccno5;
-		this.ClientMicrno5=ClientMicrno5;
-		this.ClientNeftIfsccode5=ClientNeftIfsccode5;
-		this.DefaultBankFlag5=DefaultBankFlag5;
-		this.ClientChequename5 = ClientChequename5;
-		this.ClientAdd1=ClientAdd1;
-		this.ClientAdd2=ClientAdd2;
-		this.ClientAdd3=ClientAdd3;
-		this.ClientCity=ClientCity;
-		this.ClientState=ClientState;
-		this.ClientPincode=ClientPincode;
-		this.ClientCountry=ClientCountry;
-		this.ClientResiphone=ClientResiphone;
-		this.ClientResifax=ClientResifax;
-		this.ClientOfficefax=ClientOfficefax;
-		this.ClientEmail=ClientEmail;
-		this.ClientCommmode=ClientCommmode;
-		this.ClientDivpaymode=ClientDivpaymode;
-		this.ClientPan2=ClientPan2;
-		this.ClientPan3=ClientPan3;
-		this.MapinNo=MapinNo;
-		this.Cm_foradd1=Cm_foradd1;
-		this.Cm_foradd2=Cm_foradd2;
-		this.Cm_foradd3=Cm_foradd3;
-		this.Cm_forcity=Cm_forcity;
-		this.Cm_forpincode=Cm_forpincode;
-		this.Cm_forstate=Cm_forstate;
-		this.Cm_forcountry=Cm_forcountry;
-		this.Cm_forresiphone=Cm_forresiphone;
-		this.Cm_forresifax=Cm_forresifax;
-		this.Cm_foroffphone=Cm_foroffphone;
-		this.Cm_forofffax=Cm_forofffax;
-		this.Cm_mobile=Cm_mobile;
-		
-		
-	}
 	
 	
 	public String getClientCode() {
@@ -405,17 +324,23 @@ public class BseRegistrationMFD implements Serializable{
 	public void setClientAppname1(String clientAppname1) {
 		ClientAppname1 = clientAppname1;
 	}
-	public String getClientAppname2() {
-		return ClientAppname2;
+	public String getApplicant1fname() {
+		return applicant1fname;
 	}
-	public void setClientAppname2(String clientAppname2) {
-		ClientAppname2 = clientAppname2;
+	public void setApplicant1fname(String applicant1fname) {
+		this.applicant1fname = applicant1fname;
 	}
-	public String getClientAppname3() {
-		return ClientAppname3;
+	public String getApplicant1mname() {
+		return applicant1mname;
 	}
-	public void setClientAppname3(String clientAppname3) {
-		ClientAppname3 = clientAppname3;
+	public void setApplicant1mname(String applicant1mname) {
+		this.applicant1mname = applicant1mname;
+	}
+	public String getApplicant1lname() {
+		return applicant1lname;
+	}
+	public void setApplicant1lname(String applicant1lname) {
+		this.applicant1lname = applicant1lname;
 	}
 	public String getClientDob() {
 		return ClientDob;
@@ -429,35 +354,23 @@ public class BseRegistrationMFD implements Serializable{
 	public void setClientGender(String clientGender) {
 		ClientGender = clientGender;
 	}
-	public String getClientGuardian() {
-		return ClientGuardian;
+	public String getApplicant1panexempt() {
+		return applicant1panexempt;
 	}
-	public void setClientGuardian(String clientGuardian) {
-		ClientGuardian = clientGuardian;
+	public void setApplicant1panexempt(String applicant1panexempt) {
+		this.applicant1panexempt = applicant1panexempt;
+	}
+	public String getApplicant1panexemptcategory() {
+		return applicant1panexemptcategory;
+	}
+	public void setApplicant1panexemptcategory(String applicant1panexemptcategory) {
+		this.applicant1panexemptcategory = applicant1panexemptcategory;
 	}
 	public String getClientPan() {
 		return ClientPan;
 	}
 	public void setClientPan(String clientPan) {
 		ClientPan = clientPan;
-	}
-	public String getClientNominee() {
-		return ClientNominee;
-	}
-	public void setClientNominee(String clientNominee) {
-		ClientNominee = clientNominee;
-	}
-	public String getClientNomineeRelation() {
-		return ClientNomineeRelation;
-	}
-	public void setClientNomineeRelation(String clientNomineeRelation) {
-		ClientNomineeRelation = clientNomineeRelation;
-	}
-	public String getClientGuardianpan() {
-		return ClientGuardianpan;
-	}
-	public void setClientGuardianpan(String clientGuardianpan) {
-		ClientGuardianpan = clientGuardianpan;
 	}
 	public String getClientType() {
 		return ClientType;
@@ -494,6 +407,258 @@ public class BseRegistrationMFD implements Serializable{
 	}
 	public void setClientNsdlcltid(String clientNsdlcltid) {
 		ClientNsdlcltid = clientNsdlcltid;
+	}
+	public String getApplicant1kyctype() {
+		return applicant1kyctype;
+	}
+	public void setApplicant1kyctype(String applicant1kyctype) {
+		this.applicant1kyctype = applicant1kyctype;
+	}
+	public String getApplicant1ckycno() {
+		return applicant1ckycno;
+	}
+	public void setApplicant1ckycno(String applicant1ckycno) {
+		this.applicant1ckycno = applicant1ckycno;
+	}
+	public String getApplicant1kraexemptno() {
+		return applicant1kraexemptno;
+	}
+	public void setApplicant1kraexemptno(String applicant1kraexemptno) {
+		this.applicant1kraexemptno = applicant1kraexemptno;
+	}
+	public String getApplicant1aadhaarupdated() {
+		return applicant1aadhaarupdated;
+	}
+	public void setApplicant1aadhaarupdated(String applicant1aadhaarupdated) {
+		this.applicant1aadhaarupdated = applicant1aadhaarupdated;
+	}
+	public String getPaperlessflag() {
+		return paperlessflag;
+	}
+	public void setPaperlessflag(String paperlessflag) {
+		this.paperlessflag = paperlessflag;
+	}
+	public String getClientAppname2() {
+		return ClientAppname2;
+	}
+	public void setClientAppname2(String clientAppname2) {
+		ClientAppname2 = clientAppname2;
+	}
+	public String getApplicant2fname() {
+		return applicant2fname;
+	}
+	public void setApplicant2fname(String applicant2fname) {
+		this.applicant2fname = applicant2fname;
+	}
+	public String getApplicant2mname() {
+		return applicant2mname;
+	}
+	public void setApplicant2mname(String applicant2mname) {
+		this.applicant2mname = applicant2mname;
+	}
+	public String getApplicant2lname() {
+		return applicant2lname;
+	}
+	public void setApplicant2lname(String applicant2lname) {
+		this.applicant2lname = applicant2lname;
+	}
+	public String getApplicant2dob() {
+		return applicant2dob;
+	}
+	public void setApplicant2dob(String applicant2dob) {
+		this.applicant2dob = applicant2dob;
+	}
+	public String getApplicant2panexempt() {
+		return applicant2panexempt;
+	}
+	public void setApplicant2panexempt(String applicant2panexempt) {
+		this.applicant2panexempt = applicant2panexempt;
+	}
+	public String getApplicant2panexemptcategory() {
+		return applicant2panexemptcategory;
+	}
+	public void setApplicant2panexemptcategory(String applicant2panexemptcategory) {
+		this.applicant2panexemptcategory = applicant2panexemptcategory;
+	}
+	public String getApplicant2kyctype() {
+		return applicant2kyctype;
+	}
+	public void setApplicant2kyctype(String applicant2kyctype) {
+		this.applicant2kyctype = applicant2kyctype;
+	}
+	public String getApplicant2ckycno() {
+		return applicant2ckycno;
+	}
+	public void setApplicant2ckycno(String applicant2ckycno) {
+		this.applicant2ckycno = applicant2ckycno;
+	}
+	public String getApplicant2kraexemptrefno() {
+		return applicant2kraexemptrefno;
+	}
+	public void setApplicant2kraexemptrefno(String applicant2kraexemptrefno) {
+		this.applicant2kraexemptrefno = applicant2kraexemptrefno;
+	}
+	public String getClientAppname3() {
+		return ClientAppname3;
+	}
+	public void setClientAppname3(String clientAppname3) {
+		ClientAppname3 = clientAppname3;
+	}
+	public String getApplicant3fname() {
+		return applicant3fname;
+	}
+	public void setApplicant3fname(String applicant3fname) {
+		this.applicant3fname = applicant3fname;
+	}
+	public String getApplicant3mname() {
+		return applicant3mname;
+	}
+	public void setApplicant3mname(String applicant3mname) {
+		this.applicant3mname = applicant3mname;
+	}
+	public String getApplicant3lname() {
+		return applicant3lname;
+	}
+	public void setApplicant3lname(String applicant3lname) {
+		this.applicant3lname = applicant3lname;
+	}
+	public String getApplicant3dob() {
+		return applicant3dob;
+	}
+	public void setApplicant3dob(String applicant3dob) {
+		this.applicant3dob = applicant3dob;
+	}
+	public String getApplicant3panexempt() {
+		return applicant3panexempt;
+	}
+	public void setApplicant3panexempt(String applicant3panexempt) {
+		this.applicant3panexempt = applicant3panexempt;
+	}
+	public String getApplicant3panexemptcategory() {
+		return applicant3panexemptcategory;
+	}
+	public void setApplicant3panexemptcategory(String applicant3panexemptcategory) {
+		this.applicant3panexemptcategory = applicant3panexemptcategory;
+	}
+	public String getApplicant3kyctype() {
+		return applicant3kyctype;
+	}
+	public void setApplicant3kyctype(String applicant3kyctype) {
+		this.applicant3kyctype = applicant3kyctype;
+	}
+	public String getApplicant3ckycno() {
+		return applicant3ckycno;
+	}
+	public void setApplicant3ckycno(String applicant3ckycno) {
+		this.applicant3ckycno = applicant3ckycno;
+	}
+	public String getApplicant3kraexemptrefno() {
+		return applicant3kraexemptrefno;
+	}
+	public void setApplicant3kraexemptrefno(String applicant3kraexemptrefno) {
+		this.applicant3kraexemptrefno = applicant3kraexemptrefno;
+	}
+	public String getClientGuardian() {
+		return ClientGuardian;
+	}
+	public void setClientGuardian(String clientGuardian) {
+		ClientGuardian = clientGuardian;
+	}
+	public String getGuardianfname() {
+		return guardianfname;
+	}
+	public void setGuardianfname(String guardianfname) {
+		this.guardianfname = guardianfname;
+	}
+	public String getGuardianmname() {
+		return guardianmname;
+	}
+	public void setGuardianmname(String guardianmname) {
+		this.guardianmname = guardianmname;
+	}
+	public String getGuardianlanme() {
+		return guardianlanme;
+	}
+	public void setGuardianlanme(String guardianlanme) {
+		this.guardianlanme = guardianlanme;
+	}
+	public String getGuardiandob() {
+		return guardiandob;
+	}
+	public void setGuardiandob(String guardiandob) {
+		this.guardiandob = guardiandob;
+	}
+	public String getClientGuardianpan() {
+		return ClientGuardianpan;
+	}
+	public void setClientGuardianpan(String clientGuardianpan) {
+		ClientGuardianpan = clientGuardianpan;
+	}
+	public String getGuardianpanexempt() {
+		return guardianpanexempt;
+	}
+	public void setGuardianpanexempt(String guardianpanexempt) {
+		this.guardianpanexempt = guardianpanexempt;
+	}
+	public String getGuardianpanexemptcateegory() {
+		return guardianpanexemptcateegory;
+	}
+	public void setGuardianpanexemptcateegory(String guardianpanexemptcateegory) {
+		this.guardianpanexemptcateegory = guardianpanexemptcateegory;
+	}
+	public String getGuardiankyctype() {
+		return guardiankyctype;
+	}
+	public void setGuardiankyctype(String guardiankyctype) {
+		this.guardiankyctype = guardiankyctype;
+	}
+	public String getGuardianckycno() {
+		return guardianckycno;
+	}
+	public void setGuardianckycno(String guardianckycno) {
+		this.guardianckycno = guardianckycno;
+	}
+	public String getGuardiankraexemptrefno() {
+		return guardiankraexemptrefno;
+	}
+	public void setGuardiankraexemptrefno(String guardiankraexemptrefno) {
+		this.guardiankraexemptrefno = guardiankraexemptrefno;
+	}
+	public String getClientNominee() {
+		return ClientNominee;
+	}
+	public void setClientNominee(String clientNominee) {
+		ClientNominee = clientNominee;
+	}
+	public String getClientNomineeRelation() {
+		return ClientNomineeRelation;
+	}
+	public void setClientNomineeRelation(String clientNomineeRelation) {
+		ClientNomineeRelation = clientNomineeRelation;
+	}
+	public String getNominee1applicable() {
+		return nominee1applicable;
+	}
+	public void setNominee1applicable(String nominee1applicable) {
+		this.nominee1applicable = nominee1applicable;
+	}
+	public String getNominee1minorflag() {
+		return nominee1minorflag;
+	}
+	public void setNominee1minorflag(String nominee1minorflag) {
+		this.nominee1minorflag = nominee1minorflag;
+	}
+	public String getNominee1dob() {
+		return nominee1dob;
+	}
+	public void setNominee1dob(String nominee1dob) {
+		this.nominee1dob = nominee1dob;
+	}
+	public String getNominee1guardianname() {
+		return nominee1guardianname;
+	}
+	public void setNominee1guardianname(String nominee1guardianname) {
+		this.nominee1guardianname = nominee1guardianname;
 	}
 	public String getClientAcctype1() {
 		return ClientAcctype1;
@@ -644,6 +809,12 @@ public class BseRegistrationMFD implements Serializable{
 	}
 	public void setDefaultBankFlag5(String defaultBankFlag5) {
 		DefaultBankFlag5 = defaultBankFlag5;
+	}
+	public String getClientChequename5() {
+		return ClientChequename5;
+	}
+	public void setClientChequename5(String clientChequename5) {
+		ClientChequename5 = clientChequename5;
 	}
 	public String getClientAdd1() {
 		return ClientAdd1;
@@ -819,46 +990,8 @@ public class BseRegistrationMFD implements Serializable{
 	public void setCm_mobile(String cm_mobile) {
 		Cm_mobile = cm_mobile;
 	}
-	@Override
-	public String toString() {
-		return "ClientMFD [ClientCode=" + ClientCode + ", ClientHolding=" + ClientHolding + ", ClientTaxstatu="
-				+ ClientTaxstatu + ", ClientOccupationcod=" + ClientOccupationcod + ", ClientAppname1=" + ClientAppname1
-				+ ", ClientAppname2=" + ClientAppname2 + ", ClientAppname3=" + ClientAppname3 + ", ClientDob="
-				+ ClientDob + ", ClientGender=" + ClientGender + ", ClientGuardian=" + ClientGuardian + ", ClientPan="
-				+ ClientPan + ", ClientNominee=" + ClientNominee + ", ClientNomineeRelation=" + ClientNomineeRelation
-				+ ", ClientGuardianpan=" + ClientGuardianpan + ", ClientType=" + ClientType + ", ClientDefaultdp="
-				+ ClientDefaultdp + ", ClienCdsldpid=" + ClienCdsldpid + ", ClientCdslcltid=" + ClientCdslcltid
-				+ ", ClientNsdldpid=" + ClientNsdldpid + ", ClientNsdlcltid=" + ClientNsdlcltid + ", ClientAcctype1="
-				+ ClientAcctype1 + ", ClientAccno1=" + ClientAccno1 + ", ClientMicrno1=" + ClientMicrno1
-				+ ", ClientNeftIfsccode1=" + ClientNeftIfsccode1 + ", DefaultBankFlag=" + DefaultBankFlag
-				+ ", ClientAcctype2=" + ClientAcctype2 + ", ClientAccno2=" + ClientAccno2 + ", ClientMicrno2="
-				+ ClientMicrno2 + ", ClientNeftIfsccode2=" + ClientNeftIfsccode2 + ", DefaultBankFlag2="
-				+ DefaultBankFlag2 + ", ClientAcctype3=" + ClientAcctype3 + ", ClientAccno3=" + ClientAccno3
-				+ ", ClientMicrno3=" + ClientMicrno3 + ", ClientNeftIfsccode3=" + ClientNeftIfsccode3
-				+ ", DefaultBankFlag3=" + DefaultBankFlag3 + ", ClientAcctype4=" + ClientAcctype4 + ", ClientAccno4="
-				+ ClientAccno4 + ", ClientMicrno4=" + ClientMicrno4 + ", ClientNeftIfsccode4=" + ClientNeftIfsccode4
-				+ ", DefaultBankFlag4=" + DefaultBankFlag4 + ", ClientAcctype5=" + ClientAcctype5 + ", ClientAccno5="
-				+ ClientAccno5 + ", ClientMicrno5=" + ClientMicrno5 + ", ClientNeftIfsccode5=" + ClientNeftIfsccode5
-				+ ", DefaultBankFlag5=" + DefaultBankFlag5 + ", ClientAdd1=" + ClientAdd1 + ", ClientAdd2=" + ClientAdd2
-				+ ", ClientAdd3=" + ClientAdd3 + ", ClientCity=" + ClientCity + ", ClientState=" + ClientState
-				+ ", ClientPincode=" + ClientPincode + ", ClientCountry=" + ClientCountry + ", ClientResiphone="
-				+ ClientResiphone + ", ClientResifax=" + ClientResifax + ", ClientOfficephone=" + ClientOfficephone
-				+ ", ClientOfficefax=" + ClientOfficefax + ", ClientEmail=" + ClientEmail + ", ClientCommmode="
-				+ ClientCommmode + ", ClientDivpaymode=" + ClientDivpaymode + ", ClientPan2=" + ClientPan2
-				+ ", ClientPan3=" + ClientPan3 + ", MapinNo=" + MapinNo + ", Cm_foradd1=" + Cm_foradd1 + ", Cm_foradd2="
-				+ Cm_foradd2 + ", Cm_foradd3=" + Cm_foradd3 + ", Cm_forcity=" + Cm_forcity + ", Cm_forpincode="
-				+ Cm_forpincode + ", Cm_forstate=" + Cm_forstate + ", Cm_forcountry=" + Cm_forcountry
-				+ ", Cm_forresiphone=" + Cm_forresiphone + ", Cm_forresifax=" + Cm_forresifax + ", Cm_foroffphone="
-				+ Cm_foroffphone + ", Cm_forofffax=" + Cm_forofffax + ", Cm_mobile=" + Cm_mobile + "]";
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
-
-	public String getClientChequename5() {
-		return ClientChequename5;
-	}
-
-	public void setClientChequename5(String clientChequename5) {
-		ClientChequename5 = clientChequename5;
-	}
-
 
 }

@@ -3,6 +3,7 @@ package com.freemi.services.partners.Impl;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -19,6 +20,7 @@ import org.apache.pdfbox.tools.imageio.ImageIOUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResourceAccessException;
 
 import com.freemi.common.util.CommonConstants;
 import com.freemi.entity.bse.BseAOFUploadRequest;
@@ -61,7 +63,8 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 				logger.info("Convert form data to BSE format data");
 				BseRegistrationMFD bseregistrationForm=  BseBeansMapper.InvestmentFormToBseBeans(registrationForm);
 				logger.info("Begin BSE service invoke process");
-				result= bseRestClientService.registerUser(bseregistrationForm);
+//				result= bseRestClientService.registerUser(bseregistrationForm);
+				result= bseRestClientService.registeruserv2(bseregistrationForm);
 			}catch(Exception e){
 				logger.error("Failed during proceesing of BSE customer details to BSE platform",e);
 				result="BSE_CONN_FAIL";
@@ -201,10 +204,10 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 				if(!aofresp.getStatusCode().equalsIgnoreCase("100")){
 					logger.info("AOF upload status not successul.Reason- "+ aofresp.getStatusMessage());
 				}
-			} catch (IOException e) {
+			} catch (ResourceAccessException e) {
 				logger.error("Failed to query BSE to upload AOF form", e);
 				aofresp.setStatusCode("999");
-				aofresp.setStatusMessage("FAILED_CONN");
+				aofresp.setStatusMessage("Failed to connect service to process request.");
 				try{
 					document.close();
 				}catch(Exception ex){
@@ -213,7 +216,7 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 			}catch(Exception ex1){
 				logger.info("AOF image conversion error- ", ex1);
 				aofresp.setStatusCode("999");
-				aofresp.setStatusMessage("INTERNAL_ERROR_AOF");
+				aofresp.setStatusMessage("Internal error. Kindly try after sometime.");
 			}
 		}else{
 			logger.info("AOF File does not exist for upload!");

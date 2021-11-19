@@ -28,13 +28,17 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.freemi.common.util.CommonConstants;
 import com.freemi.common.util.CommonTask;
+import com.freemi.common.util.InvestFormConstants;
 import com.freemi.entity.general.Datarquestresponse;
 import com.freemi.entity.general.HttpClientResponse;
 import com.freemi.entity.general.Login;
 import com.freemi.entity.general.LoginResponse;
 import com.freemi.entity.general.MfCollatedFundsView;
 import com.freemi.entity.general.Registerform;
+import com.freemi.entity.general.Searchlocationdetials;
+import com.freemi.entity.general.Select2Results;
 import com.freemi.entity.general.UserProfileLdap;
 import com.freemi.entity.investment.MFKarvyFundsView;
 import com.freemi.entity.investment.MfAllInvestorValueByCategory;
@@ -498,6 +502,48 @@ public class ProfileController {
 		return smssendstatus;
 	}
     
+    @PostMapping(value="/mf/validate-pan")
+    @ResponseBody
+    public Datarquestresponse checkpan(@RequestBody HashMap<String, String> params,HttpServletRequest request, HttpServletResponse httpResponse,HttpSession session){
+    	logger.info("checkpan():Request received to validate if PAN exisitng and registered");
+    	List<String[]> result = null;
+
+    	Datarquestresponse response = new Datarquestresponse();
+
+    	try {
+    		String mobile=params.get("mobile");
+    		
+    		if(params.containsKey("mobile") && params.containsKey("key")) {
+    		/*if( session.getAttribute("token") == null || session.getAttribute("userid") == null){
+    			response.setStatus("1");
+				response.setMsg("SESSION_MISSING");
+    		}else{
+    			if(mobile.equals(session.getAttribute("userid").toString())) {
+    				response = bseEntryManager.checkifkeyregistered(mobile, params.get("key"), "pan", null);
+    				logger.info("checkpan(): Result received- "+ response.getStatus() + "->"+ response.getMsg());
+    			}else {
+    				logger.info("checkpan(): Passed mobile and sessio mobile data do not match");
+    				response.setStatus("1");
+    				response.setMsg("REQUEST_DENIED");
+    			}
+    		}*/
+    			
+    			response = bseEntryManager.checkifkeyregistered(mobile, params.get("key"), "pan", null);
+    		}else {
+    			logger.info("checkpan(): Requuired paramaters missing");
+    			response.setStatus("1");
+				response.setMsg("PARAM_MISSING");
+    		}
+    	}catch(Exception e) {
+    		logger.error("checkpan(): Error processing request",e);
+    		response.setStatus("1");
+    		response.setMsg("INTERNAL_ERROR");
+    	}
+
+    	logger.info("checkpan(): Retrunung result- "+ result);
+    	return response;
+    }
+    
 
 
     @PostMapping(value="/loan/get-hdfc-loan")
@@ -540,6 +586,8 @@ public class ProfileController {
     }
     
     
+    
+    
 
     @PostMapping(value="/loan/get-loan-status")
     @ResponseBody
@@ -578,6 +626,78 @@ public class ProfileController {
 
     	return response;
     }
+    
+    
+    
+    @RequestMapping(value = {"/mf/search-city"}, method = RequestMethod.POST)
+	@ResponseBody
+	public List<Select2Results> searchcity(@RequestBody Map<String,String> filters, HttpServletRequest request, HttpServletResponse reeponse) {
+		logger.info("searchcity() :Fetch city list... ");
+
+		List<Select2Results> dataarr= new ArrayList<Select2Results>();
+		Select2Results r =null;
+		try {
+//			String stateid = request.getParameter("stateid");
+			String stateid = filters.get("stateid");
+			logger.info("Received state ID- "+ stateid);
+			Map<String,String> statekey = InvestFormConstants.hdfcstatekey;
+			String hdfcstatekey = statekey.get(stateid);
+			filters.replace("stateid", hdfcstatekey);
+			dataarr = hdfcService.searchcity(filters, hdfcstatekey);
+
+		}catch(Exception e) {
+			logger.error("Failed to fetch statewise city list",e);
+			r = new Select2Results();
+			r.setId("ERROR");
+			r.setText("Error fetching list");
+			dataarr.add(r);
+		}
+
+		return dataarr;
+	}
+
+
+
+
+	@PostMapping(value = {"/mf/search-citypincode"})
+	@ResponseBody
+	public List<Select2Results> searchcitypincode(@RequestBody HashMap<String,String> filters, HttpServletRequest request, HttpServletResponse reeponse) {
+
+		logger.info("searchcitypincode() :Fetch city pincode list");
+
+
+		List<Select2Results> dataarr= new ArrayList<Select2Results>();
+		Select2Results r =null;
+
+		try{
+
+			String cityid = filters.get("search");
+			String stateid = filters.get("stateid");
+
+			if(stateid!=null && cityid!=null) {
+				
+				String hdfcstatekey = InvestFormConstants.hdfcstatekey.get(stateid);
+				filters.replace("stateid", hdfcstatekey);
+				filters.put("cityvaluetype", "CITYNAME");
+				Searchlocationdetials data = new Searchlocationdetials();
+				data.stateid = hdfcstatekey;
+				data.cityid = cityid;
+				dataarr = hdfcService.searchcitypincode(data,filters, stateid, cityid);
+			}else {
+				logger.info("Required field details are missing, request rejected to fetch city pincode");
+			}
+		}catch(Exception e){
+			logger.error("Error fecthing city pincode list info",e);
+			r = new Select2Results();
+			r.setId("ERROR");
+			r.setText("Error fetching list");
+			dataarr.add(r);
+		}
+
+		logger.info("Returning list of data");
+
+		return dataarr;
+	}
 
 
 

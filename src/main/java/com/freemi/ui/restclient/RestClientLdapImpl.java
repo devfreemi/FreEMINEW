@@ -104,29 +104,15 @@ public class RestClientLdapImpl implements ProfileRestClientService {
 			headers.set("authorization", ANONYMOUS_TOKEN);
 			HttpEntity<String> entity = new HttpEntity<String>(formdata,headers);
 
-			response = restTemplate.postForEntity(url, entity,  String.class);
-			httpClientResponse.setResponseEntity(response);
+//			response = restTemplate.postForEntity(url, entity,  String.class);
+			httpClientResponse = restTemplate.postForObject(url, entity,  HttpClientResponse.class);
+//			httpClientResponse.setResponseEntity(response);
+			
+			/*
 			String status = response.getHeaders().get("STATUS").get(0);
 			if(status.equals("SUCCESS")){
 				httpClientResponse.setResponseCode(CommonConstants.HTTP_CLIENT_CALL_SUCCESS);
 				httpClientResponse.setRetrunMessage("Registration successful. Login to your account");
-				
-		/*
-		try {
-			logger.info("User registration complete in LDAP. Save basic details in database");
-			PortalUsers registeredUser = new PortalUsers();
-			registeredUser.setMobile(registerForm.getMobile());
-			registeredUser.setFullname(registerForm.getFullName());
-			registeredUser.setEmail(registerForm.getEmail());
-			registeredUser.setSystemIp(systemDetails.getClientIpv4Address());
-			registeredUser.setSystemDetails(systemDetails.getClientBrowser());
-			registeredUser.setRegistrationTime(new Date());
-			portalUsersCrudRepository.save(registeredUser);
-		}catch(Exception e) {
-			logger.error("registerUser(): Failed to save registered user details to database for user- ",registerForm.getMobile(),e );
-		}
-		*/
-				
 			}else if(status.equals("DUPLICATE ENTRY")){
 				httpClientResponse.setResponseCode(CommonConstants.HTTP_CLIENT_CALL_FAIL);
 				httpClientResponse.setRetrunMessage("Account already exist with this number.");
@@ -140,8 +126,8 @@ public class RestClientLdapImpl implements ProfileRestClientService {
 			}else{
 				httpClientResponse.setResponseCode(CommonConstants.HTTP_CLIENT_CALL_FAIL);
 				httpClientResponse.setRetrunMessage("Unknown response");
-
 			}
+			*/
 		}catch(HttpStatusCodeException  e){
 			logger.error("registerUser(): registration failed for Link failure - ", e);
 			httpClientResponse.setResponseCode(CommonConstants.HTTP_CLIENT_CALL_FAIL);
@@ -380,6 +366,7 @@ public class RestClientLdapImpl implements ProfileRestClientService {
 			HttpHeaders headers = new HttpHeaders();	
 			headers.set("authorization", ANONYMOUS_TOKEN);
 			HttpEntity<String> entity = new HttpEntity<String>(form.toString(),headers);
+			logger.info("Calling url- "+ url);
 			response= restTemplate.postForEntity(url, entity,  String.class);
 			logger.info("Updating profile with PAN no status- "+ response.getBody());
 		}catch(Exception e) {

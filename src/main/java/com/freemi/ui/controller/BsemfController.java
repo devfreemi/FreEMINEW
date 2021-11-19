@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,6 +44,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -54,6 +56,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freemi.common.util.BseAOFGenerator;
 import com.freemi.common.util.CommonConstants;
 import com.freemi.common.util.CommonTask;
@@ -68,7 +71,11 @@ import com.freemi.entity.bse.BseOrderPaymentResponse;
 import com.freemi.entity.database.UserBankDetails;
 import com.freemi.entity.general.ClientSystemDetails;
 import com.freemi.entity.general.HttpClientResponse;
+import com.freemi.entity.general.Searchlocationdetials;
+import com.freemi.entity.general.Select2Results;
 import com.freemi.entity.general.UserProfileLdap;
+import com.freemi.entity.investment.AddressDetails;
+import com.freemi.entity.investment.BseAOFDocument;
 import com.freemi.entity.investment.BseFundsScheme;
 import com.freemi.entity.investment.BseMFSelectedFunds;
 import com.freemi.entity.investment.BseMFTop15lsSip;
@@ -82,6 +89,7 @@ import com.freemi.entity.investment.SelectMFFund;
 import com.freemi.entity.investment.TransactionStatus;
 import com.freemi.services.Impl.Profilerequesthandler;
 import com.freemi.services.interfaces.BseEntryManager;
+import com.freemi.services.interfaces.HdfcService;
 import com.freemi.services.interfaces.InvestmentConnectorBseInterface;
 import com.freemi.services.interfaces.MailSenderInterface;
 import com.freemi.services.interfaces.ProfileRestClientService;
@@ -113,6 +121,9 @@ public class BsemfController {
 
 	@Autowired
 	MailSenderInterface mailSenderInterface;
+	
+	 @Autowired
+	 HdfcService hdfcService;
 
 	
 	@RequestMapping(value = "/mutual-funds/top-performing", method = RequestMethod.GET)
@@ -417,12 +428,17 @@ public class BsemfController {
 			investForm.setDividendPayMode("02");
 			investForm.setOccupation("01");
 		}
-
+		
+//		AddressDetails d = new AddressDetails();
+//		d.setState("WB");
+//		investForm.setAddressDetails(d);
 		map.addAttribute("mfInvestForm", investForm);
 
 		logger.info("registerUser(): Get device platform during MF registration -" + device.getDevicePlatform());
 
-		return "bsemf/bse-form-new-customer2";
+//		return "bsemf/bse-form-new-customer2";
+		return "bsemf/bse-form-version2";
+		
 	}
 
 	@RequestMapping(value = { "/mutual-funds/mfInvestRegister" }, method = RequestMethod.GET)
@@ -433,13 +449,16 @@ public class BsemfController {
 
 	}
 
-	@RequestMapping(value = "/mutual-funds/mfInvestRegister.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/mutual-funds/register", method = RequestMethod.POST)
 	public String registerBsepost(@Valid @ModelAttribute("mfInvestForm") MFCustomers investForm,
 			BindingResult bindResult, Model map, HttpServletRequest request, HttpServletResponse response,
 			RedirectAttributes attrs, HttpSession session) {
 
 		logger.info("registerBsepost(): BSE MF STAR Customer Register post controller");
-		String returnUrl = "bsemf/bse-registration-status";
+//		String returnUrl = "bsemf/bse-registration-status";
+		String returnUrl = "redirect:/mutual-funds/mf-registration-status";
+		String returnurlsuccess="redirect:/mutual-funds/mf-registration-status";
+		String returnurlonerror= "bsemf/bse-form-version2";
 		String mfRegflag = "NOT_COMPLETE";
 		BseApiResponse bseregistrationstatus = new BseApiResponse();
 		//		String fatcaFlag = "FAIL";
@@ -453,7 +472,15 @@ public class BsemfController {
 		BseApiResponse aofuploadresponse = null;
 		
 		boolean bseregistersuccess=false, fatcauploadsuccess =false, aofuploadsuccess =false;
-
+		
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			logger.info("Submitted form data -"+ mapper.writeValueAsString(investForm));
+		} catch (JsonProcessingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		if (bindResult.hasErrors()) {
 			validationpass = false;
 			validationerrormsg = bindResult.getFieldError().getDefaultMessage();
@@ -523,7 +550,7 @@ public class BsemfController {
 				logger.info("Mobile no changed from initiated mobile no."+session.getAttribute("INITIATED_MOBILE").toString()+ ". Validate if exisitng");
 				existdata = bseEntryManager.isExisitngBSECustomerByMobile(investForm.getMobile());
 				if(existdata) {
-					logger.info("Mobile is changed during registration which is already exisitng.... Prevent registration...");
+					logger.info("Mobile is changed during registration which is already existing.... Prevent registration...");
 					validationpass = false;
 					validationerrormsg = "Updated mobile already registered. Login to complete registartion or change it.";
 				}else {
@@ -540,8 +567,8 @@ public class BsemfController {
 		if (!validationpass) {
 			logger.info("registerBsepost(): Error validating form data: " + validationerrormsg);
 			map.addAttribute("error", validationerrormsg);
-			return "bsemf/bse-form-new-customer2";
-
+//			return "bsemf/bse-form-new-customer2";
+			return returnurlonerror;
 		}
 
 		try {
@@ -570,7 +597,8 @@ public class BsemfController {
 				logger.info("registerBsepost(): Error validating form data: " + validationerrormsg);
 
 				map.addAttribute("error", validationerrormsg);
-				return "bsemf/bse-form-new-customer2";
+//				return "bsemf/bse-form-new-customer2";
+				return returnurlonerror;
 
 			}
 
@@ -737,7 +765,8 @@ public class BsemfController {
 			 * }
 			 */
 		} catch (Exception e) {
-			returnUrl = "bsemf/bse-form-new-customer2";
+//			returnUrl = "bsemf/bse-form-new-customer2";
+			returnUrl = returnurlonerror;
 			map.addAttribute("error", "Unable to register customer currently.");
 			validationerrormsg="Internal error. Unable to register customer currently. Please try again after sometime";
 			logger.error("registerBsepost(): Unable to save customer registration", e);
@@ -761,7 +790,8 @@ public class BsemfController {
 		
 
 		if(bseregistersuccess && fatcauploadsuccess) {
-			returnUrl = "redirect:/mutual-funds/mf-registration-status";
+//			returnUrl = "redirect:/mutual-funds/mf-registration-status";
+			returnUrl = returnurlsuccess;
 			session.setAttribute("CUSTOMER_TYPE", "NEW_CUSTOMER");
 			attrs.addFlashAttribute("mfInvestForm", investForm);
 			session.removeAttribute("mfInvestForm");
@@ -769,7 +799,8 @@ public class BsemfController {
 			attrs.addAttribute("STATUS", "Y");
 			
 		}else {
-			returnUrl = "bsemf/bse-form-new-customer2";
+//			returnUrl = "bsemf/bse-form-new-customer2";
+			returnUrl = returnurlonerror;
 			map.addAttribute("error", validationerrormsg);
 			
 			/*
@@ -2668,11 +2699,11 @@ public class BsemfController {
 
 					String result = "";
 					String fileName = investForm.getPan1() + ".pdf";
-					String flag1 = BseAOFGenerator.aofGenerator(investForm, fileName,
+					BseAOFDocument flag1 = BseAOFGenerator.aofGenerator(investForm, fileName,
 							env.getProperty("investment.bse.aoffile.logo"), "VERIFIED",
 							env.getProperty(CommonConstants.BSE_AOF_GENERATION_FOLDR));
 					logger.info("uploadsign(): Status of AOF generation- " + flag1);
-					if (flag1.equalsIgnoreCase("SUCCESS")) {
+					if (flag1.getFilegenerationstatus().equalsIgnoreCase("SUCCESS")) {
 						logger.info("uploadsign(): Signed AOF file generation complete for customer- "
 								+ investForm.getPan1());
 						result = bseEntryManager.upddateCustomerFormSignature(investForm.getMobile(),
@@ -2703,9 +2734,9 @@ public class BsemfController {
 	}
 
 
-	@RequestMapping(value = "/mutual-funds/uploadsignedaof", method = RequestMethod.GET)
+	@RequestMapping(value = "/mutual-funds/uploadsignedaof", method = RequestMethod.POST)
 	@ResponseBody
-	public String uploadSignedAOFFile(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+	public HttpClientResponse uploadSignedAOFFile(@RequestBody Map<String, String> requestdata, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 
 		logger.info("uploadSignedAOFFile(): mf-signature-udpate post controller");
 		String result = "SUCCESS";
@@ -2713,10 +2744,13 @@ public class BsemfController {
 		String requestedMobile = "";
 		boolean uploadAOF=false;
 		MFCustomers investForm = null;
-
+		HttpClientResponse requeststatus = new HttpClientResponse();
+		requeststatus.setResponseCode(CommonConstants.TASK_FAILURE);
+		
+		try {
+		if(requestdata.containsKey("mobile")) {
+			
 		if (session.getAttribute("token") != null && session.getAttribute("userid") != null) {
-
-			try {
 				ResponseEntity<String> apiresponse = profileRestClientService.validateUserToken(session.getAttribute("userid").toString(),session.getAttribute("token").toString(), CommonTask.getClientSystemIp(request));
 				logger.debug("uploadSignedAOFFile(): RESPONSE- " + apiresponse.getBody());
 				if (apiresponse.getBody().equals("VALID")) {
@@ -2725,55 +2759,44 @@ public class BsemfController {
 					requestedMobile = mobile;
 
 					logger.info("uploadSignedAOFFile(): Upload sign for customer mobile from session- " + session.getAttribute("userid"));
-					investForm = bseEntryManager.getCustomerInvestFormData(session.getAttribute("userid").toString());
-
+					//investForm = bseEntryManager.getCustomerInvestFormData(session.getAttribute("userid").toString());
+					
+					if (requestdata.get("mobile").equalsIgnoreCase(mobile)) {
+						requeststatus = bseEntryManager.completemfregistration(requestedMobile);
+					} else {
+						logger.info("Mobile number do not match with holding session form data. Request rejected. Session mobile no:"+ mobile + " : Requested mobile: " + requestedMobile);
+						//result = "SESSION_MOB_MISMATCH";
+						requeststatus.setRetrunMessage("Session data mismatch. Kindly contact admin.");
+					}
+					
 				} else if (apiresponse.getBody().equals("EXPIRED")) {
 					logger.info("uploadSignedAOFFile(): Session has expired for requesting user- "+ mobile);
-					result = "SESSION_EXPIRED";
-
-				} else {
-					logger.info("uploadSignedAOFFile(): Session mismtach or invalid.. Not allowing to access.");
-					result = "REQUEST_DENIED";
-				}
-			} catch (Exception e) {
-				logger.error("uploadSignedAOFFile(): Failed to validate session for logged in user..", e);
-				result = "INTERNAL_ERROR";
-			}
+					//result = "SESSION_EXPIRED";
+					requeststatus.setRetrunMessage("Session token expired. Please login again to complete request.");
+				} 
 
 		}else {
-			investForm = (MFCustomers) session.getAttribute("mfRegisterdUser");
-			mobile = investForm.getMobile();
-			requestedMobile = request.getParameter("mobile");
+			requeststatus.setRetrunMessage("Session lost. Kindly login to complete registration");
 		}
-
+		}else {
+			requeststatus.setRetrunMessage("Invalid request. Missing required paramaters.");
+		}
+		
+		} catch (Exception e) {
+			logger.error("uploadSignedAOFFile(): Failed to validate session for logged in user..", e);
+//			result = "INTERNAL_ERROR";
+			requeststatus.setRetrunMessage("Internal error. Please try after sometime.");
+		}
+		/*
 		try {
 			if(investForm!=null &&  (investForm.getPan1KycVerified().equals("Y") || env.getProperty("investment.bse.sign.bypasskyc").equalsIgnoreCase("Y")) ) {
 				if (mobile != "") {
 
 					logger.info("uploadSignedAOFFile(): Get mobile no- " + request.getParameter("mobdata"));
 					if (requestedMobile.equalsIgnoreCase(mobile)) {
-						// returnUrl="SUCCESS";
-						String clientCode = bseEntryManager.getClientIdfromMobile(requestedMobile);
-						String panForAOfFile = bseEntryManager.getCustomerPanfromMobile(requestedMobile);
-						// call api to upload pdf
-
-						logger.info("uploadSignedAOFFile(): Call API uploadAOFForm");
-						BseAOFUploadResponse aofresp1 = investmentConnectorBseInterface.uploadAOFFormtoBSE(panForAOfFile,
-								env.getProperty(CommonConstants.BSE_AOF_GENERATION_FOLDR), clientCode);
-						logger.info("uploadSignedAOFFile(): AOF upload status as received- " + aofresp1.getStatusMessage());
-						if (aofresp1.getStatusCode().equalsIgnoreCase("100") || (aofresp1.getStatusCode()
-								.equalsIgnoreCase("101")
-								&& (aofresp1.getStatusMessage().contains("Exception caught at Service Application")
-										|| aofresp1.getStatusMessage().contains("PAN NO ALREADY APPROVED")
-										|| aofresp1.getStatusMessage()
-										.contains("IMAGE IS ALREADY AVAILABLE AND IMAGE STATUS IS PENDING")))) {
-							String updateStatus = bseEntryManager.uploadAOFFormStatus(mobile, "Y"+";"+aofresp1.getStatusMessage());
-							logger.info("uploadSignedAOFFile(): AOF upload status to database- " + updateStatus);
-						} else {
-							result = aofresp1.getStatusMessage();
-							String updateStatus = bseEntryManager.uploadAOFFormStatus(mobile, "N"+";"+aofresp1.getStatusMessage());
-							logger.info("uploadSignedAOFFile(): AOF upload status to database- " + updateStatus);
-						}
+						
+						requeststatus = bseEntryManager.completemfregistration(requestedMobile);
+						
 					} else {
 						logger.info("Mobile number do not match with holding session form data. Request rejected. Session mobile no:"+ mobile + " : Requested mobile: " + requestedMobile);
 						result = "SESSION_MOB_MISMATCH";
@@ -2794,21 +2817,19 @@ public class BsemfController {
 			logger.error("uploadSignedAOFFile(): Error with service", e);
 			result = "INTERNAL_ERROR";
 		}
-
-
-
-		logger.info("uploadSignedAOFFile(): returnResponse - " + result);
-		return result;
+		*/
+		logger.info("uploadSignedAOFFile(): returnResponse - " + requeststatus.getResponseCode());
+		return requeststatus;
 
 	}
-
+	
 
 	@RequestMapping("/download/aof/{fileName:.+}")
 	public void downloadPDFResource(HttpServletRequest request, HttpServletResponse response,
 			@PathVariable("fileName") String fileName,
 			/* @ModelAttribute("mfInvestForm") BseMFInvestForm investForm, */ /* @RequestHeader String referer, */HttpSession session) {
 		logger.info("downloadPDFResource(): AOF File download request received for customer- "+ fileName);
-		String aofresult="FAIL";
+		BseAOFDocument aofresult;
 		MFCustomers investForm =null;
 		boolean proceedwithdownload = false;
 		String dataDirectory = env.getProperty(CommonConstants.BSE_AOF_GENERATION_FOLDR);
@@ -2882,7 +2903,7 @@ public class BsemfController {
 
 				if (investForm != null) {
 					aofresult =  BseAOFGenerator.aofGenerator(investForm, fileName, env.getProperty("investment.bse.aoffile.logo"),"VERIFIED", dataDirectory);
-					logger.info("downloadPDFResource(): AOF generation status without signature for download- "+ aofresult);
+					logger.info("downloadPDFResource(): AOF generation status without signature for download- "+ aofresult.getFilegenerationstatus());
 				} else {
 					logger.info("Investform data blank.AOF generation skipped. ");
 				}
@@ -2991,6 +3012,7 @@ public class BsemfController {
 	@ModelAttribute("occupation") 
 	public Map<String, String> occupation()
 	{
+		
 		return InvestFormConstants.occupationList; 
 	}
 
@@ -3000,7 +3022,7 @@ public class BsemfController {
 		return InvestFormConstants.bankNames; 
 	}
 
-	@ModelAttribute("accountTypes") 
+	@ModelAttribute("accountTypes")
 	public Map<String, String> accountTypes()
 	{
 		return InvestFormConstants.accountTypes; 
@@ -3009,8 +3031,54 @@ public class BsemfController {
 	@ModelAttribute("states") 
 	public Map<String, String> states()
 	{
+		
 		return InvestFormConstants.states; 
 	}
+	
+	@ModelAttribute("cities") 
+	public Map<String,String> cities(@ModelAttribute("mfInvestForm") MFCustomers investForm)
+	{
+//		List<Select2Results> dataarr= new ArrayList<Select2Results>();
+		Map<String,String> data = new HashMap<String, String>();
+		System.out.println("Passed investform- "+ investForm);
+		if(investForm!=null) {
+			if(investForm.getAddressDetails()!=null &&  investForm.getAddressDetails().getState()!=null) {
+				String statefrommapping = InvestFormConstants.hdfcstatekey.get(investForm.getAddressDetails().getState());
+				Map<String,String> filters = new HashMap<String, String>();
+				filters.put("stateid", statefrommapping);
+				filters.put("search","city");
+				data = hdfcService.searchcity2(filters, statefrommapping);
+				logger.info("City list retrieved- "+ data.size());
+			}
+		}
+		return data;
+	}
+	
+	
+	@ModelAttribute("pincode") 
+	public Map<String,String> pincode(@ModelAttribute("mfInvestForm") MFCustomers investForm)
+	{
+		Map<String,String> data = new HashMap<String, String>();
+		System.out.println("pincode(): Passed investform- "+ investForm);
+		if(investForm!=null) {
+			if(investForm.getAddressDetails()!=null &&  investForm.getAddressDetails().getState()!=null) {
+				String statefrommapping = InvestFormConstants.hdfcstatekey.get(investForm.getAddressDetails().getState());
+				Map<String,String> filters = new HashMap<String, String>();
+				System.out.println("Pincode for state- "+ statefrommapping + " city- "+ investForm.getAddressDetails().getCity());
+				filters.put("stateid", statefrommapping);
+				filters.put("search",investForm.getAddressDetails().getCity());
+				filters.put("cityvaluetype", "CITYNAME");
+				Searchlocationdetials data2 = new Searchlocationdetials();
+				data2.stateid = statefrommapping;
+				data2.cityid = investForm.getAddressDetails().getCity();
+				
+				data = hdfcService.searchcitypincode2(data2,filters, data2.stateid,data2.cityid);
+				logger.info("Pincode list retrieved- "+ data.size());
+			}
+		}
+		return data;
+	}
+
 
 	@ModelAttribute("wealthSource") 
 	public Map<String, String> wealthSource()

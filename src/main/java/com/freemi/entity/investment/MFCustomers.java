@@ -52,26 +52,57 @@ public class MFCustomers implements Serializable {
 	@Column(name="PAN_NO_1")
 	private String pan1="";
 	
+	@Column(name= "PROFILE_UNIQUE_ID")
+	private String profileuniqueid;
+	
+	@Column(name="PAN1_EXEMPT")
+	private String pan1exempt="N";
+	
+	@Column(name="PAN1_EXEMPT_CATEGORY")
+	private String pan1exemptcategory="";
+	
 	@Column(name="PAN_NO_2")
 	private String pan2="";
 	
-	@NotBlank(message="Investor name is mandatory")
+	@Transient
+	private String pan2exempt="";
+	
+	@Transient
+	private String pan2exemptcategory="";
+	
+//	@NotBlank(message="Investor name is mandatory")
 	@Column(name=" INVESTOR_1")
 	private String invName="";
 	
-	@Column(name = "FNAME")
+	@Column(name = "INVESTOR1_FNAME")
 	@NotNull(message = "First Name is mandatory") @Size(max = 48, message = "First name max 48 characters allowed") @Pattern(regexp = "[a-zA-Z .]*", message = "No special charcaters allowed in name")
 	private String fname;
 	
-	@Column(name = "LNAME")
+	@Column(name="INVESTOR1_MNAME")
+	private String mname;	//Added for v2
+	
+	@Column(name = "INVESTOR1_LNAME")
 	@NotNull(message = "Last Name is mandatory") @Size(max = 48, message = "Last name max 48 characters allowed") @Pattern(regexp = "[a-zA-Z .]*", message = "No special charcaters allowed in name")
 	private String lname;
 	
 	@Column(name="INVESTOR_2")
 	private String applicant2="";
 	
-	@Column(name="INVESTOR_DOB")
+	@Column(name="INVESTOR2_FNAME")
+	private String applicant2fname;
+	
+	@Column(name="INVESTOR2_MNAME")
+	private String applicant2mname;
+	
+	@Column(name="INVESTOR2_LNAME")
+	private String applicant2lname;
+	
+	@Column(name="INVESTOR1_DOB")
 	private String invDOB="";
+	
+	@Column(name="INVESTOR2_DOB")
+	private String inv2DOB;
+	
 
 //	@NotEmpty(message="Date of birth is mandatory")
 	@JsonIgnore
@@ -84,6 +115,28 @@ public class MFCustomers implements Serializable {
 	
 	@Column(name="AADHAAR_INVESTOR_1")
 	private String aadhaar;
+	
+	@Column(name="AADHAAR_UPDATED")
+	private String aadhaarupdated="";
+	
+	@Column(name="PAPERLESS_FLAG")
+	private String paperlessflag="Z";
+	
+	@Column(name="CLIENT_TYPE")
+	private String clienttype="P";
+	
+	@Column(name="INVESTOR1_KYCTYPE")
+	private String investor1kyctpe="K";
+	
+	@Column(name="INVESTOR1_CKYC")
+	private String investor1ckycno="";
+	
+	@Column(name="INVESTOR2_KYCTYPE")
+	private String investor2kyctpe;
+	
+	@Column(name="INVESTOR2_CKYC")
+	private String investor2ckycno;
+	 
 	
 	@NotBlank(message="Provide your holding mode")
 	@Column(name="HOLDING_MODE")
@@ -109,7 +162,7 @@ public class MFCustomers implements Serializable {
 	private String dividendPayMode="02";
 	
 	@Column(name="OCCUPATION_CODE")
-	private String occupation="02";
+	private String occupation="";
 	
 	@Transient
 	@Column(name="")
@@ -192,7 +245,6 @@ public class MFCustomers implements Serializable {
 	@Column(name = "AOF_UPLOAD_RESPONSE")
 	private String aofUploadResponse;
 	
-	
 	@Column(name="REGISTER_TIME")
 	private Date registrationTime;
 	
@@ -232,6 +284,14 @@ public class MFCustomers implements Serializable {
 	
 	@Column(name="SYSTEM_DETAILS")
 	private String systemDetails;
+	
+	@Transient
+	@JsonIgnore
+	private String mobileverified="N";
+	
+	@Transient
+	@JsonIgnore
+	private String emailverified="N";
 	
 	@Valid
 	@OneToOne(fetch=FetchType.EAGER, mappedBy="mfForm",cascade=CascadeType.ALL)
@@ -822,5 +882,197 @@ public class MFCustomers implements Serializable {
 	public void setCustomerdob(String customerdob) {
 		this.customerdob = customerdob;
 	}
+
+
+	public String getMname() {
+		return mname;
+	}
+
+
+	public void setMname(String mname) {
+		this.mname = mname;
+	}
+
+
+	public String getApplicant2fname() {
+		return applicant2fname;
+	}
+
+
+	public void setApplicant2fname(String applicant2fname) {
+		this.applicant2fname = applicant2fname;
+	}
+
+
+	public String getApplicant2mname() {
+		return applicant2mname;
+	}
+
+
+	public void setApplicant2mname(String applicant2mname) {
+		this.applicant2mname = applicant2mname;
+	}
+
+
+	public String getApplicant2lname() {
+		return applicant2lname;
+	}
+
+
+	public void setApplicant2lname(String applicant2lname) {
+		this.applicant2lname = applicant2lname;
+	}
+
+
+	public String getInv2DOB() {
+		return inv2DOB;
+	}
+
+
+	public void setInv2DOB(String inv2dob) {
+		inv2DOB = inv2dob;
+	}
+
+
+	public String getAadhaarupdated() {
+		return aadhaarupdated;
+	}
+
+
+	public void setAadhaarupdated(String aadhaarupdated) {
+		this.aadhaarupdated = aadhaarupdated;
+	}
+
+
+	public String getPaperlessflag() {
+		return paperlessflag;
+	}
+
+
+	public void setPaperlessflag(String paperlessflag) {
+		this.paperlessflag = paperlessflag;
+	}
+
+
+	public String getClienttype() {
+		return clienttype;
+	}
+
+
+	public void setClienttype(String clienttype) {
+		this.clienttype = clienttype;
+	}
+
+
+	public String getInvestor1kyctpe() {
+		return investor1kyctpe;
+	}
+
+
+	public void setInvestor1kyctpe(String investor1kyctpe) {
+		this.investor1kyctpe = investor1kyctpe;
+	}
+
+
+	public String getInvestor1ckycno() {
+		return investor1ckycno;
+	}
+
+
+	public void setInvestor1ckycno(String investor1ckycno) {
+		this.investor1ckycno = investor1ckycno;
+	}
+
+
+	public String getInvestor2kyctpe() {
+		return investor2kyctpe;
+	}
+
+
+	public void setInvestor2kyctpe(String investor2kyctpe) {
+		this.investor2kyctpe = investor2kyctpe;
+	}
+
+
+	public String getInvestor2ckycno() {
+		return investor2ckycno;
+	}
+
+
+	public void setInvestor2ckycno(String investor2ckycno) {
+		this.investor2ckycno = investor2ckycno;
+	}
+
+
+	public String getPan1exempt() {
+		return pan1exempt;
+	}
+
+
+	public void setPan1exempt(String pan1exempt) {
+		this.pan1exempt = pan1exempt;
+	}
+
+
+	public String getPan1exemptcategory() {
+		return pan1exemptcategory;
+	}
+
+
+	public void setPan1exemptcategory(String pan1exemptcategory) {
+		this.pan1exemptcategory = pan1exemptcategory;
+	}
+
+
+	public String getPan2exempt() {
+		return pan2exempt;
+	}
+
+
+	public void setPan2exempt(String pan2exempt) {
+		this.pan2exempt = pan2exempt;
+	}
+
+
+	public String getPan2exemptcategory() {
+		return pan2exemptcategory;
+	}
+
+
+	public void setPan2exemptcategory(String pan2exemptcategory) {
+		this.pan2exemptcategory = pan2exemptcategory;
+	}
+
+
+	public String getMobileverified() {
+		return mobileverified;
+	}
+
+
+	public void setMobileverified(String mobileverified) {
+		this.mobileverified = mobileverified;
+	}
+
+
+	public String getEmailverified() {
+		return emailverified;
+	}
+
+
+	public void setEmailverified(String emailverified) {
+		this.emailverified = emailverified;
+	}
+
+
+	public String getProfileuniqueid() {
+		return profileuniqueid;
+	}
+
+
+	public void setProfileuniqueid(String profileuniqueid) {
+		this.profileuniqueid = profileuniqueid;
+	}
+	
+	
 	
 }

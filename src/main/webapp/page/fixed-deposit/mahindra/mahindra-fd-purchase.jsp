@@ -7,21 +7,16 @@
 <meta charset="UTF-8">
 <title>Fixed Deposit Investment, interest rate upto 8.50%*</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Fixed Deposit Investment</title>
-<meta http-equiv="cache-control" content="max-age=0" />
 <meta http-equiv="cache-control" content="no-cache" />
 <meta http-equiv="expires" content="0" />
 <meta name="keywords" content="Fixed Desposit" />
-
 <meta name="description" content="fixed Deposit " />
-
 <meta name="robots" content="index, follow">
 <meta name="googlebot" content="index, follow" />
 <meta name="bingbot" content="index, follow" />
-
 <link rel="canonical" href="/products/fixed-deposit" />
+
 <jsp:include page="/page/include/bootstrap.jsp"></jsp:include>
 <link href="<c:url value="${contextcdn}/resources/css/animate.css"/>" rel="preload" as="style" onload="this.rel='stylesheet'">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" rel="preload" as="style" onload="this.rel='stylesheet'">

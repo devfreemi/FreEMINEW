@@ -14,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.freemi.common.util.CommonConstants;
@@ -24,6 +23,8 @@ import com.freemi.entity.bse.BseOrderPaymentRequest;
 import com.freemi.entity.bse.BseOrderPaymentResponse;
 import com.freemi.entity.database.MfTopFundsInventory;
 import com.freemi.entity.database.UserBankDetails;
+import com.freemi.entity.general.Datarquestresponse;
+import com.freemi.entity.general.HttpClientResponse;
 import com.freemi.entity.general.UserProfile;
 import com.freemi.entity.investment.AofSignaure;
 import com.freemi.entity.investment.BseAllTransactionsView;
@@ -35,7 +36,6 @@ import com.freemi.entity.investment.BsemfTransactionHistory;
 import com.freemi.entity.investment.MFCamsFolio;
 import com.freemi.entity.investment.MFCamsValueByCategroy;
 import com.freemi.entity.investment.MFCustomers;
-import com.freemi.entity.investment.MFInvestForm;
 import com.freemi.entity.investment.MFKarvyValueByCategory2;
 import com.freemi.entity.investment.MfAllInvestorValueByCategory;
 import com.freemi.entity.investment.MfNavData;
@@ -878,6 +878,18 @@ public class BseRestClient implements BseEntryManager {
 	public Map<String, String> getbseregistrationstatus(String mobile, String pan, String customeruniqid,
 			String clientcode) {
 		
+		return null;
+	}
+
+	@Override
+	public Datarquestresponse checkifkeyregistered(String mobile, String pan, String searchtype, String filter1) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HttpClientResponse completemfregistration(String mobile) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 

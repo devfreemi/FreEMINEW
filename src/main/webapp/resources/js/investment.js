@@ -1060,3 +1060,60 @@ $("#fddetailsmodal").on('show.bs.modal', function(event) {
 
 });
 
+
+function retryaofupload(mobile) {
+
+	var jsonObjects = JSON.stringify({
+		action : 'aof_upload',
+		mobile : mobile,
+		module : "MF",
+		submodule : "REGISTRATION_RETRY_INCOMPLETE"
+	});
+	
+	/*
+	$.ajaxSetup({
+		headers:
+		{ 'X-CSRF-TOKEN': token }
+	});*/
+
+	request = $.ajax({
+		url: "/products/mutual-funds/uploadsignedaof",
+		method: "POST",
+		data: jsonObjects,
+		async: true,
+		datatype: "json",
+		contentType : 'application/json',
+		beforeSend: function() {
+			//$("#retryaofupload").text("<span>Processing <i class=\"fas fa-spinner fa-spin\"></i></span>");
+			//console.log("Before send");
+			document.getElementById("retryaofupload").innerHTML = "Processing <i class=\"fas fa-spinner fa-spin\"></i>";
+			$("#retryaofupload").prop('disabled',true);
+		}
+	});
+
+	request.done(function(data) {
+		if (data.responseCode == 100) {
+			$("#signuploadstatus").text("Your AOF uploaded successfully. Registration process complete.");
+			$("#signuploadstatus").css("color", "green");
+			$("#aofuploadbtn").hide();
+			$("#purchasecon").removeAttr('hidden');
+		} else {
+			$('#exampleModal1').modal('hide');
+			$("#signuploadstatus").text(data.retrunMessage);
+			$("#signuploadstatus").css("color", "red");
+		}
+
+	});
+
+	request.fail(function(jqXHR, textStatus) {
+		$('#exampleModal1').modal('hide');
+		$("#signuploadstatus").text("Failed to make request. Please try again.");
+	});
+
+	request.always(function(msg){
+		$("#retryaofupload").html("Retry AOF Upload");
+		$("#retryaofupload").prop('disabled',false);
+	});
+
+
+}

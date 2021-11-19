@@ -8,22 +8,23 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.freemi.entity.bse.BseAOFUploadResponse;
 import com.freemi.entity.bse.BseApiResponse;
 import com.freemi.entity.bse.BseOrderPaymentRequest;
 import com.freemi.entity.bse.BseOrderPaymentResponse;
 import com.freemi.entity.database.MfTopFundsInventory;
 import com.freemi.entity.database.UserBankDetails;
+import com.freemi.entity.general.Datarquestresponse;
+import com.freemi.entity.general.HttpClientResponse;
 import com.freemi.entity.general.UserProfile;
 import com.freemi.entity.investment.BseAllTransactionsView;
 import com.freemi.entity.investment.BseFundsScheme;
-import com.freemi.entity.investment.MFCustomers;
 import com.freemi.entity.investment.BseMFSelectedFunds;
 import com.freemi.entity.investment.BseMFTop15lsSip;
 import com.freemi.entity.investment.BseMandateDetails;
 import com.freemi.entity.investment.BsemfTransactionHistory;
 import com.freemi.entity.investment.MFCamsFolio;
 import com.freemi.entity.investment.MFCamsValueByCategroy;
+import com.freemi.entity.investment.MFCustomers;
 import com.freemi.entity.investment.MFKarvyValueByCategory2;
 import com.freemi.entity.investment.MfAllInvestorValueByCategory;
 import com.freemi.entity.investment.MfNavData;
@@ -38,6 +39,8 @@ public interface BseEntryManager {
 	public BseApiResponse saveCustomerDetails(MFCustomers customerForm, String customerType, String customerlogged, String initiatedmobileid);
 	public BseApiResponse saveFatcaDetails(MFCustomers fatcaForm, String flag1, String dateformat, String clientcode);
 	public String updateFatcaStatus(String clientId, String status, String responseCode, String message);
+	public HttpClientResponse completemfregistration(String mobile);
+	
 	
 	public List<SelectMFFund> getMFOrderHistory(String customerId);
 	public UserProfile getCustomerProfileDetailsByMobile(String mobile);
@@ -121,4 +124,6 @@ public interface BseEntryManager {
 	public BseOrderPaymentResponse getPaymentUrl(BseOrderPaymentRequest request);
 	
 	public BseApiResponse extractAllotmentstatement(String fromdate, String todate, String orderstatus, String ordertype, String settlementtype);
+	
+	public Datarquestresponse checkifkeyregistered(String mobile, String pan, String searchtype, String filter1);
 }

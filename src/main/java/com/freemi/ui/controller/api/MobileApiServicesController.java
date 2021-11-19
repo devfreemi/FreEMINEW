@@ -39,6 +39,7 @@ import com.freemi.entity.bse.BseAOFUploadResponse;
 import com.freemi.entity.bse.BseApiResponse;
 import com.freemi.entity.general.ClientSystemDetails;
 import com.freemi.entity.investment.AofSignaure;
+import com.freemi.entity.investment.BseAOFDocument;
 import com.freemi.entity.investment.MFAdditionalPurchaseForm;
 import com.freemi.entity.investment.MFCustomers;
 import com.freemi.entity.investment.MFRedeemForm;
@@ -357,9 +358,9 @@ public class MobileApiServicesController {
 			    investForm.setCustomerSignature2(customerSignature2);
 			    String result = "";
 			    String fileName = investForm.getPan1() + ".pdf";
-			    String flag1 = BseAOFGenerator.aofGenerator(investForm, fileName, env.getProperty("investment.bse.aoffile.logo"), "VERIFIED", env.getProperty(CommonConstants.BSE_AOF_GENERATION_FOLDR));
+			    BseAOFDocument flag1 = BseAOFGenerator.aofGenerator(investForm, fileName, env.getProperty("investment.bse.aoffile.logo"), "VERIFIED", env.getProperty(CommonConstants.BSE_AOF_GENERATION_FOLDR));
 			    logger.info("bseUploadAOFSignature(): Status of AOF generation- " + flag1);
-			    if (flag1.equalsIgnoreCase("SUCCESS")) {
+			    if (flag1.getFilegenerationstatus().equalsIgnoreCase("SUCCESS")) {
 				logger.info("bseUploadAOFSignature(): Signed AOF file generation complete for customer- " + investForm.getPan1());
 				result = bseEntryManager.upddateCustomerFormSignature(investForm.getMobile(),
 					investForm.getPan1(), investForm.getCustomerSignature1(),

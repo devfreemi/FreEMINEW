@@ -11,6 +11,7 @@ import com.freemi.entity.bse.BsePaymentStatus;
 import com.freemi.entity.bse.BseRegistrationMFD;
 import com.freemi.entity.bse.BseSipOrderEntry;
 import com.freemi.entity.bse.BseXipISipOrderEntry;
+import com.freemi.entity.bse.Uccregisterresponse;
 
 @Component
 public interface BseRestClientService {
@@ -18,6 +19,7 @@ public interface BseRestClientService {
 	public String otpGeneration(String userid);
 	public String otpverify(String userid,String otp);
 	public String registerUser(BseRegistrationMFD form);
+	public String registeruserv2(BseRegistrationMFD form);
 	public String purchaseRequestProcess(BseOrderEntry form);
 	public String purchaseSIPRequestProcess(BseSipOrderEntry form);
 	public String purchaseCancelXSIPISIPRequestProcess(BseXipISipOrderEntry form);
