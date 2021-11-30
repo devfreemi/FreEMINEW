@@ -1,4 +1,4 @@
-//console.log = function() {}
+console.log = function() {}
 var minsip=0;
 var minlumpsum=0;
 var otpsending = false;
@@ -26,10 +26,13 @@ function nextPrev(n) {
 		console.log("1st form")
 		if (!validBasicForm()){
 			$("#nextBtn").html("Next");
+			$("#nextBtn").prop('disabled',false);
 			return false;
 		}
+		
 	}
-
+	$("#nextBtn").prop('disabled',false);
+	
 	if (n == 1 && currentTab == 1) {
 		console.log("2nd form");
 
@@ -167,7 +170,7 @@ $(document).ready(function() {
 		if (regex.test(ifsc)) {
 			$("#ifsc").css('border-bottom','2px solid #43c253');
 			$.get("https://ifsc.razorpay.com/"+ ifsc,function(data,status) {
-//				console.log(data.BANK);
+				console.log(data);
 				//console.log(data.BRANCH);
 				//console.log(data.ADDRESS);
 
@@ -183,11 +186,11 @@ $(document).ready(function() {
 				//console.log(data);
 //				console.log(status);
 				$("#invalidifsc").text("Invalid IFSC code");
-				$("#bankCity").val("");					
-				$("#branch").val("");
-				$("#bankAddress").val("");
-				$("#bankName").val("");
-				$("#bankState").val("");
+				$("#bankCity").val("NA");					
+				$("#branch").val("NA");
+				$("#bankAddress").val("NA");
+				$("#bankName").val("NA");
+				$("#bankState").val("NA");
 			});
 		} else {
 			$("#ifsc").css('border-bottom','2px solid #ff6a6a');
@@ -301,7 +304,7 @@ function validateForm() {
 function validBasicForm() {
 	console.log("Validate 1st form");
 	$("#nextBtn").html("<span>Validating <i class=\"fas fa-spinner fa-spin\"></i></span>");
-	$("#nextBtn").removeAttr("disabled");
+	$("#nextBtn").prop('disabled',true);
 	$("#mandateField").text("");
 	var dt= $("#investorDOB").val();
 	var panregex1 = /^[A-Z]{3}[P]{1}[A-Z]{1}[0-9]{4}[A-Z]{1}$/;
@@ -339,12 +342,6 @@ function validBasicForm() {
 		return false;
 	}
 	
-	if(pan1!=''){
-		let flag= validatesubmittedpan($("#mobile").val(),pan1);
-		if(!flag){
-			return flag;
-		}
-	}
 	
 /*
 	if(taxstatus == '01' || taxstatus == '02'){
@@ -374,7 +371,18 @@ function validBasicForm() {
 		showerrormsg('mandateField','Please select your occupation');
 		return false;
 	}
-
+	
+	if($("#mobileverified").val() == 'N'){
+		showerrormsg('mandateField','Mobile verification not complete');
+		return false;
+	}
+	
+	if($("#emailverified").val() == 'N'){
+		showerrormsg('mandateField','Email verification not complete');
+		return false;
+	}
+	
+		
 	/*
 	if(holdingmode == 'AS' || holdingmode == 'JO'){
 		if(applicant2 == undefined || applicant2 == ''){
@@ -392,6 +400,15 @@ function validBasicForm() {
 		}
 		
 	}*/
+	
+	if(pan1!=''){
+		let flag= validatesubmittedpan($("#mobile").val(),pan1);
+		if(!flag){
+			return flag;
+		}
+	}
+	
+	
 	console.log("All validation success");
 	$("#nextBtn").html("Next");
 	return true;
@@ -434,7 +451,33 @@ function validBankForm() {
 	}*/
 	
 //	viewapplicant2sign();
+	
+	if($("#nomineeName").val() == ""){
+		showerrormsg('mandateField','Please provide nominee details');
+		return false;
+	}
+	
+	if($("#relation").val() ==""){
+		showerrormsg('mandateField','Please provide nominee relation');
+		return false;
+	}
+	
+	var nomineeminor = $("input[name='nominee.isNomineeMinor']:checked").val();
 
+	if(nomineeminor == "Y" && $("#nomineeguardian").val() ==""){
+		showerrormsg('mandateField','Please provide minor guardian name');
+		return false;
+	}
+	if(nomineeminor == "Y" && ( $("#relation").val() =="Parents" ||$("#relation").val() =="Spouse" ) ){
+		showerrormsg('mandateField','Parents or spouse cannot be minor');
+		return false;
+	}
+	
+	if(nomineeminor == "N" && $("#nomineeguardian").val() !=""){
+		showerrormsg('mandateField','Remove guardian name if not minor');
+		return false;
+	}
+	
 	return true;
 }
 
@@ -470,6 +513,8 @@ function validFatcaForm() {
 	}
 	
 	$("#signature1").val(dataUrl);
+	
+	/*
 	var holdingmode = document.forms["regForm"]["holdingMode"].value;
 	
 	if(holdingmode == 'AS' || holdingmode == 'JO'){
@@ -501,11 +546,27 @@ function validFatcaForm() {
 		
 		$("#signature2").val(dataUrl2);
 	}
+	*/
+	
+	var f = $("input[name='fatcaDetails.usCitizenshipCheck']:checked").val();
+	
+	if(f){
+		$("#mandateField").text("Sorry, we are currently registering Indian residents only.");
+		return false;
+	}
+	
+	if(!$("input[name='ubo']:checked").val() || $("input[name='ubo']:checked").val() == undefined){
+		$("#mandateField").text("You need to accept the policy to proceed.");
+		return false;
+	}
 	
 	return true;
 }
 
-function validConfirmForm() {
+//function validConfirmForm() {
+/*
+$( "#customCheck1" ).change(function() {
+	console.log("Validate final stage submit")
 	$("#mandateField").text("");
 	if($("input[name='ubo']:checked").val()){
 		$("#nextBtn").removeAttr("disabled");
@@ -515,7 +576,9 @@ function validConfirmForm() {
 	}
 
 	return true;
-}
+});
+*
+*/
 
 function setDefaultvalues() {
 
@@ -535,6 +598,7 @@ function populateConfirmPage() {
 	//	console.log("last page called");
 	//	console.log(document.getElementById("holdingMode").value);
 
+	console.log("Populate confirm");
 	if($("input[name='ubo']:checked").val()){
 		$("#nextBtn").removeAttr("disabled");
 	}
@@ -573,12 +637,13 @@ function populateConfirmPage() {
 		$("#secondapplicantName").text($("#applicant2Val").val());
 		$("#secondapplicantPan").text($("#pan2").val());
 	}
+	/*
 	$("#pan1kycverifyDisplay").text($("#pan1kycverified :selected").text());
 	if($("#pan1kycverified :selected").val() == 'N'){
 		$("#pan1kycverifyDisplay").css({"color":"white","background":"#ef2e2eed","padding":"2px 10px","border-radius":"2px"});
 	}else{
 		$("#pan1kycverifyDisplay").css({"color":"white","background":"#1cad1ced","padding":"2px 10px","border-radius":"2px"});
-	}
+	}*/
 
 
 	var x = $("input[name='nominee.isNominate']:checked").val();
@@ -620,10 +685,10 @@ function populateConfirmPage() {
 	$("#accHolderDisplay").text($("#invName").val());
 
 	/*$("#paymentModeDisplay").text($("#dividendPayMode :selected").text());*/
-	$("#accountTypeDisplay").text($("#accountType :selected").text());
+	$("#accountTypeDisplay").text($("input[name='bankDetails.accountType']:checked").parent().text());
 	$("#accNumberDisplay").text($("#accountno").val());
 
-	$("#ifscDisplay").text($("#ifsc").val());
+	$("#ifscDisplay").text($("#ifsc").val().toUpperCase());
 	$("#bankNameDisplay").text($("#bankName").val());
 	$("#branchDisplay").text($("#branch").val());
 	$("#branchAddressDisplay").text($("#bankAddress").val());
@@ -637,7 +702,7 @@ function populateConfirmPage() {
 	var f = $("input[name='fatcaDetails.usCitizenshipCheck']:checked").val();
 //	console.log("US citizen> "+ f);
 
-	if(f){
+	if(!f){
 		$("#uscitizenshipcheckdisplay").text("No");
 		$("#uscitizenshipcheckdisplay").css({"color":"white","background":"rgba(26, 115, 53, 0.93)","padding":"2px 10px","border-radius":"2px"});
 
@@ -651,7 +716,7 @@ function populateConfirmPage() {
 	$("#spousenamedisplay").text($("#spousename").val());
 	$("#wealthsourcedisplay").text($("#wealthsource :selected").text());
 	$("#incomeslabdisplay").text($("#incomeslab :selected").text());
-	$("#occupationtypedisplay").text($("#occupationType :selected").text());
+	/*$("#occupationtypedisplay").text($("#occupationType :selected").text());*/
 	$("#politicalviewdisplay").text($("#politicalview :selected").text());
 //	$("#sign1display").text($("#signature1").val());
 	let sigImage = document.getElementById("sign1display");
@@ -816,11 +881,38 @@ $('#verifymobile').on('click', function() {
 	}
 });
 
+
+$("#msendotpbutton").click(function(e){
+//	 alert("Submitted");
+	e.preventDefault();
+	if($("#verifytype").val() == 'M'){
+		sendotp($("#verifykey").val(),null,$("#verifytype").val(),"mobileverifymsg","msendotpbutton","motpdiv");
+	}else{
+		alert("Invalid request!");
+	}
+	
+});
+
+$("#mverifybutton").click(function(e){
+//	 alert("Submitted");
+	e.preventDefault();
+	if($("#verifytype").val() == 'M'){
+		if($("#mobileotpdata").val() == ''){
+			alert("OTP data is not provided")
+		}else{
+			verifyotp($("#verifykey").val(),$("#verifytype").val(),$("#mobileotpdata").val(),"mobileverifymsg","mobileverifymodal","mverifybutton");
+		}
+	}else{
+		alert("Invalid request!");
+	}
+	
+});
+
 $("#esendotpbutton").click(function(e){
 //	 alert("Submitted");
 	e.preventDefault();
 	if($("#everifytype").val() == 'E'){
-		sendotp($("#emailkey").val(),$("#everifytype").val(),"emailverifymsg","esendotpbutton","eotpdiv");
+		sendotp($("#emailkey").val(),$("#mobile").val(),$("#everifytype").val(),"emailverifymsg","esendotpbutton","eotpdiv");
 	}else{
 		alert("Invalid request!");
 	}
@@ -835,7 +927,7 @@ $("#everifybutton").click(function(e){
 			alert("OTP data is not provided")
 		}else{
 			console.log("Email OTP- "+ $("#emailotpdata").val());
-			verifyotp($("#emailkey").val(),$("#everifytype").val(),$("#emailotpdata").val(),"emailverifymsg","emailverifymodal");
+			verifyotp($("#emailkey").val(),$("#everifytype").val(),$("#emailotpdata").val(),"emailverifymsg","emailverifymodal","everifybutton");
 		}
 	}else{
 		alert("Invalid request!");
@@ -843,33 +935,8 @@ $("#everifybutton").click(function(e){
 	
 });
 
-$("#msendotpbutton").click(function(e){
-//	 alert("Submitted");
-	e.preventDefault();
-	if($("#verifytype").val() == 'M'){
-		sendotp($("#verifykey").val(),$("#verifytype").val(),"mobileverifymsg","msendotpbutton","motpdiv");
-	}else{
-		alert("Invalid request!");
-	}
-	
-});
 
-$("#mverifybutton").click(function(e){
-//	 alert("Submitted");
-	e.preventDefault();
-	if($("#verifytype").val() == 'M'){
-		if($("#mobileotpdata").val() == ''){
-			alert("OTP data is not provided")
-		}else{
-			verifyotp($("#verifykey").val(),$("#verifytype").val(),$("#mobileotpdata").val(),"mobileverifymsg","mobileverifymodal");
-		}
-	}else{
-		alert("Invalid request!");
-	}
-	
-});
-
-function sendotp(key, keytype,msgdisplayfield,sendbutton,otpboxname){
+function sendotp(key,key2, keytype,msgdisplayfield,sendbutton,otpboxname){
 	
 	var valid=true;
 	if(!otpsending){
@@ -878,7 +945,7 @@ function sendotp(key, keytype,msgdisplayfield,sendbutton,otpboxname){
 //		var mnum = $("#mobileid").val();
 		var mnum = key;
 		//alert(state);
-		var jsonObjects = {"key":mnum,"keytype":keytype, "module" : "MF", "submodule":"R","otp":null};
+		var jsonObjects = {"key":mnum,"key2":key2,"keytype":keytype, "module" : "MF", "submodule":"R","otp":null};
 		$("#"+msgdisplayfield).text("");
 		$.ajaxSetup({
 			headers:
@@ -898,18 +965,18 @@ function sendotp(key, keytype,msgdisplayfield,sendbutton,otpboxname){
 //				$("#nextBtn").html("Processing <i class=\"fas fa-spinner fa-spin\"></i>");
 				
 				//document.getElementById("sendotpbutton").innerHTML = "Processing <i class=\"fas fa-spinner fa-spin\"></i>";
-				$("#sendotpbutton").html("Processing <i class=\"fas fa-spinner fa-spin\"></i>");
-				//$("#retryaofupload").prop('disabled',true);
+				$("#"+sendbutton).html("Processing <i class=\"fas fa-spinner fa-spin\"></i>");
+				$("#"+sendbutton).prop('disabled',true);
 				otpsending = true;
 			}
 		});
-
+		
 		request.done(function(data, textStatus, xhr) {
 			console.log("Response received- "+ JSON.stringify(data));
 			if (data.statuscode == 0){
 				const options= { positionClass:'toast-otp' };
 				toastr.success("OTP has been sent to "+ mnum, '', options );
-				$("#"+msgdisplayfield).text("OTP has been sent"+' ('+data.maxresendcount +' of 3 attempt)');
+				$("#"+msgdisplayfield).text(data.msg);
 				$("#"+msgdisplayfield).css("color", "grey");
 				timer= setTimeout(function() {
 					console.log("Re-enable OTP")
@@ -925,11 +992,14 @@ function sendotp(key, keytype,msgdisplayfield,sendbutton,otpboxname){
 				toastr.error("OTP could not be sent to "+ mnum, '', options );
 				otpsending = false;
 				$("#"+msgdisplayfield).text("Request failed- "+ data.errormsg);
-				valid=false;	
+				valid=false;
+				$("#"+sendbutton).prop('disabled',false);
 			}
 
 		});
-
+		
+		
+		
 		request.fail(function(xhr, textStatus) {
 //			alert("Request failed: "+textStatus+" "+ xhr.responseText);
 			otpsending = false;
@@ -938,10 +1008,11 @@ function sendotp(key, keytype,msgdisplayfield,sendbutton,otpboxname){
 			valid=false;
 			$("#"+sendbutton).html("Send OTP");
 		});
-
+		request.always(function(xhr){
+			$("#"+sendbutton).html("Send OTP");
+		})
 		//  const options= { positionClass:'toast-otp' };
 		//	toastr.success("OTP has been sent to "+ mnum, '', options );
-
 	}else{
 		console.log("OTP disabled..");
 	}
@@ -950,7 +1021,7 @@ function sendotp(key, keytype,msgdisplayfield,sendbutton,otpboxname){
 }
 
 
-function verifyotp(key,keytype, otpdata,msgdisplayfield,modalname){
+function verifyotp(key,keytype, otpdata,msgdisplayfield,modalname,verifybutton){
 	
 	var otp= otpdata;
 	
@@ -969,7 +1040,8 @@ function verifyotp(key,keytype, otpdata,msgdisplayfield,modalname){
 				async: true,
 				datatype: "json",
 				beforeSend: function() {
-					
+					$("#"+verifybutton).html("Verifying <i class=\"fas fa-spinner fa-spin\"></i>");
+					$("#"+verifybutton).prop("disabled", true);
 				}
 				
 			});
@@ -1011,9 +1083,14 @@ function verifyotp(key,keytype, otpdata,msgdisplayfield,modalname){
 			});
 			
 			request.fail(function(xhr, textStatus) {
-				$("#"+msgdisplayfield).text("Request failed: "+textStatus+" "+ xhr.responseText);
+				$("#"+msgdisplayfield).text("Request failed: "+textStatus+"- "+ xhr.status);
 				otpVerified =false;
 			});
+			request.always(function(xhr){
+				$("#"+verifybutton).html("Verify Code");
+				$("#"+verifybutton).prop("disabled", false);
+			});
+			
 			
 			return otpVerified;
 }
@@ -1128,7 +1205,7 @@ $(document).ready(function() {
 
 
 function validatesubmittedpan(mobile, pan){
-	let status=false;
+	let panunique=false;
 	var jsonObjects = JSON.stringify({
 		search : 'pan',
 		mobile : mobile,
@@ -1156,8 +1233,9 @@ function validatesubmittedpan(mobile, pan){
 
 	request.done(function(data, textStatus, xhr) {
 		console.log("Response received- "+ JSON.stringify(data));
-		if (data.status == '0'){
-			status = true;
+		if (data.status == "0"){
+			console.log("PAN UNIQUE FOUND")
+			panunique = true;
 		} else {
 			showerrormsg('mandateField', data.msg);
 		}
@@ -1168,8 +1246,10 @@ function validatesubmittedpan(mobile, pan){
 		showerrormsg('mandateField','Failed to validate PAN');
 	});
 	
-	return status;
+	console.log ("Returning valid- "+ panunique)
+	return panunique;
 }
+
 
 
 

@@ -124,7 +124,7 @@ public class UserBankDetails implements Serializable  {
 	}
 
 	public void setIfscCode(String ifscCode) {
-		this.ifscCode = ifscCode;
+		this.ifscCode = ifscCode.toUpperCase();
 	}
 
 	public String getBankName() {

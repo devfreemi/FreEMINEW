@@ -26,6 +26,7 @@
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
 <link href="<c:url value="${contextcdn}/resources/css/bseinvestv2.css"/>" rel="preload" as="style" onload="this.rel='stylesheet'">
+<link href="<c:url value="${contextcdn}/resources/css/bseinvestmentformv2.css"/>" rel="stylesheet">
 <link
 	href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css"
 	rel="stylesheet" />
@@ -95,6 +96,13 @@ $(document).ready(function() {
 		}
 	});
 	 */
+	 $('#bankName').select2({
+			placeholder : {
+				id : '-1', // the value of the option
+				text : 'Select Bank'
+			}
+		});
+	 
 	$('#countryOfBirth').select2({
 		placeholder : {
 			id : '-1', // the value of the option

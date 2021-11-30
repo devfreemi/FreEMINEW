@@ -23,7 +23,7 @@
 				<div class="modal-body">
 					<div>
 						<div>
-							<span style="font-size: 11px; color: red" id="error1"></span>
+							<small class="text-danger" id="error1">${error1}</small>
 						</div>
 						<form:hidden path="schemeCode" id="schemecode" />
 						<form:hidden path="reinvSchemeCode" id="reinvSchemeCode" />
@@ -83,7 +83,7 @@
 					<div class="md-form mb-3">
 							 <img class="img-fluid prefix lazy" style="height: 2rem;" data-src="<c:url value="${contextcdn}/resources/images/invest/fund_mobile.svg"/>" ><form:input type="text" class="form-control form-control-sm"
 							id="mobile" path="mobile" style="height: 2rem;"
-							required="required" placeholder="10-digit mobile number"
+					  placeholder="10-digit mobile number"
 							maxlength="10" pattern="[0-9]*" /> 
 						</div>
 					

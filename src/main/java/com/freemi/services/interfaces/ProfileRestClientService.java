@@ -1,5 +1,7 @@
 package com.freemi.services.interfaces;
 
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -48,11 +50,16 @@ public interface ProfileRestClientService {
 	
 	public ResponseEntity<String> isUserExisitng(String mobile) throws JsonProcessingException;
 	
+	public ResponseEntity<String> isEmailExisitng(String email) throws JsonProcessingException;
+	public ResponseEntity<String> isEmailExisitngforothers(String mobile, String email) throws JsonProcessingException;
+	
 	public String isPanExisitngForOthers(String mobile, String pan);
 	
 	public ResponseEntity<String> validateUserToken(String userid, String token,String requestingIp);
 	
 	public ResponseEntity<String> linkmfaccountDetails(String mobile, String pan,String bseclientId);
+	
+	public ResponseEntity<String> updateprofiledetails(UserProfile profiledetails);
 	
 	
 

@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.AssertFalse;
 
 import org.hibernate.annotations.Proxy;
 import org.hibernate.validator.constraints.NotBlank;
@@ -37,6 +38,7 @@ public class MFFatcaDeclareForm implements Serializable {
 	private String clientID;
 	
 	@Transient
+	@AssertFalse(message = "Sorry, we are currently registering Indian residents only.")
 	private boolean usCitizenshipCheck;
 	
 	@Column(name="US_CITIZEN")
@@ -55,7 +57,7 @@ public class MFFatcaDeclareForm implements Serializable {
 	private String dataSource="E";
 	
 	@Column(name="ADDRESS_TYPE")
-	private String addressType="2";
+	private String addressType="1";
 	
 	@Column(name="PLACE_OF_BIRTH")
 	@NotBlank(message="Please mention your place of birth")
@@ -105,6 +107,9 @@ public class MFFatcaDeclareForm implements Serializable {
 	
 	@Column(name="UBO_APPLICABLE")
 	private String uboApplicable="N";
+	
+	@Column(name="UBO_DF")
+	private String ubodf;
 	
 	@Column(name="NEW_UPDATE_INDICATOR")
 	private String newUpdateIndicator="N";
@@ -272,6 +277,12 @@ public class MFFatcaDeclareForm implements Serializable {
 	}
 	public void setUboApplicable(String uboApplicable) {
 		this.uboApplicable = uboApplicable;
+	}
+	public String getUbodf() {
+		return ubodf;
+	}
+	public void setUbodf(String ubodf) {
+		this.ubodf = ubodf;
 	}
 	public String getNewUpdateIndicator() {
 		return newUpdateIndicator;

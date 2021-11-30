@@ -17,6 +17,8 @@ public class Otpform implements Serializable{
 	@NotNull(message = "Key data is empty.") @NotEmpty(message="Key data is empty")
 	private String key;
 	
+	private String key2;
+	
 	@NotNull(message = "Keytype is empty.") @NotEmpty(message="Keytype is empty")
 	@Pattern(regexp = "M|E", message = "Invalid validation category provided")
 	private String keytype;
@@ -30,13 +32,21 @@ public class Otpform implements Serializable{
 	private String submodule;
 	
 	private String otp;
-
+	
 	public String getKey() {
 		return key;
 	}
 
 	public void setKey(String key) {
 		this.key = key;
+	}
+	
+	public String getKey2() {
+		return key2;
+	}
+
+	public void setKey2(String key2) {
+		this.key2 = key2;
 	}
 
 	public String getKeytype() {

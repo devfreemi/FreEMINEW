@@ -1,6 +1,7 @@
 package com.freemi.entity.general;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -50,6 +51,8 @@ public class Registerform implements Serializable {
 	
 	@JsonIgnore
 	private String sessionid;
+	
+	private Map<String, String> otherfields;
 	
 	public String getFullName() {
 	    return fullName;
@@ -139,6 +142,12 @@ public class Registerform implements Serializable {
 	}
 	public static long getSerialversionuid() {
 	    return serialVersionUID;
+	}
+	public Map<String, String> getOtherfields() {
+		return otherfields;
+	}
+	public void setOtherfields(Map<String, String> otherfields) {
+		this.otherfields = otherfields;
 	}
 	
 	

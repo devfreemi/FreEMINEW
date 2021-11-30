@@ -172,55 +172,38 @@ public class BseBeansMapper {
 		fatcaForm.setCO_BIR_INC(registrationForm.getFatcaDetails().getCountryOfBirth());
 
 		//		Fixed to INDIA
-		fatcaForm.setTAX_RES1("IN");
+//		fatcaForm.setTAX_RES1("IN");
+		fatcaForm.setTAX_RES1(registrationForm.getFatcaDetails().getResidenceCountry1());
 		fatcaForm.setTPIN1(registrationForm.getPan1());
 		fatcaForm.setID1_TYPE(registrationForm.getFatcaDetails().getIdentificationDocType());
 		fatcaForm.setSRCE_WEALT(registrationForm.getFatcaDetails().getWealthSource());
 		fatcaForm.setINC_SLAB(registrationForm.getFatcaDetails().getIncomeSlab());
-
+		
+		
 		try{
 			fatcaForm.setNET_WORTH(registrationForm.getFatcaDetails().getNetWordth()!=null?Double.toString(registrationForm.getFatcaDetails().getNetWordth()):"");
 		}catch(Exception e){
 			logger.error("InvestmentFormToBseFATCABeans(): Unable to convert net worth data.");
 		}
-		try {
-			if(registrationForm.getFatcaDetails().getDateOfNetworth()!=null){
-				Date date1 = simpleDateFormat1.parse(registrationForm.getInvDOB());
-				String bseFormatDob = simpleDateFormat3.format(date1);
-				fatcaForm.setNW_DATE(bseFormatDob);
-			}
-		} catch (ParseException e) {
-			logger.error("InvestmentFormToBseFATCABeans(): failed to convert Networth date: ",e);
+		if(registrationForm.getFatcaDetails().getDateOfNetworth()!=null){
+			String bseFormatDob = simpleDateFormat3.format(new Date());
+			fatcaForm.setNW_DATE(bseFormatDob);
 		}
-
+	
 		fatcaForm.setPEP_FLAG(registrationForm.getFatcaDetails().getPoliticalExposedPerson());
-		fatcaForm.setOCC_CODE(registrationForm.getOccupation());
+		fatcaForm.setOCC_CODE(registrationForm.getFatcaDetails().getOccupationCode());
 		//	fatcaForm.setOCC_TYPE(registrationForm.getFatcaDetails().getOccupationType());
-
-		List<String> servicelist = new ArrayList<String>();
-		servicelist.add("02");
-		servicelist.add("03");
-		servicelist.add("04");
-		servicelist.add("09");
-		servicelist.add("41");
-		servicelist.add("42");
-		servicelist.add("44");
-
-		if(registrationForm.getOccupation().equals("01") || registrationForm.getOccupation().equals("43")) {
-			fatcaForm.setOCC_TYPE("B");
-		}else if(servicelist.contains(registrationForm.getOccupation())) {
-			fatcaForm.setOCC_TYPE("S");
-		}else {
-			fatcaForm.setOCC_TYPE("O");
-		}
+		
+		fatcaForm.setOCC_TYPE(registrationForm.getFatcaDetails().getOccupationType());
+		
 
 		fatcaForm.setEXCH_NAME(registrationForm.getFatcaDetails().getExchangeName());
 
 		fatcaForm.setUBO_APPL(registrationForm.getFatcaDetails().getUboApplicable());
-		fatcaForm.setUBO_DF("N");
+		fatcaForm.setUBO_DF(registrationForm.getFatcaDetails().getUbodf());
 
 		fatcaForm.setNEW_CHANGE(registrationForm.getFatcaDetails().getNewUpdateIndicator());
-		fatcaForm.setLOG_NAME(registrationForm.getPan1());
+		fatcaForm.setLOG_NAME(registrationForm.getFatcaDetails().getLogName());
 
 
 		return  fatcaForm;

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -46,7 +47,7 @@ public class ErrorHandlers implements ErrorController{
 	@RequestMapping("/error")
     public String handleError(Model map, HttpServletRequest request) {
 		Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
-		logger.error("Error received http code- "+ status);
+		logger.error("Error received http code- "+ status + " from page- "+ request.getHeader("Referer"));
 //		logger.error("Error reason: "+ request.getAttribute(RequestDispatcher.ERROR_MESSAGE) + " --> "+request.getAttribute(RequestDispatcher.ERROR_EXCEPTION_TYPE) + " --> "+ request.getAttribute(RequestDispatcher.ERROR_EXCEPTION));
 		
 			ServletWebRequest servletWebRequest = new ServletWebRequest(request);

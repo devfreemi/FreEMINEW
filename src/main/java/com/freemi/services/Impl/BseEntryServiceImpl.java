@@ -277,7 +277,8 @@ public class BseEntryServiceImpl implements BseEntryManager {
     				logger.error("saveCustomerDetails(): failed to convert date. Leaving date to default format. ",e);
 
     			}
-
+    			updatecommonfield(customerForm,null);
+    			
     			bseCustomerCrudRespository.saveAndFlush(customerForm);
     			//		bseCustomerCrudRespository.flush();
     			registerCustomerToBse = true;
@@ -912,38 +913,38 @@ public class BseEntryServiceImpl implements BseEntryManager {
 
     @Override
     public List<BsemfTransactionHistory> getAllPurchaseHistory(String clientId) {
-	logger.info("Get purchase history from DB");
-	List<BsemfTransactionHistory> getAllOrders = null;
+    	logger.info("Get purchase history from DB");
+    	List<BsemfTransactionHistory> getAllOrders = null;
 
-	try{
-	    //				if(bseCustomerCrudRespository.existsByMobile(mobileNumber)){
-	    //				getAllOrders=bseOrderEntryResponseRepository.findAllByClientCode(clientId);
-	    getAllOrders = bseTransHistoryViewCrudRepository.findAllByClienId(clientId);
-	    logger.info("Total purchase history found for custmer- "+ clientId + " : "+ getAllOrders.size());
+    	try{
+    		//				if(bseCustomerCrudRespository.existsByMobile(mobileNumber)){
+    		//				getAllOrders=bseOrderEntryResponseRepository.findAllByClientCode(clientId);
+    		getAllOrders = bseTransHistoryViewCrudRepository.findAllByClienId(clientId);
+    		logger.info("Total purchase history found for custmer- "+ clientId + " : "+ getAllOrders.size());
 
-	}catch(Exception e){
-	    logger.error("Failed to query database to get customer AOF upload status and upload", e);
-	}
-	return getAllOrders;
+    	}catch(Exception e){
+    		logger.error("Failed to query database to get customer AOF upload status and upload", e);
+    	}
+    	return getAllOrders;
     }
 
     @Override
     public List<BseMFTop15lsSip> getTopFunds() {
 
-	return bseTop15lsSipViewCrudReositry.findAll();
+    	return bseTop15lsSipViewCrudReositry.findAll();
     }
 
     @Override
     public UserBankDetails getCustomerBankDetails(String clientCode) {
 
-	UserBankDetails bank = null;
-	try{
-	    bank= bseCustomerBankDetailsCrudRespository.findOneByClientID(clientCode);
-	}catch(Exception e){
-	    logger.error("Failed to query database to fetch customer bank details",e);
-	}
+    	UserBankDetails bank = null;
+    	try{
+    		bank= bseCustomerBankDetailsCrudRespository.findOneByClientID(clientCode);
+    	}catch(Exception e){
+    		logger.error("Failed to query database to fetch customer bank details",e);
+    	}
 
-	return bank;
+    	return bank;
     }
 
     @Override
@@ -1400,8 +1401,85 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	//		toupdateForm.setPan1verified(customerForm);
 	//		toupdateForm.setPan2verified(customerForm);
 	//		toupdateForm.setPan1KycVerified(customerForm);
+	
+//	FATCA DECLARATION
+	
+	/*
+	List<String> occupationservicelist = new ArrayList<String>();
+	occupationservicelist.add("02");
+	occupationservicelist.add("03");
+	occupationservicelist.add("04");
+	occupationservicelist.add("09");
+	occupationservicelist.add("41");
+	occupationservicelist.add("42");
+	occupationservicelist.add("44");
+
+	if(customerForm.getOccupation().equals("01") || customerForm.getOccupation().equals("43")) {
+//		fatcaForm.setOCC_TYPE("B");
+		toupdateForm.getFatcaDetails().setOccupationType("B"); // Business
+	}else if(occupationservicelist.contains(customerForm.getOccupation())) {
+//		fatcaForm.setOCC_TYPE("S");
+		toupdateForm.getFatcaDetails().setOccupationType("S"); // Service
+	}else {
+//		fatcaForm.setOCC_TYPE("O");
+		toupdateForm.getFatcaDetails().setOccupationType("O"); // Others
+	}
+
+	toupdateForm.getFatcaDetails().setUboApplicable("N");
+	toupdateForm.getFatcaDetails().setUbodf("N"); 	// For individual
+	*/
+	updatecommonfield(toupdateForm,null);
+	
 	toupdateForm.setLastModifiedDate(new Date());
 	return toupdateForm;
+    }
+    
+    
+    private MFCustomers updatecommonfield(MFCustomers mfcustomer, String dateformat) {
+    	
+//    	FATCA DECLARATION
+    	
+    	SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy-mm-dd");
+		//	SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat(dateformat!=null?dateformat:"dd/mm/yyyy");
+		SimpleDateFormat simpleDateFormat3 = new SimpleDateFormat(dateformat!=null?dateformat:"mm/dd/yyyy");
+    	
+    	List<String> occupationservicelist = new ArrayList<String>();
+    	occupationservicelist.add("02");
+    	occupationservicelist.add("03");
+    	occupationservicelist.add("04");
+    	occupationservicelist.add("09");
+    	occupationservicelist.add("41");
+    	occupationservicelist.add("42");
+    	occupationservicelist.add("44");
+    	
+    	mfcustomer.getFatcaDetails().setTaxStatus(mfcustomer.getTaxStatus());
+    	
+    	if(mfcustomer.getOccupation().equals("01") || mfcustomer.getOccupation().equals("43")) {
+//    		fatcaForm.setOCC_TYPE("B");
+    		mfcustomer.getFatcaDetails().setOccupationType("B"); // Business
+    	}else if(occupationservicelist.contains(mfcustomer.getOccupation())) {
+//    		fatcaForm.setOCC_TYPE("S");
+    		mfcustomer.getFatcaDetails().setOccupationType("S"); // Service
+    	}else {
+//    		fatcaForm.setOCC_TYPE("O");
+    		mfcustomer.getFatcaDetails().setOccupationType("O"); // Others
+    	}
+    	mfcustomer.getFatcaDetails().setOccupationCode(mfcustomer.getOccupation());
+    	mfcustomer.getFatcaDetails().setUboApplicable("N");
+    	mfcustomer.getFatcaDetails().setUbodf("N"); 	// For individual
+    	
+  		mfcustomer.getFatcaDetails().setUscanadaCitizen(mfcustomer.getFatcaDetails().isUsCitizenshipCheck()?"Y":"N");
+    	
+  		mfcustomer.getFatcaDetails().setNetWordth(null);
+  		/*
+  		if(mfcustomer.getFatcaDetails().getDateOfNetworth()!=null){
+			String bseFormatDob = simpleDateFormat3.format(new Date());
+		}
+  		*/
+  		mfcustomer.getFatcaDetails().setLogName(mfcustomer.getPan1());
+  		
+    	
+    	return mfcustomer;
     }
 
     @Override
@@ -1668,6 +1746,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
     				flag1 = BseAOFGenerator.aofGenerator(investForm, fileName, logolocation, "VERIFIED", aoffolderLocation);
     				logger.info("uploadsign(): Signed AOF file generation complete for customer- " + mobileNumber + "->" +investForm.getPan1() + "-> "+ clientCode + " -> "+ flag1);
     				if(flag1.getFilegenerationstatus().equalsIgnoreCase("SUCCESS")) {
+    					flag1.setClientid(clientCode);
     					bseaofepository.save(flag1);
     				}
     			}
@@ -1799,7 +1878,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		
 		Datarquestresponse response = new Datarquestresponse();
 		try {
-		if( bseCustomerCrudRespository.existsByPan1(pan) || (profileRestClientService.isPanExisitngForOthers(mobile, pan).equals("Y") ) ) {
+		if( bseCustomerCrudRespository.existsByPan1AndMobileNot(pan,mobile) || (profileRestClientService.isPanExisitngForOthers(mobile, pan).equals("Y") ) ) {
 			response.setStatus("1");;
 			response.setMsg("Pan already registered with alternate account.");
 		}else {

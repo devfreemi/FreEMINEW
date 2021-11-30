@@ -3,24 +3,30 @@ package com.freemi.ui.controller.api;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpStatusCodeException;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freemi.common.util.CommonTask;
 import com.freemi.entity.general.ClientSystemDetails;
 import com.freemi.entity.general.Otpform;
 import com.freemi.entity.general.Otprequeststatus;
+import com.freemi.services.interfaces.BseEntryManager;
+import com.freemi.services.interfaces.ProfileRestClientService;
 import com.freemi.services.interfaces.Verifydetailsinterface;
 
 
@@ -37,6 +43,12 @@ public class VerifydetailsController {
 
 	private static final String ERROR_S = "1";
 
+	@Autowired
+	BseEntryManager bseentrymanager;
+
+	@Autowired
+	ProfileRestClientService profileRestClientService;
+
 	/*
 	@Autowired 
 	OTPInfoRepository otpInfoRepository;
@@ -49,7 +61,7 @@ public class VerifydetailsController {
 
 
 	@RequestMapping(value = "/sendotp", method = RequestMethod.POST)
-	public @ResponseBody Otprequeststatus sendOTP(@RequestBody @Valid Otpform otpform, BindingResult bindingResult, HttpServletRequest request) {
+	public @ResponseBody Otprequeststatus sendOTP(@RequestBody @Valid Otpform otpform, BindingResult bindingResult, HttpServletRequest request, HttpSession session) {
 		logger.info("POST "+ request.getRequestURI()+ " : start : sendOTP()");
 
 		Otprequeststatus requeststatus = new Otprequeststatus();
@@ -69,17 +81,48 @@ public class VerifydetailsController {
 				requeststatus.setStatuscode(ERROR_S);
 				requeststatus.setErrormsg("Email ID format not accepted.");
 			}else {
+
+				ResponseEntity<String> responseProfile = null;
+
 				ClientSystemDetails systemdetails = new ClientSystemDetails();
 				systemdetails = CommonTask.getClientSystemDetails(request);
-				
+
 				logger.info("Session ID- "+ request.getSession().getId());
 				if(otpform.getKeytype().equals("M")) {
 					logger.info("Process OTP for mobile category- "+ otpform.getKeytype());
-					
 					requeststatus = verifydetailsinterface.generatemobileotp(otpform,systemdetails, request.getSession().getId());
 				}else if(otpform.getKeytype().equals("E")) {
-					logger.info("Process OTP for email category- "+ otpform.getKeytype());
-					requeststatus = verifydetailsinterface.generateemailotp(otpform,systemdetails, request.getSession().getId());
+					if(otpform.getKey2()!=null && !otpform.getKey2().isEmpty()) {
+						logger.info("OTP requested for logged-in customer.");
+						
+						if(session.getAttribute("token")!=null && session.getAttribute("userid")!=null && session.getAttribute("userid").toString().equalsIgnoreCase(otpform.getKey2())) {
+							logger.info("Email ID validation for logged in customer customer");
+							responseProfile = profileRestClientService.isEmailExisitngforothers(otpform.getKey2(), otpform.getKey());
+						}else {
+							logger.info("Email ID validation for non-logged in customer customer");
+							responseProfile = profileRestClientService.isEmailExisitng(otpform.getKey());
+						}
+						
+						if(responseProfile!=null) {
+							logger.info("Checking if email ID is aready registered- " + responseProfile.getBody());
+							if(responseProfile.getBody().equalsIgnoreCase("N")) {
+								requeststatus = verifydetailsinterface.generateemailotp(otpform,systemdetails, request.getSession().getId());
+							}else if(responseProfile.getBody().equalsIgnoreCase("E")){
+								requeststatus.setStatuscode(ERROR_S);
+								requeststatus.setErrormsg("Error validating email ID. Please try after sometime.");
+							}else {
+								requeststatus.setStatuscode(ERROR_S);
+								requeststatus.setErrormsg("Email ID is already registered with another account.");
+							}
+						}else {
+							requeststatus.setStatuscode(ERROR_S);
+							requeststatus.setErrormsg("Failed to validate email ID. Please try after sometime.");
+						}
+					}else {
+						requeststatus.setStatuscode(ERROR_S);
+						requeststatus.setErrormsg("Key parameters missing in request");
+					}
+
 				}else {
 					requeststatus.setStatuscode(ERROR_S);
 					requeststatus.setErrormsg("Validation category not recognized");
@@ -120,13 +163,13 @@ public class VerifydetailsController {
 				//			logger.info("session id =  "+ sessionId + "->" + mobileNum + " -> " + otp);
 				ClientSystemDetails systemdetails = new ClientSystemDetails();
 				systemdetails = CommonTask.getClientSystemDetails(request);
-				
+
 				if(otpCheckInfo.getKeytype().equals("M")) {
 
-				apiresponse = verifydetailsinterface.verifymobileotp(otpCheckInfo,systemdetails,request.getSession().getId());
+					apiresponse = verifydetailsinterface.verifymobileotp(otpCheckInfo,systemdetails,request.getSession().getId());
 				}else if(otpCheckInfo.getKeytype().equals("E")) {
 					logger.info("Process OTP for email category- "+ otpCheckInfo.getKeytype());
-					
+
 					apiresponse = verifydetailsinterface.verifyemailotp(otpCheckInfo,systemdetails,request.getSession().getId());
 				}else {
 					apiresponse.setStatuscode(ERROR_S);

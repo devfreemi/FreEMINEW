@@ -37,6 +37,7 @@ public class BseAOFGenerator {
 	public static BseAOFDocument aofGenerator(MFCustomers investForm,String fileName, String imageAbsPath, String kycStatus, String aofbasepath){
 		logger.info("Beginning process to generate AOF file - "+ (aofbasepath+fileName));
 		String flag = "SUCCESS";
+		kycStatus = "";	//
 		PdfWriter writer = null;
 		Document document = new Document(PageSize.A4);
 		BseAOFDocument aoffilestatus = new BseAOFDocument();

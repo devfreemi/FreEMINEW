@@ -285,12 +285,14 @@ public class MFCustomers implements Serializable {
 	@Column(name="SYSTEM_DETAILS")
 	private String systemDetails;
 	
-	@Transient
 	@JsonIgnore
+	@Column(name="MOBILE_VERIFIED")
+	@Pattern(regexp = "Y", message = "Mobile no is not verified")
 	private String mobileverified="N";
 	
-	@Transient
 	@JsonIgnore
+	@Column(name = "EMAIL_VERIFIED")
+	@Pattern(regexp = "Y", message = "Email ID is not verified")
 	private String emailverified="N";
 	
 	@Valid

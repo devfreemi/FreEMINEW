@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -323,6 +324,24 @@ public class RestClientLdapImpl implements ProfileRestClientService {
 		return restTemplate.postForEntity(url, entity,  String.class);
 	}
 
+
+	@Override
+	public ResponseEntity<String> isEmailExisitng(String email) throws JsonProcessingException {
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_PROFILE) + "/checkEmailExist";
+		RestTemplate restTemplate = new RestTemplate();
+		ObjectMapper mapper = new ObjectMapper();
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", ANONYMOUS_TOKEN);
+		headers.set("content-Type", MediaType.APPLICATION_JSON_VALUE);
+		HashMap<String, String> paramdata = new HashMap<String, String>();
+		paramdata.put("email", email);
+		logger.info("Calling URL- "+ url);
+		HttpEntity<String> entity = new HttpEntity<String>(mapper.writeValueAsString(paramdata),headers);
+		return restTemplate.postForEntity(url, entity,  String.class);
+	}
+
+	
+	
 	@Override
 	public ResponseEntity<String> validateUserToken(String userid, String token, String requestingIp) {
 		logger.info("Validate user session token - "+ token);
@@ -395,6 +414,47 @@ public class RestClientLdapImpl implements ProfileRestClientService {
 	    }
 	    
 	    return response;
+	}
+
+	@Override
+	public ResponseEntity<String> isEmailExisitngforothers(String mobile, String email) throws JsonProcessingException {
+		logger.info("Request received to link PAN to registered account with mobile no- "+ mobile);
+		ResponseEntity<String> response = null;
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_PROFILE) + "/check-email-exist-for-others";
+		RestTemplate restTemplate = new RestTemplate();
+		JsonObject form = new  JsonObject();
+		form.addProperty("mobile", mobile);
+		form.addProperty("email", email);
+
+		HttpHeaders headers = new HttpHeaders();	
+		headers.set("authorization", ANONYMOUS_TOKEN);
+		HttpEntity<String> entity = new HttpEntity<String>(form.toString(),headers);
+		logger.info("Calling url- "+ url);
+		response= restTemplate.postForEntity(url, entity,  String.class);
+		logger.info("Email ID exist for others"+ response.getBody());
+		return response;
+	}
+
+	@Override
+	public ResponseEntity<String> updateprofiledetails(UserProfile profileData) {
+		logger.info("Request received to update profile details for mobile no (general) - "+ profileData.getMobile());
+		
+		ResponseEntity<String> response = null;
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_PROFILE) + "/update-profile-details";
+		try {
+			RestTemplate restTemplate = new RestTemplate();
+			ObjectMapper mapper = new ObjectMapper();
+			HttpHeaders headers = new HttpHeaders();	
+			headers.set("authorization", ANONYMOUS_TOKEN);
+			HttpEntity<String> entity = new HttpEntity<String>(mapper.writeValueAsString(profileData),headers);
+			logger.info("Calling url- "+ url);
+			response= restTemplate.postForEntity(url, entity,  String.class);
+			logger.info("Updating profile with details- "+ response.getBody());
+		}catch(Exception e) {
+			logger.error("Error updating PAN to LDAP account ",e);
+		}
+		
+		return response;
 	}
 
 

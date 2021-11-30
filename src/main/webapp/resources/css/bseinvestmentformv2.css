@@ -1,0 +1,30 @@
+
+/* Mark input boxes that gets an error on validation: */
+input.invalid {
+	/* background-color: #ffdddd; */
+	border-left: 2px solid red;
+}
+
+input.valid {
+	/* background-color: #ffdddd; */
+	border-left: 2px solid green;
+}
+
+.label_design {
+	font-weight: 500;
+	color: #283b94;
+	font-size: 14px;
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
+.label_design1 {
+	font-weight: normal;
+	color: black;
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
+.label_design::after {
+	content: " :"
+}

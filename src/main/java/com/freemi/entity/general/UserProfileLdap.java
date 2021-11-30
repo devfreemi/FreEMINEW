@@ -23,7 +23,9 @@ public class UserProfileLdap {
 	private String state;
 	private String pincode;
 	private String landmark;
-	
+	private String mobilenovalidated;
+	private String emailidvalidated;
+	private String panidvalidated;
 	private String userPassword;
 
 	public String getUid() {
@@ -188,6 +190,30 @@ public class UserProfileLdap {
 
 	public String getUserPassword() {
 		return userPassword;
+	}
+	
+	public String getMobilenovalidated() {
+		return mobilenovalidated;
+	}
+
+	public void setMobilenovalidated(String mobilenovalidated) {
+		this.mobilenovalidated = mobilenovalidated;
+	}
+
+	public String getEmailidvalidated() {
+		return emailidvalidated;
+	}
+
+	public void setEmailidvalidated(String emailidvalidated) {
+		this.emailidvalidated = emailidvalidated;
+	}
+
+	public String getPanidvalidated() {
+		return panidvalidated;
+	}
+
+	public void setPanidvalidated(String panidvalidated) {
+		this.panidvalidated = panidvalidated;
 	}
 
 	public void setUserPassword(String userPassword) {

@@ -79,20 +79,6 @@
 				<div class="form-row mb-3">
 					<div class="col-md-4 col-lg-4">
 						<div class="md-form md-outline form-sm mt-0">
-							<form:input type="email" class="buttonInside form-control"
-								maxlength="128" id="email" path="email" required="required"
-								readonly="${LOGGED =='Y' ? 'true' : 'false' }" />
-							<label for="email">Email ID <sup class="text-danger">*</sup></label>
-							<span class="border-0 verifybtn" id="verifyemail"
-								data-mdb-toggle="tooltip" data-mdb-placement="top"
-								title="Click to send OTP"><i id="emailverifyimg"
-								class="fas ${mfInvestForm.emailverified =='Y' ? 'fa-user-check text-success' : 'fa-exclamation-circle text-danger' }"
-								style="margin-top: 10px;"></i></span>
-						</div>
-					</div>
-
-					<div class="col-md-4 col-lg-4">
-						<div class="md-form md-outline form-sm mt-0">
 							<form:input type="text" class="buttonInside form-control"
 								minlength="10" maxlength="10" pattern="[0-9]*" id="mobile"
 								path="mobile" required="required"
@@ -105,6 +91,20 @@
 								style="margin-top: 10px;"></i>
 
 							</span>
+						</div>
+					</div>
+					
+					<div class="col-md-4 col-lg-4">
+						<div class="md-form md-outline form-sm mt-0">
+							<form:input type="email" class="buttonInside form-control"
+								maxlength="128" id="email" path="email" required="required"
+								readonly="${LOGGED =='Y' ? 'true' : 'false' }" />
+							<label for="email">Email ID <sup class="text-danger">*</sup></label>
+							<span class="border-0 verifybtn" id="verifyemail"
+								data-mdb-toggle="tooltip" data-mdb-placement="top"
+								title="Click to send OTP"><i id="emailverifyimg"
+								class="fas ${mfInvestForm.emailverified =='Y' ? 'fa-user-check text-success' : 'fa-exclamation-circle text-danger' }"
+								style="margin-top: 10px;"></i></span>
 						</div>
 					</div>
 
@@ -299,6 +299,37 @@
 						</div>
 					</div>
 				</div>
+				
+				
+				<div class="form-row mb-3">
+
+					<div class="col-md-6 col-lg-6 mb-4">
+						<p class="mb-0" style="font-size: .9rem;">
+							Nominee Minor? <sup class="text-danger">*</sup>
+						</p>
+						<div class="form-check form-check-inline">
+							<form:radiobutton class="form-check-input" path="nominee.isNomineeMinor"
+								id="isNomineeMinorn" value="N" />
+							<label class="form-check-label" for=isNomineeMinorn>No</label>
+						</div>
+
+						<div class="form-check form-check-inline">
+							<form:radiobutton class="form-check-input" path="nominee.isNomineeMinor"
+								id="isNomineeMinory" value="Y" />
+							<label class="form-check-label" for="isNomineeMinory">Yes</label>
+						</div>
+					</div>
+
+
+					<div class="col-md-6 col-lg-6">
+						<div class="md-form md-outline form-sm mt-0">
+							<form:input type="text" class="form-control" id="nomineeguardian" maxlength="64"
+								path="nominee.nomineeGuardian" />
+								<label for="nomineeName">Nominee Gurdian</label>
+						</div>
+					</div>
+				</div>
+				
 
 
 			</div>
@@ -501,12 +532,12 @@
 					</div>
 
 					<div class="row gap_custom">
-						<div class="col-md-6">
+						<!-- <div class="col-md-6">
 							<label class="col-5 col-md-5 col-form-label label_design">KYC
 								Verified? </label> <label
 								class="col-6 col-md-6 col-form-label label_design1"><span
 								id="pan1kycverifyDisplay"></span></label>
-						</div>
+						</div> -->
 						<div class="col-md-6">
 							<label class="col-5 col-md-5 col-form-label label_design">Occupation
 							</label> <label class="col-6 col-md-6 col-form-label label_design1"><span
@@ -790,11 +821,11 @@
 					</div>
 
 					<div class="row gap_custom">
-						<div class="col-md-6">
+						<!-- <div class="col-md-6">
 							<label class="col-5 col-md-5 col-form-label label_design">Occupation
 								Type</label> <label class="col-6 col-md-6 col-form-label label_design1"><span
 								id="occupationtypedisplay"></span></label>
-						</div>
+						</div> -->
 						<div class="col-md-6">
 							<label class="col-5 col-md-5 col-form-label label_design">Political
 								View </label> <label class="col-6 col-md-6 col-form-label label_design1"><span
@@ -805,7 +836,7 @@
 					<div class="row gap_custom">
 						<div class="col-md-6">
 							<label class="col-5 col-md-5 col-form-label label_design">1<sup>st</sup>
-								Applicant sign
+								Applicant
 							</label>
 							<div class="col-6 col-md-6 col-form-label label_design1">
 								<!-- <span
@@ -814,11 +845,13 @@
 									<img src="" class="img-fluid" id="sign1display"
 										alt="Signature Image">
 									<figcaption class="text-muted">
-										1<sup>st</sup> Applicant
+										Applicant Signature
 									</figcaption>
 								</figure>
 							</div>
 						</div>
+						
+						<%-- 
 						<div
 							class="col-md-6 ${mfInvestForm.holdingMode == 'SI' ? 'd-none' : '' }"
 							id="sign2-display">
@@ -826,8 +859,6 @@
 								Applicant sign
 							</label>
 							<div class="col-6 col-md-6 col-form-label label_design1">
-								<!-- <span
-						id="sign2display"></span> -->
 								<figure>
 									<img src="" class="img-fluid" id="sign2display"
 										alt="Signature Image">
@@ -836,7 +867,8 @@
 									</figcaption>
 								</figure>
 							</div>
-						</div>
+						</div> --%>
+						
 					</div>
 
 					<!-- FATCA Declaration  -->

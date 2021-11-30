@@ -1,3 +1,4 @@
+console.log = function() {}
 var signapplicant="sign1";
 var signature1="";
 var signature2="";

@@ -26,6 +26,7 @@ public interface BseCustomerCrudRespository extends JpaRepository<MFCustomers, L
 	public boolean existsByMobileAndAccountActive(String mobile,String status);
 	
 	public boolean existsByPan1(String pan);
+	public boolean existsByPan1AndMobileNot(String pan,String mobile);
 	
 //	public boolean existsByPan1AndAccountActive(String pan,String activeStatus);
 	
@@ -56,8 +57,9 @@ public interface BseCustomerCrudRespository extends JpaRepository<MFCustomers, L
 	
 //	@Query("select c.bseregistrationSuccess, c.aofuploadComplete from BseMFInvestForm c where c.mobile= :mobile and c.accountActive = 'Y'")
 	
-	@Query(value = "select c.BSE_REGISTRATION_SUCCESS, c.RESGISTRATION_RESPONSE,f.FATCA_DECLARE_UPLOAD_COMPLETE, f.UPLOAD_RESPONSE, c.AOF_UPLOAD_COMPLETE, c.AOF_UPLOAD_RESPONSE from bsemf_customers c, bsemf_customers_fatca_declaration f WHERE c.CLIENT_ID=f.CLIENT_ID and c.MOBILE_NO=:mobile and c.ACCOUNT_ACTIVE = 'Y';",nativeQuery = true)
+//	@Query(value = "select c.BSE_REGISTRATION_SUCCESS, c.RESGISTRATION_RESPONSE,f.FATCA_DECLARE_UPLOAD_COMPLETE, f.UPLOAD_RESPONSE, c.AOF_UPLOAD_COMPLETE, c.AOF_UPLOAD_RESPONSE from bsemf_customers c, bsemf_customers_fatca_declaration f WHERE c.CLIENT_ID=f.CLIENT_ID and c.MOBILE_NO=:mobile and c.ACCOUNT_ACTIVE = 'Y';",nativeQuery = true)
 //	public List<Object[]> getBseRegistrationAOFStatus(@Param("mobile") String mobile);
+	@Query(value = "select c.BSE_REGISTRATION_SUCCESS, c.RESGISTRATION_RESPONSE, COALESCE(f.FATCA_DECLARE_UPLOAD_COMPLETE,'0') AS 'FATCA_DECLARE_UPLOAD_COMPLETE', COALESCE(f.UPLOAD_RESPONSE, 'Not yet submitted') AS 'UPLOAD_RESPONSE', c.AOF_UPLOAD_COMPLETE, c.AOF_UPLOAD_RESPONSE from bsemf_customers c LEFT JOIN bsemf_customers_fatca_declaration f on c.CLIENT_ID=f.CLIENT_ID where c.MOBILE_NO=:mobile and c.ACCOUNT_ACTIVE = 'Y';", nativeQuery = true)
 	public String getBseRegistrationAOFStatus(@Param("mobile") String mobile);
 	
 	@Transactional
