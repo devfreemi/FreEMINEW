@@ -23,6 +23,7 @@ import com.freemi.entity.bse.BseOrderPaymentRequest;
 import com.freemi.entity.bse.BseOrderPaymentResponse;
 import com.freemi.entity.database.MfTopFundsInventory;
 import com.freemi.entity.database.UserBankDetails;
+import com.freemi.entity.general.ClientSystemDetails;
 import com.freemi.entity.general.Datarquestresponse;
 import com.freemi.entity.general.HttpClientResponse;
 import com.freemi.entity.general.UserProfile;
@@ -33,6 +34,7 @@ import com.freemi.entity.investment.BseMFSelectedFunds;
 import com.freemi.entity.investment.BseMFTop15lsSip;
 import com.freemi.entity.investment.BseMandateDetails;
 import com.freemi.entity.investment.BsemfTransactionHistory;
+import com.freemi.entity.investment.Bseregistrationstatus;
 import com.freemi.entity.investment.MFCamsFolio;
 import com.freemi.entity.investment.MFCamsValueByCategroy;
 import com.freemi.entity.investment.MFCustomers;
@@ -57,7 +59,7 @@ public class BseRestClient implements BseEntryManager {
     
     @Override
     public BseApiResponse saveCustomerDetails(MFCustomers customerForm, String customerType, String customerlogged,
-	    String initiatedmobileid) {
+	    String initiatedmobileid, ClientSystemDetails systemdetails) {
 	final String url = env.getProperty(CommonConstants.URL_SERVICE_MF_BSE) + "/api/transaction/capture-registration-request";
 	logger.info(url);
 	RestTemplate restTemplate = new RestTemplate();
@@ -87,7 +89,7 @@ public class BseRestClient implements BseEntryManager {
     }
 
     @Override
-    public /*BseApiResponse*/ BseApiResponse saveFatcaDetails(MFCustomers fatcaForm, String flag1, String dateformat,String clientcode) {
+    public /*BseApiResponse*/ BseApiResponse saveFatcaDetails(MFCustomers fatcaForm, String flag1, String dateformat,String clientcode,ClientSystemDetails systemdetails) {
 	final String url = env.getProperty(CommonConstants.URL_SERVICE_MF_BSE) + "/api/transaction/capture-fatca-registration";
 	logger.info(url);
 	RestTemplate restTemplate = new RestTemplate();
@@ -874,12 +876,6 @@ public class BseRestClient implements BseEntryManager {
 	return null;
     }
 
-	@Override
-	public Map<String, String> getbseregistrationstatus(String mobile, String pan, String customeruniqid,
-			String clientcode) {
-		
-		return null;
-	}
 
 	@Override
 	public Datarquestresponse checkifkeyregistered(String mobile, String pan, String searchtype, String filter1) {
@@ -889,6 +885,20 @@ public class BseRestClient implements BseEntryManager {
 
 	@Override
 	public HttpClientResponse completemfregistration(String mobile) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public BseApiResponse updateCustomerDetails(MFCustomers customerForm, String customerType, String customerlogged,
+			String initiatedmobileid, ClientSystemDetails systemdetails) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Bseregistrationstatus getbseregistrationstatus(String mobile, String pan, String customeruniqid,
+			String clientcode) {
 		// TODO Auto-generated method stub
 		return null;
 	}

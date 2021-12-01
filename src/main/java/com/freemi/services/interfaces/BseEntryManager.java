@@ -2,7 +2,6 @@ package com.freemi.services.interfaces;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +12,7 @@ import com.freemi.entity.bse.BseOrderPaymentRequest;
 import com.freemi.entity.bse.BseOrderPaymentResponse;
 import com.freemi.entity.database.MfTopFundsInventory;
 import com.freemi.entity.database.UserBankDetails;
+import com.freemi.entity.general.ClientSystemDetails;
 import com.freemi.entity.general.Datarquestresponse;
 import com.freemi.entity.general.HttpClientResponse;
 import com.freemi.entity.general.UserProfile;
@@ -22,6 +22,7 @@ import com.freemi.entity.investment.BseMFSelectedFunds;
 import com.freemi.entity.investment.BseMFTop15lsSip;
 import com.freemi.entity.investment.BseMandateDetails;
 import com.freemi.entity.investment.BsemfTransactionHistory;
+import com.freemi.entity.investment.Bseregistrationstatus;
 import com.freemi.entity.investment.MFCamsFolio;
 import com.freemi.entity.investment.MFCamsValueByCategroy;
 import com.freemi.entity.investment.MFCustomers;
@@ -36,8 +37,10 @@ import com.freemi.entity.investment.TransactionStatus;
 public interface BseEntryManager {
 	
 	//Customer records related crud operation
-	public BseApiResponse saveCustomerDetails(MFCustomers customerForm, String customerType, String customerlogged, String initiatedmobileid);
-	public BseApiResponse saveFatcaDetails(MFCustomers fatcaForm, String flag1, String dateformat, String clientcode);
+	public BseApiResponse saveCustomerDetails(MFCustomers customerForm, String customerType, String customerlogged, String initiatedmobileid,ClientSystemDetails systemdetails);
+	public BseApiResponse updateCustomerDetails(MFCustomers customerForm, String customerType, String customerlogged, String initiatedmobileid,ClientSystemDetails systemdetails);
+	
+	public BseApiResponse saveFatcaDetails(MFCustomers fatcaForm, String flag1, String dateformat, String clientcode,ClientSystemDetails systemdetails);
 	public String updateFatcaStatus(String clientId, String status, String responseCode, String message);
 	public HttpClientResponse completemfregistration(String mobile);
 	
@@ -55,7 +58,7 @@ public interface BseEntryManager {
 	public boolean updateCustomerBankDetails(UserProfile investorData);
 	public boolean updateCustomerAddress(UserProfile investorData);
 	public String investmentProfileStatus(String mobileNumber);
-	public Map<String, String> getbseregistrationstatus(String mobile, String pan, String customeruniqid, String clientcode);
+	public Bseregistrationstatus getbseregistrationstatus(String mobile, String pan, String customeruniqid, String clientcode);
 	
 	public List<BseMandateDetails> getCustomerMandateDetails(String clientId, String accountNumber);
 	

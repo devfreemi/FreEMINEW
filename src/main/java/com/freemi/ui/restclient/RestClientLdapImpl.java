@@ -428,6 +428,8 @@ public class RestClientLdapImpl implements ProfileRestClientService {
 
 		HttpHeaders headers = new HttpHeaders();	
 		headers.set("authorization", ANONYMOUS_TOKEN);
+		headers.set("content-Type", MediaType.APPLICATION_JSON_VALUE);
+		logger.info("Request data- "+ form.toString());
 		HttpEntity<String> entity = new HttpEntity<String>(form.toString(),headers);
 		logger.info("Calling url- "+ url);
 		response= restTemplate.postForEntity(url, entity,  String.class);
@@ -446,6 +448,7 @@ public class RestClientLdapImpl implements ProfileRestClientService {
 			ObjectMapper mapper = new ObjectMapper();
 			HttpHeaders headers = new HttpHeaders();	
 			headers.set("authorization", ANONYMOUS_TOKEN);
+			headers.set("content-Type", MediaType.APPLICATION_JSON_VALUE);
 			HttpEntity<String> entity = new HttpEntity<String>(mapper.writeValueAsString(profileData),headers);
 			logger.info("Calling url- "+ url);
 			response= restTemplate.postForEntity(url, entity,  String.class);

@@ -208,7 +208,7 @@ public class BseAOFGenerator {
 			try {
 				logger.info("Date of birth- "+ investForm.getCustomerdob() + " -> "+ investForm.getInvDOB());
 //				dobinFormat = baseFormat.format(investForm.getInvDOB());
-				dobinFormat = baseFormat2.format(investForm.getCustomerdob());
+				dobinFormat = baseFormat2.format(baseFormat2.parse(investForm.getCustomerdob()) );
 			}catch(Exception e) {
 				logger.error("AOF date format issue of DOB with format dd/mm/yyyy. ", e);
 				try {

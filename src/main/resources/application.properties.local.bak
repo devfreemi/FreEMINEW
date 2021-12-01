@@ -158,6 +158,6 @@ api.iccs.auth.token=Basic dXNlcmNjMjM6dmFsZGNjMzcx
 
 ############### HDFC SERVICES #######################
 
-#backend.service.hdfc.baseurl=http://localhost:8020/hdfcbackendservice
-backend.service.hdfc.baseurl=http://localhost:8111/hdfcbackendservice
+backend.service.hdfc.baseurl=http://localhost:8020/hdfcbackendservice
+#backend.service.hdfc.baseurl=http://localhost:8111/hdfcbackendservice
 backend.service.hdfc.test.enabled=N

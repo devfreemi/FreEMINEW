@@ -228,7 +228,7 @@ public class MobileApiServicesController {
 		investForm.setSystemip(systemDet.getClientIpv4Address());
 		investForm.setSystemDetails(systemDet.getClientBrowser());
 
-		bseregisterresponse = bseEntryManager.saveCustomerDetails(investForm,"NEW_CUSTOMER","Y", "NA" );
+		bseregisterresponse = bseEntryManager.saveCustomerDetails(investForm,"NEW_CUSTOMER","Y", "NA",systemDet );
 		if (bseregisterresponse.getResponseCode().equalsIgnoreCase(CommonConstants.TASK_SUCCESS_S)) {
 		    apiresponse.setStatusCode(Integer.toString(CommonConstants.TASK_FAILURE));
 		    apiresponse.setRemarks(bseregisterresponse.getRemarks());
@@ -261,7 +261,7 @@ public class MobileApiServicesController {
 		    logger.info("Pushing customer FATCA details to BSE");
 		    BseApiResponse fatresponse = null;
 
-		    fatresponse = bseEntryManager.saveFatcaDetails(investForm,null,null,null);
+		    fatresponse = bseEntryManager.saveFatcaDetails(investForm,null,null,null,systemDet);
 
 		    /*
 		    if(fatresponse.getResponseCode().equals("101") && fatresponse.getRemarks().contains("101|FAILED: INVALID DATE OF BIRTH FORMAT MM/DD/YYYY") ) {

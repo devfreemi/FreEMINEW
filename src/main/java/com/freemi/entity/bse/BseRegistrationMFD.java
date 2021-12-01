@@ -13,6 +13,7 @@ public class BseRegistrationMFD implements Serializable{
 	
 	private String ClientCode="";
 	
+	private String registrationtype="NEW";
 	private String ClientHolding="";
 	
 	private String ClientTaxstatu="";
@@ -299,6 +300,13 @@ public class BseRegistrationMFD implements Serializable{
 	}
 	public void setClientCode(String clientCode) {
 		ClientCode = clientCode;
+	}
+	
+	public String getRegistrationtype() {
+		return registrationtype;
+	}
+	public void setRegistrationtype(String registrationtype) {
+		this.registrationtype = registrationtype;
 	}
 	public String getClientHolding() {
 		return ClientHolding;

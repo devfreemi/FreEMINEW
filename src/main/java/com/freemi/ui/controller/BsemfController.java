@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -55,6 +56,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -64,7 +66,6 @@ import com.freemi.common.util.CommonConstants;
 import com.freemi.common.util.CommonTask;
 import com.freemi.common.util.InvestFormConstants;
 import com.freemi.database.interfaces.ProductSchemeDetailService;
-import com.freemi.entity.bse.BseAOFUploadResponse;
 import com.freemi.entity.bse.BseApiResponse;
 import com.freemi.entity.bse.BseFatcaForm;
 import com.freemi.entity.bse.BseFileUpload;
@@ -74,16 +75,15 @@ import com.freemi.entity.database.UserBankDetails;
 import com.freemi.entity.general.ClientSystemDetails;
 import com.freemi.entity.general.HttpClientResponse;
 import com.freemi.entity.general.Searchlocationdetials;
-import com.freemi.entity.general.Select2Results;
 import com.freemi.entity.general.UserProfile;
 import com.freemi.entity.general.UserProfileLdap;
-import com.freemi.entity.investment.AddressDetails;
 import com.freemi.entity.investment.BseAOFDocument;
 import com.freemi.entity.investment.BseFundsScheme;
 import com.freemi.entity.investment.BseMFSelectedFunds;
 import com.freemi.entity.investment.BseMFTop15lsSip;
 import com.freemi.entity.investment.BseMandateDetails;
 import com.freemi.entity.investment.BsemfTransactionHistory;
+import com.freemi.entity.investment.Bseregistrationstatus;
 import com.freemi.entity.investment.MFAdditionalPurchaseForm;
 import com.freemi.entity.investment.MFCustomers;
 import com.freemi.entity.investment.MFRedeemForm;
@@ -232,95 +232,138 @@ public class BsemfController {
 		return returnUrl;
 
 	}
-	
+
 	@RequestMapping(value = "/mutual-funds/purchase.do", method = { RequestMethod.GET, RequestMethod.POST })
-	public String purchasemfbsePost(@ModelAttribute("selectFund") SelectMFFund selectedFund, BindingResult bindResult,
+	public ModelAndView purchasemfbsePost(@ModelAttribute("selectFund") SelectMFFund selectedFund, BindingResult bindResult,
 			Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session,
 			RedirectAttributes redirectAttrs) {
-
+		ModelAndView view = new ModelAndView();
 		logger.info("purchasemfbsePost(): BSE MF STAR Purchse.do controller from url - " + request.getHeader("Referer") + " : Request type - " + request.getMethod());
-		String returnUrl = "redirect:/mutual-funds/funds-explorer";
+		//		String returnUrl = "redirect:/mutual-funds/funds-explorer";
+		String returnUrl = "mutual-funds/funds-explorer";
 		logger.info("purchasemfbsePost():MF purchase initiated by- "+ selectedFund.getMobile() + " :Re-invest code- " + selectedFund.getReinvSchemeCode());
 		String customertype="NEW_CUSTOMER";
-		
+
 		String referrerUrl = request.getHeader("Referer");
-//		String returnUrl2 = "";
+		//		String returnUrl2 = "";
+		RedirectView redview = new RedirectView();
+		//		redview.setExposeModelAttributes(false);
 		try {
-			returnUrl = redirectaftermfpurchaseerror(referrerUrl!=null?URLDecoder.decode(referrerUrl, StandardCharsets.UTF_8.toString()):URI.create(request.getRequestURL().toString()).resolve(request.getContextPath()).toString(),request);
-			
+			//returnUrl = redirectaftermfpurchaseerror(referrerUrl!=null?URLDecoder.decode(referrerUrl, StandardCharsets.UTF_8.toString()):URI.create(request.getRequestURL().toString()).resolve(request.getContextPath()).toString(),request);
+
 		} catch (Exception e1) {
 			logger.error("Error parsing referrer url",e1);
 		}
-		
+
+
+		//		redview.setContextRelative(true);
+
 		if (bindResult.hasErrors()) {
 			logger.info("purchasemfbsePost(): Form has error- "+ bindResult.getFieldError().getDefaultMessage());
-			redirectAttrs.addFlashAttribute("error1", bindResult.getFieldError().getDefaultMessage());
+			//			redirectAttrs.addFlashAttribute("error1", bindResult.getFieldError().getDefaultMessage());
 			//return "bsemf/bse-form-new-customer2";
-			redirectAttrs.addFlashAttribute("selectedFund", selectedFund);
-			return returnUrl;
+			//			redirectAttrs.addFlashAttribute("selectedFund", selectedFund);
+			//			redview.setUrl(returnUrl);
+			view.addObject("errro1", bindResult.getFieldError().getDefaultMessage());
+			redview.setUrl(referrerUrl);
+			view.setView(redview);
+			return view;
 		}
 
 		if (selectedFund.getMobile() == null || selectedFund.getPan() == null || selectedFund.getMobile().isEmpty() || selectedFund.getPan().isEmpty()) {
 			logger.info("purchasemfbsePost(): selectfund mobile/pan not found");
-			redirectAttrs.addFlashAttribute("error1", "Please provide valid PAN and mobile no.");
-//			return "redirect:/mutual-funds/funds-explorer";
+			//			redirectAttrs.addFlashAttribute("error1", "Please provide valid PAN and mobile no.");
+			view.addObject("errro1", "Please provide valid PAN and mobile no.");
+			//			return "redirect:/mutual-funds/funds-explorer";
 			redirectAttrs.addFlashAttribute("selectedFund", selectedFund);
-			return returnUrl;
+			//			return returnUrl;
+			redview.setUrl(returnUrl);
+			view.setView(redview);
+			return view;
+		}
+
+		if(session.getAttribute("token")!=null && session.getAttribute("userid")!=null && !session.getAttribute("userid").toString().equalsIgnoreCase(selectedFund.getMobile())) {
+			//			redirectAttrs.addFlashAttribute("error1", "Mobile mismatch for registered customer");
+			view.addObject("errro1", "Mobile mismatch for registered customer");
+			redirectAttrs.addFlashAttribute("selectedFund", selectedFund);
+			//			return referrerUrl;
+			redview.setUrl(returnUrl);
+			view.setView(redview);
+			return view;
 		}
 
 		try {
 			session.setAttribute("INITIATED_MOBILE",selectedFund.getMobile());
 			//			Record initiated transaction request
-			
+
 
 			// Check if existing BSE registered customer or not
-			boolean flag = bseEntryManager.isExisitngBSECustomerByMobile(selectedFund.getMobile());
+			//			boolean flag = bseEntryManager.isExisitngBSECustomerByMobile(selectedFund.getMobile());
 
-			logger.info("purchasemfbsePost(): Is existing customer by mobile? - " + selectedFund.getMobile() + " : " + flag);
+			Bseregistrationstatus registrationstatus = bseEntryManager.getbseregistrationstatus(selectedFund.getMobile(), selectedFund.getPan(), null, null);
+
+			logger.info("purchasemfbsePost(): Is existing customer by mobile? - " + selectedFund.getMobile() + " : " + registrationstatus.getAccountexist());
 
 			logger.info("purchasemfbsePost(): Setting session for current selected fund with customer details");
 			session.removeAttribute("selectedFund");
 			session.setAttribute("selectedFund", selectedFund);
-			if (flag && session.getAttribute("token") == null) {
+			//			if (flag && session.getAttribute("token") == null) {
+			String nexturl;
+			if (registrationstatus.getAccountexist().equalsIgnoreCase("Y")){
 
-				session.setAttribute("NEXT_URL", "/mutual-funds/purchase");
-				redirectAttrs.addAttribute("ref", URLEncoder.encode(request.getRequestURL().toString(), StandardCharsets.UTF_8.toString()));
-				returnUrl = "redirect:/login?mf=00&id="+ CommonTask.encryptText(selectedFund.getMobile()); // Already existing customer, just login and fetch customer details
-				customertype="EXISTING";
-				redirectAttrs.addFlashAttribute("uid", selectedFund.getMobile());
-
-			} else if ((flag && session.getAttribute("token") != null)) {
-
-				// If logged in account PAN and mobile do not match with provided PAN. Revert
-				// back to page which should pick up correct details from session now overriding
-				
-				String pan = bseEntryManager.getCustomerPanfromMobile(session.getAttribute("userid").toString());
-
-				if (!session.getAttribute("userid").toString().equalsIgnoreCase(selectedFund.getMobile())) {
-					logger.info("purchasemfbsePost(): Customer logged in with another mobile than provided during form fillup.");
-					logger.warn("purchasemfbsePost(): Data provided during form fillup:[ " + selectedFund.getPan() + " : " + selectedFund.getMobile() + "] Data from session user:[" + pan + " : "+ session.getAttribute("userid").toString() + "]");
-					redirectAttrs.addFlashAttribute("error1", "Mobile mismatch for registered customer");
-					redirectAttrs.addFlashAttribute("USERINFO", "01");
-					//returnUrl = "redirect:/mutual-funds/funds-explorer";
-				}else if(!pan.equalsIgnoreCase(selectedFund.getPan())) {
-					logger.info("purchasemfbsePost(): Customer PAN provided is different from registered PAN");
-					logger.warn("purchasemfbsePost(): Data provided during form fillup:[ " + selectedFund.getPan() + " : " + selectedFund.getMobile() + "] Data from session user:[" + pan + " : "+ session.getAttribute("userid").toString() + "]");
-					redirectAttrs.addFlashAttribute("error1", "PAN mismatch for registered customer");
-					redirectAttrs.addFlashAttribute("USERINFO", "01");
-					//returnUrl = "redirect:/mutual-funds/funds-explorer";
+				if (session.getAttribute("token") == null) {
+					session.setAttribute("NEXT_URL", "/mutual-funds/purchase");
+					logger.info("Account exist. Redirect to login page and transfer to fund purchase. Current referrel URL-");
+//					redirectAttrs.addAttribute("ref", URLEncoder.encode(request.getRequestURL().toString(), StandardCharsets.UTF_8.toString()));
 					
-				} else {
-					returnUrl = "redirect:/mutual-funds/purchase";
-					logger.info("All data passed. Redirect to purchase URL- "+ returnUrl);
-					customertype="EXISTING";
-					bseEntryManager.saveMFInitiatedTranasctionRequest(selectedFund);
-				}
+					if(registrationstatus.getBseregisterstatus().equals("Y") && registrationstatus.getFatcadeclared().equals("1")  && registrationstatus.getAofuploadstatus().equals("Y") ) {
+						nexturl = request.getRequestURL().toString().split(request.getContextPath())[0]+ request.getContextPath() + "/mutual-funds/purchase"; //Registered customer,BSE complete, go to purchase page after login
+						customertype="EXISTING";
+						bseEntryManager.saveMFInitiatedTranasctionRequest(selectedFund);
+					}else {
+						nexturl = request.getRequestURL().toString().split(request.getContextPath())[0] + request.getContextPath()+ "/mutual-funds/register?mf=04"; // Complete fresh customer. Create both profile and register for MF
+						customertype="COMPLETE_REGISTRATION";
+					}
+					logger.info("Next URL to - "+ nexturl);
+					redirectAttrs.addAttribute("ref", URLEncoder.encode(nexturl, StandardCharsets.UTF_8.toString()));
+					returnUrl = "/login?mf=00&id="+ CommonTask.encryptText(selectedFund.getMobile()); // Already existing customer, just login and fetch customer details
+					redirectAttrs.addFlashAttribute("uid", selectedFund.getMobile());
+					redview.setContextRelative(true);
 
-			} else {
+				} else if (session.getAttribute("token") != null) {
+
+					// If logged in account PAN and mobile do not match with provided PAN. Revert
+					// back to page which should pick up correct details from session now overriding
+
+					String pan = bseEntryManager.getCustomerPanfromMobile(session.getAttribute("userid").toString());
+
+					if(!pan.equalsIgnoreCase(selectedFund.getPan())) {
+						logger.info("purchasemfbsePost(): Customer PAN provided is different from registered PAN");
+						logger.warn("purchasemfbsePost(): Data provided during form fillup:[ " + selectedFund.getPan() + " : " + selectedFund.getMobile() + "] Data from session user:[" + pan + " : "+ session.getAttribute("userid").toString() + "]");
+						redirectAttrs.addFlashAttribute("USERINFO", "01");
+						view.addObject("error1", "PAN mismatch for registered customer");
+						returnUrl = referrerUrl;
+					} else {
+
+						if(registrationstatus.getBseregisterstatus().equals("Y") && registrationstatus.getFatcadeclared().equals("1")  && registrationstatus.getAofuploadstatus().equals("Y") ) {
+							logger.info("Account full registration is complete. Go to purchase page"+ returnUrl);	
+							returnUrl = "/mutual-funds/purchase";
+							customertype="EXISTING";
+							bseEntryManager.saveMFInitiatedTranasctionRequest(selectedFund);
+							redview.setContextRelative(true);
+						}else {
+							logger.info("Logged in customer but BSE registration was not complete. Send to registration page for completion");
+							returnUrl = "/mutual-funds/register?mf=04"; // Complete fresh customer. Create both profile and register for MF
+							customertype="COMPLETE_REGISTRATION";
+							redview.setContextRelative(true);
+						}
+
+					} 
+				}
+			}else {
 				// Check if he is registered customer form LDAP. If already registered customer,
 				// then only need to register for MF, else create profile password as well
 
-				// RestClient client = new RestClient();
 				ResponseEntity<String> responseProfile = null;
 
 				try {
@@ -337,32 +380,37 @@ public class BsemfController {
 				if (responseProfile.getBody().equalsIgnoreCase("Y")) {
 
 					if (session.getAttribute("token") != null) {
-						returnUrl = "redirect:/mutual-funds/register?mf=01";
+						//						returnUrl = "redirect:/mutual-funds/register?mf=01";
+						returnUrl = "/mutual-funds/register?mf=01";
 						customertype="LOGGED_NEW_CUSTOMER";
+						redview.setContextRelative(true);
 					} else {
-						returnUrl = "redirect:/login?mf=01&id="+ CommonTask.encryptText(selectedFund.getMobile()); // User exist in LDAP, so just need to register MF profile, do not create profile
+						returnUrl = "/login?mf=01&id="+ CommonTask.encryptText(selectedFund.getMobile()); // User exist in LDAP, so just need to register MF profile, do not create profile
 						customertype="LOGGED_NEW_CUSTOMER";
+						redview.setContextRelative(true);
 					}
 
 				} else if (responseProfile.getBody().equalsIgnoreCase("N")) {
-					returnUrl = "redirect:/mutual-funds/register?mf=02"; // Complete fresh customer. Create both profile and register for MF
-					//					session.setAttribute("PURCHASE_TYPE", "NEW_CUSTOMER");
+					//					returnUrl = "redirect:/mutual-funds/register?mf=02"; // Complete fresh customer. Create both profile and register for MF
+					returnUrl = "/mutual-funds/register?mf=02"; // Complete fresh customer. Create both profile and register for MF
 					customertype="NEW_CUSTOMER";
 				} else {
 					logger.warn("purchasemfbsePost(): Failed to get cutomer status from LDAP");
-					returnUrl = "redirect:/mutual-funds/register?mf=03";
+					//					returnUrl = "redirect:/mutual-funds/register?mf=03";
+					returnUrl = "/mutual-funds/register?mf=03";
 					customertype="FAILED_SEARCH";
 
 				}
-				
+
 				// returnUrl="redirect:/mutual-funds/register";
 			}
 		} catch (Exception e) {
 			logger.error("purchasemfbsePost(): Failed to check customer in databases/LDAP", e);
-			redirectAttrs.addFlashAttribute("error1", "Error processing request. Please try after sometime");
-//			returnUrl = "redirect:/mutual-funds/funds-explorer?msg=SRV_NOT_RESPONDING";
+			//			redirectAttrs.addFlashAttribute("error1", "Error processing request. Please try after sometime");
+			view.addObject("error1", "Error processing request. Please try after sometime");
+			//			returnUrl = "redirect:/mutual-funds/funds-explorer?msg=SRV_NOT_RESPONDING";
 			returnUrl = returnUrl+"?msg=SRV_NOT_RESPONDING";
-			
+
 		}
 		redirectAttrs.addFlashAttribute("selectedFund", selectedFund);
 		/*
@@ -374,8 +422,16 @@ public class BsemfController {
 
 		session.setAttribute("PURCHASE_TYPE",customertype);
 		session.setAttribute("REQ_MOB",selectedFund.getMobile());
-		return returnUrl;
 
+		//		return returnUrl;
+		logger.info("purchasemfbsePost(): Rdirectreview- "+ returnUrl);
+
+		//		redview.setUrl(returnUrl);
+
+		redview.setUrl(returnUrl);
+		view.setView(redview);
+
+		return view;
 		/*
 		 * redirectAttrs.addFlashAttribute("selectedFund", selectedFund);
 		 * returnUrl="redirect:/mutual-funds/register"; return returnUrl;
@@ -393,7 +449,7 @@ public class BsemfController {
 
 		MFCustomers investForm = new MFCustomers();
 
-
+		UserProfileLdap userDetails = null;
 		SelectMFFund selectFund = (SelectMFFund) session.getAttribute("selectedFund");
 
 		if (selectFund != null) {
@@ -404,14 +460,21 @@ public class BsemfController {
 			logger.info("registerUser(): registerUserMfGet(): selectFund is null.");
 
 		}
+		/*
+		Category-
+		00 - 
+		01 - Logged in customer new BSE profile registraiton
+		02 - Fresh customer, both profile and BSE registration required
+		04 - Registered customer, incomplete BSE registration
+		*/
 
 		if (userType.equalsIgnoreCase("01")) {
-			if (session.getAttribute("userid") != null) {
+			if (session.getAttribute("token") != null) {
 				map.addAttribute("LOGGED", "Y");
 				investForm.setMobile(session.getAttribute("userid").toString());
 				investForm.setEmail(session.getAttribute("email").toString());
 				try {
-					UserProfileLdap userDetails =  profileRestClientService.getProfileData(session.getAttribute("userid").toString(), session.getAttribute("token").toString(), CommonTask.getClientSystemDetails(request).getClientIpv4Address());
+					userDetails =  profileRestClientService.getProfileData(session.getAttribute("userid").toString(), session.getAttribute("token").toString(), CommonTask.getClientSystemDetails(request).getClientIpv4Address());
 					//		    UserProfileLdap userDetails = new ObjectMapper().readValue(profresponse.getBody(), UserProfileLdap.class);
 					investForm.setFname(userDetails.getFname());
 					investForm.setLname(userDetails.getLname());
@@ -420,6 +483,11 @@ public class BsemfController {
 						investForm.setPan1(userDetails.getPan());
 						session.setAttribute("ACCOUNT_PAN", userDetails.getPan());
 					}
+					
+					if(userDetails.getMail()!=null) {
+						investForm.setEmail(userDetails.getMail());
+					}
+					
 					investForm.getAddressDetails().setAddress1(userDetails.getAddress1());
 					investForm.getAddressDetails().setAddress2(userDetails.getAddress2());
 					investForm.getAddressDetails().setCity(userDetails.getCity());
@@ -427,7 +495,7 @@ public class BsemfController {
 					investForm.getAddressDetails().setState(userDetails.getState());
 					investForm.setMobileverified(userDetails.getMobilenovalidated()!=null?userDetails.getMobilenovalidated():"N");
 					investForm.setEmailverified(userDetails.getEmailidvalidated()!=null?userDetails.getEmailidvalidated():"N");
-					
+
 
 				}catch(Exception e){
 					logger.info("Failed to fetch customer details..",e);
@@ -442,10 +510,36 @@ public class BsemfController {
 		}
 
 		if (userType.equalsIgnoreCase("04")) {
-			logger.info("registerUser(): Request received to complete profile registration. The request must come from dashbaord, check if logged in ");
+			logger.info("registerUser(): Request received to complete profile registration. The request must come from dashbaord or purchase page, check if logged in ");
 			if (session.getAttribute("userid") != null) {
+				
+				try {
+					userDetails =  profileRestClientService.getProfileData(session.getAttribute("userid").toString(), session.getAttribute("token").toString(), CommonTask.getClientSystemDetails(request).getClientIpv4Address());
+				}catch(Exception e) {
+					logger.error("Failed to fetch profile details",e);
+				}
 				investForm = bseEntryManager.getCustomerInvestFormData(session.getAttribute("userid").toString());
-
+				
+				
+				if(userDetails!=null && userDetails.getMobilenovalidated()!=null) {
+					investForm.setMobileverified(userDetails.getMobilenovalidated());
+				}else if(investForm.getMobileverified()== null || investForm.getMobileverified().isEmpty()) {
+					investForm.setMobileverified("N");
+				}
+				
+				
+				if(userDetails!=null && userDetails.getEmailidvalidated()!=null) {
+					investForm.setEmailverified(userDetails.getEmailidvalidated());
+				}
+				else if(investForm.getEmailverified()==null || investForm.getEmailverified().isEmpty()) {
+					investForm.setEmailverified("N");
+				}
+				
+				
+				if(session.getAttribute("email")!=null && !session.getAttribute("email").toString().equalsIgnoreCase(investForm.getEmail())) {
+					investForm.setEmail(session.getAttribute("email").toString());
+				}
+				
 				// Convert date format
 				/*
 				try {
@@ -458,25 +552,25 @@ public class BsemfController {
 				} catch (Exception e) {
 					logger.error("registerUser(): Failed to convert date format- ", e);
 				}
-				
-				*/
+
+				 */
 
 			}
 		} else {
 			investForm.setDividendPayMode("02");
 			investForm.setOccupation("01");
 		}
-		
-//		AddressDetails d = new AddressDetails();
-//		d.setState("WB");
-//		investForm.setAddressDetails(d);
+
+		//		AddressDetails d = new AddressDetails();
+		//		d.setState("WB");
+		//		investForm.setAddressDetails(d);
 		map.addAttribute("mfInvestForm", investForm);
 
 		logger.info("registerUser(): Get device platform during MF registration -" + device.getDevicePlatform());
 
-//		return "bsemf/bse-form-new-customer2";
+		//		return "bsemf/bse-form-new-customer2";
 		return "bsemf/bse-form-version2";
-		
+
 	}
 
 	@RequestMapping(value = { "/mutual-funds/mfInvestRegister" }, method = RequestMethod.GET)
@@ -570,6 +664,12 @@ public class BsemfController {
 				 * System.out.println("Age- "+ (todaydt.get(Calendar.YEAR) -
 				 * dobdt.get(Calendar.YEAR) ));
 				 */
+				
+				
+				String bseFormatDob = simpleDateFormat1.format(dob);
+				logger.info("DOB field converted to DB format for record update- "+ bseFormatDob);
+				investForm.setInvDOB(bseFormatDob);
+				
 				logger.info("registerBsepost(): Investor DOB is in desired format. Proceed");
 
 			} catch (Exception e) {
@@ -610,7 +710,7 @@ public class BsemfController {
 		}
 
 		try {
-
+			
 			// Check if user required to be registered at portal first
 			logger.info("registerBsepost(): Is profile generation required during MF profile registration? - " + investForm.isProfileRegRequired());
 			if (investForm.isProfileRegRequired()) {
@@ -643,32 +743,34 @@ public class BsemfController {
 				return returnurlonerror;
 
 			}
-
-			logger.info("KYC verified? "+ investForm.getPan1KycVerified());
+			
+			Bseregistrationstatus bseregisterstatus = bseEntryManager.getbseregistrationstatus(investForm.getMobile(), null, null, null);
+			ClientSystemDetails systemdetails = CommonTask.getClientSystemDetails(request);
+//			logger.info("KYC verified? "+ investForm.getPan1KycVerified());
 			// Map other required fields for FATCA based on PAN
 			// ----------------------------------------------------------------------------
-			investForm.getFatcaDetails().setIdentificationDocType("C");
-			investForm.getFatcaDetails().setDaclarationDate(new Date());
-			investForm.getFatcaDetails().setCreatedBy("SELF REGISTRATION");
+			
+//			investForm.getFatcaDetails().setIdentificationDocType("C");
+//			investForm.getFatcaDetails().setDaclarationDate(new Date());
+//			investForm.getFatcaDetails().setCreatedBy("SELF REGISTRATION");
 
-			ClientSystemDetails systemDet = CommonTask.getClientSystemDetails(request);
-			investForm.getFatcaDetails().setSystemip(systemDet.getClientIpv4Address());
-			investForm.getFatcaDetails().setSystemDetails(systemDet.getClientBrowser());
-			investForm.getFatcaDetails().setUscanadaCitizen(investForm.getFatcaDetails().isUsCitizenshipCheck() ? "Y" : "N");
+//			investForm.getFatcaDetails().setSystemip(systemDet.getClientIpv4Address());
+//			investForm.getFatcaDetails().setSystemDetails(systemDet.getClientBrowser());
+//			investForm.getFatcaDetails().setUscanadaCitizen(investForm.getFatcaDetails().isUsCitizenshipCheck() ? "Y" : "N");
 			// -----------------------------------------------------------------------------
 
 			// Save customer registration details
 			logger.info("registerBsepost(): Checking if customer already registered with bean flag- " + investForm.getCustomerRegistered());
 			
 			
-			if (investForm.getCustomerRegistered().equalsIgnoreCase("N")) {
-				investForm.setSystemip(systemDet.getClientIpv4Address());
-				investForm.setSystemDetails(systemDet.getClientBrowser());
+//			if (investForm.getCustomerRegistered().equalsIgnoreCase("N")) {
+			if (bseregisterstatus.getAccountexist().equalsIgnoreCase("N") || bseregisterstatus.getBseregisterstatus().equalsIgnoreCase("N")) {
+				
 				
 				logger.info("Customer type- "+ session.getAttribute("PURCHASE_TYPE"));
 				String customertype= session.getAttribute("PURCHASE_TYPE")!=null?session.getAttribute("PURCHASE_TYPE").toString():"NA";
 
-				bseregistrationstatus = bseEntryManager.saveCustomerDetails(investForm,customertype,session.getAttribute("token") != null?"Y":"N", session.getAttribute("token") != null?session.getAttribute("userid").toString() : (session.getAttribute("INITIATED_MOBILE")!=null?session.getAttribute("INITIATED_MOBILE").toString():"NA") );
+				bseregistrationstatus = bseEntryManager.saveCustomerDetails(investForm,customertype,session.getAttribute("token") != null?"Y":"N", session.getAttribute("token") != null?session.getAttribute("userid").toString() : (session.getAttribute("INITIATED_MOBILE")!=null?session.getAttribute("INITIATED_MOBILE").toString():"NA"),systemdetails );
 
 				logger.info("registerBsepost(): Customer MF registration status completed in DB- " + bseregistrationstatus.getResponseCode() + " -> " +bseregistrationstatus.getRemarks());
 				if (bseregistrationstatus.getResponseCode().equalsIgnoreCase(CommonConstants.TASK_SUCCESS_S)) {
@@ -676,7 +778,9 @@ public class BsemfController {
 					investForm.setCustomerRegistered("Y");
 					bseregistersuccess = true;
 					//Link customer PAN and BSE client ID in LDAP account
-					bseclientcode= bseEntryManager.getClientIdfromMobile(investForm.getMobile());
+//					bseclientcode= bseEntryManager.getClientIdfromMobile(investForm.getMobile());
+					bseclientcode = bseregistrationstatus.getData1();
+					
 					ResponseEntity<String> responsePortal = null;
 					logger.info("MF REG - > Update LDAP with PAN and bseclientID....");
 //					responsePortal = profileRestClientService.linkmfaccountDetails(investForm.getMobile(), investForm.getPan1(), bseclientcode);
@@ -719,14 +823,10 @@ public class BsemfController {
 					validationerrormsg = bseregistrationstatus.getRemarks();
 				}
 
-			} 
-			
-			
-			else {
-				logger.info("Submitted form shows customer registered.. Must be a submit after iniital error. Chek in DB BSE registration status");
-				Map<String, String> bseregisterstatus = bseEntryManager.getbseregistrationstatus(investForm.getMobile(), null, null, null);
-				if(bseregisterstatus.get("ACCOUNTEXIST").equalsIgnoreCase("Y")) {
-					if(bseregisterstatus.get("BSEREGISTER").equalsIgnoreCase("Y")) {
+			} else {
+				if(bseregisterstatus.getAccountexist().equalsIgnoreCase("Y")) {
+					if(bseregisterstatus.getBseregisterstatus().equalsIgnoreCase("Y")) {
+						logger.info("Submitted form shows customer BSE account registration complete.. Proceed with FATCA and AOF.. ");
 						bseregistersuccess = true;
 					}
 				}else {
@@ -737,38 +837,18 @@ public class BsemfController {
 			}
 			
 			
-			/*
-			else {
-				logger.info("registerBsepost(): Customer already registered. This must be a call to with FATCA details fix... Check fatca status and only update fatca");
-				fatresponse = bseEntryManager.saveFatcaDetails(investForm,null,null,bseclientcode);
-
-				if (fatresponse.getResponseCode().equals("100")) {
-					logger.info("registerBsepost(): FATCA  complete for customer- " + investForm.getPan1());
-					returnUrl = "redirect:/mutual-funds/mf-registration-status";
-
-					session.setAttribute("CUSTOMER_TYPE", "NEW_CUSTOMER");
-					attrs.addFlashAttribute("mfInvestForm", investForm);
-					attrs.addAttribute("STATUS", "Y");
-				} else {
-					logger.info("registerBsepost(): MF registered but FATCA save failed. Return with result..");
-					// map.addAttribute("success", "Your registration partially complete. Your FATCA
-					// declaration failed for below reason-");
-					map.addAttribute("error", "Registration success. FATCA declaration failed for- " + fatresponse.getRemarks());
-					returnUrl = "bsemf/bse-form-new-customer2";
-
-				}
-
-			}
-			*/
-			
 				if(bseregistersuccess) {
 					if(bseclientcode == null) {
 						logger.info("Get BSE client code from database for user- " +  investForm.getMobile());
 						bseclientcode = bseEntryManager.getClientIdfromMobile(investForm.getMobile());
 					}
 //					Send FATCA Declaration. New code added on 24-04-21 to replace existing logic
-					fatresponse = bseEntryManager.saveFatcaDetails(investForm,(bseregistersuccess?"Y":"N"),null,bseclientcode);
-
+					if(bseregisterstatus.getFatcadeclared().equals("0")) {
+						fatresponse = bseEntryManager.saveFatcaDetails(investForm,(bseregistersuccess?"Y":"N"),null,bseclientcode,systemdetails);
+					}else {
+						
+					}
+					
 					if (fatresponse.getResponseCode().equals(CommonConstants.TASK_SUCCESS_S)) {
 						logger.info("registerBsepost(): FATCA  complete for customer- " + investForm.getPan1());
 						
@@ -791,7 +871,11 @@ public class BsemfController {
 
 					//				Send AOF to BSE
 					if(bseclientcode!=null) {
-						aofuploadresponse = bseEntryManager.uploadAOFForm(investForm.getMobile(), env.getProperty(CommonConstants.BSE_AOF_GENERATION_FOLDR),env.getProperty(CommonConstants.BSE_AOF_LOGO_LOCATION), bseclientcode,investForm);
+						if(fatcauploadsuccess) {
+							aofuploadresponse = bseEntryManager.uploadAOFForm(investForm.getMobile(), env.getProperty(CommonConstants.BSE_AOF_GENERATION_FOLDR),env.getProperty(CommonConstants.BSE_AOF_LOGO_LOCATION), bseclientcode,investForm);
+						}else {
+							logger.info("FATCA upload was not success hence skipping AOF generation...");
+						}
 					}else {
 						logger.info("Clientcode not found. Skip AOF upload call for mobile- "+ investForm.getMobile());
 					}
@@ -1041,6 +1125,7 @@ public class BsemfController {
 			selectedFund = (SelectMFFund) session.getAttribute("selectedFund");
 			if (selectedFund == null) {
 				logger.info("purchaseBseMfAfterLogin(): No selected funds details found in session. Returning to fund selection page.");
+				redirectAttrs.addFlashAttribute("error1", "Funds details was not found in request. Please select again.");
 				return "redirect:/mutual-funds/funds-explorer";
 			}
 
@@ -1054,7 +1139,7 @@ public class BsemfController {
 				if (!session.getAttribute("userid").toString().equalsIgnoreCase(selectedFund.getMobile()) || !pan.equalsIgnoreCase(selectedFund.getPan())) {
 					logger.warn("purchaseBseMfAfterLogin(): Customer logged in with another mobile than provided during form fillup. Also the PAN number is different. Redirecting back to fund selection page and override information with current details");
 					logger.warn("purchaseBseMfAfterLogin(): Data provided during form fillup:[ " + selectedFund.getPan() + " : " + selectedFund.getMobile() + "] Data from session user:[" + pan + " : " + session.getAttribute("userid").toString() + "]");
-
+					redirectAttrs.addFlashAttribute("error1", "Mobile or PAN mismatch for registered customer");
 					redirectAttrs.addFlashAttribute("USERINFO", "01");
 					// returnUrl = "redirect:/mutual-funds/top-performing";
 					logger.info("purchaseBseMfAfterLogin(): Further processing prevented. Return");
@@ -1115,6 +1200,7 @@ public class BsemfController {
 			} else {
 				logger.info("purchaseBseMfAfterLogin(): MF purchase request required customer to be either logged in or be a fresh customer to access the url. Returning");
 				// returnUrl="redirect:/mutual-funds/top-performing";
+				redirectAttrs.addFlashAttribute("error1", "Only logged in or new customer can place order!");
 				return "redirect:/mutual-funds/funds-explorer";
 			}
 
@@ -3273,6 +3359,7 @@ public class BsemfController {
 			tosend = uri.getRawPath().split("/products/")[1];
 		}else {
 			tosend = uri.getPath();
+//			tosend = uri.getPath().replaceFirst("/", "");
 		}
 	    } catch (Exception e) {
 			    logger.error("redirectUrlAfterLogin(): Exception while processing...",e);
@@ -3280,8 +3367,8 @@ public class BsemfController {
 			}
 		
 		
-		returnUrl = "redirect:/" + tosend;
-		
+//		returnUrl = "redirect:/" + tosend;
+	    returnUrl = tosend;
 		logger.info("Redirect url after MF intitiated transaction- "+ returnUrl);
 		return returnUrl;
 	    }

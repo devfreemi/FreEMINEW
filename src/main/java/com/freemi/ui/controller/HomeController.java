@@ -104,7 +104,7 @@ public class HomeController {
 	//		map.addAttribute("login", login);
 	//		logger.info("Referer- "+ request.getHeader("Referer"));
 	//		model.addAttribute("returnSite", request.getHeader("Referer"));
-	logger.info("url from referrer- "+ request.getHeader("Referer"));
+	logger.info("url from referrer- "+ referrerUrl);
 	try {
 	    //			login.setReturnUrl(referrerUrl!=null?URLDecoder.decode(referrerUrl, StandardCharsets.UTF_8.toString()):request.getHeader("Referer"));
 
@@ -194,7 +194,7 @@ public class HomeController {
 	return "redirect:/login";
     }
 
-    @RequestMapping(value = "/login.do", method = RequestMethod.POST)
+//    @RequestMapping(value = "/login.do", method = RequestMethod.POST)
     public String loginAttemptPost(@ModelAttribute("login") @Valid Login login, BindingResult bindingResult, ModelMap model, HttpServletRequest request, HttpSession session) {
 	logger.info("@@@@ Inside Login do..");
 	//		logger.info("Referer- "+ request.getHeader("Referer"));
@@ -302,7 +302,12 @@ public class HomeController {
 		    //					returnUrl=uri.getRawPath().split("/products/")[1].replace(".do", "");
 		    //					returnUrl = referer.replace(".do", "");
 		    //					returnUrl = "redirect:/products/";
-		    returnUrl = /*"redirect:"+*/ URI.create(request.getRequestURL().toString()).resolve(request.getContextPath()).toString();
+			
+			if(uri.getRawPath().contains("mutual-funds/register")) {
+				returnUrl = referer.replace(".do", "");
+			}else {
+				returnUrl = /*"redirect:"+*/ URI.create(request.getRequestURL().toString()).resolve(request.getContextPath()).toString();
+			}
 		}else
 		    //					returnUrl = uri.getRawPath().split("/products/")[1].replace(".do", "");
 		    returnUrl = referer.replace(".do", "");
