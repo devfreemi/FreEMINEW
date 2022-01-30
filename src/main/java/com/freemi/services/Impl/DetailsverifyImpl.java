@@ -44,7 +44,7 @@ public class DetailsverifyImpl implements Verifydetailsinterface {
 
 		otpinfo.setRequestingsystemip(systemdetails.getClientIpv4Address());
 		otpinfo.setSystemdetails(systemdetails.getClientBrowser());
-		otpinfo.setRequestedfrommodule("101");
+		otpinfo.setRequestedfrommodule("PRODUCTS");
 		if(otpinfo.getModule().equals("MF")) {
 			if(otpinfo.getSubModule().equals("R")) {
 				otpinfo.setModule("MUTUAL_FUND");
@@ -68,7 +68,7 @@ public class DetailsverifyImpl implements Verifydetailsinterface {
 		otpinfo.setRequestingsystemip(systemdetails.getClientIpv4Address());
 		otpinfo.setSystemdetails(systemdetails.getClientBrowser());
 		
-		otpinfo.setRequestedfrommodule("101");
+		otpinfo.setRequestedfrommodule("PRODUCTS");
 		if(otpinfo.getModule().equals("MF")) {
 			if(otpinfo.getSubModule().equals("R")) {
 				otpinfo.setModule("MUTUAL_FUND");
@@ -95,7 +95,7 @@ public class DetailsverifyImpl implements Verifydetailsinterface {
 		otpinfo.setRequestingsystemip(systemdetails.getClientIpv4Address());
 		otpinfo.setSystemdetails(systemdetails.getClientBrowser());
 		
-		otpinfo.setRequestedfrommodule("101");
+		otpinfo.setRequestedfrommodule("PRODUCTS");
 		if(otpinfo.getModule().equals("MF")) {
 			if(otpinfo.getSubModule().equals("R")) {
 				otpinfo.setModule("MUTUAL_FUND");

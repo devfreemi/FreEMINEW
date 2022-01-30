@@ -309,10 +309,44 @@ public class RestClientLdapImpl implements ProfileRestClientService {
 		headers.set("Authorization", "Bearer "+token);
 		headers.set("requestingIp", requestingIp);
 		headers.set("userid", userid);
-		//		HttpEntity<String> entity = new HttpEntity<String>(formdata,headers);
-		HttpEntity<String> entity = new HttpEntity<String>(headers);
+		
+		JsonObject form = new  JsonObject();
+		form.addProperty("token", "Bearer "+token);
+		form.addProperty("userid", userid);
+		form.addProperty("systemip", requestingIp);
+		form.addProperty("timeStamp", (new Date()).toString() );
+		
+		HttpEntity<String> entity = new HttpEntity<String>(form.toString(),headers);
+		
+//		HttpEntity<String> entity = new HttpEntity<String>(headers);
+		
 		return restTemplate.postForEntity(url, entity,  String.class);
 	}
+	
+	@Override
+	public ResponseEntity<String> extractdatafromtoken(String userid, String token,String requestingIp) throws JsonProcessingException{
+		logger.info("Extract data from token- "+ token);
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_PROFILE) + "/extractsessiondata/"+userid;
+		RestTemplate restTemplate = new RestTemplate();
+
+		HttpHeaders headers = new HttpHeaders();
+//		headers.set("Authorization", "Bearer "+token);
+		headers.set("Authorization", token);
+		headers.set("requestingIp", requestingIp);
+		headers.set("userid", userid);
+		
+		JsonObject form = new  JsonObject();
+		form.addProperty("token", "Bearer "+token);
+		form.addProperty("userid", userid);
+		form.addProperty("systemip", requestingIp);
+		form.addProperty("timeStamp", (new Date()).toString() );
+		
+		HttpEntity<String> entity = new HttpEntity<String>(form.toString(),headers);
+//		HttpEntity<String> entity = new HttpEntity<String>(headers);
+		
+		return restTemplate.postForEntity(url, entity,  String.class);
+	}
+	
 
 	@Override
 	public ResponseEntity<String> isUserExisitng(String mobile) throws JsonProcessingException{

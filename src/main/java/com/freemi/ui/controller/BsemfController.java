@@ -127,6 +127,9 @@ public class BsemfController {
 	
 	 @Autowired
 	 HdfcService hdfcService;
+	 
+	 SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy-mm-dd");
+	 SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("dd/mm/yyyy");
 
 	
 	@RequestMapping(value = "/mutual-funds/top-performing", method = RequestMethod.GET)
@@ -195,9 +198,8 @@ public class BsemfController {
 		 * PageRequest p =new PageRequest(0, 200); Pageable pg = p.first();
 		 */
 		
-//		List<BseMFSelectedFunds> funds = null;
-//		funds = bseEntryManager.getAllSelectedFunds();
-
+		List<BseMFSelectedFunds> funds = null;
+		funds = bseEntryManager.getAllSelectedFunds();
 //		logger.info("getSelectFundsExplorer(): Total selected funds to display- " + (funds != null ? funds.size() : "NULL returned"));
 		/*
 		 * logger.info("Paginated fundss- "+ b.getSize()); logger.info("Total pages- "+
@@ -226,7 +228,7 @@ public class BsemfController {
 			}
 		}
 		map.addAttribute("error1", error1);
-//		map.addAttribute("fundsexplorer", funds);
+		map.addAttribute("fundsexplorer", funds);
 		map.addAttribute("selectFund", fundChoice);
 
 		return returnUrl;
@@ -392,7 +394,7 @@ public class BsemfController {
 
 				} else if (responseProfile.getBody().equalsIgnoreCase("N")) {
 					//					returnUrl = "redirect:/mutual-funds/register?mf=02"; // Complete fresh customer. Create both profile and register for MF
-					returnUrl = "/mutual-funds/register?mf=02"; // Complete fresh customer. Create both profile and register for MF
+					returnUrl = request.getRequestURL().toString().split(request.getContextPath())[0] + request.getContextPath()+"/mutual-funds/register?mf=02"; // Complete fresh customer. Create both profile and register for MF
 					customertype="NEW_CUSTOMER";
 				} else {
 					logger.warn("purchasemfbsePost(): Failed to get cutomer status from LDAP");
@@ -443,32 +445,32 @@ public class BsemfController {
 	@RequestMapping(value = "/mutual-funds/register", method = RequestMethod.GET)
 	public String registerUserMfGet(
 			/* @ModelAttribute("selectedFund")SelectMFFund selectFund , */@RequestParam(name = "mf", required = false) String userType,
-			Model map, HttpServletRequest request, HttpSession session, HttpServletResponse response, Device device) {
+			Model map, @ModelAttribute("mfInvestForm") MFCustomers investForm, HttpServletRequest request, HttpSession session, HttpServletResponse response, Device device) {
 		// logger.info("@@@@ Inside Login..");
-		logger.info("registerUser(): @@@@ BSE New customer register @@@@");
+		logger.info("registerUserMfGet(): @@@@ BSE New customer register @@@@");
 
-		MFCustomers investForm = new MFCustomers();
+//		MFCustomers investForm = new MFCustomers();
 
 		UserProfileLdap userDetails = null;
 		SelectMFFund selectFund = (SelectMFFund) session.getAttribute("selectedFund");
 
 		if (selectFund != null) {
-			logger.info("registerUser(): Setting register form with mobile and PAN from selected fund details...");
+			logger.info("registerUserMfGet(): Setting register form with mobile and PAN from selected fund details...");
 			investForm.setPan1(selectFund.getPan());
 			investForm.setMobile(selectFund.getMobile());
 		} else {
-			logger.info("registerUser(): registerUserMfGet(): selectFund is null.");
+			logger.info("registerUserMfGet(): selectFund is null.");
 
 		}
 		/*
 		Category-
 		00 - 
-		01 - Logged in customer new BSE profile registraiton
+		01 - Logged in customer new BSE profile registration
 		02 - Fresh customer, both profile and BSE registration required
 		04 - Registered customer, incomplete BSE registration
 		*/
 
-		if (userType.equalsIgnoreCase("01")) {
+		if (userType.equalsIgnoreCase("01")) {		// Logged in customer new BSE profile registration
 			if (session.getAttribute("token") != null) {
 				map.addAttribute("LOGGED", "Y");
 				investForm.setMobile(session.getAttribute("userid").toString());
@@ -510,7 +512,7 @@ public class BsemfController {
 		}
 
 		if (userType.equalsIgnoreCase("04")) {
-			logger.info("registerUser(): Request received to complete profile registration. The request must come from dashbaord or purchase page, check if logged in ");
+			logger.info("registerUserMfGet(): Request received to complete profile registration. The request must come from dashbaord or purchase page, check if logged in ");
 			if (session.getAttribute("userid") != null) {
 				
 				try {
@@ -540,21 +542,7 @@ public class BsemfController {
 					investForm.setEmail(session.getAttribute("email").toString());
 				}
 				
-				// Convert date format
-				/*
-				try {
-					SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy-mm-dd");
-					SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("dd/mm/yyyy");
-
-					Date dob = simpleDateFormat1.parse(investForm.getInvDOB());
-					investForm.setInvDOB(simpleDateFormat2.format(dob));
-
-				} catch (Exception e) {
-					logger.error("registerUser(): Failed to convert date format- ", e);
-				}
-
-				 */
-
+				logger.info("State found- "+ investForm.getAddressDetails().getState());
 			}
 		} else {
 			investForm.setDividendPayMode("02");
@@ -565,19 +553,41 @@ public class BsemfController {
 		//		d.setState("WB");
 		//		investForm.setAddressDetails(d);
 		map.addAttribute("mfInvestForm", investForm);
+		
+		
+		if(investForm.getAddressDetails()!=null &&  investForm.getAddressDetails().getState()!=null) {
+			Map<String,String> data = new HashMap<String, String>();
+			String statefrommapping = InvestFormConstants.hdfcstatekey.get(investForm.getAddressDetails().getState());
+			
+			Map<String,String> filters = new HashMap<String, String>();
+			filters.put("stateid", statefrommapping);
+			filters.put("search",investForm.getAddressDetails().getCity());
+			filters.put("cityvaluetype", "CITYNAME");
+			Searchlocationdetials data2 = new Searchlocationdetials();
+			data2.stateid = statefrommapping;
+			data2.cityid = investForm.getAddressDetails().getCity();
+			data = hdfcService.searchcitypincode2(data2,filters, data2.stateid,data2.cityid);
+			logger.info("Pincode list retrieved- "+ data.size());
+			map.addAttribute("pincode",data);
+		}
+		
+		if(investForm.getAddressDetails()!=null &&  investForm.getAddressDetails().getState()!=null) {
+			Map<String,String> data = new HashMap<String, String>();
+			String statefrommapping = InvestFormConstants.hdfcstatekey.get(investForm.getAddressDetails().getState());
+			
+			Map<String,String> filters = new HashMap<String, String>();
+			filters.put("stateid", statefrommapping);
+			filters.put("search","city");
+			data = hdfcService.searchcity2(filters, statefrommapping);
+			logger.info("City list retrieved- "+ data.size());
+			map.addAttribute("cities",data);
+		}
+		
 
-		logger.info("registerUser(): Get device platform during MF registration -" + device.getDevicePlatform());
+		logger.info("registerUserMfGet(): Get device platform during MF registration -" + device.getDevicePlatform());
 
 		//		return "bsemf/bse-form-new-customer2";
 		return "bsemf/bse-form-version2";
-
-	}
-
-	@RequestMapping(value = { "/mutual-funds/mfInvestRegister" }, method = RequestMethod.GET)
-	public String defaultPostUrl(@Valid @ModelAttribute("mfInvestForm") MFCustomers investForm,
-			BindingResult bindResult, Model map, HttpServletRequest request, HttpServletResponse response,
-			RedirectAttributes attrs, HttpSession session) {
-		return "redirect:/";
 
 	}
 
@@ -595,11 +605,10 @@ public class BsemfController {
 		BseApiResponse bseregistrationstatus = new BseApiResponse();
 		//		String fatcaFlag = "FAIL";
 		String validationerrormsg = "";
-		BseApiResponse fatresponse = null;
+		BseApiResponse fatcaresponse = null;
 		boolean validationpass = true;
 		boolean existdata=false;
-		SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy-mm-dd");
-		SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("dd/mm/yyyy");
+		
 		String bseclientcode = null;
 		BseApiResponse aofuploadresponse = null;
 		
@@ -722,6 +731,7 @@ public class BsemfController {
 					if(httpResponse.getResponseCode() == CommonConstants.HTTP_CLIENT_CALL_SUCCESS) {
 						logger.info("registerBsepost(): Registration successful for mobile number during new BSE MF registration- "+ investForm.getMobile());
 						investForm.setProfileRegRequired(false);
+						investForm.setProfileuniqueid(httpResponse.getData1());
 					}else {
 						validationpass =false;
 						if(httpResponse.getRetrunMessage().equalsIgnoreCase("ERROR")) {
@@ -733,7 +743,17 @@ public class BsemfController {
 				}else {
 					logger.info("registerBsepost(): ACCOUNT ALREADY LOGGED IN as token found... Skipping ldap registration "+ investForm.getMobile());
 				}
-			} 
+			} else {
+				if(investForm.getProfileuniqueid()==null) {
+					if(session.getAttribute("token")!=null) {
+						ResponseEntity<String> profileidfromsession= profileRestClientService.extractdatafromtoken(session.getAttribute("userid").toString(), session.getAttribute("token").toString(), CommonTask.getClientSystemIp(request));
+						if(!profileidfromsession.getBody().equals("INVALID")) {
+							logger.info("Setting profile uniue ID retrived from session token..");
+							investForm.setProfileuniqueid(profileidfromsession.getBody());
+						}
+					}
+				}
+			}
 
 			if (!validationpass) {
 				logger.info("registerBsepost(): Error validating form data: " + validationerrormsg);
@@ -797,11 +817,10 @@ public class BsemfController {
 					String status = responsePortal.getBody();
 					logger.info("registerBsepost(): Linking successful for mobile numberwith MF account- "+ investForm.getMobile() + " -> "+ status);
 
-//					Send mail notification
+//					Send mail notification to SUPPORT team
 					logger.info("registerBsepost(): Customer BSE registration successful. Drop mail to support team.. ");
-					mailSenderInterface.sendMFRegisterNotification("MF_REG_NOTIFICATION", investForm.getInvName(), investForm.getMobile(), investForm.getEmail(), "NA", investForm.getPan1(), investForm.getPan1KycVerified());
-
-
+					mailSenderInterface.sendMFRegisterNotification("MF_REG_NOTIFICATION", investForm.getInvName(), investForm.getMobile(), null, "NA", investForm.getPan1(), investForm.getPan1KycVerified());
+					
 					/*
 					if (fatresponse.getResponseCode().equals("100")) {
 						logger.info("registerBsepost(): FATCA save status to database and registration success. Set CUSTOMER_TYPE");
@@ -842,14 +861,23 @@ public class BsemfController {
 						logger.info("Get BSE client code from database for user- " +  investForm.getMobile());
 						bseclientcode = bseEntryManager.getClientIdfromMobile(investForm.getMobile());
 					}
+					logger.info("Proceed with FATCA upload. Current status- "+ bseregisterstatus.getFatcadeclared());
 //					Send FATCA Declaration. New code added on 24-04-21 to replace existing logic
-					if(bseregisterstatus.getFatcadeclared().equals("0")) {
-						fatresponse = bseEntryManager.saveFatcaDetails(investForm,(bseregistersuccess?"Y":"N"),null,bseclientcode,systemdetails);
+//					if(bseregisterstatus.getFatcadeclared().equals("0")) {
+					if(bseregisterstatus.getFatcadeclared().equals("N") || bseregisterstatus.getFatcadeclared().equals("0")) {
+						fatcaresponse = bseEntryManager.saveFatcaDetails(investForm,(bseregistersuccess?"Y":"N"),null,bseclientcode,systemdetails);
 					}else {
+						logger.info("FATCA is already declared.. Skipping the step and declare false state");
+						fatcaresponse = new BseApiResponse();
 						
+//						fatcaresponse.setResponseCode(CommonConstants.TASK_FAILURE_S);
+//						fatcaresponse.setRemarks("Failed to validate registraition status!");
+						
+						fatcaresponse.setResponseCode(CommonConstants.TASK_SUCCESS_S);
+						fatcaresponse.setRemarks("FATCA_UPLOAD_SUCCESS");
 					}
 					
-					if (fatresponse.getResponseCode().equals(CommonConstants.TASK_SUCCESS_S)) {
+					if (fatcaresponse.getResponseCode().equals(CommonConstants.TASK_SUCCESS_S)) {
 						logger.info("registerBsepost(): FATCA  complete for customer- " + investForm.getPan1());
 						
 						/*
@@ -865,7 +893,7 @@ public class BsemfController {
 						// map.addAttribute("success", "Your registration partially complete. Your FATCA
 						// declaration failed for below reason-");
 //						map.addAttribute("error", "Registration success. FATCA declaration failed for- " + fatresponse.getRemarks());
-						validationerrormsg= "Registration partially successful! FATCA declaration submit failed for- " + fatresponse.getRemarks();
+						validationerrormsg= "Registration partially successful! FATCA declaration submit failed for- " + fatcaresponse.getRemarks();
 					}
 
 
@@ -873,6 +901,15 @@ public class BsemfController {
 					if(bseclientcode!=null) {
 						if(fatcauploadsuccess) {
 							aofuploadresponse = bseEntryManager.uploadAOFForm(investForm.getMobile(), env.getProperty(CommonConstants.BSE_AOF_GENERATION_FOLDR),env.getProperty(CommonConstants.BSE_AOF_LOGO_LOCATION), bseclientcode,investForm);
+							
+							if(aofuploadresponse!=null && aofuploadresponse.getStatusCode().equalsIgnoreCase(CommonConstants.TASK_SUCCESS_S)) {
+								aofuploadsuccess = true;
+								
+								
+							}else {
+								validationerrormsg= "Registration partially successful! AOF uplaod not complete for- " + aofuploadresponse.getRemarks();
+							}
+							
 						}else {
 							logger.info("FATCA upload was not success hence skipping AOF generation...");
 						}
@@ -880,9 +917,7 @@ public class BsemfController {
 						logger.info("Clientcode not found. Skip AOF upload call for mobile- "+ investForm.getMobile());
 					}
 
-					if(aofuploadresponse!=null && aofuploadresponse.getStatusCode().equalsIgnoreCase(CommonConstants.TASK_SUCCESS_S)) {
-						aofuploadsuccess = true;
-					}
+					
 				}
 				
 				
@@ -923,9 +958,8 @@ public class BsemfController {
 		}catch(Exception e) {
 			logger.error("Error updating fund details in session..",e);
 		}
-		
 
-		if(bseregistersuccess && fatcauploadsuccess) {
+		if(bseregistersuccess && fatcauploadsuccess && aofuploadsuccess) {
 //			returnUrl = "redirect:/mutual-funds/mf-registration-status";
 			returnUrl = returnurlsuccess;
 			session.setAttribute("CUSTOMER_TYPE", "NEW_CUSTOMER");
@@ -965,16 +999,62 @@ public class BsemfController {
 		List<String> customerPortfolios = new ArrayList<String>();
 		MFCustomers investForm = null;
 		SelectMFFund selectedfund = null;
+		String purchasetype= (String) session.getAttribute("PURCHASE_TYPE");
+		logger.info("PURCHASE_TYPE info- " + purchasetype);
 		try {
 			
 			investForm = (MFCustomers) session.getAttribute("mfInvestForm");
 			selectedfund = (SelectMFFund) session.getAttribute("selectedFund");
+			session.removeAttribute("selectedFund");
 			
 			if(investForm==null) {
 				investForm = new MFCustomers();
 			}
 			if(selectedfund==null) {
+				logger.info("No selected fund details found... Request may be from dashboard..");
 				selectedfund = new SelectMFFund();
+				map.addAttribute("FUND_DATA","EMPTY");
+			}else {
+				map.addAttribute("FUND_DATA","PROVIDED");
+				// Set SIP start date from
+				if (selectedfund.getInvestype().equalsIgnoreCase("SIP")) {
+					int initialMonth = LocalDate.now().getMonth().getValue();
+					int initialYear = LocalDate.now().getYear();
+					int currentday = LocalDate.now().getDayOfMonth();
+					if (Integer.valueOf(selectedfund.getSipDate()) > currentday) {
+						selectedfund.setSipStartMonth(initialMonth);
+					} else {
+						selectedfund.setSipStartMonth(initialMonth + 1);
+					}
+					selectedfund.setSipStartYear(initialYear);
+
+					selectedfund.setNoOfInstallments(120); // Default SIP installments to 5 years -- todo dynamic
+					
+					selectedfund.seteMandateRegRequired(true);
+					selectedfund.setMandateType("I");
+					
+					/*
+					map.addAttribute("bankacc",
+							userbankDetails.getAccountNumber() != null
+							? "XXXXXXXXX" + userbankDetails.getAccountNumber()
+							.substring(userbankDetails.getAccountNumber().length() - 3)
+							: "NOT AVAILABLE");
+					
+					*/
+//					map.addAttribute("bankname", userbankDetails.getBankName());
+					/* map.addAttribute("ifsc", userbankDetails.getIfscCode()); */
+//					map.addAttribute("isEmandateComplete", !selectedFund.iseMandateRegRequired()); // should to opposite
+				}
+				
+				String transId = bseEntryManager.generateTransId();
+				logger.info("purchaseBseMfAfterLogin(): Generated transation ID for current order of customer: " + selectedfund.getClientID() + " : " + transId);
+
+				selectedfund.setTransactionID(transId);
+				selectedfund.setInvestorName(investForm.getInvName());
+				selectedfund.setPortfolio("NEW");
+				selectedfund.setAmcimg(InvestFormConstants.amchouseicon.get(selectedfund.getAmcCode()));
+				
+				map.addAttribute("paymentMethod", InvestFormConstants.bsePaymentMethod);
 			}
 			
 			logger.info("Details of investor- " + (investForm!= null?investForm.getPan1():"NULL")+ "->"+  (investForm!= null?investForm.getHoldingMode():"NULL") + "-> "+ pan1verified);
@@ -982,8 +1062,6 @@ public class BsemfController {
 			
 //			session.setAttribute("mfRegisterdUser", investForm);
 			
-			selectedfund.setPortfolio("NEW");
-			selectedfund.setAmcimg(InvestFormConstants.amchouseicon.get(selectedfund.getAmcCode()));
 			
 			
 //			Map fund transaction details
@@ -994,35 +1072,7 @@ public class BsemfController {
 			} 
 			
 
-			// Set SIP start date from
-			if (selectedfund.getInvestype().equalsIgnoreCase("SIP")) {
-				int initialMonth = LocalDate.now().getMonth().getValue();
-				int initialYear = LocalDate.now().getYear();
-				int currentday = LocalDate.now().getDayOfMonth();
-				if (Integer.valueOf(selectedfund.getSipDate()) > currentday) {
-					selectedfund.setSipStartMonth(initialMonth);
-				} else {
-					selectedfund.setSipStartMonth(initialMonth + 1);
-				}
-				selectedfund.setSipStartYear(initialYear);
 
-				selectedfund.setNoOfInstallments(120); // Default SIP installments to 5 years -- todo dynamic
-				
-				selectedfund.seteMandateRegRequired(true);
-				selectedfund.setMandateType("I");
-				
-				/*
-				map.addAttribute("bankacc",
-						userbankDetails.getAccountNumber() != null
-						? "XXXXXXXXX" + userbankDetails.getAccountNumber()
-						.substring(userbankDetails.getAccountNumber().length() - 3)
-						: "NOT AVAILABLE");
-				
-				*/
-//				map.addAttribute("bankname", userbankDetails.getBankName());
-				/* map.addAttribute("ifsc", userbankDetails.getIfscCode()); */
-//				map.addAttribute("isEmandateComplete", !selectedFund.iseMandateRegRequired()); // should to opposite
-			}
 			
 //			selectedfund.setClientID();
 			
@@ -1072,12 +1122,7 @@ public class BsemfController {
 			*/
 
 			//			String transId = generateTransId();
-			String transId = bseEntryManager.generateTransId();
-			logger.info("purchaseBseMfAfterLogin(): Generated transation ID for current order of customer: " + selectedfund.getClientID() + " : " + transId);
-
-			selectedfund.setTransactionID(transId);
-			selectedfund.setInvestorName(investForm.getInvName());
-
+			
 			
 //			------------------------------------------------			
 			
@@ -1088,9 +1133,9 @@ public class BsemfController {
 		
 //		map.addAttribute("customerData", investForm);
 
-		map.addAttribute("paymentMethod", InvestFormConstants.bsePaymentMethod);
-		map.addAttribute("selectedFund", selectedfund);
 		
+		map.addAttribute("selectedFund", selectedfund);
+		map.addAttribute("PURCHASE_TYPE",purchasetype);
 		map.addAttribute("investForm", investForm);
 //		map.addAttribute("KYCVERIFIED", pan1verified);
 //		session.setAttribute("userid", investForm.getMobile());
@@ -1101,6 +1146,13 @@ public class BsemfController {
 	}
 
 	
+	@RequestMapping(value = { "/mutual-funds/mfInvestRegister" }, method = RequestMethod.GET)
+	public String defaultPostUrl(@Valid @ModelAttribute("mfInvestForm") MFCustomers investForm,
+			BindingResult bindResult, Model map, HttpServletRequest request, HttpServletResponse response,
+			RedirectAttributes attrs, HttpSession session) {
+		return "redirect:/";
+
+	}
 
 
 	@RequestMapping(value = "/mutual-funds/purchase", method = RequestMethod.GET)
@@ -2837,7 +2889,7 @@ public class BsemfController {
 
 					String result = "";
 					String fileName = investForm.getPan1() + ".pdf";
-					BseAOFDocument flag1 = BseAOFGenerator.aofGenerator(investForm, fileName,
+					BseAOFDocument flag1 = BseAOFGenerator.aofGenerator(null,investForm, fileName,
 							env.getProperty("investment.bse.aoffile.logo"), "VERIFIED",
 							env.getProperty(CommonConstants.BSE_AOF_GENERATION_FOLDR));
 					logger.info("uploadsign(): Status of AOF generation- " + flag1);
@@ -2877,11 +2929,8 @@ public class BsemfController {
 	public HttpClientResponse uploadSignedAOFFile(@RequestBody Map<String, String> requestdata, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 
 		logger.info("uploadSignedAOFFile(): mf-signature-udpate post controller");
-		String result = "SUCCESS";
 		String mobile = "";
 		String requestedMobile = "";
-		boolean uploadAOF=false;
-		MFCustomers investForm = null;
 		HttpClientResponse requeststatus = new HttpClientResponse();
 		requeststatus.setResponseCode(CommonConstants.TASK_FAILURE);
 		
@@ -2897,19 +2946,25 @@ public class BsemfController {
 					requestedMobile = mobile;
 
 					logger.info("uploadSignedAOFFile(): Upload sign for customer mobile from session- " + session.getAttribute("userid"));
-					//investForm = bseEntryManager.getCustomerInvestFormData(session.getAttribute("userid").toString());
 					
 					if (requestdata.get("mobile").equalsIgnoreCase(mobile)) {
-						requeststatus = bseEntryManager.completemfregistration(requestedMobile);
+//						requeststatus = bseEntryManager.completemfregistration(requestedMobile);
+						MFCustomers investForm = bseEntryManager.getCustomerInvestFormData(mobile);
+						BseApiResponse aofuplaodresponse = bseEntryManager.uploadAOFForm(investForm.getMobile(), env.getProperty(CommonConstants.BSE_AOF_GENERATION_FOLDR),env.getProperty(CommonConstants.BSE_AOF_LOGO_LOCATION), investForm.getClientID(),investForm);
+						if(aofuplaodresponse!=null && aofuplaodresponse.getStatusCode().equalsIgnoreCase(CommonConstants.TASK_SUCCESS_S)) {
+							requeststatus.setResponseCode(CommonConstants.TASK_SUCCESS);
+							requeststatus.setRetrunMessage(aofuplaodresponse.getRemarks());
+						}else {
+							requeststatus.setRetrunMessage(aofuplaodresponse.getRemarks());
+						}
+						
 					} else {
 						logger.info("Mobile number do not match with holding session form data. Request rejected. Session mobile no:"+ mobile + " : Requested mobile: " + requestedMobile);
-						//result = "SESSION_MOB_MISMATCH";
 						requeststatus.setRetrunMessage("Session data mismatch. Kindly contact admin.");
 					}
 					
 				} else if (apiresponse.getBody().equals("EXPIRED")) {
 					logger.info("uploadSignedAOFFile(): Session has expired for requesting user- "+ mobile);
-					//result = "SESSION_EXPIRED";
 					requeststatus.setRetrunMessage("Session token expired. Please login again to complete request.");
 				} 
 
@@ -2922,40 +2977,9 @@ public class BsemfController {
 		
 		} catch (Exception e) {
 			logger.error("uploadSignedAOFFile(): Failed to validate session for logged in user..", e);
-//			result = "INTERNAL_ERROR";
 			requeststatus.setRetrunMessage("Internal error. Please try after sometime.");
 		}
-		/*
-		try {
-			if(investForm!=null &&  (investForm.getPan1KycVerified().equals("Y") || env.getProperty("investment.bse.sign.bypasskyc").equalsIgnoreCase("Y")) ) {
-				if (mobile != "") {
-
-					logger.info("uploadSignedAOFFile(): Get mobile no- " + request.getParameter("mobdata"));
-					if (requestedMobile.equalsIgnoreCase(mobile)) {
-						
-						requeststatus = bseEntryManager.completemfregistration(requestedMobile);
-						
-					} else {
-						logger.info("Mobile number do not match with holding session form data. Request rejected. Session mobile no:"+ mobile + " : Requested mobile: " + requestedMobile);
-						result = "SESSION_MOB_MISMATCH";
-					}
-
-					// String result=
-					// bseEntryManager.upddateCustomerFormSignature(investForm.getMobile(),
-					// investForm.getPan1(), investForm.getCustomerSignature());
-
-				} else {
-					result = "REQUEST_DENIED";
-				}
-			}else {
-				logger.info("uploadSignedAOFFile(): Customer not KYC verified. AOF upload not permitted.");
-				result = "KYC_NOT_VERIFIED";
-			}
-		} catch (Exception e) {
-			logger.error("uploadSignedAOFFile(): Error with service", e);
-			result = "INTERNAL_ERROR";
-		}
-		*/
+		
 		logger.info("uploadSignedAOFFile(): returnResponse - " + requeststatus.getResponseCode());
 		return requeststatus;
 
@@ -3040,7 +3064,7 @@ public class BsemfController {
 				logger.info("AOF file not found. Generating new one...");
 
 				if (investForm != null) {
-					aofresult =  BseAOFGenerator.aofGenerator(investForm, fileName, env.getProperty("investment.bse.aoffile.logo"),"VERIFIED", dataDirectory);
+					aofresult =  BseAOFGenerator.aofGenerator(null,investForm, fileName, env.getProperty("investment.bse.aoffile.logo"),"VERIFIED", dataDirectory);
 					logger.info("downloadPDFResource(): AOF generation status without signature for download- "+ aofresult.getFilegenerationstatus());
 				} else {
 					logger.info("Investform data blank.AOF generation skipped. ");
@@ -3169,19 +3193,25 @@ public class BsemfController {
 	@ModelAttribute("states") 
 	public Map<String, String> states()
 	{
-		
+		logger.info("Return state list...");
 		return InvestFormConstants.states; 
 	}
+
 	
-	@ModelAttribute("cities") 
-	public Map<String,String> cities(@ModelAttribute("mfInvestForm") MFCustomers investForm)
+	@ModelAttribute(name="cities") 
+	public Map<String,String> cities(@ModelAttribute("mfInvestForm") MFCustomers investformui)
 	{
-//		List<Select2Results> dataarr= new ArrayList<Select2Results>();
+		ObjectMapper mapper = new ObjectMapper();
 		Map<String,String> data = new HashMap<String, String>();
-//		System.out.println("Passed investform- "+ investForm);
-		if(investForm!=null) {
-			if(investForm.getAddressDetails()!=null &&  investForm.getAddressDetails().getState()!=null) {
-				String statefrommapping = InvestFormConstants.hdfcstatekey.get(investForm.getAddressDetails().getState());
+		try {
+			logger.info("Data- "+ mapper.writeValueAsString(investformui));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		if(investformui!=null) {
+			if(investformui.getAddressDetails()!=null &&  investformui.getAddressDetails().getState()!=null) {
+				String statefrommapping = InvestFormConstants.hdfcstatekey.get(investformui.getAddressDetails().getState());
+				
 				Map<String,String> filters = new HashMap<String, String>();
 				filters.put("stateid", statefrommapping);
 				filters.put("search","city");
@@ -3189,27 +3219,27 @@ public class BsemfController {
 				logger.info("City list retrieved- "+ data.size());
 			}
 		}
+		logger.info("Returning cities..");
 		return data;
 	}
 	
-	
+
+
 	@ModelAttribute("pincode") 
-	public Map<String,String> pincode(@ModelAttribute("mfInvestForm") MFCustomers investForm)
+	public Map<String,String> pincode(@ModelAttribute("mfInvestForm") MFCustomers investForm, HttpServletRequest request)
 	{
 		Map<String,String> data = new HashMap<String, String>();
-//		System.out.println("pincode(): Passed investform- "+ investForm);
 		if(investForm!=null) {
 			if(investForm.getAddressDetails()!=null &&  investForm.getAddressDetails().getState()!=null) {
 				String statefrommapping = InvestFormConstants.hdfcstatekey.get(investForm.getAddressDetails().getState());
+				
 				Map<String,String> filters = new HashMap<String, String>();
-//				System.out.println("Pincode for state- "+ statefrommapping + " city- "+ investForm.getAddressDetails().getCity());
 				filters.put("stateid", statefrommapping);
 				filters.put("search",investForm.getAddressDetails().getCity());
 				filters.put("cityvaluetype", "CITYNAME");
 				Searchlocationdetials data2 = new Searchlocationdetials();
 				data2.stateid = statefrommapping;
 				data2.cityid = investForm.getAddressDetails().getCity();
-				
 				data = hdfcService.searchcitypincode2(data2,filters, data2.stateid,data2.cityid);
 				logger.info("Pincode list retrieved- "+ data.size());
 			}
@@ -3267,12 +3297,12 @@ public class BsemfController {
 		return env.getProperty(CommonConstants.CDN_URL);
 	}
 	
+	/*
 	@ModelAttribute("fundsexplorer")
 	public List<BseMFSelectedFunds> funddetails() {
-//		List<BseMFSelectedFunds> funds = null;
 		return bseEntryManager.getAllSelectedFunds();
 	}
-	
+	*/
 	
 	@ExceptionHandler(MissingServletRequestParameterException.class)
 	public ModelAndView handleMissingParams(MissingServletRequestParameterException ex) {

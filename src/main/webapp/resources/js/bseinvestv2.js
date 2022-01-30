@@ -156,8 +156,9 @@ function validateForm() {
 
 $(document).ready(function() {
 	$( function() {
-		$( "#investorDOB" ).datepicker({ format: 'dd/mm/yyyy' });
+		$( "#investorDOB,nomineedob" ).datepicker({ format: 'dd/mm/yyyy' });
 	} );
+	
 	setDefaultvalues();
 });
 
@@ -468,6 +469,10 @@ function validBankForm() {
 		showerrormsg('mandateField','Please provide minor guardian name');
 		return false;
 	}
+	if(nomineeminor == "Y" && $("#nomineedob").val() ==""){
+		showerrormsg('mandateField','Please provide minor date of birth');
+		return false;
+	}
 	if(nomineeminor == "Y" && ( $("#relation").val() =="Parents" ||$("#relation").val() =="Spouse" ) ){
 		showerrormsg('mandateField','Parents or spouse cannot be minor');
 		return false;
@@ -475,6 +480,10 @@ function validBankForm() {
 	
 	if(nomineeminor == "N" && $("#nomineeguardian").val() !=""){
 		showerrormsg('mandateField','Remove guardian name if not minor');
+		return false;
+	}
+	if(nomineeminor == "N" && $("#nomineedob").val() !=""){
+		showerrormsg('mandateField','Remove date of birth if not minor');
 		return false;
 	}
 	

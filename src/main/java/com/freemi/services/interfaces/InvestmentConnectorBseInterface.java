@@ -31,7 +31,7 @@ public interface InvestmentConnectorBseInterface {
 	
 	public String saveCustomerRegistration(MFCustomers registrationForm,String field1);
 	
-	public BseAOFUploadResponse uploadAOFFormtoBSE(String mobileNumber, String aoffolderLocation, String clientCode);
+	public BseAOFUploadResponse uploadAOFFormtoBSE(String mobileNumber, String aoffolderLocation, String clientCode, String filename);
 	
 	public BseOrderEntryResponse processCustomerTransactionbsaRequest(SelectMFFund selectedFund, String transactionNumber, String mandateId);
 	

@@ -171,7 +171,7 @@ public class RestClientBseImpl implements BseRestClientService {
 			if(env.getProperty(CommonConstants.BSE_CALL_TEST_ENABLED).equalsIgnoreCase("N")){
 				response= restTemplate.postForObject(url, entity, Uccregisterresponse.class);
 //				returnRes=response.getBody().toString();
-				logger.info("registerUser() : Register Request Response- "+ mapper.writeValueAsString(response));
+				logger.info("registeruserv2() : Register Request Response- "+ mapper.writeValueAsString(response));
 				if(response.getStatus().equals("0"))
 				{ 
 					returnRes = "SUCCESS";
@@ -186,6 +186,7 @@ public class RestClientBseImpl implements BseRestClientService {
 				 * "101|FAILED: INVALID DATE OF BIRTH OF INDIVIDUAL"; else returnRes =
 				 * "101|FAILED: DOB MANDATORY";
 				 */
+				logger.info("registeruserv2(): Test phase enabled. Sending back dummy response.");
 				returnRes = "SUCCESS";
 //			    returnRes="101|FAILED: INVALID DATE OF BIRTH OF INDIVIDUAL";
 //			    returnRes="100|RECORD INSERTED SUCCESSFULLY";
@@ -435,7 +436,7 @@ public class RestClientBseImpl implements BseRestClientService {
 			}else{
 				//				returnRes = "101|FAILED: AMOUNT SHOULD NOT BE BLANK";
 				//				returnRes = "101|FAILED: INVALID CLIENT ACCOUNT NUMBER";
-				returnRes = "100|RECORD SAVED SUCCESSFULLY";
+				returnRes = "100|RECORD INSERTED SUCCESSFULLY";
 //				returnRes = "101|FAILED: INVALID ADDRESS TYPE";
 //			    	returnRes ="101|FAILED: INVALID DATE OF BIRTH FORMAT MM/DD/YYYY";
 			}
@@ -505,8 +506,9 @@ public class RestClientBseImpl implements BseRestClientService {
 				//			returnRes = "100|File Uploaded Successfully.";
 				//			returnRes="101|Invalid FileType";
 				//			returnRes="101|FAILED: PAN NO ALREADY APPROVED";
+				logger.info("uploadAOF(): Test phase enabled. Sending back dummy response");
 				returnRes = "101|FAILED: IMAGE IS ALREADY AVAILABLE AND IMAGE STATUS IS PENDING";
-
+//				returnRes = "101|FAILED: CLIENT STATUS IS NOT ACTIVE";
 			}
 		} catch (JsonProcessingException e) {
 			logger.error("uploadAOF(): Failed to write form data", e);

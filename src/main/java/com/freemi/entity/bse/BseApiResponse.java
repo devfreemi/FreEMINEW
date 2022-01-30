@@ -1,12 +1,20 @@
 package com.freemi.entity.bse;
 
-public class BseApiResponse {
+import java.io.Serializable;
+
+public class BseApiResponse implements Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	
 	private String responseCode="";
 	private String remarks="";
 	private String statusCode="";
 	private String data1;
 	private String data2;
+	private byte[] data3;
 	
 	public String getResponseCode() {
 		return responseCode;
@@ -38,5 +46,15 @@ public class BseApiResponse {
 	public void setData2(String data2) {
 		this.data2 = data2;
 	}
-
+	public byte[] getData3() {
+		return data3;
+	}
+	public void setData3(byte[] data3) {
+		this.data3 = data3;
+	}
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+	
+	
 }

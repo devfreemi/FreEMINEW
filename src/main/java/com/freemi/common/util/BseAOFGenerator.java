@@ -11,6 +11,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
+import javax.activation.DataSource;
+import javax.mail.util.ByteArrayDataSource;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,13 +37,17 @@ import com.itextpdf.text.pdf.PdfWriter;
 public class BseAOFGenerator {
 	private static final Logger logger = LogManager.getLogger(BseAOFGenerator.class);
 
-	public static BseAOFDocument aofGenerator(MFCustomers investForm,String fileName, String imageAbsPath, String kycStatus, String aofbasepath){
+	public static BseAOFDocument aofGenerator(BseAOFDocument aoffilestatus, MFCustomers investForm,String fileName, String imageAbsPath, String kycStatus, String aofbasepath){
 		logger.info("Beginning process to generate AOF file - "+ (aofbasepath+fileName));
 		String flag = "SUCCESS";
 		kycStatus = "";	//
 		PdfWriter writer = null;
 		Document document = new Document(PageSize.A4);
-		BseAOFDocument aoffilestatus = new BseAOFDocument();
+//		BseAOFDocument aoffilestatus = new BseAOFDocument();
+		if(aoffilestatus == null) {
+			logger.info("No existing record in DB hence create new BseAOFDocument() object");
+			aoffilestatus = new BseAOFDocument();
+		}
 		try
 		{
 			writer = PdfWriter.getInstance(document, new FileOutputStream(aofbasepath+fileName));
@@ -1238,7 +1245,29 @@ public class BseAOFGenerator {
 		m.setInvName("asdas asdasd");
 		aofGenerator(m,"232323", "E:/BITBUCKET REPOSITORY/freemi/src/main/webapp/resources/images/freemi.png","VERIFIED","E:/AOF/");
 
-	}*/
+	}
+	*/
 	
+	
+	/*
+	public static void main(String[] args) {
+		
+		PdfWriter writer = null;
+		Document document = new Document(PageSize.A4);
+		
+		try {
+			Path filepath = Paths.get("D:\\AOF\\GGGPM9876H.pdf");
+			if(Files.exists(filepath)) {
+				byte[] filearray = Files.readAllBytes(filepath);
+//				DataSource dataSource = new ByteArrayDataSource(java.util.Base64.getDecoder().decode(filearray), "application/pdf");
+				DataSource dataSource = new ByteArrayDataSource(filearray, "application/pdf");
+				System.out.println("Done");
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	*/
 	
 }

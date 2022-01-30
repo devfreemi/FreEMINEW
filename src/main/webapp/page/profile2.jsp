@@ -79,7 +79,7 @@
 							<div class="col-6 borderstyle-1">
 								<label>Name</label>
 							</div>
-							<div class="col-6 borderstyle-1 text-muted" style="overflow: auto;">${profilefreemi.fullname }</div>
+							<div class="col-6 borderstyle-1 text-muted" style="overflow: auto;">${profilefreemi.fname } ${profilefreemi.lname }</div>
 						</div>
 						<div class="row">
 							<div class="col-6 borderstyle-1">

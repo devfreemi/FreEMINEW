@@ -320,6 +320,7 @@ public class MFCustomers implements Serializable {
 	@OneToOne(fetch=FetchType.EAGER, mappedBy="mfForm",cascade=CascadeType.ALL)
 	private AddressDetails addressDetails;
 	
+	
 	@OneToMany(mappedBy="clientID", cascade=CascadeType.ALL)
 	private List<SelectMFFund> fundPurchaseDetails;
 	
@@ -1074,7 +1075,7 @@ public class MFCustomers implements Serializable {
 	public void setProfileuniqueid(String profileuniqueid) {
 		this.profileuniqueid = profileuniqueid;
 	}
-	
+
 	
 	
 }

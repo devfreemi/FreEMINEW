@@ -15,6 +15,7 @@ public class UserProfileLdap {
 	private String accountNumber;
 	private String aadhaar;
 	private String pan;
+	private String pan1;
 	private String gender;
 	private String houseNumber;
 	private String address1;
@@ -118,6 +119,14 @@ public class UserProfileLdap {
 
 	public String getPan() {
 		return pan;
+	}
+
+	public String getPan1() {
+		return pan1;
+	}
+
+	public void setPan1(String pan1) {
+		this.pan1 = pan1;
 	}
 
 	public void setPan(String pan) {

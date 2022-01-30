@@ -131,10 +131,10 @@ public class HdfcServiceImpl implements HdfcService {
 	@Override
 	@Cacheable(value = "statecities2", unless = "#result.size() == 0")
 	public Map<String, String> searchcity2(Map<String, String> filters, String stateid) {
-
+		
 		Map<String, String> dataarr = new HashMap<String, String>();
 		Hdfccity[] citylist = null;
-
+		logger.info("Fetch city details for- "+ stateid);
 		try {
 			String state = filters.get("stateid");
 			logger.info("Selected state: " + state);

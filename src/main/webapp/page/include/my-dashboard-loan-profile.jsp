@@ -33,7 +33,7 @@
 
 	<div class="text-center">
 		<span id="loanfetch"><button class="btn btn-sm btn-secondary"
-				onclick="gethdfcloanrequestlist(reqid);">Fetch your Loan
+				onclick="gethdfcloanrequestlist(reqid,null);">Fetch your Loan
 				Requests</button></span>
 		<div>
 			<small class="text-danger" id="loanreqmsg"></small>

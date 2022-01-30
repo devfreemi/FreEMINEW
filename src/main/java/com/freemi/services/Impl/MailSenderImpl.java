@@ -124,7 +124,7 @@ public class MailSenderImpl implements MailSenderInterface {
 	 * @param bccSupport
 	 * @throws MessagingException
 	 */
-	private void processMailRequestWithAttachment(Mail mail, boolean bccSupport,DataSource dataSource,InputStream targetStream) throws MessagingException{
+	private void processMailRequestWithAttachment(Mail mail, boolean bccSupport,DataSource dataSource,String filename, InputStream targetStream) throws MessagingException{
 
 		logger.info("Begin process to format mail...");
 		MimeMessage message = javaMailSender.createMimeMessage();
@@ -141,7 +141,7 @@ public class MailSenderImpl implements MailSenderInterface {
 		}
 
 		helper.setText(mail.getContent(),true);	//True flag to indicate the text included is HTML
-		helper.addAttachment("Investment_ack.pdf", dataSource);
+		helper.addAttachment(filename, dataSource);
 //		helper.addAttachment("test.pdf", new InputStreamResource(targetStream));
 		
 		message.setSubject(mail.getSubject());
@@ -301,10 +301,62 @@ public class MailSenderImpl implements MailSenderInterface {
 		catch (Exception e) {
 			logger.error("sendMFRegisterNotification(): Error", e);
 		}
-
-
-
 	}
+	
+	
+	/**
+	 *@apiNote - use this to send notification with attachment
+	 */
+	@Async
+	@Override
+	public void sendMFRegisterNotificationwithAOF(String mailType, String customerName, String mobile, String mailId,
+			String bseClientID, String pan, String kycStatus, byte[] aofdata) {
+
+		logger.info("sendMFRegisterNotificationwithAOF(): Trigger mail to support to notify about new BSE account registration..");
+
+		try{
+
+			if(env.getProperty(CommonConstants.MAIL_SUPPORT_TEAM_MF_REGISTRATION).equals("Y")) {
+				InternetAddress address = new InternetAddress(env.getProperty(CommonConstants.MAIL_ACCOUNT_ID), "FreEMI");
+
+				Map<String, Object> replacementContent= new HashMap<String,Object>();
+				String date = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
+
+				replacementContent.put("name", customerName!=null?customerName:"NA");
+				replacementContent.put("mobile", mobile!=null?mobile:"NA");
+				replacementContent.put("pan", pan!=null?pan:"NA");
+				replacementContent.put("bseid", bseClientID!=null?bseClientID:"NA");
+
+				replacementContent.put("kycstatus", kycStatus!=null?kycStatus:"NA");
+				replacementContent.put("regdate", date);
+
+				Mail mail = processMailAddress(address, replacementContent, env.getProperty(CommonConstants.SUPPORT_TEAM_MAIL_ID), env.getProperty(CommonConstants.DEVELOPER_TEAM_MAIL_ID), "Mutual Fund Account Registration notification - "+ customerName,"mf-registration-notify.txt");
+
+				boolean bccSupport =false;
+				if(aofdata!=null) {
+					logger.info("Sending mail along with AOF..");
+//					DataSource dataSource = new ByteArrayDataSource(Base64.getDecoder().decode(aofdata), "application/pdf");
+					DataSource dataSource = new ByteArrayDataSource(aofdata, "application/pdf");
+					processMailRequestWithAttachment(mail, bccSupport, dataSource,"MF_Registration_AOF.pdf", null);
+				}else {
+					logger.info("Sending mail without AOF as recieved no AOF data to process");
+					processMailRequest(mail,bccSupport);
+				}
+			}else {
+				logger.info("sendMFRegisterNotificationwithAOF(): Mail notification is disbaled. Skipping...");
+			}
+		}catch(MessagingException exp){
+			logger.error("sendMFRegisterNotificationwithAOF(): MessageHelper Issue. ",exp);
+		} catch (UnsupportedEncodingException e) {
+			logger.error("sendMFRegisterNotificationwithAOF(): Error setting Internet address.", e);
+		}
+		catch (Exception e) {
+			logger.error("sendMFRegisterNotificationwithAOF(): Error", e);
+		}
+		
+		
+	}
+	
 
 	@Override
 	public void sendMFInitiatedNotice(MFinitiatedTrasactions initiatedData) {
@@ -361,7 +413,7 @@ public class MailSenderImpl implements MailSenderInterface {
 				byte[] testbyte = binarydoc.getBytes();
 				DataSource dataSource = new ByteArrayDataSource(Base64.getDecoder().decode(testbyte), "application/pdf");
 //				 InputStream targetStream = new ByteArrayInputStream(testbyte);
-				processMailRequestWithAttachment(mail,false,dataSource,null);
+				processMailRequestWithAttachment(mail,false,dataSource,"Investment_ack.pdf",null);
 
 			}else{
 				logger.info("sendMFInitiatedNotice():MFinitiatedTrasactions object is null. Skipping mail trigger");
@@ -429,6 +481,8 @@ public class MailSenderImpl implements MailSenderInterface {
 		}
 		
 	}
+
+	
 
 	/*
 	  public static void main(String[] args) throws IOException { 

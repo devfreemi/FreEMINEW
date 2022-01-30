@@ -1020,49 +1020,10 @@ function progresscomplete(elementid){
 	$("#"+elementid).html("");
 }
 
-$("#fddetailsmodal").on('show.bs.modal', function(event) {
-//	console.log("Modal called")
-	$("#nbscid").text("Mahindra Finance");
-	if ($(event.relatedTarget).attr("data-fdrno") != undefined) {
-		$("#fdrnoid").text($(event.relatedTarget).attr("data-fdrno"));
-	}
-	if ($(event.relatedTarget).attr("data-invname") != undefined) {
-		$("#invnameid").text($(event.relatedTarget).attr("data-invname"));
-	}
-	if ($(event.relatedTarget).attr("data-fdrdate") != undefined) {
-		$("#purchasedateid").text($(event.relatedTarget).attr("data-fdrdate"));
-	}
-	if ($(event.relatedTarget).attr("data-principal") != undefined) {
-		$("#principalamntid").text(convertNumberToIndianFormat($(event.relatedTarget).attr("data-principal")));
-	}
-	if ($(event.relatedTarget).attr("data-schemetype") != undefined) {
-		let type = $(event.relatedTarget).attr("data-schemetype");
-		if(type =='C'){
-			$("#schemetypeid").text("Cumulative");
-		}else if(type =='NC'){
-			$("#schemetypeid").text("Non Cumulative");
-		}else{
-			$("#schemetypeid").text(type);
-		}
-	}
-	if ($(event.relatedTarget).attr("data-tenure") != undefined) {
-		$("#fdtenureid").text($(event.relatedTarget).attr("data-tenure") + " months");
-	}
-	if ($(event.relatedTarget).attr("data-intrate") != undefined) {
-		$("#purchaserateid").text($(event.relatedTarget).attr("data-intrate"));
-	}
-	if ($(event.relatedTarget).attr("data-maturity") != undefined) {
-		$("#maturityamountid").text(convertNumberToIndianFormat($(event.relatedTarget).attr("data-maturity")));
-	}
-	if ($(event.relatedTarget).attr("data-maturitydate") != undefined) {
-		$("#maturitydate").text($(event.relatedTarget).attr("data-maturitydate"));
-	}
-
-});
-
 
 function retryaofupload(mobile) {
-
+	
+	var token =  $('input[name="_csrf"]').attr('value');
 	var jsonObjects = JSON.stringify({
 		action : 'aof_upload',
 		mobile : mobile,
@@ -1070,11 +1031,10 @@ function retryaofupload(mobile) {
 		submodule : "REGISTRATION_RETRY_INCOMPLETE"
 	});
 	
-	/*
-	$.ajaxSetup({
+		$.ajaxSetup({
 		headers:
 		{ 'X-CSRF-TOKEN': token }
-	});*/
+	});
 
 	request = $.ajax({
 		url: "/products/mutual-funds/uploadsignedaof",
@@ -1114,6 +1074,45 @@ function retryaofupload(mobile) {
 		$("#retryaofupload").html("Retry AOF Upload");
 		$("#retryaofupload").prop('disabled',false);
 	});
-
-
 }
+
+
+$("#fddetailsmodal").on('show.bs.modal', function(event) {
+//	console.log("Modal called")
+	$("#nbscid").text("Mahindra Finance");
+	if ($(event.relatedTarget).attr("data-fdrno") != undefined) {
+		$("#fdrnoid").text($(event.relatedTarget).attr("data-fdrno"));
+	}
+	if ($(event.relatedTarget).attr("data-invname") != undefined) {
+		$("#invnameid").text($(event.relatedTarget).attr("data-invname"));
+	}
+	if ($(event.relatedTarget).attr("data-fdrdate") != undefined) {
+		$("#purchasedateid").text($(event.relatedTarget).attr("data-fdrdate"));
+	}
+	if ($(event.relatedTarget).attr("data-principal") != undefined) {
+		$("#principalamntid").text(convertNumberToIndianFormat($(event.relatedTarget).attr("data-principal")));
+	}
+	if ($(event.relatedTarget).attr("data-schemetype") != undefined) {
+		let type = $(event.relatedTarget).attr("data-schemetype");
+		if(type =='C'){
+			$("#schemetypeid").text("Cumulative");
+		}else if(type =='NC'){
+			$("#schemetypeid").text("Non Cumulative");
+		}else{
+			$("#schemetypeid").text(type);
+		}
+	}
+	if ($(event.relatedTarget).attr("data-tenure") != undefined) {
+		$("#fdtenureid").text($(event.relatedTarget).attr("data-tenure") + " months");
+	}
+	if ($(event.relatedTarget).attr("data-intrate") != undefined) {
+		$("#purchaserateid").text($(event.relatedTarget).attr("data-intrate"));
+	}
+	if ($(event.relatedTarget).attr("data-maturity") != undefined) {
+		$("#maturityamountid").text(convertNumberToIndianFormat($(event.relatedTarget).attr("data-maturity")));
+	}
+	if ($(event.relatedTarget).attr("data-maturitydate") != undefined) {
+		$("#maturitydate").text($(event.relatedTarget).attr("data-maturitydate"));
+	}
+
+});

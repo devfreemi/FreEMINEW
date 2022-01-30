@@ -1,12 +1,33 @@
 package com.freemi.common.util;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 public class InvestFormConstants {
+	
+	
+	public static List<String> occupationservicelist = new ArrayList<String>(){
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 
+		{
+			add("02");
+			add("03");
+			add("04");
+			add("09");
+			add("41");
+			add("42");
+			add("44");
+			
+		}
+	};
+	
 
 	public static Map<String,String> taxStatus = new LinkedHashMap<String,String>(){
 		/**

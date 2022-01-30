@@ -167,7 +167,7 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 	}
 
 	@Override
-	public BseAOFUploadResponse uploadAOFFormtoBSE(String fileName, String aoffolderLocation, String clientCode) {
+	public BseAOFUploadResponse uploadAOFFormtoBSE(String fileName, String aoffolderLocation, String clientCode, String filename) {
 		logger.info("Convert AOF form details to BSE format and process for file of PAN- "+ fileName);
 		BseAOFUploadResponse aofresp = new BseAOFUploadResponse();
 		byte[] filearray = null;
@@ -196,7 +196,7 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 				String encodedString = Base64.getEncoder().encodeToString(filearray);
 				logger.debug("Uploading file to bse- "+ tifffilepath.toString());
 				logger.info("AOF image converted to bse base64 format for client- "+ clientCode);
-				BseAOFUploadRequest r = BseBeansMapper.AOFFormtoBseBeanMapper(filearray,encodedString, clientCode);
+				BseAOFUploadRequest r = BseBeansMapper.AOFFormtoBseBeanMapper(filearray,encodedString, clientCode,filename);
 				
 				String responseText = bseRestClientService.uploadAOF(r);
 				logger.info("Response for AOF upload against customer : "+ clientCode + " : "+ responseText);

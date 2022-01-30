@@ -585,15 +585,24 @@ public class BseBeansMapper {
 	}
 
 
-	public static BseAOFUploadRequest AOFFormtoBseBeanMapper(byte[] aoffile, String base64Image, String clientCode){
+	public static BseAOFUploadRequest AOFFormtoBseBeanMapper(byte[] aoffile, String base64Image, String clientCode, String filenamedata){
 		BseAOFUploadRequest response = new BseAOFUploadRequest();
-		StringBuffer fileName = new StringBuffer(CommonConstants.BSE_MEMBER_ID);
-		fileName.append(clientCode).append(new SimpleDateFormat("ddMMyyyy").format(new Date())).append(".tiff");
+		StringBuffer filename = new StringBuffer(CommonConstants.BSE_MEMBER_ID);
+		
+		if(filenamedata!=null) {
+			response.setFileName(filenamedata);
+		}else {
+			filename.append(clientCode).append(new SimpleDateFormat("ddMMyyyy").format(new Date())).append(".tiff");
+			filenamedata = filename.toString();
+			response.setFileName(filenamedata);
+		}
+		
 		response.setFlag("UCC");
-		response.setDocumentType("Image/tiff");
+//		response.setDocumentType("Image/tiff");
+		response.setDocumentType("");
 		response.setMemberCode(CommonConstants.BSE_MEMBER_ID);
 		response.setClientCode(clientCode);
-		response.setFileName(fileName.toString());
+		
 		//		response.setpFileBytes(aoffile);
 		response.setpFileBytes(base64Image);
 		response.setFiller1("NULL");

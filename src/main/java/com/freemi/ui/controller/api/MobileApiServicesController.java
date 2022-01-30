@@ -34,6 +34,7 @@ import com.freemi.common.util.BseAOFGenerator;
 import com.freemi.common.util.CommonConstants;
 import com.freemi.common.util.CommonTask;
 import com.freemi.common.util.InvestFormConstants;
+import com.freemi.database.interfaces.BseCustomerAOFRepository;
 import com.freemi.database.interfaces.ProductSchemeDetailService;
 import com.freemi.entity.bse.BseAOFUploadResponse;
 import com.freemi.entity.bse.BseApiResponse;
@@ -74,6 +75,9 @@ public class MobileApiServicesController {
 
     @Autowired
     MailSenderInterface mailSenderInterface;
+    
+    @Autowired
+    BseCustomerAOFRepository bseaofepository;
 
     SimpleDateFormat dbformat = new SimpleDateFormat("yyyy-mm-dd");
     SimpleDateFormat apiformat = new SimpleDateFormat("dd/mm/yyyy");
@@ -294,6 +298,7 @@ public class MobileApiServicesController {
 	return apiresponse;
     }
 
+    @Deprecated
     @RequestMapping(value = "/mutual-funds/upload-aof-signature", method = RequestMethod.POST)
     @ResponseBody
     public Object bseUploadAOFSignature(@Valid @RequestBody AofSignaure aofsignature,BindingResult bindingResult, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
@@ -358,7 +363,9 @@ public class MobileApiServicesController {
 			    investForm.setCustomerSignature2(customerSignature2);
 			    String result = "";
 			    String fileName = investForm.getPan1() + ".pdf";
-			    BseAOFDocument flag1 = BseAOFGenerator.aofGenerator(investForm, fileName, env.getProperty("investment.bse.aoffile.logo"), "VERIFIED", env.getProperty(CommonConstants.BSE_AOF_GENERATION_FOLDR));
+			    
+			    BseAOFDocument aofrecord = bseaofepository.findOneByClientid(investForm.getClientID());
+			    BseAOFDocument flag1 = BseAOFGenerator.aofGenerator(aofrecord,investForm, fileName, env.getProperty("investment.bse.aoffile.logo"), "VERIFIED", env.getProperty(CommonConstants.BSE_AOF_GENERATION_FOLDR));
 			    logger.info("bseUploadAOFSignature(): Status of AOF generation- " + flag1);
 			    if (flag1.getFilegenerationstatus().equalsIgnoreCase("SUCCESS")) {
 				logger.info("bseUploadAOFSignature(): Signed AOF file generation complete for customer- " + investForm.getPan1());
@@ -368,7 +375,7 @@ public class MobileApiServicesController {
 				if (result.equalsIgnoreCase("SUCCESS")) {
 
 				    logger.info("PROCEED WITH AOF SUBMIT....");
-				    BseAOFUploadResponse aofresp1 = investmentConnectorBseInterface.uploadAOFFormtoBSE(investForm.getPan1(), env.getProperty(CommonConstants.BSE_AOF_GENERATION_FOLDR), investForm.getClientID());
+				    BseAOFUploadResponse aofresp1 = investmentConnectorBseInterface.uploadAOFFormtoBSE(null,investForm.getPan1(), env.getProperty(CommonConstants.BSE_AOF_GENERATION_FOLDR), investForm.getClientID());
 				    logger.info("bseUploadAOFSignature(): AOF upload status as received- " + aofresp1.getStatusMessage());
 				    if (aofresp1.getStatusCode().equalsIgnoreCase("100") || (aofresp1.getStatusCode() .equalsIgnoreCase("101") && (aofresp1.getStatusMessage().contains("Exception caught at Service Application")
 					    || aofresp1.getStatusMessage().contains("PAN NO ALREADY APPROVED")

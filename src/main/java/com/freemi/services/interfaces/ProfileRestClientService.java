@@ -48,6 +48,8 @@ public interface ProfileRestClientService {
 	
 	public ResponseEntity<String> validateResetPasswordToken(String userid, String token,String requestingIp) throws JsonProcessingException;
 	
+	public ResponseEntity<String> extractdatafromtoken(String userid, String token,String requestingIp) throws JsonProcessingException;
+	
 	public ResponseEntity<String> isUserExisitng(String mobile) throws JsonProcessingException;
 	
 	public ResponseEntity<String> isEmailExisitng(String email) throws JsonProcessingException;

@@ -188,40 +188,43 @@ public class MfDataController {
     @ResponseBody
     public Object getcustomerfdfolios(Model model, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 
-	logger.info("@@ FIXED DEPOSIT PORTFOLIO fetch @@");
-	List<MahindraFDListItem> result = null;
-	try {
-	    if (session.getAttribute("userid") != null && session.getAttribute("token") != null) {
+    	logger.info("@@ FIXED DEPOSIT PORTFOLIO fetch @@");
+    	List<MahindraFDListItem> result = null;
+    	try {
+    		if (session.getAttribute("userid") != null && session.getAttribute("token") != null) {
 
-		String mobile = request.getParameter("mobile");
+    			String mobile = request.getParameter("mobile");
+    			logger.info("Request received to fetch FD details for user- "+ mobile);
+    			if(mobile!=null && mobile.equalsIgnoreCase(session.getAttribute("userid").toString())) {
 
-		if(mobile!=null && mobile.equalsIgnoreCase(session.getAttribute("userid").toString())) {
+    				UserProfileLdap profile = profileRestClientService.getProfileData(mobile, session.getAttribute("token").toString(), CommonTask.getClientSystemIp(request));
+    				logger.info("PAN- "+ profile.getPan());
+    				if(profile!=null && profile.getPan1()!=null) {
+    					result = mahindraFDProfileService.getMahidraFdList(mobile, profile.getPan1());
+    					if(result == null || result.size()==0	) {
+    						logger.warn("getcustomerfdfolios(): NO_DATA details. Return error");
+    						return "NO_DATA";
+    					}
+    				}else {
+    					logger.warn("getcustomerfdfolios(): No profile details or no PAN details. Return error");
+    					return "NO_PAN";
+    				}
+    			}else {
+    				logger.warn("getcustomerfdfolios(): Mobile no do not match with session. Return error");
+    				return "INAVLID_REQUEST";
+    			}
 
-		    UserProfileLdap profile = profileRestClientService.getProfileData(mobile, session.getAttribute("token").toString(), CommonTask.getClientSystemIp(request));
+    		} else {
+    			return "NO_SESSION";
+    		}
+    		//	    result = mahindraFDProfileService.getMahidraFdList("9051472645","CQOPS7539Z");
+    	} catch (Exception e) {
+    		logger.error("fdportfoliohistory(): Error processing request",e);
+    		return "INTERNAL_ERROR";
+    	}
 
-		    if(profile!=null && profile.getPan()!=null) {
-			result = mahindraFDProfileService.getMahidraFdList(mobile, profile.getPan());
-			if(result == null || result.size()==0	) {
-			    return "NO_DATA";
-			}
-		    }else {
-			return "NO_PAN";
-		    }
-		}else {
-		    return "INAVLID_REQUEST";
-		}
-
-	    } else {
-		return "NO_SESSION";
-	    }
-	    //	    result = mahindraFDProfileService.getMahidraFdList("9051472645","CQOPS7539Z");
-	} catch (Exception e) {
-	    logger.error("fdportfoliohistory(): Error processing request",e);
-	    return "INTERNAL_ERROR";
-	}
-
-	logger.info("Returning result...");
-	return result;
+    	logger.info("Returning result...");
+    	return result;
     }
 
 

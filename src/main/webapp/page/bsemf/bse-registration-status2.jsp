@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>BSE registration status</title>
+<title>Mutual fund registration status</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="robots" content="noindex,nofollow" />
 
@@ -26,11 +26,40 @@
 				<div class="col-md-6 col-lg-6 mx-auto pt-3"
 					style="border: 1px solid #c1bdb8; border-radius: 5px;">
 					<h1 style="font-size: 1.5rem; color: #5885e9; font-weight: 400;">Congratulation!</h1>
-					<small class="text-muted"><i class="fas fa-check" style="color: #3fc53f;"></i> Your mutual account registration complete. Your account is registered at FreEMI and temporary password sent over mail for your login.</small>
+					<small class="text-muted"><i class="fas fa-check" style="color: #3fc53f;"></i> Your mutual fund account registration complete.</small>
+					<br>
+					<c:if test="${PURCHASE_TYPE =='NEW_CUSTOMER' }">
+						<small>Your account is registered at FreEMI and temporary password sent over mail for your login.</small>
+					</c:if>
+					<c:if test="${PURCHASE_TYPE =='LOGGED_NEW_CUSTOMER' }">
+						<small>Proceed to complete your fund order</small>
+					</c:if>
+					
 					<hr>
-					<div class="mt-3">
+					<c:if test="${FUND_DATA == 'PROVIDED' }">
+						<div class="mt-3">
 						<jsp:include page="bse-purchase-form-new-register.jsp"></jsp:include>
 					</div>
+					</c:if>
+					<c:if test="${FUND_DATA == 'EMPTY' }">
+						<div class="row mx-auto">
+							<div class="col-md-12 col-lg-12 text-center mb-3">
+								<h6>Start your first investment</h6>
+							<a href="https://www.freemi.in/mutual-funds/mutual-fund-explorer/">
+								<button class="btn btn-info">Select fund</button>
+							 </a>
+							</div>
+							<div class="col-md-12 col-lg-12 text-center mb-3">
+								<h6>Check your dashboard</h6>
+							<a href="/products/my-dashboard">
+								<button class="btn btn-info">Visit dashboard</button>
+							 </a>
+							</div>
+							
+						</div>
+						
+					</c:if>
+					
 
 				</div>
 			</div>

@@ -187,7 +187,6 @@
 							<label for="address3">Address 3</label>
 						</div>
 					</div>
-
 					<div class="col-md-4 col-lg-4 mb-3">
 						<form:select class="custom-select select2size" id="addState"
 							required="required" path="addressDetails.state">
@@ -303,7 +302,7 @@
 				
 				<div class="form-row mb-3">
 
-					<div class="col-md-6 col-lg-6 mb-4">
+					<div class="col-md-4 col-lg-4 mb-4">
 						<p class="mb-0" style="font-size: .9rem;">
 							Nominee Minor? <sup class="text-danger">*</sup>
 						</p>
@@ -319,13 +318,23 @@
 							<label class="form-check-label" for="isNomineeMinory">Yes</label>
 						</div>
 					</div>
+					
+					<div class="col-md-4 col-lg-4">
+						<div class="md-form md-outline form-sm mt-0">
+							<form:input type="text" path="nominee.nomineeDOB" required="required"
+								data-provide="datepicker" data-date-start-date="-18y"
+								data-date-end-date="-1d" maxlength="10"
+								class="form-control datepicker mb-0" id="nomineedob" />
+							<label for="nomineedob">Minor's DOB </label>
+						</div>
+					</div>
 
 
-					<div class="col-md-6 col-lg-6">
+					<div class="col-md-4 col-lg-4">
 						<div class="md-form md-outline form-sm mt-0">
 							<form:input type="text" class="form-control" id="nomineeguardian" maxlength="64"
 								path="nominee.nomineeGuardian" />
-								<label for="nomineeName">Nominee Gurdian</label>
+								<label for="nomineeName">Nominee Guardian</label>
 						</div>
 					</div>
 				</div>
@@ -547,7 +556,7 @@
 
 					<div class="row gap_custom">
 						<div class="col-md-6">
-							<label class="col-5 col-md-5 col-form-label label_design">DOB
+							<label class="col-5 col-md-5 col-form-label label_design">Date of birth
 							</label> <label class="col-6 col-md-6 col-form-label label_design1"><span
 								id="DOBDisplay"></span></label>
 						</div>
@@ -637,6 +646,8 @@
 									id="nomineeRelationDisplay"></span></label>
 							</div>
 						</div>
+						
+						
 
 					</div>
 

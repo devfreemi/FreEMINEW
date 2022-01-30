@@ -58,7 +58,7 @@ public class MFNominationForm implements Serializable {
 	@Column(name="NOMINEE_PERCENTAGE")
 	private String nomineePercentage="100";
 	
-	@Transient
+	@Column(name="NOMINEE_DOB")
 	private String nomineeDOB="";
 	
 	@Column(name="NOMINEE_RELATION")

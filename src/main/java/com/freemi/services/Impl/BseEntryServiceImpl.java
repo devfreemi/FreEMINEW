@@ -175,6 +175,10 @@ public class BseEntryServiceImpl implements BseEntryManager {
     
     @Autowired
     Environment env;
+    
+    SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy-mm-dd");
+	 SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("dd/mm/yyyy");
+
 
     private static final Logger logger = LogManager.getLogger(BseEntryServiceImpl.class);
 
@@ -1037,32 +1041,37 @@ public class BseEntryServiceImpl implements BseEntryManager {
 
     @Override
     public MFCustomers getCustomerInvestFormData(String mobile) {
-	logger.info("Querying to get registered investment form data for mobile- "+ mobile);
-	MFCustomers investmentFormdata = null;
-	try{
-	    if(bseCustomerCrudRespository.existsByMobileAndAccountActive(mobile,"Y")){
-		String clientId = bseCustomerCrudRespository.getClientIdFromMobile(mobile);
-		investmentFormdata = bseCustomerCrudRespository.findOneByClientID(clientId);
-		AddressDetails address = bseCustomerAddressCrudRepository.findOneByClientID(clientId);
-		UserBankDetails bank = bseCustomerBankDetailsCrudRespository.getOne(clientId);
-		MFNominationForm nominee = bseCustomerNomineeCrudRepository.findOneByClientID(clientId);
-		//				System.out.println("Address- "+ address + " : Bank: "+ bank);
+    	logger.info("getCustomerInvestFormData(): Querying to get registered investment form data for mobile- "+ mobile);
+    	MFCustomers investmentFormdata = null;
+    	try{
+    		if(bseCustomerCrudRespository.existsByMobileAndAccountActive(mobile,"Y")){
+    			String clientId = bseCustomerCrudRespository.getClientIdFromMobile(mobile);
+    			investmentFormdata = bseCustomerCrudRespository.findOneByClientID(clientId);
+    			AddressDetails address = bseCustomerAddressCrudRepository.findOneByClientID(clientId);
+    			UserBankDetails bank = bseCustomerBankDetailsCrudRespository.getOne(clientId);
+    			MFNominationForm nominee = bseCustomerNomineeCrudRepository.findOneByClientID(clientId);
+    			//				System.out.println("Address- "+ address + " : Bank: "+ bank);
+    			investmentFormdata.setAddressDetails(address!=null?address:new AddressDetails());
+    			investmentFormdata.setBankDetails(bank!=null?bank:new UserBankDetails());
+    			investmentFormdata.setNominee(nominee!=null?nominee:new MFNominationForm());
+    			
+    			try {
+    				logger.info("getCustomerInvestFormData() : Investor DOB: " + investmentFormdata.getCustomerdob());
+    				investmentFormdata.setCustomerdob(simpleDateFormat2.format(simpleDateFormat1.parse(investmentFormdata.getInvDOB())));
+    				logger.info("getCustomerInvestFormData(): Investor DOB is in desired format. Proceed");
 
+    			} catch (Exception e) {
+    				logger.error("getCustomerInvestFormData(): Error converting date",e);
+    			}
+    			
+    		}else{
+    			logger.info("Cusotmer invest form data not found!");
+    		}
+    	}catch(Exception e){
+    		logger.error("Failed to query database to fetch customer details",e);
+    	}
 
-		investmentFormdata.setAddressDetails(address!=null?address:new AddressDetails());
-		investmentFormdata.setBankDetails(bank!=null?bank:new UserBankDetails());
-		investmentFormdata.setNominee(nominee!=null?nominee:new MFNominationForm());
-
-
-
-	    }else{
-		logger.info("Cusotmer invest form data not found!");
-	    }
-	}catch(Exception e){
-	    logger.error("Failed to query database to fetch customer details",e);
-	}
-
-	return investmentFormdata;
+    	return investmentFormdata;
     }
 
     @Override
@@ -1082,7 +1091,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 
     @Override
     public Page<BseFundsScheme> getpaginatedFundsList(Pageable p) {
-	logger.info("Querying to schemes by page wise- ");
+	logger.info("getpaginatedFundsList(): Querying to schemes by page wise- ");
 	Page<BseFundsScheme> fundDetails = null;
 	try{
 
@@ -1098,7 +1107,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
     @Override
     @Cacheable(value = "mutualfundexplorerdata", unless = "#result == null")
     public List<BseMFSelectedFunds> getAllSelectedFunds() {
-	logger.info("Querying to schemes by page wise- ");
+	logger.info("getAllSelectedFunds(): get all selected funds- ");
 
 	List<BseMFSelectedFunds> fundDetails = null;
 	try{
@@ -1161,10 +1170,12 @@ public class BseEntryServiceImpl implements BseEntryManager {
     					clientcode = bseCustomerCrudRespository.getClientIdFromMobile(customerForm.getMobile());
     				}
     				customerForm.setClientID(clientcode);
+    				
+    				/*
     				if(customerForm.getFatcaDetails().getResidenceCountry1()==null || customerForm.getFatcaDetails().getResidenceCountry1().isEmpty()) {
     					customerForm.getFatcaDetails().setResidenceCountry1(customerForm.getFatcaDetails().getCountryOfBirth());
     				}
-    				
+    				*/
     				
     				MFFatcaDeclareForm fatcadetails = bseCustomerFATCACrudRepository.findByClientID(clientcode);
     				
@@ -1401,7 +1412,12 @@ public class BseEntryServiceImpl implements BseEntryManager {
 
 	//		Basic details
 
-
+	toupdateForm.setProfileuniqueid(customerForm.getProfileuniqueid());
+	
+	toupdateForm.setFname(customerForm.getFname());
+	toupdateForm.setMname(customerForm.getMname());
+	toupdateForm.setLname(customerForm.getLname());
+	
 	toupdateForm.setPan1(customerForm.getPan1());
 	toupdateForm.setPan2(customerForm.getPan2());
 	toupdateForm.setInvName(customerForm.getInvName());
@@ -1431,9 +1447,14 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	toupdateForm.setTaxStatus(customerForm.getTaxStatus());
 	//		toupdateForm.setPlaceOfBirth(customerForm.getPlaceOfBirth());
 	//		toupdateForm.setFatherOrSpouse(customerForm.getFatherOrSpouse());
-
+	toupdateForm.setCustomerSignature1(customerForm.getCustomerSignature1());
+	
+	
 	toupdateForm.getNominee().setNomineeName(customerForm.getNominee().getNomineeName());
 	toupdateForm.getNominee().setNomineeRelation(customerForm.getNominee().getNomineeRelation());
+	toupdateForm.getNominee().setIsNomineeMinor(customerForm.getNominee().getIsNomineeMinor());
+	toupdateForm.getNominee().setNomineeGuardian(customerForm.getNominee().getNomineeGuardian());
+	toupdateForm.getNominee().setNomineeDOB(customerForm.getNominee().getNomineeDOB());
 
 	toupdateForm.getBankDetails().setAccountNumber(customerForm.getBankDetails().getAccountNumber());
 	toupdateForm.getBankDetails().setAccountType(customerForm.getBankDetails().getAccountType());
@@ -1466,7 +1487,21 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	//		toupdateForm.setPan2verified(customerForm);
 	//		toupdateForm.setPan1KycVerified(customerForm);
 	
+
+//	updatecommonfield(toupdateForm,null);
+	toupdateForm.setSystemip(systemdetails.getClientIpv4Address());
+	toupdateForm.setSystemDetails(systemdetails.getClientBrowser());
+	
+	
+//	toupdateForm.setFatcaDetails(updatefatcafield(customerForm, customerForm.getFatcaDetails(), "yyyy-mm-dd",systemdetails));
+	
+	
 //	FATCA DECLARATION
+
+	String dateformat="yyyy-mm-dd";
+	//	SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy-mm-dd");
+	//	SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat(dateformat!=null?dateformat:"dd/mm/yyyy");
+//	SimpleDateFormat simpleDateFormat3 = new SimpleDateFormat(dateformat!=null?dateformat:"mm/dd/yyyy");
 	
 	/*
 	List<String> occupationservicelist = new ArrayList<String>();
@@ -1477,76 +1512,56 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	occupationservicelist.add("41");
 	occupationservicelist.add("42");
 	occupationservicelist.add("44");
-
+	*/
+	
+	toupdateForm.getFatcaDetails().setIncomeSlab(customerForm.getFatcaDetails().getIncomeSlab());
+	toupdateForm.getFatcaDetails().setPlaceOfBirth(customerForm.getFatcaDetails().getPlaceOfBirth());
+	toupdateForm.getFatcaDetails().setWealthSource(customerForm.getFatcaDetails().getWealthSource());
+	toupdateForm.getFatcaDetails().setPoliticalExposedPerson(customerForm.getFatcaDetails().getPoliticalExposedPerson());
+	toupdateForm.getFatcaDetails().setFatherName(customerForm.getFatcaDetails().getFatherName());
+	toupdateForm.getFatcaDetails().setSpouseName(customerForm.getFatcaDetails().getSpouseName());
+	toupdateForm.getFatcaDetails().setCountryOfBirth(customerForm.getFatcaDetails().getCountryOfBirth());
+	
+	toupdateForm.getFatcaDetails().setTaxStatus(customerForm.getTaxStatus());
 	if(customerForm.getOccupation().equals("01") || customerForm.getOccupation().equals("43")) {
-//		fatcaForm.setOCC_TYPE("B");
 		toupdateForm.getFatcaDetails().setOccupationType("B"); // Business
-	}else if(occupationservicelist.contains(customerForm.getOccupation())) {
-//		fatcaForm.setOCC_TYPE("S");
+//	}else if(occupationservicelist.contains(customerForm.getOccupation())) {
+	}else if(InvestFormConstants.occupationservicelist.contains(customerForm.getOccupation())) {
 		toupdateForm.getFatcaDetails().setOccupationType("S"); // Service
 	}else {
-//		fatcaForm.setOCC_TYPE("O");
 		toupdateForm.getFatcaDetails().setOccupationType("O"); // Others
 	}
-
+	toupdateForm.getFatcaDetails().setOccupationCode(customerForm.getOccupation());
 	toupdateForm.getFatcaDetails().setUboApplicable("N");
 	toupdateForm.getFatcaDetails().setUbodf("N"); 	// For individual
-	*/
-//	updatecommonfield(toupdateForm,null);
-	toupdateForm.setSystemip(systemdetails.getClientIpv4Address());
-	toupdateForm.setSystemDetails(systemdetails.getClientBrowser());
+	
+	toupdateForm.getFatcaDetails().setUscanadaCitizen(customerForm.getFatcaDetails().isUsCitizenshipCheck()?"Y":"N");
+	
+	toupdateForm.getFatcaDetails().setNetWordth(null);
+		/*
+		if(mfcustomer.getFatcaDetails().getDateOfNetworth()!=null){
+		String bseFormatDob = simpleDateFormat3.format(new Date());
+	}
+		*/
+	toupdateForm.getFatcaDetails().setLogName(customerForm.getPan1());
+	toupdateForm.getFatcaDetails().setResidenceCountry1(customerForm.getFatcaDetails().getResidenceCountry1()!=null?customerForm.getFatcaDetails().getResidenceCountry1():"IN");
+	
+	toupdateForm.getFatcaDetails().setIdentificationDocType("C");
+	toupdateForm.getFatcaDetails().setDaclarationDate(new Date());
+	toupdateForm.getFatcaDetails().setCreatedBy("SELF REGISTRATION");
+
+	toupdateForm.getFatcaDetails().setSystemip(systemdetails.getClientIpv4Address());
+	toupdateForm.getFatcaDetails().setSystemDetails(systemdetails.getClientBrowser());
+	toupdateForm.getFatcaDetails().setUscanadaCitizen(customerForm.getFatcaDetails().isUsCitizenshipCheck() ? "Y" : "N");
 	
 	
-	toupdateForm.setFatcaDetails(updatefatcafield(customerForm, customerForm.getFatcaDetails(), "yyyy-mm-dd",systemdetails));
 	
 	toupdateForm.setLastModifiedDate(new Date());
 	return toupdateForm;
     }
     
     
-    private MFCustomers updatecommonfield(MFCustomers mfcustomer, String dateformat) {
-    	
-//    	FATCA DECLARATION
-    	
-    	List<String> occupationservicelist = new ArrayList<String>();
-    	occupationservicelist.add("02");
-    	occupationservicelist.add("03");
-    	occupationservicelist.add("04");
-    	occupationservicelist.add("09");
-    	occupationservicelist.add("41");
-    	occupationservicelist.add("42");
-    	occupationservicelist.add("44");
-    	
-    	mfcustomer.getFatcaDetails().setTaxStatus(mfcustomer.getTaxStatus());
-    	
-    	if(mfcustomer.getOccupation().equals("01") || mfcustomer.getOccupation().equals("43")) {
-//    		fatcaForm.setOCC_TYPE("B");
-    		mfcustomer.getFatcaDetails().setOccupationType("B"); // Business
-    	}else if(occupationservicelist.contains(mfcustomer.getOccupation())) {
-//    		fatcaForm.setOCC_TYPE("S");
-    		mfcustomer.getFatcaDetails().setOccupationType("S"); // Service
-    	}else {
-//    		fatcaForm.setOCC_TYPE("O");
-    		mfcustomer.getFatcaDetails().setOccupationType("O"); // Others
-    	}
-    	mfcustomer.getFatcaDetails().setOccupationCode(mfcustomer.getOccupation());
-    	mfcustomer.getFatcaDetails().setUboApplicable("N");
-    	mfcustomer.getFatcaDetails().setUbodf("N"); 	// For individual
-    	
-  		mfcustomer.getFatcaDetails().setUscanadaCitizen(mfcustomer.getFatcaDetails().isUsCitizenshipCheck()?"Y":"N");
-    	
-  		mfcustomer.getFatcaDetails().setNetWordth(null);
-  		/*
-  		if(mfcustomer.getFatcaDetails().getDateOfNetworth()!=null){
-			String bseFormatDob = simpleDateFormat3.format(new Date());
-		}
-  		*/
-  		mfcustomer.getFatcaDetails().setLogName(mfcustomer.getPan1());
-  		
-    	
-    	return mfcustomer;
-    }
-
+   
     
     
     
@@ -1557,6 +1572,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		//	SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat(dateformat!=null?dateformat:"dd/mm/yyyy");
 		SimpleDateFormat simpleDateFormat3 = new SimpleDateFormat(dateformat!=null?dateformat:"mm/dd/yyyy");
     	
+		/*
     	List<String> occupationservicelist = new ArrayList<String>();
     	occupationservicelist.add("02");
     	occupationservicelist.add("03");
@@ -1565,6 +1581,8 @@ public class BseEntryServiceImpl implements BseEntryManager {
     	occupationservicelist.add("41");
     	occupationservicelist.add("42");
     	occupationservicelist.add("44");
+    	*/
+    	
     	
     	if(mffatca == null) {
     		logger.info("FATCA entry is not found in DB. Create new instance");
@@ -1584,7 +1602,8 @@ public class BseEntryServiceImpl implements BseEntryManager {
     	if(mfcustomer.getOccupation().equals("01") || mfcustomer.getOccupation().equals("43")) {
 //    		fatcaForm.setOCC_TYPE("B");
     		mffatca.setOccupationType("B"); // Business
-    	}else if(occupationservicelist.contains(mfcustomer.getOccupation())) {
+//    	}else if(occupationservicelist.contains(mfcustomer.getOccupation())) {
+    	}else if(InvestFormConstants.occupationservicelist.contains(mfcustomer.getOccupation())) {
 //    		fatcaForm.setOCC_TYPE("S");
     		mffatca.setOccupationType("S"); // Service
     	}else {
@@ -1604,7 +1623,8 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		}
   		*/
     	mffatca.setLogName(mfcustomer.getPan1());
-  		
+  		mffatca.setResidenceCountry1(mfcustomer.getFatcaDetails().getResidenceCountry1()!=null?mfcustomer.getFatcaDetails().getResidenceCountry1():"IN");
+    	
     	mffatca.setIdentificationDocType("C");
     	mffatca.setDaclarationDate(new Date());
     	mffatca.setCreatedBy("SELF REGISTRATION");
@@ -1869,26 +1889,44 @@ public class BseEntryServiceImpl implements BseEntryManager {
     		if(( bseregistered[0]).equalsIgnoreCase("Y")) {
     		if(aofuploadstatus.equalsIgnoreCase("Y")) {
     			logger.info("AOF upload status is already comoplete. Skipping reupload for clientcode- "+ clientCode);
-    			requestresult.setResponseCode("998");
+//    			requestresult.setResponseCode("998");
+    			requestresult.setResponseCode(CommonConstants.TASK_SUCCESS_S);
     			requestresult.setRemarks("ALREDY_UPLOADED");
-    			requestresult.setStatusCode("1");
+//    			requestresult.setStatusCode("1");
+    			requestresult.setStatusCode(CommonConstants.TASK_SUCCESS_S);
     		}else {
 //    			BseAOFDocument flag1 = null;
-    			BseAOFDocument flag1 = bseaofepository.findOneByClientid(clientCode);
     			
+    			
+    			BseAOFDocument aofrecord = bseaofepository.findOneByClientid(clientCode);
+    			
+    			aofrecord = BseAOFGenerator.aofGenerator(aofrecord,investForm, fileName, logolocation, "VERIFIED", aoffolderLocation);
+    			
+    			if(aofrecord.getClientid() ==null) {
+    				aofrecord.setClientid(clientCode);
+    			}
+    			
+    			StringBuffer filename = new StringBuffer(CommonConstants.BSE_MEMBER_ID);
+    			filename.append(clientCode).append(new SimpleDateFormat("ddMMyyyy").format(new Date())).append(".tiff");
+    			aofrecord.setFileuploadname(filename.toString());
+    			
+    			bseaofepository.save(aofrecord);
+    			
+    			/*
     			if(flag1 == null) {
-    				flag1 = BseAOFGenerator.aofGenerator(investForm, fileName, logolocation, "VERIFIED", aoffolderLocation);
+    				
     				logger.info("uploadsign(): Signed AOF file generation complete for customer- " + mobileNumber + "->" +investForm.getPan1() + "-> "+ clientCode + " -> "+ flag1);
     				if(flag1.getFilegenerationstatus().equalsIgnoreCase("SUCCESS")) {
     					flag1.setClientid(clientCode);
     					bseaofepository.save(flag1);
     				}
     			}
+    			*/
     			
-    			if (flag1.getFilegenerationstatus().equalsIgnoreCase("SUCCESS")) {
+    			if (aofrecord.getFilegenerationstatus().equalsIgnoreCase("SUCCESS")) {
     				//			Send AOF to BSE
 //    				BseAOFUploadResponse aofresp1 = investmentConnectorBseInterface.uploadAOFFormtoBSE(mobileNumber, aoffolderLocation, clientCode);
-    				BseAOFUploadResponse aofresp1 = investmentConnectorBseInterface.uploadAOFFormtoBSE(investForm.getPan1(), aoffolderLocation, clientCode);
+    				BseAOFUploadResponse aofresp1 = investmentConnectorBseInterface.uploadAOFFormtoBSE(investForm.getPan1(), aoffolderLocation, clientCode, filename.toString());
         			logger.info("uploadAOFForm(): AOF upload status from BSE as received- " + aofresp1.getStatusMessage());
         			requestresult.setResponseCode(aofresp1.getStatusCode());
         			requestresult.setRemarks(aofresp1.getStatusMessage());
@@ -1898,36 +1936,49 @@ public class BseEntryServiceImpl implements BseEntryManager {
         							aofresp1.getStatusCode().equalsIgnoreCase("101")
         					&& 
         						(
-        							aofresp1.getStatusMessage().contains("Exception caught at Service Application")
-        							|| aofresp1.getStatusMessage().contains("PAN NO ALREADY APPROVED")
-        							|| aofresp1.getStatusMessage().contains("FAILED: IMAGE IS ALREADY AVAILABLE AND IMAGE STATUS IS PENDING")
+        							aofresp1.getStatusMessage().equalsIgnoreCase("Exception caught at Service Application")
+        							|| aofresp1.getStatusMessage().equalsIgnoreCase("PAN NO ALREADY APPROVED")
+        							|| aofresp1.getStatusMessage().equalsIgnoreCase("FAILED: IMAGE IS ALREADY AVAILABLE AND IMAGE STATUS IS PENDING")
         						)
         					)
         				) {
+        				logger.info("AOF upload is considered successful.. Proceed with success");
         				bseuploadstatus="Y";
+        				
+        				requestresult.setStatusCode(CommonConstants.TASK_SUCCESS_S);
+        				requestresult.setRemarks("Failed to generate AOF file!");
+        				
+        				requestresult.setData3(aofrecord.getAofpdf());
         			} else {
+        				logger.info("AOF upload not success...");
         				bseuploadstatus="N";
+        				
+        				requestresult.setStatusCode(CommonConstants.TASK_FAILURE_S);
+        				requestresult.setRemarks(aofresp1.getStatusMessage());
         			}
 //        			databasesavesatatus = bseCustomerCrudRespository.updateAofUploadStatus(mobileNumber,"N",aofresp1.getStatusMessage());
         			databasesavesatatus = bseCustomerCrudRespository.updateAofUploadStatus(mobileNumber,bseuploadstatus,aofresp1.getStatusMessage());
+        			bseaofepository.updateAofUploadStatus(clientCode, bseuploadstatus, aofresp1.getStatusCode(), aofresp1.getStatusMessage());
         			logger.info("uploadSignedAOFFile(): AOF upload status to database for mobile- "+mobileNumber + " -> status "+ bseuploadstatus+ " -> " + databasesavesatatus);
 
     			}else {
     				logger.info("AOF PDF file generation failed for mobile- +"+mobileNumber + ". SKipped uploading to BSE");
+    				requestresult.setStatusCode(CommonConstants.TASK_FAILURE_S);
+    				requestresult.setRemarks("Failed to generate AOF file!");
     			}
-    			requestresult.setStatusCode(Integer.toString(databasesavesatatus));
+//    			requestresult.setStatusCode(Integer.toString(databasesavesatatus));
     		}
     		}else {
     			logger.info("BSE customer registration not complete, hence skipping AOF upload for customer- "+ mobileNumber + " -> "+ clientCode);
-    			requestresult.setResponseCode("997");
-    			requestresult.setRemarks("BSE_REGISTRATION_INCOMPLETE");
-    			requestresult.setStatusCode("1");
+    			requestresult.setResponseCode(CommonConstants.TASK_FAILURE_S);
+    			requestresult.setRemarks("Customer registration is not yet complete.");
     		}
     	}catch(Exception e) {
     		logger.error("Failed to process AOF status update to database",e);
-    		requestresult.setResponseCode("999");
-			requestresult.setRemarks("INTERNAL_ERROR");
-			requestresult.setStatusCode("0");
+    		requestresult.setResponseCode(CommonConstants.TASK_FAILURE_S);
+			requestresult.setRemarks("Internal error. Please contact admin");
+//			requestresult.setStatusCode("0");
+			requestresult.setStatusCode(CommonConstants.TASK_FAILURE_S);
     	}
 
     	return requestresult;
@@ -2037,6 +2088,8 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		return response;
 	}
 
+	
+	@Deprecated
 	@Override
 	public HttpClientResponse completemfregistration(String mobile) {
 
@@ -2052,7 +2105,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 			if(aofUploadStatus[4].equals("N")) {
 
 				logger.info("uploadSignedAOFFile(): Call API uploadAOFForm");
-				BseAOFUploadResponse aofresp1 = investmentConnectorBseInterface.uploadAOFFormtoBSE(panForAOfFile,
+				BseAOFUploadResponse aofresp1 = investmentConnectorBseInterface.uploadAOFFormtoBSE(null,panForAOfFile,
 						env.getProperty(CommonConstants.BSE_AOF_GENERATION_FOLDR), clientCode);
 				logger.info("uploadSignedAOFFile(): AOF upload status as received- " + aofresp1.getStatusMessage());
 				if (aofresp1.getStatusCode().equalsIgnoreCase("100") || (aofresp1.getStatusCode()
@@ -2080,7 +2133,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 					bseCustomerCrudRespository.updateAofUploadStatus(mobile,success,message);
 				}
 			}else {
-				logger.info("AOF already uploaded successfully. Prevernt reinitiate");
+				logger.info("AOF already uploaded successfully. Prevent reinitiate");
 				result.setResponseCode(CommonConstants.TASK_FAILURE);
 				result.setRetrunMessage("AOF upload already complete.");
 			}
