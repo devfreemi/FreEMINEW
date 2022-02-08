@@ -3201,13 +3201,15 @@ public class BsemfController {
 	@ModelAttribute(name="cities") 
 	public Map<String,String> cities(@ModelAttribute("mfInvestForm") MFCustomers investformui)
 	{
-		ObjectMapper mapper = new ObjectMapper();
 		Map<String,String> data = new HashMap<String, String>();
+		/**
+		ObjectMapper mapper = new ObjectMapper();
+		
 		try {
 			logger.info("Data- "+ mapper.writeValueAsString(investformui));
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
-		}
+		}*/
 		if(investformui!=null) {
 			if(investformui.getAddressDetails()!=null &&  investformui.getAddressDetails().getState()!=null) {
 				String statefrommapping = InvestFormConstants.hdfcstatekey.get(investformui.getAddressDetails().getState());
@@ -3219,7 +3221,7 @@ public class BsemfController {
 				logger.info("City list retrieved- "+ data.size());
 			}
 		}
-		logger.info("Returning cities..");
+		
 		return data;
 	}
 	
@@ -3232,7 +3234,6 @@ public class BsemfController {
 		if(investForm!=null) {
 			if(investForm.getAddressDetails()!=null &&  investForm.getAddressDetails().getState()!=null) {
 				String statefrommapping = InvestFormConstants.hdfcstatekey.get(investForm.getAddressDetails().getState());
-				
 				Map<String,String> filters = new HashMap<String, String>();
 				filters.put("stateid", statefrommapping);
 				filters.put("search",investForm.getAddressDetails().getCity());

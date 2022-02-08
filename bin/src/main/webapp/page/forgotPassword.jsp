@@ -6,23 +6,22 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <html>
 <head>
-<link
-	href="<c:url value="${contextcdn}/resources/css/login.component.css"/>"
-	rel="stylesheet">
-<link href="<c:url value="${contextcdn}/resources/css/styles.css"/>"
-	rel="stylesheet">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Forgot Password</title>
+<title>Forgot Password - freemi.in</title>
 <meta http-equiv="cache-control" content="max-age=0" />
 <meta http-equiv="cache-control" content="no-cache" />
 <meta http-equiv="expires" content="0" />
-<!-- <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" /> -->
 <meta http-equiv="pragma" content="no-cache" />
+<meta name="keywords" content="freemi login, Sign up for free Online Mutual Fund account, Get best health insurance by signup, get Instant credit by signup" />
+<meta name="description" content="" />
+
+<link href="<c:url value="${contextcdn}/resources/css/login.component.css"/>" rel="stylesheet">
+<link href="<c:url value="${contextcdn}/resources/css/styles.css"/>" rel="stylesheet">
 <jsp:include page="include/bootstrap.jsp"></jsp:include>
 </head>
-<body class="back_set">
+<body>
 	<jsp:include page="include/header.jsp"></jsp:include>
-	<div class="container freemi_container" style="">
+	<div class="container" style="">
 
 		<div class="freemi-logo">
 			<img src="<c:url value="${contextcdn}/resources/images/f.png"/>"
@@ -37,7 +36,7 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-md-6 col-lg-6 form_div" style="margin: auto;">
+			<div class="col-md-6 col-lg-6" style="margin: auto;">
 				<div class="row">
 					<div class="col-12">
 
@@ -64,13 +63,13 @@
 				<div style="padding: 5px; font-size: 12px; color: red;">
 					<span id="jsmsg"></span>
 					<form:form method="POST"
-						action="${pageContext.request.contextPath}/forgotPassword.do"
+						action="${pageContext.request.contextPath}/forgotPassword"
 						commandName="forgotPasswordForm"
 						onsubmit="return validateForm(event)">
 
 						<div class="md-form">
 							<i class="fas fa-mobile-alt prefix"></i>
-							<form:input path="usermobile" type="text" id="form1"
+							<form:input path="usermobile" type="tel" id="form1"
 								pattern="[0-9]{10}" maxlength="10"
 								class="form-control form-control-sm"
 								placeholder="10 digit mobile number"></form:input>

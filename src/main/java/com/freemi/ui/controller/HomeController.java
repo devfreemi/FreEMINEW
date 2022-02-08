@@ -135,7 +135,6 @@ public class HomeController {
 		}
 	    }
 
-	    map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 
 	}else{
 	    logger.info("User session is already detected. Preventing another attempt of login. Update session cookie with current details");
@@ -803,11 +802,10 @@ public class HomeController {
 
 
     @RequestMapping(value = "/forgotPassword", method = RequestMethod.GET)
-    public String forgotPasswordDisplay(Model map) {
+    public String forgotPasswordDisplay(Model map, HttpServletRequest request, HttpServletResponse response) {
 	//logger.info("@@@@ Inside Login..");
 	logger.info("@@@@ ForgotPasswordController @@@@");
 	map.addAttribute("forgotPasswordForm", new ForgotPassword());
-	map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 
 	return "forgotPassword";
     }
@@ -817,24 +815,25 @@ public class HomeController {
 	return "redirect:/forgotPassword";
     }
 
-    @RequestMapping(value = "/forgotPassword.do", method = RequestMethod.POST)
-    public String forgotPasswordSubmit(@ModelAttribute("forgotPasswordForm") @Valid ForgotPassword forgotPasswordForm, BindingResult bindingResult, Model model, HttpServletRequest request, HttpServletResponse resp) {
+    @RequestMapping(value = "/forgotPassword", method = RequestMethod.POST)
+    public String forgotPasswordSubmit(@ModelAttribute("forgotPasswordForm") @Valid ForgotPassword forgotPasswordForm, BindingResult bindingResult, Model model, HttpServletRequest request, HttpServletResponse resp,RedirectAttributes redirectAttrs) {
 	logger.info("@@@@ Forgot password request submit POSTController.. /forgotPassword.do");
-
+	String returnpage="forgotPassword";
+	
 	if(bindingResult.hasErrors()){
 	    logger.info("Error in forgotpassword form- "+ bindingResult.getFieldError());
 	    model.addAttribute("error", bindingResult.getFieldError().getDefaultMessage());
-	    return "forgotPassword";
+	    return returnpage;
 	}
 	if(request.getParameter("g-recaptcha-response")==""){
 	    logger.info("Security token not checked");
 	    model.addAttribute("error", "Please check the security verification");
-	    return "forgotPassword";
+	    return returnpage;
 	}else{
 	    if(!GoogleSecurity.verifyRecaptcha(request.getParameter("g-recaptcha-response"), "Y", CommonTask.getClientSystemIp(request), request.getRequestURL().toString())){
 		logger.warn("Security token validation failed");
 		model.addAttribute("error", "Security token validation failed!");
-		return "forgotPassword";
+		return returnpage;
 	    }
 	}
 
@@ -843,25 +842,46 @@ public class HomeController {
 	try {
 	    logger.info("Beginning process to request password change process for mobile..." + forgotPasswordForm.getUsermobile());
 	    response = profileRestClientService.forgotPassword(forgotPasswordForm);
-	    logger.info("Forgot password change response for mobile:  "+forgotPasswordForm.getUsermobile() +" : " + response.getBody());
+	    logger.info("Forgot password change response for mobile:  "+forgotPasswordForm.getUsermobile() +" : " + (response!=null?response.getBody():"NULL"));
 	    //			logger.info(response.getHeaders());
 	    model.addAttribute("success", "Password reset mail sent on registered email id.");
+	    redirectAttrs.addFlashAttribute("msg", "Password reset mail sent on registered email id.");
+	    redirectAttrs.addFlashAttribute("forgotPasswordForm", forgotPasswordForm);
+	    returnpage = "redirect:/forgotPassword/success";
 	}catch(HttpStatusCodeException  e){
 	    logger.error("Forgot password httpexception - ",e.getStatusCode(),e);
 	    model.addAttribute("error", "Unable to process request curretnly");
-	} catch (JsonProcessingException e) {
+	} 
+	 /* catch (JsonProcessingException e) {
 	    logger.error("Forgot password JSONProcessing exception - ",e);
 	    model.addAttribute("error","Invalid form data");
-	}catch(Exception e){
+	}*/catch(Exception e){
 	    logger.error("Forgot password handling exception - ",e);
 	    model.addAttribute("error","Error processing request");
 	}
 
 	//		model.addAttribute("forgotPasswordForm", forgotPasswordForm);
 
-	return "forgotPassword";
+	return returnpage;
     }
-
+    
+    
+    @RequestMapping(value = "/forgotPassword/success", method = RequestMethod.GET)
+    public String forgotPasswordsuccess(@ModelAttribute("forgotPasswordForm") ForgotPassword passwordform, @ModelAttribute("msg") String msg, Model map, HttpServletRequest request, HttpServletResponse response) {
+	//logger.info("@@@@ Inside Login..");
+	logger.info("@@@@ ForgotPassword Success @@@@");
+	
+	if(passwordform!=null) {
+		logger.info("Password reset link sent successfully to mobile no account- "+ passwordform.getUsermobile());
+	}else {
+		logger.info("No form data or page refreshed or loaded blank, redirecting..");
+		return "redirect:/forgotPassword";
+	}
+	map.addAttribute("msg", msg);
+	
+	return "forgotPassword-success";
+    }
+    
 
     @RequestMapping(value = "/contact", method = RequestMethod.GET)
     public String contact( Model map, HttpServletRequest request, HttpSession session) {
@@ -870,7 +890,6 @@ public class HomeController {
 	ContactUsForm contactForm =new ContactUsForm();
 	//		String 
 	map.addAttribute("contactForm", contactForm);
-	map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 
 	return "contact";
     }
@@ -930,7 +949,6 @@ public class HomeController {
     public String termsOfUse(Model map) {
 	//logger.info("@@@@ Inside Login..");
 	logger.info("@@@@ Terms of user controller @@@@");
-	map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
 	return "terms-of-use";
     }
 
@@ -1159,6 +1177,11 @@ public class HomeController {
 	        return (Integer) httpRequest
 	          .getAttribute("javax.servlet.error.status_code");
 	    }*/
+    
+    
+    @ModelAttribute("contextcdn") String contextcdn() {
+		return env.getProperty(CommonConstants.CDN_URL);
+	}
 
 
 }

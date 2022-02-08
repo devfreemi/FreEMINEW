@@ -8,8 +8,8 @@
 	<Appenders>
 	
 		<!-- Rolling File Appender -->
-		<RollingFile name="FileAppender" fileName="/apps/backend_application/logs/PRODUCTS/freemiweb.log"
-			filePattern="/apps/backend_application/logs/PRODUCTS/BACKUP/%d{yyyy}/%d{MMM}/freemiweb-%d{yyyy-MM-dd}-%i.log">
+		<RollingFile name="FileAppender" fileName="D:/logs/PRODUCTS/freemiweb.log"
+			filePattern="D:/logs/PRODUCTS/BACKUP/%d{yyyy}/%d{MMM}/freemiweb-%d{yyyy-MM-dd}-%i.log">
 			<PatternLayout>
 				<Pattern>${LOG_PATTERN}</Pattern>
 			</PatternLayout>
@@ -17,6 +17,8 @@
 				<OnStartupTriggeringPolicy />
         		<SizeBasedTriggeringPolicy size="20 MB" />
        			 <TimeBasedTriggeringPolicy />
+				<!-- <SizeBasedTriggeringPolicy size="20MB" /> -->
+				<!-- <TimeBasedTriggeringPolicy interval="1"/> -->
 			</Policies>
 			<DefaultRolloverStrategy max="50" />
 		</RollingFile>
