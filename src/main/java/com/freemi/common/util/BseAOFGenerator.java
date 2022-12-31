@@ -34,6 +34,17 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
+/*
+Note-
+using itextpdf to generate pdf and pdfbox to convert pdf to .tff file.
+It was noticed that when image converted in linux, .tff file contents were distored.
+After debugging, it was identified that, font 'Courier' was not installed in Centos where the war was deployed.
+In linux, check list of fonts available by command 'fc-list'
+TO mitigate file issue, courier and courier-bold font file .ttf was downloaded and placed in server /usr/share/fonts/custom
+Then recached by command fc-cache
+This solved distortion issue.
+*/
+
 public class BseAOFGenerator {
 	private static final Logger logger = LogManager.getLogger(BseAOFGenerator.class);
 
@@ -54,10 +65,16 @@ public class BseAOFGenerator {
 			document.open();
 			/*document.add(new Paragraph("A Hello World PDF document."));*/
 
+			/*
 			Font f1 = new Font(FontFamily.COURIER,8,Font.BOLD);
 			Font f2 = new Font(FontFamily.COURIER,8,Font.NORMAL);
 			Font f3 = new Font(FontFamily.COURIER,6,Font.NORMAL);
-
+			*/
+			Font f1 = new Font(FontFamily.COURIER,8,Font.BOLD);
+			Font f2 = new Font(FontFamily.COURIER,8,Font.NORMAL);
+			Font f3 = new Font(FontFamily.COURIER,6,Font.NORMAL);
+			
+			
 			// 0th row - image
 
 			PdfPTable table21 = new PdfPTable(1); // 3 columns.

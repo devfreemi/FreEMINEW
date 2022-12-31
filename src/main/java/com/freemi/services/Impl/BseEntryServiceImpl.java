@@ -1104,6 +1104,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	return fundDetails;
     }
 
+    /*
     @Override
     @Cacheable(value = "mutualfundexplorerdata", unless = "#result == null")
     public List<BseMFSelectedFunds> getAllSelectedFunds() {
@@ -1120,6 +1121,8 @@ public class BseEntryServiceImpl implements BseEntryManager {
 
 	return fundDetails;
     }
+    */
+    
 
     @Override
     public List<BseMFSelectedFunds> getFundsByCategory(String category) {
@@ -2151,6 +2154,11 @@ public class BseEntryServiceImpl implements BseEntryManager {
 			String initiatedmobileid,ClientSystemDetails systemdetails) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public String getifscdetails(String ifsc) {
+		return investmentConnectorBseInterface.getifscdetails(ifsc);
 	}
 
 

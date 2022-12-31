@@ -5,6 +5,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +24,7 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freemi.common.util.CommonConstants;
+import com.freemi.common.util.CommonTask;
 import com.freemi.database.interfaces.PortalUsersCrudRepository;
 import com.freemi.entity.database.CampaignSignupForm;
 import com.freemi.entity.database.ContactUsForm;
@@ -379,30 +384,11 @@ public class RestClientLdapImpl implements ProfileRestClientService {
 	@Override
 	public ResponseEntity<String> validateUserToken(String userid, String token, String requestingIp) {
 		logger.info("Validate user session token - "+ token);
-		final String url = env.getProperty(CommonConstants.URL_SERVICE_PROFILE) + "/validateSessionToken/"+userid;
-		ObjectMapper mapper = new ObjectMapper();
-		RestTemplate restTemplate = new RestTemplate();
-		SessionToken sessiontoken = new SessionToken();
-		sessiontoken.setToken(token);
-		sessiontoken.setUserid(userid);
-		sessiontoken.setSystemip(requestingIp);
-		ResponseEntity<String> response=null;
-
-		String formdata =null;
-		try {
-			formdata= mapper.writeValueAsString(sessiontoken);
-			HttpHeaders headers = new HttpHeaders();
-			headers.set("Authorization", ANONYMOUS_TOKEN);
-			headers.set("requestingIp", requestingIp);
-			HttpEntity<String> entity = new HttpEntity<String>(formdata,headers);
-			response = restTemplate.postForEntity(url, entity,  String.class);
-			logger.debug("validateUserToken(): Session validation response- "+ response);
-		} catch (JsonProcessingException e) {
-			logger.info("Failed to carry out session validation for user - "+userid,e);
-		}
+		ResponseEntity<String> response = validatesessionmethod(userid, token, requestingIp);
 
 		return response;
 	}
+
 
 	@Override
 	public ResponseEntity<String> linkmfaccountDetails(String mobile, String pan, String bseclientId) {
@@ -491,6 +477,95 @@ public class RestClientLdapImpl implements ProfileRestClientService {
 			logger.error("Error updating PAN to LDAP account ",e);
 		}
 		
+		return response;
+	}
+
+	@Override
+	public HttpClientResponse validateusersession(HttpServletRequest request, HttpSession session,
+			String requestingmobile, String requestingemail, String pan, String token,String requestingIp, boolean registeredvalue) {
+		logger.info("Check and validate if session exist");
+		ResponseEntity<String> response=null;
+		HttpClientResponse validationresponse = new HttpClientResponse();
+		try{
+			
+			HashMap<String, String> cookiedata = new HashMap<String, String>();
+			boolean found = false;
+//	        System.out.println("@@@ ContextPath: "+request.getContextPath());
+	        Cookie[] cookies = request.getCookies();{
+	        	
+	        }
+	        //System.out.println();
+	        if (cookies!=null) {
+	            int i = 0;
+	            while (!found && i < cookies.length) {
+//	                System.out.println(cookies[i].getName()+"::"+"loggedSession");
+	                if (cookies[i].getName().equals("token")) {
+	                    found=true;
+//	                    result = cookies[i].getValue();
+	                    cookiedata.put("token", cookies[i].getValue());
+//	                    logger.info("Logger user from cookie: "+ result);
+//	                    modelAndView.addObject("loggedSession",cookies[i].getValue());
+	                    
+	                }
+	                if(cookies[i].getName().equals("userid")) {
+	                	cookiedata.put("userid", cookies[i].getValue());
+	                }
+	                i++;
+	              }
+	        }
+	       
+	        if(cookiedata.containsKey("userid") && requestingmobile!=null && !cookiedata.get("userid").equalsIgnoreCase(requestingmobile)) {
+	        	validationresponse.setResponseCode(101);
+	        	validationresponse.setRetrunMessage("MOB_MISMATCH");
+	        	
+	        }else if(cookiedata.containsKey("token") && requestingmobile!=null) {
+	        	response = validatesessionmethod(requestingmobile, cookiedata.get("token"), requestingIp);
+	        	logger.info("validateusersession(): Token validation status received- "+ response.getBody());
+	        	if(response.getBody().equals("VALID")) {
+	        		validationresponse.setResponseCode(100);
+	        		
+	        	}else {
+	        		validationresponse.setResponseCode(101);
+	        	}
+	        	validationresponse.setRetrunMessage(response.getBody());
+	        	
+	        }else {
+	        	validationresponse.setResponseCode(101);
+	        	validationresponse.setRetrunMessage("NO_TOKEN");
+	        }
+			
+			}catch(Exception e){
+				logger.error("validateusersession: Error getting session form cookie", e);
+				validationresponse.setResponseCode(101);
+				validationresponse.setRetrunMessage("INTERNAL_ERROR");
+			}
+		
+		return validationresponse;
+	}
+	
+	
+	private ResponseEntity<String> validatesessionmethod(String userid, String token, String requestingIp) {
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_PROFILE) + "/validateSessionToken/"+userid;
+		ObjectMapper mapper = new ObjectMapper();
+		RestTemplate restTemplate = new RestTemplate();
+		SessionToken sessiontoken = new SessionToken();
+		sessiontoken.setToken(token);
+		sessiontoken.setUserid(userid);
+		sessiontoken.setSystemip(requestingIp);
+		ResponseEntity<String> response=null;
+
+		String formdata =null;
+		try {
+			formdata= mapper.writeValueAsString(sessiontoken);
+			HttpHeaders headers = new HttpHeaders();
+			headers.set("Authorization", ANONYMOUS_TOKEN);
+			headers.set("requestingIp", requestingIp);
+			HttpEntity<String> entity = new HttpEntity<String>(formdata,headers);
+			response = restTemplate.postForEntity(url, entity,  String.class);
+			logger.debug("validateUserToken(): Session validation response- "+ response);
+		} catch (Exception e) {
+			logger.info("Failed to carry out session validation for user - "+userid,e);
+		}
 		return response;
 	}
 

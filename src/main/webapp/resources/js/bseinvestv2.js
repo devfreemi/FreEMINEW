@@ -169,23 +169,25 @@ $(document).ready(function() {
 		var ifsc = $("#ifsc").val();
 
 		if (regex.test(ifsc)) {
-			$("#ifsc").css('border-bottom','2px solid #43c253');
-			$.get("https://ifsc.razorpay.com/"+ ifsc,function(data,status) {
-				console.log(data);
-				//console.log(data.BRANCH);
-				//console.log(data.ADDRESS);
-
+			$("#ifsc").css('border-bottom','2px solid #43c253');			
+			var request;
+			console.log(ifsc);
+			request = $.ajax({
+				url: "/products/api/get-ifsc-details/"+ ifsc,
+				method: "POST",
+				async: true,
+				datatype: "json",
+			});
+			
+			request.done(function(data, textStatus, xhr) {
 				$("#bankCity").val(data.CITY);
 				$("#branch").val(data.BRANCH);
 				$("#bankAddress").val(data.ADDRESS);
 				$("#bankName").val(data.BANK);
 				$("#bankState").val(data.STATE);
 				$("#invalidifsc").text("");
-			})
-			.fail(function(data,status) {
-				//console.log("Error retrieving data");
-				//console.log(data);
-//				console.log(status);
+			});
+			request.fail(function(xhr, textStatus) {
 				$("#invalidifsc").text("Invalid IFSC code");
 				$("#bankCity").val("NA");					
 				$("#branch").val("NA");
@@ -193,6 +195,8 @@ $(document).ready(function() {
 				$("#bankName").val("NA");
 				$("#bankState").val("NA");
 			});
+			
+			
 		} else {
 			$("#ifsc").css('border-bottom','2px solid #ff6a6a');
 		}

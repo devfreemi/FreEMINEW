@@ -25,9 +25,9 @@ public class SchedulerTasks {
 	
 //	@Scheduled(fixedRate = 15000)
 	@Scheduled(cron = "0 0 7 * * ?")
-	@CacheEvict(value = { "mutualfundexplorerdata","isinnavhistory" })
+	@CacheEvict(value = { "mutualfundexplorerdata","isinnavhistory","mutualfundexplorerdata_new" })
 	public void clearCache() {
-		logger.info("clear cache- mutualfundexplorerdata,isinnavhistory");
+		logger.info("clear cache- mutualfundexplorerdata,isinnavhistory,mutualfundexplorerdata_new");
 		
 	}
 	

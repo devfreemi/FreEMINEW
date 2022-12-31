@@ -96,7 +96,7 @@ public class HomeController {
     public String login(@ModelAttribute("login")Login login,@ModelAttribute("otpForm")Login otpForm, @RequestParam(name="ref",required=false)String referrerUrl,@RequestParam(name="mf",required=false)String mfStatus,@RequestParam(name="id",required=false)String loginid, Model map, HttpServletRequest request, HttpSession session, HttpServletResponse response) {
 	//logger.info("@@@@ Inside Login..");
 
-	logger.info("@@@@ LoginController @@@@");
+	logger.info("@@@@ LoginController @@@@ -"  + session.getId() );
 	logger.debug("Referrer url if passed-"+ referrerUrl!=null?referrerUrl:request.getHeader("Referer"));
 
 
@@ -626,6 +626,7 @@ public class HomeController {
 
 
     protected void setloggedsessiondata(HttpSession session, ResponseEntity<String> responseEntity) {
+    logger.info("Session ID- "+ session.getId());
 	if(responseEntity.getHeaders().get("fname")!=null){
 	    session.setAttribute("loggedSession", responseEntity.getHeaders().get("fname").get(0).split(" ")[0]);
 	}

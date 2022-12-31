@@ -16,6 +16,8 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.Proxy;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name="bsemf_transactions")
 @Proxy(lazy=false)
@@ -26,6 +28,7 @@ public class SelectMFFund implements Serializable {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="SL_NO")
+	@JsonIgnore
 	private long serialNo;
 	
 	@NotEmpty(message="Client ID not found.")

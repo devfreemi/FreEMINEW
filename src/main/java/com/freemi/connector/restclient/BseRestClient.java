@@ -622,7 +622,8 @@ public class BseRestClient implements BseEntryManager {
 	// TODO Auto-generated method stub
 	return null;
     }
-
+    
+    /*
     @Override
     public List<BseMFSelectedFunds> getAllSelectedFunds() {
 	final String url = env.getProperty(CommonConstants.URL_SERVICE_MF_BSE) + "/api/search/get-top-funds";
@@ -643,6 +644,8 @@ public class BseRestClient implements BseEntryManager {
 	}
 	return result;
     }
+    
+    */
 
     @Override
     public List<BseMFSelectedFunds> getFundsByCategory(String category) {
@@ -899,6 +902,12 @@ public class BseRestClient implements BseEntryManager {
 	@Override
 	public Bseregistrationstatus getbseregistrationstatus(String mobile, String pan, String customeruniqid,
 			String clientcode) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getifscdetails(String ifsc) {
 		// TODO Auto-generated method stub
 		return null;
 	}

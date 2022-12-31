@@ -16,6 +16,8 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Proxy;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name="bsemf_customers_nominee")
 @Proxy(lazy=false)
@@ -29,6 +31,7 @@ public class MFNominationForm implements Serializable {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="SL_NO")
+	@JsonIgnore
 	private long serialNo;
 	
 	@Column(name="CLIENT_ID")

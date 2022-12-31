@@ -11,7 +11,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,18 +22,32 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freemi.common.util.CommonConstants;
 import com.freemi.common.util.CommonTask;
 import com.freemi.database.respository.mahindra.MahindraKycdocupdateform;
 import com.freemi.entity.bse.BseOrderPaymentResponse;
+import com.freemi.entity.database.UserBankDetails;
 import com.freemi.entity.general.UserProfileLdap;
+import com.freemi.entity.investment.BseMFSelectedFunds;
+import com.freemi.entity.investment.ChosenMFund;
+import com.freemi.entity.investment.MFInvestForm;
+import com.freemi.entity.investment.MFInvestformAPI;
+import com.freemi.entity.investment.MFInvestmentDates;
+import com.freemi.entity.investment.MFNominationForm;
+import com.freemi.entity.investment.MFmanagementapiresponse;
+import com.freemi.entity.investment.MFpurchasefundAPI;
 import com.freemi.entity.investment.MfNavData;
+import com.freemi.entity.investment.PanValidationStatus;
 import com.freemi.entity.investment.RegistryFunds;
+import com.freemi.entity.investment.SelectMFFund;
 import com.freemi.entity.investment.TransactionStatus;
 import com.freemi.entity.investment.mahindra.MahindraFDListItem;
 import com.freemi.entity.investment.mahindra.MahindraResponse;
+import com.freemi.services.interfaces.Amcfundmanager;
 import com.freemi.services.interfaces.BseEntryManager;
 import com.freemi.services.interfaces.MahindraFDProfileService;
 import com.freemi.services.interfaces.ProfileRestClientService;
@@ -52,6 +66,9 @@ public class MfDataController {
 
     @Autowired
     RegistryManager registryManager;
+    
+    @Autowired
+    Amcfundmanager amcfundmanager;
 
     @Autowired
     MahindraFDProfileService mahindraFDProfileService;
@@ -93,6 +110,91 @@ public class MfDataController {
 	return json;
 	//		return navhistorydata;
     }
+    
+
+    @PostMapping(value = "/get-ifsc-details/{ifsc}", produces = "application/json")
+    //    @CrossOrigin(origins = "https://www.freemi.in")
+    @ResponseBody
+    public String getifscdetails(@PathVariable(name = "ifsc") String ifsc, Model model, HttpServletRequest request,
+    		HttpServletResponse httpResponse) {
+    	logger.info("Request received to fetch IFSC deatils for - " + ifsc);
+    	String json=null;
+    	try {
+    		if (!ifsc.isEmpty() || !ifsc.equalsIgnoreCase("null")) {
+    			json = bseEntryManager.getifscdetails(ifsc);
+    		} else {
+    			logger.info("No isin in api call- " + ifsc);
+    		}
+
+    	}catch(HttpClientErrorException e1) {
+    		logger.info("URL processing error- "+ e1.getStatusCode());
+    		throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
+    	} catch (Exception e) {
+    		logger.error("Error reading ISIN nav data..", e);
+    	}
+    	return json;
+    }
+
+    
+    @RequestMapping(value = "/mutual-funds/register-customer", method = RequestMethod.POST)
+    public MFmanagementapiresponse mfregistration(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+
+	logger.info("@@ Mutual fund registration request received through API @@");
+	MFmanagementapiresponse apiresponse = new MFmanagementapiresponse();
+	try {
+		ObjectMapper mapper = new ObjectMapper();
+		MFInvestformAPI registerdata = new  MFInvestformAPI();
+		MFInvestForm form = new MFInvestForm();
+		MFNominationForm nominee = new MFNominationForm();
+		UserBankDetails bankDetails = new UserBankDetails();
+		RegistryFunds selectedFund = new RegistryFunds();
+		PanValidationStatus panValidationStatus = new PanValidationStatus();
+		MFInvestmentDates mfInvestDates = new MFInvestmentDates();
+		form.setNominee(nominee);
+		form.setBankDetails(bankDetails);
+		form.setPanValidationStatus(panValidationStatus);
+		form.setMfInvestDates(mfInvestDates);
+		form.setSelectedFund(selectedFund);
+		registerdata.setRegistrationform(form);
+		logger.info("Registration data- "+ mapper.writeValueAsString(registerdata));
+		apiresponse.setMessage(CommonConstants.TASK_SUCCESS_S);
+		
+	} catch (Exception e) {
+	    logger.error("bsePendingPayments(): Failed to get pending url links. Returning to dashboard", e);
+	    apiresponse.setMessage(CommonConstants.TASK_FAILURE_S);
+	}
+
+	//		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
+	logger.info("bsePendingPayments(): Return url- " + apiresponse);
+	return apiresponse;
+    }
+    
+    
+
+    @RequestMapping(value = "/mutual-funds/purchase-fund", method = RequestMethod.POST)
+    public MFmanagementapiresponse mfpurchasefund(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+
+	logger.info("@@ Mutual fund registration request received through API @@");
+	MFmanagementapiresponse apiresponse = new MFmanagementapiresponse();
+	try {
+		ObjectMapper mapper = new ObjectMapper();
+		SelectMFFund fund = new SelectMFFund();
+		MFpurchasefundAPI funds = new MFpurchasefundAPI();
+		funds.setSelectedfund(fund);
+		logger.info("Fund- "+ mapper.writeValueAsString(funds));
+		apiresponse.setMessage(CommonConstants.TASK_SUCCESS_S);
+		
+	} catch (Exception e) {
+	    logger.error("bsePendingPayments(): Failed to get pending url links. Returning to dashboard", e);
+	    apiresponse.setMessage(CommonConstants.TASK_FAILURE_S);
+	}
+
+	//		map.addAttribute("contextcdn", env.getProperty(CommonConstants.CDN_URL));
+	logger.info("bsePendingPayments(): Return url- " + apiresponse);
+	return apiresponse;
+    }
+    
+    
 
     @RequestMapping(value = "/mutual-funds/pending-payments", method = RequestMethod.POST)
     public String bsePendingPayments(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
@@ -168,19 +270,21 @@ public class MfDataController {
 
     @RequestMapping(value = "/registry/get-registry-funds", method = RequestMethod.POST)
     @ResponseBody
-    public Object getregistryfunds(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+    public List<BseMFSelectedFunds> getregistryfunds(@RequestBody ChosenMFund requestbody, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 
-	List<RegistryFunds> registryfunds=null;
-	String result=null;
+	List<BseMFSelectedFunds> registryfunds=null;
 	try {
-	    registryfunds=  registryManager.getRegistryfunds(null, null);
-	    result = new Gson().toJson(registryfunds);
-	    //	    System.out.println("Total- "+ re);
+		if(requestbody.getFundlist()!=null && requestbody.getFundlist().size()!=0) {
+			logger.info("Total fund request- " + requestbody.getFundlist());
+			registryfunds =  amcfundmanager.getSelectedfunddetails(requestbody.getFundlist());
+		}else{
+			logger.info("Fund list is empty.. Nothing to process");
+		}
 	}catch(Exception e) {
 	    logger.error("Error getting registry funds",e);
 	}
 
-	return result;
+	return registryfunds;
     }
 
 

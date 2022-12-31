@@ -89,7 +89,10 @@ public interface BseEntryManager {
 	//BSE MF related operations
 	public List<MfTopFundsInventory> getTopMfFunds();
 	public List<BseMFTop15lsSip> getTopFunds();
-	public List<BseMFSelectedFunds> getAllSelectedFunds();
+	
+	@Deprecated
+	//public List<BseMFSelectedFunds> getAllSelectedFunds();
+	
 	public List<BseMFSelectedFunds> getFundsByCategory(String category);
 	public BseMFSelectedFunds getFundsByCode(String rtacode, String isin);
 	public BseOrderPaymentResponse getpendingPaymentLinks(String userid,String callbackurl);
@@ -129,4 +132,7 @@ public interface BseEntryManager {
 	public BseApiResponse extractAllotmentstatement(String fromdate, String todate, String orderstatus, String ordertype, String settlementtype);
 	
 	public Datarquestresponse checkifkeyregistered(String mobile, String pan, String searchtype, String filter1);
+	
+	public String getifscdetails(String ifsc);
+	
 }

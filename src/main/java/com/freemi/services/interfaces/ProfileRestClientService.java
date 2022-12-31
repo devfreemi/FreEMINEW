@@ -2,6 +2,10 @@ package com.freemi.services.interfaces;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.http.HttpRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +27,8 @@ import com.freemi.entity.general.UserProfileLdap;
 public interface ProfileRestClientService {
 	
 	public ResponseEntity<String> login(String userid, String password, String ip);
+	
+	public HttpClientResponse validateusersession(HttpServletRequest request, HttpSession session, String requestingmobile, String requestingemail, String pan, String token,String requestingip, boolean registeredvalue);
 	
 	public ResponseEntity<String> validateuserIdAndGetMail(String userId) throws JsonProcessingException;
 	

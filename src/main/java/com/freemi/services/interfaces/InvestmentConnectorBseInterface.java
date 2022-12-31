@@ -46,4 +46,6 @@ public interface InvestmentConnectorBseInterface {
 	public List<Allotmentstatement> getAllotmentstatement(String fromdate, String todate, String orderstatus,
 		    String ordertype, String settlementtype);
 
+	public String getifscdetails(String ifsc);
+	
 }

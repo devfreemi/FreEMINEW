@@ -37,7 +37,7 @@ public class RequestInceptorCustom extends HandlerInterceptorAdapter {
 		 * response.addHeader("Access-Control-Allow-Headers", "Content-Type");
 		 * response.addHeader("Cache-Control", "private");
 		 */
-
+//		logger.info("JESSIONID- "+ request.getCookies());
 		logger.debug("RequestInceptorCustom- preHandle(): Validating request received for url -" + request.getRequestURI());
 
 		String reqUri = request.getRequestURI();
@@ -98,6 +98,7 @@ public class RequestInceptorCustom extends HandlerInterceptorAdapter {
 		try {
 
 			String logged = request.getAttribute("LOGGED") != null ? request.getAttribute("LOGGED").toString() : "NULL";
+			logger.info("user logged? "+ logged  + " : request from- "+ request.getRequestURI());
 			if (logged != null && logged.equalsIgnoreCase("FALSE")) {
 				modelAndView.setViewName("redirect:/login");
 			}

@@ -89,20 +89,14 @@ $(document).ready(function() {
 		tags: true
 	});
 
-	/* $('#bankName').select2({
-		placeholder : {
-			id : '-1', // the value of the option
-			text : 'Select Bank'
-		}
-	});
-	 */
+	/*
 	 $('#bankName').select2({
 			placeholder : {
 				id : '-1', // the value of the option
 				text : 'Select Bank'
 			}
 		});
-	 
+	 */
 	$('#countryOfBirth').select2({
 		placeholder : {
 			id : '-1', // the value of the option

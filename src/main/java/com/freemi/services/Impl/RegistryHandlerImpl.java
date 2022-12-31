@@ -80,7 +80,9 @@ public class RegistryHandlerImpl implements RegistryManager{
 	
 	List<RegistryFunds> funds=null;
 	try {
-	    funds = registryFundsCrudRepository.findAll();
+//	    funds = registryFundsCrudRepository.findAll();
+		
+		
 	}catch(Exception e) {
 	    logger.error("Error fetching registry funds list..");
 	}

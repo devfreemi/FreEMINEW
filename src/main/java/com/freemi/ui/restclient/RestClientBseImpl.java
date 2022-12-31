@@ -155,7 +155,9 @@ public class RestClientBseImpl implements BseRestClientService {
 		logger.info("registeruserv2() : Beginning process to send request to bse service for registration..");
 		Uccregisterresponse response = new Uccregisterresponse();
 		
-		final String url = env.getProperty(CommonConstants.URL_SERVICE_MF_BSE_UCC_REGISTRATION_V2) + "/ucc-register";
+//		final String url = env.getProperty(CommonConstants.URL_SERVICE_MF_BSE_UCC_REGISTRATION_V2) + "/ucc-register";
+		//after migrating codebase into one
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_MF_BSE_V1) + "/ucc-register";
 		ObjectMapper mapper = new ObjectMapper();
 		RestTemplate restTemplate = new RestTemplate();
 		String formdata = null;
@@ -561,6 +563,31 @@ public class RestClientBseImpl implements BseRestClientService {
 		} catch (Exception e) {
 			logger.error("getallotmentstatement(): Failed to write form data", e);
 			returnRes = "101|Error processing data";
+		}
+		
+		return returnRes;
+	}
+	@Override
+	public String getifscbankdetails(String ifsc) {
+
+		final String url = "https://ifsc.razorpay.com/"+ifsc;
+		//		ObjectMapper mapper = new ObjectMapper();
+		RestTemplate restTemplate = new RestTemplate();
+		String formdata = null;
+		ResponseEntity<?> response = null;
+		String returnRes="FAIL";
+
+		logger.info("OTP Login form- "+ formdata);
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
+
+		if(CommonConstants.BSE_OTP_ENABLED.equalsIgnoreCase("Y")){
+			response= restTemplate.getForEntity(url, String.class);
+			returnRes=response.getBody().toString();
+			logger.info("Response- "+ response.getBody().toString());
+
+		}else{
+			returnRes = "{\"STATE\":\"WEST BENGAL\",\"CONTACT\":\"\",\"CITY\":\"KOLKATA\",\"SWIFT\":\"\",\"NEFT\":true,\"MICR\":\"700229019\",\"DISTRICT\":\"KOLKATA\",\"IMPS\":true,\"RTGS\":true,\"CENTRE\":\"KOLKATA\",\"ADDRESS\":\"SWASTIK, GROUND FLOOR, NAZRUL ISLAM AVENUE,  TEGHARIA, VIP ROAD, KOLKATA   700059.\",\"UPI\":true,\"BRANCH\":\"VIP ROAD, KOLKATA\",\"BANK\":\"ICICI Bank\",\"BANKCODE\":\"ICIC\",\"IFSC\":\"ICIC0000371\"}";
 		}
 		
 		return returnRes;

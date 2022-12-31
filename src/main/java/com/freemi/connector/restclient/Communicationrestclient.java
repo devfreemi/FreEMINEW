@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freemi.common.util.CommonConstants;
 import com.freemi.entity.general.OTPInfo;
 import com.freemi.entity.general.OTPInfo2;
@@ -34,6 +35,9 @@ public class Communicationrestclient {
 			RestTemplate rt = new RestTemplate();
 			HttpEntity<Object> entity = new HttpEntity<Object>(otpinfo,headers);
 			logger.info("Calling URL - "+ uri);
+			ObjectMapper mapper = new ObjectMapper();
+			logger.info("SMS request- "+ mapper.writeValueAsString(otpinfo));
+			logger.info("msgdata- "+ otpinfo.getMsgdata());
 			res = rt.postForObject(uri, entity, Otprequeststatus.class );
 		} catch (Exception ex) {
 			logger.error("Error calling /sendotp service- ",ex);
@@ -56,6 +60,8 @@ public class Communicationrestclient {
 			
 			HttpEntity<Object> entity = new HttpEntity<Object>(otpinfo,headers);
 			logger.info("Calling URL - "+ uri);
+//			ObjectMapper mapper = new ObjectMapper();
+//			logger.info("SMS request- "+ mapper.writeValueAsString(otpinfo));
 			otpverifystatus = rt.postForObject(uri, entity, Otprequeststatus.class );
 		}catch (Exception ex) {
 			logger.error("Failed to communicate with service",ex);
@@ -78,6 +84,8 @@ public class Communicationrestclient {
 			RestTemplate rt = new RestTemplate();
 			HttpEntity<Object> entity = new HttpEntity<Object>(otpinfo,headers);
 			logger.info("Calling URL - "+ uri);
+//			ObjectMapper mapper = new ObjectMapper();
+//			logger.info("SMS request- "+ mapper.writeValueAsString(otpinfo));
 			res = rt.postForObject(uri, entity, Otprequeststatus.class );
 		} catch (Exception ex) {
 			logger.error("Error calling /sendotp service- ",ex);
@@ -100,6 +108,8 @@ public class Communicationrestclient {
 			
 			HttpEntity<Object> entity = new HttpEntity<Object>(otpinfo,headers);
 			logger.info("Calling URL - "+ uri);
+//			ObjectMapper mapper = new ObjectMapper();
+//			logger.info("SMS request- "+ mapper.writeValueAsString(otpinfo));
 			otpverifystatus = rt.postForObject(uri, entity, Otprequeststatus.class );
 		}catch (Exception ex) {
 			logger.error("Failed to communicate with service",ex);

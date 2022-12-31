@@ -91,6 +91,7 @@ import com.freemi.entity.investment.MfAllInvestorValueByCategory;
 import com.freemi.entity.investment.SelectMFFund;
 import com.freemi.entity.investment.TransactionStatus;
 import com.freemi.services.Impl.Profilerequesthandler;
+import com.freemi.services.interfaces.Amcfundmanager;
 import com.freemi.services.interfaces.BseEntryManager;
 import com.freemi.services.interfaces.HdfcService;
 import com.freemi.services.interfaces.InvestmentConnectorBseInterface;
@@ -127,6 +128,9 @@ public class BsemfController {
 	
 	 @Autowired
 	 HdfcService hdfcService;
+	 
+	 @Autowired
+	 Amcfundmanager amcfundmanager;
 	 
 	 SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy-mm-dd");
 	 SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("dd/mm/yyyy");
@@ -199,7 +203,10 @@ public class BsemfController {
 		 */
 		
 		List<BseMFSelectedFunds> funds = null;
-		funds = bseEntryManager.getAllSelectedFunds();
+//		funds = bseEntryManager.getAllSelectedFunds();
+		funds = amcfundmanager.getAllSelectedFunds();
+		
+		
 //		logger.info("getSelectFundsExplorer(): Total selected funds to display- " + (funds != null ? funds.size() : "NULL returned"));
 		/*
 		 * logger.info("Paginated fundss- "+ b.getSize()); logger.info("Total pages- "+
@@ -240,6 +247,7 @@ public class BsemfController {
 			Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session,
 			RedirectAttributes redirectAttrs) {
 		ModelAndView view = new ModelAndView();
+//		logger.info("purchasemfbsePost(): JSESSIONID- "+ request.getCookies().g);
 		logger.info("purchasemfbsePost(): BSE MF STAR Purchse.do controller from url - " + request.getHeader("Referer") + " : Request type - " + request.getMethod());
 		//		String returnUrl = "redirect:/mutual-funds/funds-explorer";
 		String returnUrl = "mutual-funds/funds-explorer";
@@ -283,8 +291,12 @@ public class BsemfController {
 			view.setView(redview);
 			return view;
 		}
+		
+		HttpClientResponse sessionvalidation = profileRestClientService.validateusersession(request, session, selectedFund.getMobile(), null, selectedFund.getPan(),null,CommonTask.getClientSystemIp(request), false);
 
-		if(session.getAttribute("token")!=null && session.getAttribute("userid")!=null && !session.getAttribute("userid").toString().equalsIgnoreCase(selectedFund.getMobile())) {
+//		if(session.getAttribute("token")!=null && session.getAttribute("userid")!=null && !session.getAttribute("userid").toString().equalsIgnoreCase(selectedFund.getMobile())) {
+		if(sessionvalidation.getResponseCode() == CommonConstants.TASK_FAILURE && sessionvalidation.getRetrunMessage().equalsIgnoreCase("MOB_MISMATCH")) {	
+			
 			//			redirectAttrs.addFlashAttribute("error1", "Mobile mismatch for registered customer");
 			view.addObject("errro1", "Mobile mismatch for registered customer");
 			redirectAttrs.addFlashAttribute("selectedFund", selectedFund);
@@ -313,7 +325,8 @@ public class BsemfController {
 			String nexturl;
 			if (registrationstatus.getAccountexist().equalsIgnoreCase("Y")){
 
-				if (session.getAttribute("token") == null) {
+//				if (session.getAttribute("token") == null) {
+					if(sessionvalidation.getRetrunMessage().equalsIgnoreCase("NO_TOKEN") ) {
 					session.setAttribute("NEXT_URL", "/mutual-funds/purchase");
 					logger.info("Account exist. Redirect to login page and transfer to fund purchase. Current referrel URL-");
 //					redirectAttrs.addAttribute("ref", URLEncoder.encode(request.getRequestURL().toString(), StandardCharsets.UTF_8.toString()));
@@ -332,8 +345,8 @@ public class BsemfController {
 					redirectAttrs.addFlashAttribute("uid", selectedFund.getMobile());
 					redview.setContextRelative(true);
 
-				} else if (session.getAttribute("token") != null) {
-
+//				} else if (session.getAttribute("token") != null) {
+					} else if (sessionvalidation.getResponseCode() == CommonConstants.TASK_SUCCESS) {
 					// If logged in account PAN and mobile do not match with provided PAN. Revert
 					// back to page which should pick up correct details from session now overriding
 
@@ -2760,8 +2773,6 @@ public class BsemfController {
 						if (apiresponse.getBody().equals("VALID")) {
 							logger.info("uploadsign(): Session found to be valid.. Proceed with upload");
 							mobile = session.getAttribute("userid").toString();
-
-
 
 							logger.info("uploadsign(): Upload sign for customer mobile from session- " + session.getAttribute("userid"));
 							investForm = bseEntryManager.getCustomerInvestFormData(session.getAttribute("userid").toString());

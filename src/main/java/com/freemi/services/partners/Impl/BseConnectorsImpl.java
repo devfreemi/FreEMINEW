@@ -423,6 +423,11 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 		return responsedata;
 	}
 
+	@Override
+	public String getifscdetails(String ifsc) {
+		return bseRestClientService.getifscbankdetails(ifsc);
+	}
+
 	/*
 	public static void main(String[] args){
 		Path filepath = Paths.get("E:/AOF/", "8777777777"+".pdf");

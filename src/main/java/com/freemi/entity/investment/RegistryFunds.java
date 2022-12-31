@@ -13,6 +13,8 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Proxy;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Component
 @Entity
 @Table(name="registry_funds")
@@ -27,6 +29,7 @@ public class RegistryFunds implements Serializable{
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name = "SL_NO")
+	@JsonIgnore
 	private Integer serial;
 	
 	@Column(name = "REGISTRY_FUND_CODE")
