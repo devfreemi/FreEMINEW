@@ -252,7 +252,7 @@ public class BsemfController {
 		//		String returnUrl = "redirect:/mutual-funds/funds-explorer";
 		String returnUrl = "mutual-funds/funds-explorer";
 		logger.info("purchasemfbsePost():MF purchase initiated by- "+ selectedFund.getMobile() + " :Re-invest code- " + selectedFund.getReinvSchemeCode());
-		String customertype="NEW_CUSTOMER";
+		String customertype="NEW_CUSTOMER"; 
 
 		String referrerUrl = request.getHeader("Referer");
 		
