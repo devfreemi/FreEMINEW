@@ -255,6 +255,7 @@ public class BsemfController {
 		String customertype="NEW_CUSTOMER";
 
 		String referrerUrl = request.getHeader("Referer");
+		
 		//		String returnUrl2 = "";
 		RedirectView redview = new RedirectView();
 		//		redview.setExposeModelAttributes(false);
