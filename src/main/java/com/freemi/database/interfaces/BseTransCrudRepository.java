@@ -3,6 +3,9 @@ package com.freemi.database.interfaces;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.freemi.entity.investment.SelectMFFund;
 
 public interface BseTransCrudRepository extends JpaRepository<SelectMFFund, Long> {
+	
+	
 	
 	public List<SelectMFFund> getByClientID(String customerId);
 	public boolean existsByTransactionID(String generatedId);

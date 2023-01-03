@@ -223,7 +223,7 @@
 							</div>
 							<div class="row d-flex justify-content-end mb-3">
 								<div class="col-12 col-md-8 col-lg-8">
-								<small class="text-muted">No paperwork. You have to add BSE through your Internet banking portal. Your Internet banking must support biller.</small>
+								<small class="text-muted">E-Nach mandate registration for automated payment service.</small>
 								</div>							
 							</div>
 							

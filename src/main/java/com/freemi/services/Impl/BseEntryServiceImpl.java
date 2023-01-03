@@ -10,6 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,6 +94,9 @@ import com.freemi.services.interfaces.ProfileRestClientService;
 @Service
 public class BseEntryServiceImpl implements BseEntryManager {
 
+	@PersistenceContext
+    private EntityManager entityManager;
+	
     @Autowired
     BseCustomerCrudRespository bseCustomerCrudRespository;
 
@@ -983,6 +989,34 @@ public class BseEntryServiceImpl implements BseEntryManager {
 
     	return bank;
     }
+    
+    @Override
+    public UserBankDetails getCustomerBankDetails(String clientCode, Long bankidserial) {
+    	
+    	UserBankDetails bank = null;
+    	try{
+    		bank= bseCustomerBankDetailsCrudRespository.findOneByClientIDAndSerialno(clientCode,bankidserial);
+    	}catch(Exception e){
+    		logger.error("Failed to query database to fetch customer bank details",e);
+    	}
+
+    	return bank;
+    	
+    }
+    
+    @Override
+    public List<UserBankDetails> getAllCustomerBankDetails(String clientCode){
+    	
+    	List<UserBankDetails> bank = null;
+    	try{
+    		bank= bseCustomerBankDetailsCrudRespository.getByClientID(clientCode);
+    	}catch(Exception e){
+    		logger.error("Failed to query database to fetch customer bank details",e);
+    	}
+
+    	return bank;
+    	
+    }
 
     @Override
     public BseApiResponse updateEmdandateStatus(String mobileNumber,String mandateType, String amount) {
@@ -1025,7 +1059,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		mandate.setIfscCode(bankDetails.getIfscCode());
 		mandate.setCreationDate(startDate);
 		mandate.setMandateComplete(true);
-
+		mandate.setMandateResponse(apiresponse.getRemarks());
 		bseMandateCrudRepository.save(mandate);
 
 	    }else{
@@ -1081,7 +1115,8 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	try{
 
 //	    mandateDetails = bseMandateCrudRepository.findAllByClientCodeAndAccountNumber(clientId, accountNumber);	
-	    mandateDetails = bseMandateCrudRepository.findAllByClientCodeAndAccountNumberAndMandateTypeAndMandateActive(clientId,accountNumber,"I","Y");
+//	    mandateDetails = bseMandateCrudRepository.findAllByClientCodeAndAccountNumberAndMandateTypeAndMandateActive(clientId,accountNumber,"I","Y");
+	    mandateDetails = bseMandateCrudRepository.findAllByClientCodeAndAccountNumberAndMandateTypeAndMandateActive(clientId,accountNumber,"N","Y");
 	}catch(Exception e){
 	    logger.error("Failed to query database to fetch mandate details",e);
 	}
@@ -1330,6 +1365,9 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	SelectMFFund fund = null;
 	try{
 	    fund = bseTransCrudRepository.findOneByTransactionIDAndClientID(transactionId, clientId);
+	    entityManager.detach(fund);	//Detaching the persisting data. So that this gets saved as new entry in DB after cancel order success. Previously flushall causing this changes to be saved and overriding purchase record
+	    fund.setSerialNo(0);
+	    
 	}catch(Exception e){
 	    logger.error("Failed to fetch particular fund details: ",e);
 	}
@@ -1692,6 +1730,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	    transactions.setSipDate(fundDetails.getSipDate());
 	    transactions.setInvestAmount(fundDetails.getInvestAmount());
 	    transactions.setOrderPlaceTime(new Date());
+	    transactions.setInvestype(fundDetails.getInvestype());
 	    mfInitiatedTransactionCrudRepository.save(transactions);
 
 	    logger.info("saveMFInitiatedTranasctionRequest(): Request details saved.. Drop mail");

@@ -65,6 +65,9 @@ public interface BseEntryManager {
 	public MFCustomers getCustomerInvestFormData(String mobile);
 	
 	public UserBankDetails getCustomerBankDetails(String clientCode);
+	public UserBankDetails getCustomerBankDetails(String clientCode, Long bankidserial);
+	public List<UserBankDetails> getAllCustomerBankDetails(String clientCode);
+	
 	public String getEmdandateDetails(String mobile, String clientCode,String mandateType, String accNumber);
 	public BseApiResponse updateEmdandateStatus(String clientCode,String mandateType, String accNumber);
 	

@@ -128,7 +128,8 @@ public class BseBeansMapper {
 		clientFregirationForm.setNominee1minorflag(registrationForm.getNominee().getIsNomineeMinor());
 		clientFregirationForm.setNominee1guardianname(registrationForm.getNominee().getNomineeGuardian());
 		clientFregirationForm.setNominee1dob(registrationForm.getNominee().getNomineeDOB());
-
+		clientFregirationForm.setMobiledecflag(registrationForm.getMobiledecflag());
+		clientFregirationForm.setEmaildecflag(registrationForm.getEmaildeclareflag());
 
 		return clientFregirationForm;
 	}
@@ -292,28 +293,14 @@ public class BseBeansMapper {
 	 * @return
 	 */
 	public static BseOrderEntry redeeemOrderToBseBeans(SelectMFFund fundDetails, String requestNumber){
-		logger.info("redeeemOrderToBseBeans()- Redeem mapping begin");
+		logger.info("redeeemOrderToBseBeans()- Redeem/canel mapping begin");
 		BseOrderEntry bseOrderForm = new BseOrderEntry();
 
 		bseOrderForm.setUserID(CommonConstants.BSE_USER_ID);
 		bseOrderForm.setMemberId(CommonConstants.BSE_MEMBER_ID);
 		bseOrderForm.setClientCode(fundDetails.getClientID());		// Customer's client ID
 
-		if(fundDetails.getTransactionType().equals("REDEEM")){
-			bseOrderForm.setTransCode("NEW");
-			bseOrderForm.setSchemeCd(fundDetails.getSchemeCode());
-			bseOrderForm.setSchemeCd(fundDetails.getSchemeCode());
-			bseOrderForm.setBuySell("R");
-			bseOrderForm.setRemarks("Redemption Request");
-			bseOrderForm.setBuySellType("FRESH");
-		}
-
-		bseOrderForm.setTransNo(requestNumber);
-
-		bseOrderForm.setDPTxn("P");
-
-
-
+		
 		if(fundDetails.getRedeemAll().equals("N")){
 			bseOrderForm.setAllRedeem("N");
 			bseOrderForm.setOrderVal(fundDetails.getRedeemAmount());	//to do for all redeem
@@ -324,6 +311,33 @@ public class BseBeansMapper {
 			bseOrderForm.setOrderVal(0);	//to do for all redeem
 			bseOrderForm.setQty("");
 		}
+		
+		if(fundDetails.getTransactionType().equals("REDEEM")){
+			bseOrderForm.setTransCode("NEW");
+			bseOrderForm.setSchemeCd(fundDetails.getSchemeCode());
+			bseOrderForm.setSchemeCd(fundDetails.getSchemeCode());
+			bseOrderForm.setBuySell("R");
+			bseOrderForm.setRemarks("Redemption Request");
+			bseOrderForm.setBuySellType("FRESH");
+			bseOrderForm.setParam3(fundDetails.getBanbkaccount());
+		}
+		if(fundDetails.getTransactionType().equals("CXL")){
+			bseOrderForm.setTransCode("CXL");
+			bseOrderForm.setOrderId(fundDetails.getOrderNo());
+			bseOrderForm.setSchemeCd(fundDetails.getSchemeCode());
+			bseOrderForm.setSchemeCd(fundDetails.getSchemeCode());
+			bseOrderForm.setBuySell("R");
+			bseOrderForm.setRemarks("Order cancel Request");
+			bseOrderForm.setBuySellType("FRESH");
+			logger.info("Cancel amount-" + fundDetails.getInvestAmount());
+			bseOrderForm.setOrderVal(fundDetails.getInvestAmount()); // overwrite above data.
+		}
+
+		bseOrderForm.setTransNo(requestNumber);
+
+		bseOrderForm.setDPTxn("P");
+
+		
 
 		bseOrderForm.setFolioNo(fundDetails.getPortfolio());
 
@@ -475,10 +489,13 @@ public class BseBeansMapper {
 		//		bseOrderForm.setParam2("");
 		bseOrderForm.setParam3("");
 
-		if(fundDetails.getMandateType().equals(CommonConstants.BSE_XIP))
-			bseOrderForm.setXSIPMANDATEID(mandateId);
-		else{
-			bseOrderForm.setParam2(mandateId);
+		if(fundDetails.getMandateType().equals(CommonConstants.BSE_XIP) || fundDetails.getMandateType().equals(CommonConstants.BSE_ENACH)) {
+			bseOrderForm.setXSIPMANDATEID(mandateId);	//BSE mandate ID (XSIP/Emandate) for XSIP Orders
+		}else if(fundDetails.getMandateType().equals(CommonConstants.BSE_ISIP)){
+			bseOrderForm.setParam2(mandateId);	//ISIP mandate
+		}else {
+			logger.info("Unidentified MANDATE TYPE. Not Setting value for mandatetype- "+ fundDetails.getMandateType());
+			
 		}
 
 		return bseOrderForm;
@@ -599,7 +616,7 @@ public class BseBeansMapper {
 		
 		response.setFlag("UCC");
 //		response.setDocumentType("Image/tiff");
-		response.setDocumentType("");
+		response.setDocumentType("NRM");
 		response.setMemberCode(CommonConstants.BSE_MEMBER_ID);
 		response.setClientCode(clientCode);
 		
@@ -654,6 +671,10 @@ public class BseBeansMapper {
 		BsePaymentStatus requestForm = new BsePaymentStatus();
 		requestForm.setClientcode(clientId);
 		requestForm.setOrderno(orderNo);
+		/*
+		BSEMF- when MF Order is placed
+		SGB- when SGB order is placed
+		*/
 		requestForm.setSegment("BSEMF");
 
 		return requestForm;

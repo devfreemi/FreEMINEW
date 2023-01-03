@@ -35,6 +35,8 @@ public class MFRedeemForm implements Serializable{
 	private String requestorSystemIp="";
 	private String requestorSystem="";
 	private String cancelOrderTransId="";
+	private Long bankaccountforredeem;
+	
 	public String getRedeemTransId() {
 		return redeemTransId;
 	}
@@ -172,6 +174,13 @@ public class MFRedeemForm implements Serializable{
 	}
 	public void setCancelOrderTransId(String cancelOrderTransId) {
 		this.cancelOrderTransId = cancelOrderTransId;
+	}
+	
+	public Long getBankaccountforredeem() {
+		return bankaccountforredeem;
+	}
+	public void setBankaccountforredeem(Long bankaccountforredeem) {
+		this.bankaccountforredeem = bankaccountforredeem;
 	}
 	public static long getSerialversionuid() {
 		return serialVersionUID;

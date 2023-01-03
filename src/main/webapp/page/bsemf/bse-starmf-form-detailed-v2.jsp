@@ -14,8 +14,7 @@
 
 			<div style="text-align: center; margin-bottom: 1rem;">
 				<span class="step"></span> <span class="step"></span> <span
-					class="step"></span><span
-					class="step"></span>
+					class="step"></span><span class="step"></span>
 			</div>
 
 			<div>
@@ -37,9 +36,9 @@
 				<form:hidden path="dividendPayMode" val="02" />
 				<form:hidden path="customerSignature1" id="signature1" />
 				<form:hidden path="customerSignature2" id="signature2" />
-				<form:hidden path="holdingMode" id="holdingMode" value="SI"/>
-				<form:hidden path="mobileverified" id="mobileverified"/>
-				<form:hidden path="emailverified" id="emailverified"/>
+				<form:hidden path="holdingMode" id="holdingMode" value="SI" />
+				<form:hidden path="mobileverified" id="mobileverified" />
+				<form:hidden path="emailverified" id="emailverified" />
 
 				<div class="sectionheader mb-5">
 					<h5 class="topic-style">
@@ -93,7 +92,7 @@
 							</span>
 						</div>
 					</div>
-					
+
 					<div class="col-md-4 col-lg-4">
 						<div class="md-form md-outline form-sm mt-0">
 							<form:input type="email" class="buttonInside form-control"
@@ -162,6 +161,30 @@
 					</div>
 
 				</div>
+
+				<div class="form-row">
+					<div class="form-group col-md-6">
+						<small class="text-primary">Mobile no. owner declaration</small>
+						<div class="input-group mb-1">
+							<form:select class="custom-select drop-down-custom" id="mobiledec"
+								path="mobiledecflag">
+								<form:options items="${idbelongsto}" />
+							</form:select>
+						</div>
+						
+					</div>
+					<div class="form-group col-md-6">
+						<small class="text-primary">Email ID owner declaration</small>
+						<div class="input-group mb-1">
+							<form:select class="custom-select" id="emaildeclare"
+								path="emaildeclareflag">
+								<form:options items="${idbelongsto}" />
+							</form:select>
+							
+						</div>
+					</div>
+				</div>
+
 
 				<div class="form-row">
 					<div class="col-md-4 col-lg-4">
@@ -298,8 +321,8 @@
 						</div>
 					</div>
 				</div>
-				
-				
+
+
 				<div class="form-row mb-3">
 
 					<div class="col-md-4 col-lg-4 mb-4">
@@ -307,24 +330,25 @@
 							Nominee Minor? <sup class="text-danger">*</sup>
 						</p>
 						<div class="form-check form-check-inline">
-							<form:radiobutton class="form-check-input" path="nominee.isNomineeMinor"
-								id="isNomineeMinorn" value="N" />
+							<form:radiobutton class="form-check-input"
+								path="nominee.isNomineeMinor" id="isNomineeMinorn" value="N" />
 							<label class="form-check-label" for=isNomineeMinorn>No</label>
 						</div>
 
 						<div class="form-check form-check-inline">
-							<form:radiobutton class="form-check-input" path="nominee.isNomineeMinor"
-								id="isNomineeMinory" value="Y" />
+							<form:radiobutton class="form-check-input"
+								path="nominee.isNomineeMinor" id="isNomineeMinory" value="Y" />
 							<label class="form-check-label" for="isNomineeMinory">Yes</label>
 						</div>
 					</div>
-					
+
 					<div class="col-md-4 col-lg-4">
 						<div class="md-form md-outline form-sm mt-0">
-							<form:input type="text" path="nominee.nomineeDOB" required="required"
-								data-provide="datepicker" data-date-start-date="-18y"
-								data-date-end-date="-1d" maxlength="10"
-								class="form-control datepicker mb-0" id="nomineedob" />
+							<form:input type="text" path="nominee.nomineeDOB"
+								required="required" data-provide="datepicker"
+								data-date-start-date="-18y" data-date-end-date="-1d"
+								maxlength="10" class="form-control datepicker mb-0"
+								id="nomineedob" />
 							<label for="nomineedob">Minor's DOB </label>
 						</div>
 					</div>
@@ -332,13 +356,13 @@
 
 					<div class="col-md-4 col-lg-4">
 						<div class="md-form md-outline form-sm mt-0">
-							<form:input type="text" class="form-control" id="nomineeguardian" maxlength="64"
-								path="nominee.nomineeGuardian" />
-								<label for="nomineeName">Nominee Guardian</label>
+							<form:input type="text" class="form-control" id="nomineeguardian"
+								maxlength="64" path="nominee.nomineeGuardian" />
+							<label for="nomineeName">Nominee Guardian</label>
 						</div>
 					</div>
 				</div>
-				
+
 
 
 			</div>
@@ -556,8 +580,9 @@
 
 					<div class="row gap_custom">
 						<div class="col-md-6">
-							<label class="col-5 col-md-5 col-form-label label_design">Date of birth
-							</label> <label class="col-6 col-md-6 col-form-label label_design1"><span
+							<label class="col-5 col-md-5 col-form-label label_design">Date
+								of birth </label> <label
+								class="col-6 col-md-6 col-form-label label_design1"><span
 								id="DOBDisplay"></span></label>
 						</div>
 						<div class="col-md-6">
@@ -596,7 +621,7 @@
 						</div>
 					</div>
 
-				<%-- 	<div
+					<%-- 	<div
 						class="row gap_custom ${mfInvestForm.holdingMode == 'SI' ? 'd-none' : '' }"
 						id="secApplicant">
 						<div class="col-md-6">
@@ -636,8 +661,9 @@
 					<div class="NomineeDetailsDisplay">
 						<div class="row gap_custom">
 							<div class="col-md-6">
-								<label class="col-5 col-md-5 col-form-label label_design">Nominee Name
-								</label> <label class="col-6 col-md-6 col-form-label label_design1"><span
+								<label class="col-5 col-md-5 col-form-label label_design">Nominee
+									Name </label> <label
+									class="col-6 col-md-6 col-form-label label_design1"><span
 									id="nomineeNameDisplay"></span></label>
 							</div>
 							<div class="col-md-6">
@@ -646,8 +672,8 @@
 									id="nomineeRelationDisplay"></span></label>
 							</div>
 						</div>
-						
-						
+
+
 
 					</div>
 
@@ -855,13 +881,12 @@
 								<figure>
 									<img src="" class="img-fluid" id="sign1display"
 										alt="Signature Image">
-									<figcaption class="text-muted">
-										Applicant Signature
+									<figcaption class="text-muted">Applicant Signature
 									</figcaption>
 								</figure>
 							</div>
 						</div>
-						
+
 						<%-- 
 						<div
 							class="col-md-6 ${mfInvestForm.holdingMode == 'SI' ? 'd-none' : '' }"
@@ -879,7 +904,7 @@
 								</figure>
 							</div>
 						</div> --%>
-						
+
 					</div>
 
 					<!-- FATCA Declaration  -->
@@ -887,7 +912,7 @@
 
 					<!-- End of FATCA declaration  -->
 
-<%-- 					<div class="sectionheader1">
+					<%-- 					<div class="sectionheader1">
 						<hr>
 						<h6 class="topic-style">
 							<img

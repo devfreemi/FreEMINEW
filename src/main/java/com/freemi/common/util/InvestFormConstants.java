@@ -47,6 +47,27 @@ public class InvestFormConstants {
 			put("13", "Sole Proprietorship");
 		}
 	};
+	
+	
+	public static Map<String,String> idbelongsto = new LinkedHashMap<String,String>(){
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		{
+			put("SE", "Self");
+			//	    put("02", "On behalf of minor");
+			put("SP", "Spouse");
+			put("DC", "Dependent Children");
+			put("DS", "Dependent Siblings");
+			put("DP", "Dependent Parents");
+			put("GD", "Guardian");
+			put("PM", "PMS");
+			put("CD", "Custodian");
+			put("PO", "POA");
+		}
+	};
 
 	public static Map<String,String> holdingMode = new LinkedHashMap<String,String>(){
 		/**

@@ -3,7 +3,6 @@ package com.freemi.connector.restclient;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -255,6 +254,17 @@ public class BseRestClient implements BseEntryManager {
 	// TODO Auto-generated method stub
 	return false;
     }
+    
+    @Override
+    public UserBankDetails getCustomerBankDetails(String clientCode, Long bankidserial) {
+    	return null;
+    }
+    
+    @Override
+    public List<UserBankDetails> getAllCustomerBankDetails(String clientCode){
+    	return null;
+    }
+    
 
     @Override
     public boolean updateCustomerAddress(UserProfile investorData) {

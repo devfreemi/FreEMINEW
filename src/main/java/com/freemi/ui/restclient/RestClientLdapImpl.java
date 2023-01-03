@@ -549,6 +549,7 @@ public class RestClientLdapImpl implements ProfileRestClientService {
 		ObjectMapper mapper = new ObjectMapper();
 		RestTemplate restTemplate = new RestTemplate();
 		SessionToken sessiontoken = new SessionToken();
+		token = token.replace("Bearer+", "Bearer ");
 		sessiontoken.setToken(token);
 		sessiontoken.setUserid(userid);
 		sessiontoken.setSystemip(requestingIp);
@@ -560,6 +561,7 @@ public class RestClientLdapImpl implements ProfileRestClientService {
 			HttpHeaders headers = new HttpHeaders();
 			headers.set("Authorization", ANONYMOUS_TOKEN);
 			headers.set("requestingIp", requestingIp);
+			logger.info("Validation data- "+ formdata);
 			HttpEntity<String> entity = new HttpEntity<String>(formdata,headers);
 			response = restTemplate.postForEntity(url, entity,  String.class);
 			logger.debug("validateUserToken(): Session validation response- "+ response);

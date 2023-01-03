@@ -28,7 +28,6 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.freemi.common.util.CommonConstants;
 import com.freemi.common.util.CommonTask;
 import com.freemi.common.util.InvestFormConstants;
 import com.freemi.entity.general.Datarquestresponse;

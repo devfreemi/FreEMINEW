@@ -85,8 +85,9 @@ public class CommonConstants {
 	public static final String BSE_TRANS_MODE_DEMAT="D";
 	public static final String BSE_TRANS_MODE_PHYSICAL="P";
 	
-	public static final String BSE_XIP="X";
-	public static final String BSE_ISP="I";
+	public static final String BSE_XIP="X";	//nach mandate
+	public static final String BSE_ISIP="I"; //BSE biller
+	public static final String BSE_ENACH="N";	//E-NACH
 	
 	public static final String LDAP_USER_REGISTRATION_ENABLED = "ldap.user.registration.enabled";
 	

@@ -36,7 +36,7 @@ public class UserBankDetails implements Serializable  {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="SL_NO")
 	@JsonIgnore
-	private long serialNo;
+	private long serialno;
 	
 	@Id
 	@Column(name="CLIENT_ID")
@@ -97,12 +97,12 @@ public class UserBankDetails implements Serializable  {
 	@JoinColumn(name="CLIENT_ID", nullable= false,insertable=false,updatable=false)
 	private MFCustomers mfForm;
 
-	public long getSerialNo() {
-		return serialNo;
+	public long getSerialno() {
+		return serialno;
 	}
 
-	public void setSerialNo(long serialNo) {
-		this.serialNo = serialNo;
+	public void setSerialno(long serialno) {
+		this.serialno = serialno;
 	}
 
 	public String getClientID() {

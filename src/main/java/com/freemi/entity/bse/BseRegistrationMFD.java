@@ -2,256 +2,197 @@ package com.freemi.entity.bse;
 
 import java.io.Serializable;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class BseRegistrationMFD implements Serializable{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
+	private String registrationtype="NEW";	//For another field in API
 	
+	private String ClientCode="";	//1
+	private String applicant1fname="";	//2
+	private String applicant1mname="";	//3
+	private String applicant1lname="";	//4
+	private String ClientTaxstatu="";	//5
+	private String ClientGender="";	//6
+	private String ClientDob="";	//7	Format - DD/MM/YYYY
+	private String ClientOccupationcod="";	//8
+	private String ClientHolding="";	//9	
+	private String applicant2fname="";	//10
+	private String applicant2mname="";	//11
+	private String applicant2lname="";	//12
+	private String applicant3fname="";	//13
+	private String applicant3mname="";	//14
+	private String applicant3lname="";	//15
+	private String applicant2dob="";	//16
+	private String applicant3dob="";	//17
+	private String guardianfname="";	//18
+	private String guardianmname="";	//19
+	private String guardianlanme="";	//20
+	private String guardiandob="";	//21
+	private String applicant1panexempt="";	//22
+	private String applicant2panexempt="";	//23
+	private String applicant3panexempt="";	//24
+	private String guardianpanexempt="";	//25
+	private String ClientPan="";	//26
+	private String ClientPan2="";	//27
+	private String ClientPan3="";	//28
+	private String ClientGuardianpan="";	//29
+	private String applicant1panexemptcategory="";	//30
+	private String applicant2panexemptcategory="";	//31
+	private String applicant3panexemptcategory="";	//32
+	private String guardianpanexemptcateegory="";	//33
+	private String ClientType="";	//34	/**mandatory if value is "D" in client type*/
+
+	/*Conditional mandatory if client type is D (Demat) - Not required for physical */
+	private String pms="";	//35	Conditional mandatory (Y/N)
+	private String ClientDefaultdp="";	//36	/**mandatory if value is "C" in client default DP */
+	private String ClienCdsldpid="";	//37	/**mandatory if value is "C" in client default DP*/
+	private String ClientCdslcltid="";	//38	/**mandatory if Default DP is CDSL */
+	private String cmbpid="";	//39
+	private String ClientNsdldpid="";	//40	/**mandatory if value is "N" in client default DP */
+	private String ClientNsdlcltid="";	//41	/**mandatory for all the cases varchar2 SB/CB/NE/NO Account Type*/
+	/*------------------------------------------------------------------------------------*/
 	
-	private String ClientCode="";
+	private String ClientAcctype1="";	//42	/**mandatory for all the cases*/
 	
-	private String registrationtype="NEW";
-	private String ClientHolding="";
-	
-	private String ClientTaxstatu="";
-	
-	private String ClientOccupationcod="";
-	
-	private String ClientAppname1="";		//Deprecated in new API
-	private String applicant1fname="";
-	private String applicant1mname="";
-	private String applicant1lname="";
-	
-	private String ClientDob="";
-	
-	private String ClientGender="";
-	private String applicant1panexempt="";
-	private String applicant1panexemptcategory="";
-	
-	private String ClientPan="";
-	
-	private String ClientType="";
-	/**
-	mandatory if value is "D" in client type
-	*/
-	
-	private String ClientDefaultdp="";
-	/**
-	mandatory if value is "C" in client default DP */
-	
-	private String ClienCdsldpid="";
-	/**
-	mandatory if value is "C" in client default DP
-	*/
-	
-	private String ClientCdslcltid="";
-	/**
-	mandatory if value is "N" in client default DP */
-	
-	private String ClientNsdldpid="";
-	/**
-	mandatory if value is "N" in client default DP */
-	
-	private String ClientNsdlcltid="";
-	/**
-	mandatory for all the cases varchar2 SB/CB/NE/NO Account Type
-	*/
-	private String applicant1kyctype="";
-	private String applicant1ckycno="";
-	private String applicant1kraexemptno="";
-	
-	private String applicant1aadhaarupdated="";
-	private String paperlessflag="";
-	
-	
-	private String ClientAppname2="";		//Deprecated in new API
-	private String applicant2fname="";
-	private String applicant2mname="";
-	private String applicant2lname="";
-	private String applicant2dob="";
-	private String applicant2panexempt="";
-	private String applicant2panexemptcategory="";
-	private String applicant2kyctype="";
-	private String applicant2ckycno="";
-	private String applicant2kraexemptrefno="";
-	
-	
-	private String ClientAppname3="";		//Deprecated in new API
-	private String applicant3fname="";
-	private String applicant3mname="";
-	private String applicant3lname="";
-	private String applicant3dob="";
-	private String applicant3panexempt="";
-	private String applicant3panexemptcategory="";
-	private String applicant3kyctype="";
-	private String applicant3ckycno="";
-	private String applicant3kraexemptrefno="";
-	
-	//Guarfan details in case of minor nominee
-	
-	private String ClientGuardian="";		//Deprecated in new API	
-	private String guardianfname="";
-	private String guardianmname="";
-	private String guardianlanme="";
-	private String guardiandob="";
-	
-	private String ClientGuardianpan="";
-	private String guardianpanexempt="";
-	private String guardianpanexemptcateegory="";
-	private String guardiankyctype="";
-	private String guardianckycno="";
-	private String guardiankraexemptrefno="";
-	
-	//1st Nominee
-	
-	private String ClientNominee="";
-	
-	private String ClientNomineeRelation="";
-	private String nominee1applicable="";
-	private String nominee1minorflag="";
-	private String nominee1dob="";
-	private String nominee1guardianname="";
-	
-	private String ClientAcctype1="";
-	/**
-	mandatory for all the cases
-	*/
-	
-	private String ClientAccno1="";
+	private String ClientAccno1="";	//43
 	/**
 	mandatory for all the cases */
 	
-	private String ClientMicrno1="";
+	private String ClientMicrno1="";	//44
 	/**
 	mandatory for all the cases */
 	
-	private String ClientNeftIfsccode1="";
+	private String ClientNeftIfsccode1="";	//45
 	/**
 	mandatory for all the cases -only one bank can be default bank */
 	
-	private String DefaultBankFlag="";
+	private String DefaultBankFlag="";	//46
 	/**
 	mandatory for all the cases varchar2 SB/CB/NE/NO Account Type
 	*/
 	
-	private String ClientAcctype2="";
+	private String ClientAcctype2="";	//47
 	/**
 	mandatory for all the cases
 	*/
 	
-	private String ClientAccno2="";
+	private String ClientAccno2="";	//48
 	/**
 	mandatory for all the cases */
 	
-	private String ClientMicrno2="";
+	private String ClientMicrno2="";	//49
 	/**
 	mandatory for all the cases */
 	
-	private String ClientNeftIfsccode2="";
+	private String ClientNeftIfsccode2="";	//50
 	/**
 	mandatory for all the cases -only one bank can be default bank */
 	
-	private String DefaultBankFlag2="";
+	private String DefaultBankFlag2="";	//51
 
 	/**
 	mandatory for all the cases varchar2 SB/CB/NE/NO Account Type
 	*/
 	
-	private String ClientAcctype3="";
+	private String ClientAcctype3="";	//52
 	/**
 	mandatory for all the cases
 	*/
 	
-	private String ClientAccno3="";
+	private String ClientAccno3="";	//53
 	/**
 	mandatory for all the cases */
 	
-	private String ClientMicrno3="";
+	private String ClientMicrno3="";	//54
 	/**
 	mandatory for all the cases */
 	
-	private String ClientNeftIfsccode3="";
+	private String ClientNeftIfsccode3="";	//55
 	/**
 	mandatory for all the cases -only one bank can be default bank */
 	
-	private String DefaultBankFlag3="";
+	private String DefaultBankFlag3="";	//56
 	/**
 	mandatory for all the cases varchar2 SB/CB/NE/NO Account Type
 	*/
 	
-	private String ClientAcctype4="";
+	private String ClientAcctype4="";	//57
 	/**
 	mandatory for all the cases
 	*/
 	
-	private String ClientAccno4="";
+	private String ClientAccno4="";	//58
 	/**
 	mandatory for all the cases */
 	
-	private String ClientMicrno4="";
+	private String ClientMicrno4="";	//59
 	/**
 	mandatory for all the cases */
 	
-	private String ClientNeftIfsccode4="";
+	private String ClientNeftIfsccode4="";	//60
 	/**
 	mandatory for all the cases -only one bank can be default bank */
 	
-	private String DefaultBankFlag4="";
+	private String DefaultBankFlag4="";	//61
 	/**
 	mandatory for all the cases varchar2 SB/CB/NE/NO Account Type
 	*/
 	
-	private String ClientAcctype5="";
+	private String ClientAcctype5="";	//62
 	/**
 	mandatory for all the cases
 	*/
 	
-	private String ClientAccno5="";
+	private String ClientAccno5="";	//63
 	/**
 	mandatory for all the cases */
 	
-	private String ClientMicrno5="";
+	private String ClientMicrno5="";	//64
 	/**
 	mandatory for all the cases */
 	
-	private String ClientNeftIfsccode5="";
+	private String ClientNeftIfsccode5="";	//65
 	/**
 	mandatory for all the cases -only one bank can be default bank */
 	
-	private String DefaultBankFlag5="";
+	private String DefaultBankFlag5="";	//66
 	/**
 	mandatory for all the cases
 	*/
 	
-	private String ClientChequename5="";
+	private String ClientChequename5="";	//67
+	
+	private String ClientDivpaymode="";	//68
+	private String ClientAdd1="";	//69
+	
+	private String ClientAdd2="";	//70
+	
+	private String ClientAdd3="";	//71
+	
+	private String ClientCity="";	//72
+	
+	private String ClientState="";	//73
+	
+	private String ClientPincode="";	//74
+	
+	private String ClientCountry="";	//75
+	
+	private String ClientResiphone="";	//76
+	
+	private String ClientResifax="";	//77
+	
+	private String ClientOfficephone="";	//78
+	
+	private String ClientOfficefax="";	//79
+	
+	private String ClientEmail="";	//80
 	
 	
-	private String ClientAdd1="";
-	
-	private String ClientAdd2="";
-	
-	private String ClientAdd3="";
-	
-	private String ClientCity="";
-	
-	private String ClientState="";
-	
-	private String ClientPincode="";
-	
-	private String ClientCountry="";
-	
-	private String ClientResiphone="";
-	
-	private String ClientResifax="";
-	
-	private String ClientOfficephone="";
-	
-	private String ClientOfficefax="";
-	
-	private String ClientEmail="";
+	private String ClientCommmode="";	//81
 	/**
 	Communication Mode 
 	P : Physical
@@ -259,49 +200,87 @@ public class BseRegistrationMFD implements Serializable{
 	M : MOBILE
 	*/
 	
-	private String ClientCommmode="";
-	/**01/02/03/04/05 **/
+	private String Cm_foradd1="";	//82
 	
-	private String ClientDivpaymode="";
+	private String Cm_foradd2="";	//83
 	
-	private String ClientPan2="";
+	private String Cm_foradd3="";	//84
 	
-	private String ClientPan3="";
+	private String Cm_forcity="";	//85
 	
-	private String MapinNo="";
+	private String Cm_forpincode="";	//86
 	
-	private String Cm_foradd1="";
+	private String Cm_forstate="";	//87
 	
-	private String Cm_foradd2="";
+	private String Cm_forcountry="";	//88
 	
-	private String Cm_foradd3="";
+	private String Cm_forresiphone="";	//89
 	
-	private String Cm_forcity="";
+	private String Cm_forresifax="";	//90
 	
-	private String Cm_forpincode="";
+	private String Cm_foroffphone="";	//91
 	
-	private String Cm_forstate="";
+	private String Cm_forofffax="";	//92
 	
-	private String Cm_forcountry="";
+	private String Cm_mobile="";	//93
 	
-	private String Cm_forresiphone="";
+	//1st Nominee
 	
-	private String Cm_forresifax="";
+	private String ClientNominee="";	//94
 	
-	private String Cm_foroffphone="";
+	private String ClientNomineeRelation="";	//95
+	private String nominee1applicable="";	//96
+	private String nominee1minorflag="";	//97
+	private String nominee1dob="";	//98
+	private String nominee1guardianname="";	//99
 	
-	private String Cm_forofffax="";
+	private String nominee2name="";	//100
+	private String nominee2relation="";	//101
+	private String nominee2applicable="";	//102
+	private String nominee2dob="";	//103
+	private String nominee2minorflag="";	//104
+	private String nominee2guardianname="";	//105
 	
-	private String Cm_mobile="";
+	private String nominee3name="";	//106
+	private String nominee3relation="";	//107
+	private String nominee3applicable="";	//108
+	private String nominee3dob="";	//109
+	private String nominee3minorflag="";	//110
+	private String nominee3guardianname="";	//111
+	private String applicant1kyctype="";	//112	(K/C/B/E)
+	private String applicant1ckycno="";		//113 (If kyc type is CKYC compliant
+	private String applicant2kyctype="";	//114
+	private String applicant2ckycno="";	//115
+	private String applicant3kyctype="";	//116
+	private String applicant3ckycno="";	//117
+	private String guardiankyctype="";	//118
+	private String guardianckycno="";	//119
+	private String applicant1kraexemptno="";	//120
+	private String applicant2kraexemptrefno="";	//121
+	private String applicant3kraexemptrefno="";	//122
+	private String guardiankraexemptrefno="";	//123
+	private String applicant1aadhaarupdated="";	//124
+	private String MapinNo="";	//125
+	private String paperlessflag="";	//126
+	private String leino="";	//127
+	private String leivalidity="";	//128
+	private String mobiledecflag="";	//129	Filler1
+	private String emaildecflag="";	//130	Filler2
+	private String filler3="";	//131	Filler3
 	
 	
+	private String ClientAppname1="";		//Deprecated in new API
+	private String ClientAppname2="";		//Deprecated in new API
+	private String ClientAppname3="";		//Deprecated in new API
+	//Guarfan details in case of minor nominee
+	private String ClientGuardian="";		//Deprecated in new API	
+
 	public String getClientCode() {
 		return ClientCode;
 	}
 	public void setClientCode(String clientCode) {
 		ClientCode = clientCode;
 	}
-	
 	public String getRegistrationtype() {
 		return registrationtype;
 	}
@@ -997,6 +976,121 @@ public class BseRegistrationMFD implements Serializable{
 	}
 	public void setCm_mobile(String cm_mobile) {
 		Cm_mobile = cm_mobile;
+	}
+	public String getMobiledecflag() {
+		return mobiledecflag;
+	}
+	public void setMobiledecflag(String mobiledecflag) {
+		this.mobiledecflag = mobiledecflag;
+	}
+	public String getEmaildecflag() {
+		return emaildecflag;
+	}
+	public void setEmaildecflag(String emaildecflag) {
+		this.emaildecflag = emaildecflag;
+	}
+	
+	public String getPms() {
+		return pms;
+	}
+	public void setPms(String pms) {
+		this.pms = pms;
+	}
+	public String getCmbpid() {
+		return cmbpid;
+	}
+	public void setCmbpid(String cmbpid) {
+		this.cmbpid = cmbpid;
+	}
+	public String getNominee2name() {
+		return nominee2name;
+	}
+	public void setNominee2name(String nominee2name) {
+		this.nominee2name = nominee2name;
+	}
+	public String getNominee2relation() {
+		return nominee2relation;
+	}
+	public void setNominee2relation(String nominee2relation) {
+		this.nominee2relation = nominee2relation;
+	}
+	public String getNominee2applicable() {
+		return nominee2applicable;
+	}
+	public void setNominee2applicable(String nominee2applicable) {
+		this.nominee2applicable = nominee2applicable;
+	}
+	public String getNominee2dob() {
+		return nominee2dob;
+	}
+	public void setNominee2dob(String nominee2dob) {
+		this.nominee2dob = nominee2dob;
+	}
+	public String getNominee2minorflag() {
+		return nominee2minorflag;
+	}
+	public void setNominee2minorflag(String nominee2minorflag) {
+		this.nominee2minorflag = nominee2minorflag;
+	}
+	public String getNominee2guardianname() {
+		return nominee2guardianname;
+	}
+	public void setNominee2guardianname(String nominee2guardianname) {
+		this.nominee2guardianname = nominee2guardianname;
+	}
+	public String getNominee3name() {
+		return nominee3name;
+	}
+	public void setNominee3name(String nominee3name) {
+		this.nominee3name = nominee3name;
+	}
+	public String getNominee3relation() {
+		return nominee3relation;
+	}
+	public void setNominee3relation(String nominee3relation) {
+		this.nominee3relation = nominee3relation;
+	}
+	public String getNominee3applicable() {
+		return nominee3applicable;
+	}
+	public void setNominee3applicable(String nominee3applicable) {
+		this.nominee3applicable = nominee3applicable;
+	}
+	public String getNominee3dob() {
+		return nominee3dob;
+	}
+	public void setNominee3dob(String nominee3dob) {
+		this.nominee3dob = nominee3dob;
+	}
+	public String getNominee3minorflag() {
+		return nominee3minorflag;
+	}
+	public void setNominee3minorflag(String nominee3minorflag) {
+		this.nominee3minorflag = nominee3minorflag;
+	}
+	public String getNominee3guardianname() {
+		return nominee3guardianname;
+	}
+	public void setNominee3guardianname(String nominee3guardianname) {
+		this.nominee3guardianname = nominee3guardianname;
+	}
+	public String getLeino() {
+		return leino;
+	}
+	public void setLeino(String leino) {
+		this.leino = leino;
+	}
+	public String getLeivalidity() {
+		return leivalidity;
+	}
+	public void setLeivalidity(String leivalidity) {
+		this.leivalidity = leivalidity;
+	}
+	public String getFiller3() {
+		return filler3;
+	}
+	public void setFiller3(String filler3) {
+		this.filler3 = filler3;
 	}
 	public static long getSerialversionuid() {
 		return serialVersionUID;

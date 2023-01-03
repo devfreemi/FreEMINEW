@@ -252,7 +252,7 @@ public class BsemfController {
 		//		String returnUrl = "redirect:/mutual-funds/funds-explorer";
 		String returnUrl = "mutual-funds/funds-explorer";
 		logger.info("purchasemfbsePost():MF purchase initiated by- "+ selectedFund.getMobile() + " :Re-invest code- " + selectedFund.getReinvSchemeCode());
-		String customertype="NEW_CUSTOMER";  
+		String customertype="NEW_CUSTOMER";
 
 		String referrerUrl = request.getHeader("Referer");
 		
@@ -1300,7 +1300,8 @@ public class BsemfController {
 					logger.info("purchaseBseMfAfterLogin(): Total emdandates fetched-  " + mandate.size());
 					if (mandate.size() > 0 && mandate.get(0).isMandateComplete()) {
 						logger.info("purchaseBseMfAfterLogin(): Emandate found for current customer.");
-						selectedFund.setMandateType("I");
+//						selectedFund.setMandateType("I");
+						selectedFund.setMandateType("N");
 						selectedFund.seteMandateRegRequired(false);
 						selectedFund.setMandateId(mandate.get(0).getMandateId());
 						List<String> manadates = new ArrayList<String>(); 
@@ -2113,7 +2114,18 @@ public class BsemfController {
 				}
 				redeemForm.setTotalUnits(customerFundDetails.getUnits());
 				redeemForm.setSchemeCode(customerFundDetails.getBsemfschemeCode());
+				
 
+				String clientid = bseEntryManager.getClientIdfromMobile(session.getAttribute("userid").toString());
+
+				List<UserBankDetails> userbankDetails = bseEntryManager.getAllCustomerBankDetails(clientid);
+				Map<Long,String> selectbank = new HashMap<Long,String>();
+				if(userbankDetails!=null) {
+					for(int i=0;i<userbankDetails.size();i++)
+						selectbank.put(userbankDetails.get(i).getSerialno(), "XXXXXXXXX" + (userbankDetails.get(i).getAccountNumber().substring(userbankDetails.get(i).getAccountNumber().length() - 3)));
+					map.addAttribute("accounts", selectbank);
+				}
+				
 				//				String transactionId = generateTransId();
 				String transactionId = bseEntryManager.generateTransId();
 				logger.info("Generated transaction ID of initiated transaction for redeem  " + transactionId);
@@ -2217,7 +2229,13 @@ public class BsemfController {
 
 				fundTransaction.setClientIp(systemDetails.getClientIpv4Address());
 				fundTransaction.setClientBrowser(systemDetails.getClientBrowser());
-
+				
+				UserBankDetails bankdetails = bseEntryManager.getCustomerBankDetails(clientId,redeemForm.getBankaccountforredeem());
+				if(bankdetails!=null) {
+					logger.info("Bank details retrieved. Setting for redemption");
+					fundTransaction.setBanbkaccount(bankdetails.getAccountNumber());
+				}
+					
 				logger.info("Redemption amount selected- " + (redeemForm.isRedeemAll() ? "REDEEM ALL" : redeemForm.getRedeemAmounts() * (-1)));
 
 				fundTransaction.setRedeemAll(redeemForm.isRedeemAll() ? "Y" : "N");
@@ -2255,8 +2273,20 @@ public class BsemfController {
 
 				} else {
 					returnUrl = "bsemf/bsemf-redeem";
-					map.addAttribute("error", "Failed to process your redeem. Please try again.");
+					map.addAttribute("error", transReport.getStatusMsg());
 					map.addAttribute("FUNDAVAILABLE", "Y");
+					
+//					Refetch bank details. THis code need to be optimized along with GET method
+					String clientid = bseEntryManager.getClientIdfromMobile(session.getAttribute("userid").toString());
+
+					List<UserBankDetails> userbankDetails = bseEntryManager.getAllCustomerBankDetails(clientid);
+					Map<Long,String> selectbank = new HashMap<Long,String>();
+					if(userbankDetails!=null) {
+						for(int i=0;i<userbankDetails.size();i++)
+							selectbank.put(userbankDetails.get(i).getSerialno(), "XXXXXXXXX" + (userbankDetails.get(i).getAccountNumber().substring(userbankDetails.get(i).getAccountNumber().length() - 3)));
+						map.addAttribute("accounts", selectbank);
+					}
+					
 				}
 
 				redirectAttrs.addFlashAttribute("TRANS_ID", redeemForm.getRedeemTransId());
@@ -2265,7 +2295,7 @@ public class BsemfController {
 
 				logger.error("Unable to save customer transaction request for redeem", e);
 				map.addAttribute("FUNDAVAILABLE", "Y");
-				map.addAttribute("error", "Failed to process your redeem. Please try again.");
+				map.addAttribute("error", "Failed to process your redeem. Please retry after sometime.");
 				map.addAttribute("mfRedeemForm", redeemForm);
 				returnUrl = "bsemf/bsemf-redeem";
 			}
@@ -3207,6 +3237,14 @@ public class BsemfController {
 	{
 		logger.info("Return state list...");
 		return InvestFormConstants.states; 
+	}
+	
+	
+	@ModelAttribute("idbelongsto") 
+	public Map<String, String> getwhoseId()
+	{
+		logger.info("Return ID belongs to...");
+		return InvestFormConstants.idbelongsto; 
 	}
 
 	

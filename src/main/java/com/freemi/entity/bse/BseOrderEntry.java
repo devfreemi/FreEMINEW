@@ -47,6 +47,7 @@ public class BseOrderEntry implements Serializable {
 	private String Parma1="";
 	private String Param2="";
 	private String Param3="";
+	
 	public String getTransCode() {
 		return TransCode;
 	}
@@ -216,6 +217,7 @@ public class BseOrderEntry implements Serializable {
 	public void setParam3(String param3) {
 		Param3 = param3;
 	}
+	
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}

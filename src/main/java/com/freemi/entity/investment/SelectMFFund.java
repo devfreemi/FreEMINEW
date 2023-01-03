@@ -133,7 +133,7 @@ public class SelectMFFund implements Serializable {
 	private String bseRefNo;
 	
 	@Column(name="SIP_MANDATE_CATEGORY")
-	private String mandateType="I";
+	private String mandateType;
 	
 	@Column(name="MANDATE_ID")
 	private String mandateId;
@@ -170,6 +170,9 @@ public class SelectMFFund implements Serializable {
 	
 	@Column(name="CANCEL_SIP_UNIQUE_REF_NO")
 	private String sipcancelrefid;
+	
+	@Transient
+	private String banbkaccount;
 
 	public long getSerialNo() {
 	    return serialNo;
@@ -177,6 +180,15 @@ public class SelectMFFund implements Serializable {
 
 	public void setSerialNo(long serialNo) {
 	    this.serialNo = serialNo;
+	}
+
+	
+	public String getBanbkaccount() {
+		return banbkaccount;
+	}
+
+	public void setBanbkaccount(String banbkaccount) {
+		this.banbkaccount = banbkaccount;
 	}
 
 	public String getClientID() {

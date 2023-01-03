@@ -99,6 +99,20 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 					bseOrderResp.setSuccessFlag("BSE_CONN_FAIL");
 				}
 
+			}else if(selectedFund.getTransactionType().equals("CXL")){
+
+				try{
+					logger.info("Convert form data to cancel order form data");
+					BseOrderEntry bseMfOrderForm=  BseBeansMapper.redeeemOrderToBseBeans(selectedFund, transactionNumber);
+					logger.info("Begin BSE service invoke process for redeem transaction: "+ selectedFund.getTransactionID());
+					result = bseRestClientService.purchaseRequestProcess(bseMfOrderForm);
+					BseBeansMapper.redeeemResponseToBean(bseOrderResp, result, selectedFund.getBseRefNo());
+				}catch(Exception e){
+					logger.error("Failed during proceesing of BSE REDEEM details to BSE platform",e);
+					//			result="BSE_CONN_FAIL";
+					bseOrderResp.setSuccessFlag("BSE_CONN_FAIL");
+				}
+
 			}else{
 
 				//		Order Entry processing for lumpsum - fresh

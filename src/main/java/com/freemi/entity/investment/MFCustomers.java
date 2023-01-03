@@ -285,6 +285,12 @@ public class MFCustomers implements Serializable {
 	@Column(name="SYSTEM_DETAILS")
 	private String systemDetails;
 	
+	@Column(name="MOBILE_DECLARE_FLAG")
+	private String mobiledecflag="SE";
+	
+	@Column(name="EMAIL_DECLARE_FLAG")
+	private String emaildeclareflag="SE";
+	
 	@JsonIgnore
 	@Column(name="MOBILE_VERIFIED")
 	@Pattern(regexp = "Y", message = "Mobile no is not verified")
@@ -1009,6 +1015,25 @@ public class MFCustomers implements Serializable {
 
 	public String getPan1exempt() {
 		return pan1exempt;
+	}
+	
+	public String getMobiledecflag() {
+		return mobiledecflag;
+	}
+
+
+	public void setMobiledecflag(String mobiledecflag) {
+		this.mobiledecflag = mobiledecflag;
+	}
+
+
+	public String getEmaildeclareflag() {
+		return emaildeclareflag;
+	}
+
+
+	public void setEmaildeclareflag(String emaildeclareflag) {
+		this.emaildeclareflag = emaildeclareflag;
 	}
 
 

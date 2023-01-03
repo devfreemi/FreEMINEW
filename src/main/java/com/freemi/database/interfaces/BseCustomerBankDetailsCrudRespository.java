@@ -12,6 +12,7 @@ public interface BseCustomerBankDetailsCrudRespository extends JpaRepository<Use
 
 	
 	public UserBankDetails findOneByClientID(String clientCode);
+	public UserBankDetails findOneByClientIDAndSerialno(String clientCode, Long serialno);
 	public List<UserBankDetails> getByClientID(String clientCode);
 	
 	/*@Transactional
