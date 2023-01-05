@@ -1295,31 +1295,14 @@ public class BsemfController {
 
 				if (userbankDetails != null) {
 
-					List<BseMandateDetails> mandate = bseEntryManager.getCustomerMandateDetails(
-							customerData.get(0).getClientID(), userbankDetails.getAccountNumber());
-					logger.info("purchaseBseMfAfterLogin(): Total emdandates fetched-  " + mandate.size());
-					if (mandate.size() > 0 && mandate.get(0).isMandateComplete()) {
-						logger.info("purchaseBseMfAfterLogin(): Emandate found for current customer.");
-//						selectedFund.setMandateType("I");
-						selectedFund.setMandateType("N");
-						selectedFund.seteMandateRegRequired(false);
-						selectedFund.setMandateId(mandate.get(0).getMandateId());
-						List<String> manadates = new ArrayList<String>(); 
-						for(int i=0;i<mandate.size();i++) {
-							manadates.add(mandate.get(i).getMandateId());
-						}
-						map.addAttribute("allmandates", manadates);
-					} else {
-						logger.info("purchaseBseMfAfterLogin(): No emnadate found for customer..");
-						selectedFund.seteMandateRegRequired(true);
-					}
-
-					map.addAttribute("bankacc",
-							userbankDetails.getAccountNumber() != null
-							? "XXXXXXXXX" + userbankDetails.getAccountNumber()
-							.substring(userbankDetails.getAccountNumber().length() - 3)
-							: "NOT AVAILABLE");
+					getmandatedetails(map, customerData, selectedFund, userbankDetails);
+					
+					String bankref= userbankDetails.getAccountNumber() != null ? "XXXXXXXXX" + userbankDetails.getAccountNumber().substring(userbankDetails.getAccountNumber().length() - 3): "NOT AVAILABLE";
+					map.addAttribute("bankacc",bankref);
 					map.addAttribute("bankname", userbankDetails.getBankName());
+					selectedFund.setBanbkaccount(bankref);
+					selectedFund.setOther1(userbankDetails.getBankName());
+					
 					/* map.addAttribute("ifsc", userbankDetails.getIfscCode()); */
 					map.addAttribute("isEmandateComplete", !selectedFund.iseMandateRegRequired()); // should to opposite
 					// to
@@ -1340,7 +1323,7 @@ public class BsemfController {
 
 			selectedFund.setTransactionID(transId);
 			selectedFund.setInvestorName(customerData.get(0).getInvName());
-
+			
 			map.addAttribute("amcPortFolio", customerPortfolios);
 			map.addAttribute("customerData", customerData.get(0));
 			map.addAttribute("GETDATA", "S");
@@ -1362,6 +1345,29 @@ public class BsemfController {
 
 	}
 
+
+	private void getmandatedetails(Model map, List<MFCustomers> customerData, SelectMFFund selectedFund,
+			UserBankDetails userbankDetails) {
+		List<BseMandateDetails> mandate = bseEntryManager.getCustomerMandateDetails(
+				customerData.get(0).getClientID(), userbankDetails.getAccountNumber());
+		logger.info("purchaseBseMfAfterLogin(): Total emdandates fetched-  " + mandate.size());
+		if (mandate.size() > 0 && mandate.get(0).isMandateComplete()) {
+			logger.info("purchaseBseMfAfterLogin(): Emandate found for current customer.");
+//						selectedFund.setMandateType("I");
+			selectedFund.setMandateType("N");
+			selectedFund.seteMandateRegRequired(false);
+			selectedFund.setMandateId(mandate.get(0).getMandateId());
+			List<String> manadates = new ArrayList<String>(); 
+			for(int i=0;i<mandate.size();i++) {
+				manadates.add(mandate.get(i).getMandateId());
+			}
+			map.addAttribute("allmandates", manadates);
+		} else {
+			logger.info("purchaseBseMfAfterLogin(): No emnadate found for customer..");
+			selectedFund.seteMandateRegRequired(true);
+		}
+	}
+
 	@RequestMapping(value = "/mutual-funds/mfPurchaseConfirm.do", method = RequestMethod.GET)
 	public String purchaseConfirmGet(HttpServletRequest request, HttpServletResponse response) {
 		return "return:/products/";
@@ -1373,20 +1379,29 @@ public class BsemfController {
 			BindingResult bindResult, Model map, HttpServletRequest request, HttpServletResponse response,
 			HttpSession session, final RedirectAttributes redirectAttrs) {
 
-		logger.info("@@ BSE MF STAR purchase confirm controller @@");
+		logger.info("@@ BSE MF STAR purchaseConfirmPost controller @@");
 		String returnUrl = "redirect:/mutual-funds/bse-transaction-status";
+		boolean requestcomplete=false;
 		map.addAttribute("GETDATA", "S");
 		logger.info("purchaseConfirmPost(): Client ID - " + selectedFund.getClientID() + " : mobile- "+ selectedFund.getMobile());
-
+		String errormsg="Request not complete!";
 		TransactionStatus transationResult = new TransactionStatus();
 		String mandateId = "";
 		boolean mandareGenerated = false;
-
+		List<String> customerPortfolios = new ArrayList<String>();
+		
 		if (bindResult.hasErrors()) {
+			/*
 			map.addAttribute("errormsg", bindResult.getFieldError().getDefaultMessage());
 			map.addAttribute("paymentMethod", InvestFormConstants.bsePaymentMethod);
 			map.addAttribute("selectedFund", selectedFund);
-
+			customerPortfolios = bseEntryManager.getSelectedAmcPortfolio(selectedFund.getSchemeCode(),
+					selectedFund.getPan(), selectedFund.getRtaAgent());
+			map.addAttribute("amcPortFolio", customerPortfolios);
+			*/
+			errormsg=bindResult.getFieldError().getDefaultMessage();
+			purchaserequestfailparam(selectedFund, map, errormsg,customerPortfolios);
+			
 			return "bsemf/bse-mf-purchase";
 		}
 
@@ -1419,9 +1434,15 @@ public class BsemfController {
 							selectedFund.setSipStartDate((new SimpleDateFormat("dd/MM/yyyy")).parse(combineDate));
 						} catch (Exception e) {
 							logger.error("Failed to convert date to required format for SIP.", e);
-							map.addAttribute("errormsg", "Failed to process the date!");
+							errormsg="Failed to process the date!";
+							/*
+							 map.addAttribute("errormsg", "Failed to process the date!");
 							map.addAttribute("paymentMethod", InvestFormConstants.bsePaymentMethod);
 							map.addAttribute("selectedFund", selectedFund);
+							
+							*/
+							errormsg=bindResult.getFieldError().getDefaultMessage();
+							purchaserequestfailparam(selectedFund, map, errormsg,customerPortfolios);
 							return "bsemf/bse-mf-purchase";
 						}
 						logger.info("Is emandate registration required?- " + selectedFund.iseMandateRegRequired());
@@ -1429,22 +1450,31 @@ public class BsemfController {
 						if (selectedFund.iseMandateRegRequired()) {
 							logger.info("Customer emandate registration need to be processed first...");
 							/* flag.setEmandateRequired(true); */
+							logger.info("Mandate type- "+ selectedFund.getMandateType());
+							if(selectedFund.getMandateType()==null || selectedFund.getMandateType().isEmpty()) {
+								logger.warn("Madatetype null.. Set to E-Nach");
+								selectedFund.setMandateType("N");
+							}
 							BseApiResponse emandateResponse = bseEntryManager.updateEmdandateStatus(selectedFund.getMobile(),
 									selectedFund.getMandateType(), Double.toString(selectedFund.getInvestAmount()));
 							if (emandateResponse != null && emandateResponse.getStatusCode().equals("100")) {
 								//						if (emandateResponse.getStatusCode().equals("100")) {
 								mandareGenerated = true;
 								mandateId = emandateResponse.getResponseCode();
-								logger.info("E-mandate registration completed successfully for Cleint ID- "
-										+ selectedFund.getClientID() + " .Mandate ID generater-"
-										+ emandateResponse.getResponseCode());
+								logger.info("E-mandate registration completed successfully for Cleint ID- " + selectedFund.getClientID() + " .Mandate ID generater-" + emandateResponse.getResponseCode());
 								redirectAttrs.addFlashAttribute("EMANDATE_STATUS", "S");
 							} else {
 								logger.info("emandate response is null... Returning to confirm page with error..");
 								redirectAttrs.addFlashAttribute("EMANDATE_STATUS", "F");
+								/*
 								map.addAttribute("errormsg","Mandate registration failed for- " + (emandateResponse!=null?emandateResponse.getRemarks():"No response" ));
 								map.addAttribute("paymentMethod", InvestFormConstants.bsePaymentMethod);
 								map.addAttribute("selectedFund", selectedFund);
+								
+								*/
+								errormsg="Mandate registration failed for- " + (emandateResponse!=null?emandateResponse.getRemarks():"N/A");
+								purchaserequestfailparam(selectedFund, map, errormsg,customerPortfolios);
+//								returnUrl ="bsemf/bse-mf-purchase";
 								return "bsemf/bse-mf-purchase";
 							}
 							redirectAttrs.addFlashAttribute("EMANDATE_REMARKS", emandateResponse.getRemarks());
@@ -1453,7 +1483,8 @@ public class BsemfController {
 						} else {
 
 							logger.info("Emandate not required. Skipping the request. Get existing mandate ID for client." + selectedFund.getClientID());
-							/*
+							
+							/*  No longer in use.
 			    mandateId = bseEntryManager.getEmdandateDetails(selectedFund.getMobile(), selectedFund.getClientID(),
 			    selectedFund.getMandateType(), null);
 			    logger.info("Exisitng mandate ID for client- " + mandateId);
@@ -1496,7 +1527,7 @@ public class BsemfController {
 						}
 
 						if (transationResult.getSuccessFlag() != null && transationResult.getSuccessFlag().equalsIgnoreCase("S")) {
-
+							requestcomplete=true;
 							try {
 								// Trigger transaction mailer
 								MFCustomers userDetails = bseEntryManager.getCustomerInvestFormData(
@@ -1535,8 +1566,7 @@ public class BsemfController {
 						} else if (transationResult.getSuccessFlag() != null
 								&& transationResult.getSuccessFlag().equalsIgnoreCase("D")) {
 							redirectAttrs.addAttribute("TRANS_STATUS", "N");
-							redirectAttrs.addFlashAttribute("TRANS_MSG",
-									"Fund transaction is currently disabled by Admin. Please try after sometime.");
+							redirectAttrs.addFlashAttribute("TRANS_MSG","Fund transaction is currently disabled by Admin. Please try after sometime.");
 						} else {
 							redirectAttrs.addAttribute("TRANS_STATUS", "SF");
 							redirectAttrs.addFlashAttribute("TRANS_MSG", transationResult.getStatusMsg());
@@ -1545,10 +1575,14 @@ public class BsemfController {
 					} catch (Exception e) {
 
 						logger.error("Unable to save customer transaction request", e);
-
+						
+						/*
 						map.addAttribute("errormsg", "Internal error! Kindly contact admin to help resolve your issue.");
 						map.addAttribute("paymentMethod", InvestFormConstants.bsePaymentMethod);
 						map.addAttribute("selectedFund", selectedFund);
+						*/
+						errormsg="Internal error! Kindly contact admin to help resolve your issue.";
+						purchaserequestfailparam(selectedFund, map, errormsg,customerPortfolios);
 						return "bsemf/bse-mf-purchase";
 
 					}
@@ -1559,9 +1593,13 @@ public class BsemfController {
 
 					logger.info("Customer profile is not yet ready for transaction. Need to complete Profile first");
 					map.addAttribute("REG_COMPLETE", "N");
+					/*
 					map.addAttribute("errormsg", "Your Mutual Account registration is not complete. Visit your dashboard and complete your registration to be enable to transact");
 					map.addAttribute("paymentMethod", InvestFormConstants.bsePaymentMethod);
 					map.addAttribute("selectedFund", selectedFund);
+					*/
+					errormsg="Your Mutual Account registration is not complete. Visit your dashboard and complete your registration to be enable to transact";
+					purchaserequestfailparam(selectedFund, map, errormsg,customerPortfolios);
 					return "bsemf/bse-mf-purchase";
 				}
 			}else {
@@ -1575,8 +1613,28 @@ public class BsemfController {
 			map.addAttribute("errormsg", "Error processing request. Please try after again.");
 			returnUrl ="bsemf/bse-mf-purchase";
 		}
+		
+		
+		if(requestcomplete) {
+			logger.info("Purchase transaction loop complete.. Proceeding to next page with transaction status..");
+		}else {
+			logger.info("Purchase request failed. Returning back to page..");
+			purchaserequestfailparam(selectedFund, map, errormsg,customerPortfolios);
+
+		}
+		
 		return returnUrl;
 
+	}
+
+
+	private void purchaserequestfailparam(SelectMFFund selectedFund, Model map, String errormsg,List<String> customerPortfolios) {
+		map.addAttribute("errormsg",errormsg );
+		map.addAttribute("paymentMethod", InvestFormConstants.bsePaymentMethod);
+		map.addAttribute("selectedFund", selectedFund);
+		customerPortfolios = bseEntryManager.getSelectedAmcPortfolio(selectedFund.getSchemeCode(),
+				selectedFund.getPan(), selectedFund.getRtaAgent());
+		map.addAttribute("amcPortFolio", customerPortfolios);
 	}
 	
 	

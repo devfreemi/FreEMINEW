@@ -902,7 +902,11 @@ public class BseAOFGenerator {
 
 			cell11 = new PdfPCell();
 			c1 = new Chunk("Guardian Name(If Nominee is Minor): ",f1);
-			c2 = new Chunk(investForm.getNominee().getIsNomineeMinor().equals("N")?"":investForm.getNominee().getNomineeGuardian(),f2);
+			if(investForm.getNominee().getIsNomineeMinor()!=null) {
+				c2 = new Chunk(investForm.getNominee().getIsNomineeMinor().equals("N")?"":investForm.getNominee().getNomineeGuardian(),f2);
+			}else {
+				c2 = new Chunk("",f2);
+			}
 			p11 = new Phrase();
 			p11.add(c1);
 			p11.add(c2);

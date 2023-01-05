@@ -48,7 +48,8 @@ investment.bse.sign.bypasskyc=Y
 ######### PROD ##################
 
 #Acceess by internal private IP. VPC peering is enabled for lilghtsail environment
-investment.bse.serviceurl=https://service.freemi.in/bsemfservice
+#investment.bse.serviceurl=https://service.freemi.in/bsemfservicenew
+investment.bse.serviceurl=http://172.26.2.56:8090/bsemfservicenew
 investment.bse.aoffolder=/apps/AOF/
 investment.bse.aoffile.logo=/apps/AOF/freemi.png
 url.service.mf.bse.ucc.registration=http://172.31.39.205:8080/bsestarmfucc

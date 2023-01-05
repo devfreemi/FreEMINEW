@@ -187,7 +187,7 @@
 								<label for="bankName" class="col-sm-5 col-form-label text-default">Registered Bank for SIP</label>
 								<div class="col-sm-7">
 									<div class="md-form mt-0 mb-0">
-									<input type="text" class="form-control-plaintext" readonly="readonly" id="bankName" value="${bankname }" />
+									<form:input path="other1" type="text" class="form-control-plaintext" readonly="readonly" id="bankName"/>
 									
 									</div>
 								</div>
@@ -199,7 +199,7 @@
 								<label for="accno" class="col-sm-5 col-form-label text-default">Registered Bank Account </label>
 								<div class="col-sm-7">
 									<div class="md-form mt-0 mb-0">
-									<input type="text"class="form-control-plaintext" readonly="readonly" id="accno" value="${bankacc}"/>
+									<form:input path="banbkaccount" type="text" class="form-control-plaintext" readonly="readonly" id="accno"/>
 									</div>
 								</div>
 							</div>
@@ -223,7 +223,8 @@
 							</div>
 							<div class="row d-flex justify-content-end mb-3">
 								<div class="col-12 col-md-8 col-lg-8">
-								<small class="text-muted">E-Nach mandate registration for automated payment service.</small>
+								<small class="text-primary">E-Nach mandate registration for automated payment service.</small>
+								<small class="text-muted">Note: Email will be sent for authenticating the generated mandate ID.</small>
 								</div>							
 							</div>
 							

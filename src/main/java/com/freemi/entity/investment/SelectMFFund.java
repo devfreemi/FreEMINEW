@@ -173,6 +173,12 @@ public class SelectMFFund implements Serializable {
 	
 	@Transient
 	private String banbkaccount;
+	
+	@Transient
+	private String other1;
+	
+	@Transient
+	private String other2;
 
 	public long getSerialNo() {
 	    return serialNo;
@@ -186,9 +192,25 @@ public class SelectMFFund implements Serializable {
 	public String getBanbkaccount() {
 		return banbkaccount;
 	}
-
+	
 	public void setBanbkaccount(String banbkaccount) {
 		this.banbkaccount = banbkaccount;
+	}
+
+	public String getOther1() {
+		return other1;
+	}
+
+	public void setOther1(String other1) {
+		this.other1 = other1;
+	}
+
+	public String getOther2() {
+		return other2;
+	}
+
+	public void setOther2(String other2) {
+		this.other2 = other2;
 	}
 
 	public String getClientID() {
