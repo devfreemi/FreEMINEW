@@ -922,6 +922,18 @@ public class BseRestClient implements BseEntryManager {
 		return null;
 	}
 
+	@Override
+	public BseApiResponse getemandateauthurl(String clientid, String mandateid) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public BseApiResponse getemandatestatus(String clientid, String mandateid) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 	
 

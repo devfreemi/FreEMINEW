@@ -14,6 +14,7 @@ import com.freemi.entity.database.UserBankDetails;
 import com.freemi.entity.investment.MFCustomers;
 import com.freemi.entity.investment.Allotmentstatement;
 import com.freemi.entity.investment.BseOrderEntryResponse;
+import com.freemi.entity.investment.Emandatestaus;
 import com.freemi.entity.investment.SelectMFFund;
 
 @Service
@@ -47,5 +48,9 @@ public interface InvestmentConnectorBseInterface {
 		    String ordertype, String settlementtype);
 
 	public String getifscdetails(String ifsc);
+	
+	public BseApiResponse getmandateauthurl(String clientid, String mandateid);
+	
+	public Emandatestaus getmandatestatus(String clientid, String mandateid);
 	
 }

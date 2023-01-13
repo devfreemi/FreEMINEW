@@ -15,8 +15,10 @@
 <meta http-equiv="cache-control" content="max-age=0" />
 <meta http-equiv="cache-control" content="no-cache" />
 <meta http-equiv="expires" content="0" />
-<meta name="keywords" content="freemi login, Sign up for free Online Mutual Fund account, Get best health insurance by signup, get Instant credit by signup" />
-<meta name="description" content="Login to your FreEMI account and view your transactions, wishes completed" />
+<meta name="keywords"
+	content="freemi login, Sign up for free Online Mutual Fund account, Get best health insurance by signup, get Instant credit by signup" />
+<meta name="description"
+	content="Login to your FreEMI account and view your transactions, wishes completed" />
 
 <meta name="robots" content="index, follow">
 <meta name="googlebot" content="index, follow" />
@@ -24,14 +26,12 @@
 
 <link rel="canonical" href=" https://www.freemi.in/products/login" />
 <jsp:include page="include/bootstrap.jsp"></jsp:include>
-<link
-	href="<c:url value="${contextcdn}/resources/css/login.component.css"/>"
-	rel="stylesheet">
-<link href="<c:url value="${contextcdn}/resources/css/styles.css"/>"
-	rel="stylesheet">
+<link href="<c:url value="${contextcdn}/resources/css/login23.css"/>"
+	type="text/css" rel="stylesheet">
 <link href="<c:url value="${contextcdn}/resources/css/animate.css"/>"
 	type="text/css" rel="stylesheet">
-
+<script src="<c:url value="${contextcdn}/resources/js/login23.js" />"
+	type="text/javascript" defer="defer"></script>
 
 <style>
 .timer_style {
@@ -44,132 +44,106 @@
 }
 
 @media screen and (max-width: 320px) {
- .signupbtnclass, .loginbtnclass  {
- 	padding: .5rem 1.6rem;
-    font-size: .84rem;
- }
+	.signupbtnclass, .loginbtnclass {
+		padding: .5rem 1.6rem;
+		font-size: .84rem;
+	}
+}
 </style>
 </head>
-<body class="login_design" onload="formOnLoad();">
+<body>
 	<jsp:include page="include/GoogleBodyTag.jsp"></jsp:include>
 	<jsp:include page="include/header.jsp"></jsp:include>
-	<div class="container" style="min-height: 100vh; padding-top: 30px;">
 
-		<!-- login form -->
-		<div class="mt-4">
-			<h1 class="login_header" id="ht">Login to your Account</h1>
-		</div>
+	<!-- MultiStep Form -->
+	<div class="container-fluid" id="grad1">
+		<div class="row justify-content-center mt-0">
+			<div
+				class="col-11 col-sm-9 col-md-7 col-lg-4 text-center p-0 mt-3 mb-2">
+				<div class="card px-0 pt-4 pb-0 mt-3 mb-3">
+					<h5>Login to your account</h5>
+					<div class="row">
+						<div class="col-md-12 mx-0">
+							<form:form id="msform" modelAttribute="login">
+								<!-- progressbar -->
+								<ul id="progressbar">
+									<li class="active" id="account"><strong>Account</strong></li>
+									<li id="personal"><strong>Verification</strong></li>
 
-		<div class="row p-1">
-			<div class="col-md-6 col-lg-6 form_div animated fadeInLeft"
-				style="margin: auto; background: #ffffffe3;">
+								</ul>
+								<!-- fieldsets -->
+								<div>
+									<div>
+										<span id="infomsg"
+											style="color: green; font-weight: 400; font-size: 13px;">${info }</span>
+									</div>
 
-
-				<div>
-					<span id="infomsg"
-						style="color: green; font-weight: 400; font-size: 13px;">${info }</span>
-				</div>
-
-				<div>
-					<span id="loginmsg"
-						style="color: #ff7623; font-weight: 400; font-size: 13px;"></span>
-				</div>
-
-				<div id="loginFormBox">
-					<form:form method="POST" commandName="login"
-						onsubmit="return submitLogin(event);">
-						<%-- action="${pageContext.request.contextPath}/login.do" --%>
-
-						<div class="md-form mb-1">
-							<i class="fas fa-mobile-alt prefix"
-								style="padding-left: 5px; color: #5a5a5a;" id="mobico"></i>
-							<form:input type="text" style="padding-left: 5px;"
-								id="validationCustomUsername"
-								class="form-control form-control-sm" path="usermobile"
-								pattern="[0-9]{10}" maxlength="10" autocomplete="off"
-								placeholder="Mobile number"></form:input>
-							<!-- <label for="validationCustomUsername">Mobile number</label> -->
-						</div>
-						<span id="msg1" style="font-size: 11px;"></span>
-
-
-						<div class="md-form" id="passbox">
-							<i class="fas fa-lock prefix" id="passico"
-								style="color: #5a5a5a;"></i>
-							<form:input type="password" style="padding-left: 5px;"
-								class="form-control form-control-sm" path="userpassword"
-								id="validationPassword" maxlength="24" autocomplete="off"
-								placeholder="Your password"></form:input>
-
-							<small class="d-flex justify-content-start" id="msg2"
-								style="font-size: 10px; padding-left: 2.5rem; color: #f33c3c;"></small>
-							<small class="d-flex justify-content-end"><a
-								class="password_reset mb-0"
-								href="${pageContext.request.contextPath}/forgotPassword">Forgot
-									Password? </a></small>
-						</div>
-
-						<div class="md-form form-group mt-0 animated fadeIn " id="otpbox"
-							style="display: none;">
-							<img
-								src="<c:url value="${contextcdn}/resources/images/otp-service.svg"/>"
-								class="img-fluid prefix" style="height: 2rem;" alt="OTP">
-							<form:input type="tel" style="padding-left: 5px;"
-								pattern="[0-9]*" class="form-control form-control-sm mr-sm-3"
-								path="otpVal" id="validationOTP" maxlength="6"
-								autocomplete="off" placeholder="OTP"
-								aria-describedby="validationOTP"></form:input>
-
-							<div class="row">
-								<div
-									class="col-6 white-text #ef5350 red lighten-1 text-center p-1"
-									style="margin: auto; border-radius: 3px;">
-									<span id="timer"></span>
+									<div>
+										<span id="loginmsg"
+											style="color: #ff7623; font-weight: 400; font-size: 13px;"></span>
+									</div>
 								</div>
+								<fieldset>
+									<div class="form-card">
+										<h6>Account Information</h6>
+										<form:input type="text" style="padding-left: 5px;"
+											id="validationCustomUsername"
+											class="form-control form-control-sm" path="usermobile"
+											pattern="[0-9]{10}" maxlength="10" autocomplete="off"
+											placeholder="Mobile number"></form:input>
 
-							</div>
+										<div class="form-check">
+											<input class="form-check-input" type="radio"
+												name="loginmethod" value="OTP" id="loginmethod1"> <label
+												class="form-check-label" for="loginmethod1"> OTP </label>
+										</div>
+										<div class="form-check">
+											<input class="form-check-input" type="radio"
+												name="loginmethod" id="loginmethod2" value="PWD" checked>
+											<label class="form-check-label" for="loginmethod2">
+												Password </label>
+										</div>
+									</div>
+									<input type="button" name="next" class="next action-button"
+										value="Proceed" id="nextbtn" />
+								</fieldset>
+								<fieldset>
+									<div class="form-card">
+										<h2 class="fs-title">Verification Details</h2>
+										<input type="text" id="key" placeholder="Login Id" readonly="readonly" />
+	<%-- 
+										<form:input type="tel" style="padding-left: 5px;"
+											pattern="[0-9]*" class="form-control form-control-sm mr-sm-3"
+											path="otpVal" id="validationOTP" maxlength="6"
+											autocomplete="off" placeholder="OTP"
+											aria-describedby="validationOTP"></form:input>
 
+										<form:input type="password" style="padding-left: 5px;"
+											class="form-control form-control-sm" path="userpassword"
+											id="validationPassword" maxlength="24" autocomplete="off"
+											placeholder="Your password"></form:input> --%>
+										<div id="logincred"></div>
+
+									</div>
+									<!-- <input type="button" name="previous" class="previous action-button-previous" value="Previous"/> -->
+									<input type="button" name="resendotp"
+										class="previous action-button-previous" value="Previous" /> <input
+										type="button" name="login_account" class="login action-button"
+										value="Confirm" />
+									<form:hidden path="returnUrl" />
+									<form:hidden path="otpSubmit" id="otpsubmitstat" />
+								</fieldset>
+							</form:form>
 						</div>
-
-						<div class="custom-control custom-checkbox mb-4" style="padding-left: 0px;"  id="otpChoice">
-							<img src="<c:url value="${contextcdn}/resources/images/sms-32.svg"/>" class="img-fluid prefix" style="height: 2rem;margin-right: 2rem;" alt="OTP">
-							<form:checkbox path="otpLogin" class="custom-control-input"
-								id="otplogin"></form:checkbox>
-							 <label class="custom-control-label" for="otplogin">Login By OTP
-								</label>
-						</div>
-						
-						<form:hidden path="returnUrl" />
-						<form:hidden path="otpSubmit" id="otpsubmitstat" />
-
-						<!-- <div style="margin-bottom: 20px;">
-						<div class="g-recaptcha" data-sitekey="6LdvUoQUAAAAADk77XVS_YlkPTluN9EYCawk1xo6"></div>
-					</div> -->
-						<div class="login_buttons text-center">
-							<button type="submit" id="loginsubmit"
-								class="btn blue-gradient white-text loginbtnclass">
-								<span id="loginbasic"><i class="fas fa-lock"></i> Login</span>
-							</button>
-
-							<a href="${pageContext.request.contextPath}/register"
-								style="text-decoration: none; margin-top: 10px">
-								<button type="button" class="btn purple-gradient white-text signupbtnclass"  id="signupbtn"
-									style="text-decoration: none;">
-									<i class="fas fa-user-plus"></i> Sign Up
-								</button>
-							</a>
-						</div>
-					</form:form>
+					</div>
 				</div>
-
-
-
 			</div>
 		</div>
-
 	</div>
 	<!-- <script src='https://www.google.com/recaptcha/api.js'></script> -->
-	<script src="<c:url value="${contextcdn}/resources/js/login.js" />"
+	<%-- <script src="<c:url value="${contextcdn}/resources/js/login.js" />"
 	type="text/javascript" defer="defer"></script>
+	
+	 --%>
 </body>
 </html>

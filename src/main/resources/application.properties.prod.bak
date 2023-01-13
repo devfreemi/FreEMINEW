@@ -81,7 +81,7 @@ sms.sender.id=FREEMI
 #sms.route.promotional=1
 sms.otp.validity=5;
 
-backend.service.communication.baseurl=http://172.31.39.205:8080/communication
+backend.service.communication.baseurl=http://172.26.2.56:8090/communication
 ###################################################################################################################
 
 
@@ -126,7 +126,7 @@ api.iccs.auth.token=Basic dXNlcmNjMjM6dmFsZGNjMzcx
 
 ############### HDFC SERVICES #######################
 
-backend.service.hdfc.baseurl=http://172.31.39.205:8080/hdfcbackendservice
+backend.service.hdfc.baseurl=http://172.26.2.56:8090/hdfcbackendservice
 backend.service.hdfc.test.enabled=N
 
 #########################################

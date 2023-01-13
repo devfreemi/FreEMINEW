@@ -17,20 +17,34 @@ public class TransactionStatus {
 	
 	private String investmentType="";
 	
+	private String mobile="";
+	
 	private String transactionReference="";
 	
 	private String bseOrderNoFromResponse="";
 	
 	private boolean isEmandateRequired=false;
 	
+	private String clientcode="";
+	private String clientprofilestatus="";
+	
 	private String emandateStatusCode="";
 	private String emandateRegisterRemark="";
+	private String mandateid="";
 	
 	private String sipStartDate="";
 	
 	private String sipInstallements="";
 	
 	private String investFrequency="";
+	
+	private String firstpay;
+	
+	private String other1;
+	
+	private String other2;
+	
+	private String other3;
 
 	public String getSuccessFlag() {
 		return successFlag;
@@ -135,6 +149,69 @@ public class TransactionStatus {
 	public void setEmandateRegisterRemark(String emandateRegisterRemark) {
 		this.emandateRegisterRemark = emandateRegisterRemark;
 	}
-	
 
+	public String getMandateid() {
+		return mandateid;
+	}
+
+	public void setMandateid(String mandateid) {
+		this.mandateid = mandateid;
+	}
+
+	public String getFirstpay() {
+		return firstpay;
+	}
+
+	public void setFirstpay(String firstpay) {
+		this.firstpay = firstpay;
+	}
+
+	public String getClientcode() {
+		return clientcode;
+	}
+
+	public void setClientcode(String clientcode) {
+		this.clientcode = clientcode;
+	}
+
+	public String getClientprofilestatus() {
+		return clientprofilestatus;
+	}
+
+	public void setClientprofilestatus(String clientprofilestatus) {
+		this.clientprofilestatus = clientprofilestatus;
+	}
+
+	public String getMobile() {
+		return mobile;
+	}
+
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
+	}
+
+	public String getOther1() {
+		return other1;
+	}
+
+	public void setOther1(String other1) {
+		this.other1 = other1;
+	}
+
+	public String getOther2() {
+		return other2;
+	}
+
+	public void setOther2(String other2) {
+		this.other2 = other2;
+	}
+
+	public String getOther3() {
+		return other3;
+	}
+
+	public void setOther3(String other3) {
+		this.other3 = other3;
+	}
+	
 }

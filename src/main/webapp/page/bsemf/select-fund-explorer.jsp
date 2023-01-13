@@ -70,6 +70,7 @@ table.dataTable thead th, table.dataTable thead td {
 						style="color: #fb7736; font-weight: 400; border-bottom: 2px solid #c1c1c1; padding-right: 2rem;">Equity
 						Large Cap</span>
 				</h3>
+				
 				<div
 					class="table-responive dataTables_wrapper dt-bootstrap4 animated fadeIn"
 					style="margin-top: 30px;">
@@ -1124,5 +1125,4 @@ table.dataTable thead th, table.dataTable thead td {
 
 					});
 </script>
-
 </html>

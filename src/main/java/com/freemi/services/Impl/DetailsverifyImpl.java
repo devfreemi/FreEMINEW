@@ -51,6 +51,12 @@ public class DetailsverifyImpl implements Verifydetailsinterface {
 				otpinfo.setSubModule("REGISTRATION");
 				otpinfo.setMesseageid("103");
 			}
+		}else if(otpinfo.getModule().equals("LOGIN")) {
+			if(otpinfo.getSubModule().equals("WEB_UI_LOGIN")) {
+				otpinfo.setModule("LOGIN");
+				otpinfo.setSubModule("WEB_UI_LOGIN");
+				otpinfo.setMesseageid("102");
+			}
 		}
 		return communicationclient.sendOTP(otpinfo); 
 	}
@@ -74,6 +80,12 @@ public class DetailsverifyImpl implements Verifydetailsinterface {
 				otpinfo.setModule("MUTUAL_FUND");
 				otpinfo.setSubModule("REGISTRATION");
 				otpinfo.setMesseageid("103");
+			}
+		}else if(otpinfo.getModule().equals("LOGIN")) {
+			if(otpinfo.getSubModule().equals("WEB_UI_LOGIN")) {
+				otpinfo.setModule("LOGIN");
+				otpinfo.setSubModule("WEB_UI_LOGIN");
+				otpinfo.setMesseageid("102");
 			}
 		}
 		

@@ -32,6 +32,7 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -51,11 +52,14 @@ import com.freemi.entity.general.ClientSystemDetails;
 import com.freemi.entity.general.Folios;
 import com.freemi.entity.general.ForgotPassword;
 import com.freemi.entity.general.Login;
+import com.freemi.entity.general.Otpform;
+import com.freemi.entity.general.Otprequeststatus;
 import com.freemi.services.interfaces.BseRestClientService;
 import com.freemi.services.interfaces.DatabaseEntryManager;
 import com.freemi.services.interfaces.MailSenderInterface;
 import com.freemi.services.interfaces.ProfileRestClientService;
 import com.freemi.services.interfaces.SmsSenderInterface;
+import com.freemi.services.interfaces.Verifydetailsinterface;
 import com.freemi.ui.restclient.GoogleSecurity;
 
 @Controller
@@ -63,7 +67,10 @@ import com.freemi.ui.restclient.GoogleSecurity;
 public class HomeController {
 
     private static final Logger logger = LogManager.getLogger(HomeController.class);
-
+    
+    private static final String ERROR_S = "1";
+    private static final String SUCCESS_S = "0";
+    
     @Autowired
     private DatabaseEntryManager databaseEntryManager ;//= (DatabaseEntryManager) BeanUtil.getBean(DatabaseEntryService.class);
 
@@ -78,6 +85,9 @@ public class HomeController {
 
     @Autowired
     SmsSenderInterface smsSenderInterface;
+    
+    @Autowired
+	Verifydetailsinterface verifydetailsinterface;
 
     @Autowired
     private Environment env;
@@ -335,9 +345,9 @@ public class HomeController {
 
 
 
-    @RequestMapping(value = "/login2.do", method = RequestMethod.POST)
+//    @RequestMapping(value = "/login2.do", method = RequestMethod.POST)
     @ResponseBody
-    public String loginwithJqueryAttemptPost2(@ModelAttribute("login") @Valid Login login,ModelMap model, BindingResult bindingResult,HttpServletRequest request,HttpServletResponse response, HttpSession session) {
+    public Otprequeststatus loginwithJqueryAttemptPost2(@ModelAttribute("login") @Valid Login login,ModelMap model, BindingResult bindingResult,HttpServletRequest request,HttpServletResponse response, HttpSession session) {
 	logger.info("@@@@ Inside Login do loginwithJqueryAttemptPost2().. /login2.do");	
 	//		logger.info("Referer- "+ request.getHeader("Referer"));
 	//		String referer = request.getHeader("Referer");
@@ -345,24 +355,34 @@ public class HomeController {
 	logger.debug("loginwithJqueryAttemptPost2(): Recpcha form resuest- "+ request.getParameter("g-recaptcha-response"));
 
 	logger.debug("loginwithJqueryAttemptPost2(): Fetching after login url- "+ login.getReturnUrl() + " OTPMIT - "+ login.isOtpSubmit());
-
+	Otprequeststatus requeststatus = new Otprequeststatus();
 	String ip = CommonTask.getClientSystemIp(request);
 
 	if(bindingResult.hasErrors()){
 	    logger.info("loginwithJqueryAttemptPost2(): Error in login form");
 	    //			model.addAttribute("error", "Invalid form data");
 	    model.addAttribute("error", bindingResult.getFieldError().getDefaultMessage());
-	    return "Invalid form data!";
+//	    return "Invalid form data!";
+	    requeststatus.setStatuscode(ERROR_S);
+		requeststatus.setErrormsg("Invalid form data!");
+		return requeststatus;
+	    
 	}
 	if(request.getParameter("g-recaptcha-response")==""){
 	    logger.info("loginwithJqueryAttemptPost2(): Security token not checked");
 	    model.addAttribute("error", "Please check the security verification");
-	    return "Security Captcha token missing!";
+//	    return "Security Captcha token missing!";
+	    requeststatus.setStatuscode(ERROR_S);
+		requeststatus.setErrormsg("Please check the security verification");
+		return requeststatus;
 	}else{
 	    if(!GoogleSecurity.verifyRecaptcha(request.getParameter("g-recaptcha-response"), "N", ip, request.getRequestURL().toString())){
 		logger.warn("loginwithJqueryAttemptPost2(): Security token validation failed");
 		model.addAttribute("error", "Security token validation failed!");
-		return "Captcha validation failed!";
+//		return "Captcha validation failed!";
+		requeststatus.setStatuscode(ERROR_S);
+		requeststatus.setErrormsg("Captcha validation failed!");
+		return requeststatus;
 	    }
 	}
 	logger.info("loginwithJqueryAttemptPost2(): Session id during login- "+ session.getId() + " :mobile : "+ login.getUsermobile());
@@ -392,6 +412,7 @@ public class HomeController {
 		    logger.info(Arrays.asList(userStatus));
 		    if(userStatus[0].equalsIgnoreCase("VALID")){
 			if(!userStatus[1].equals("NO_EMAIL")){
+				/*
 			    String resultotp= bseRestClientService.otpGeneration(login.getUsermobile());
 			    logger.debug("loginwithJqueryAttemptPost2(): RECEIVED OTP RESPONSE: "+ resultotp);
 			    if(resultotp.contains("OTP")){
@@ -409,11 +430,24 @@ public class HomeController {
 				login.setOtpSubmit(true);
 
 			    }
+			    */
+				Otpform otpform = new Otpform();
+				otpform.setKey(login.getUsermobile());
+				otpform.setModule("LOGIN");
+				otpform.setSubmodule("WEB_UI_LOGIN");
+				ClientSystemDetails systemdetails = new ClientSystemDetails();
+				systemdetails = CommonTask.getClientSystemDetails(request);
+				requeststatus = verifydetailsinterface.generatemobileotp(otpform,systemdetails, request.getSession().getId());
+				
 			}else{
-			    returnUrl = "No email to OTP. Kindly contact admin";
+//			    returnUrl = "No email to OTP. Kindly contact admin";
+				requeststatus.setStatuscode(ERROR_S);
+				requeststatus.setMsg("No email to OTP. Kindly contact admin");
 			}
 		    }else{
-			returnUrl = "Invalid user id";
+//			returnUrl = "Invalid user id";
+			requeststatus.setStatuscode(ERROR_S);
+			requeststatus.setMsg("Invalid user id");
 		    }
 
 		}catch(HttpStatusCodeException  e){
@@ -429,11 +463,17 @@ public class HomeController {
 		    else {
 			returnUrl="Internal error. Please try after sometime";
 		    }
-		    //				returnUrl = Integer.toString(e.getRawStatusCode());
+		    
+		    requeststatus.setStatuscode(ERROR_S);
+			requeststatus.setMsg(returnUrl);
+		    
 		}catch(Exception e){
 		    logger.error("loginwithJqueryAttemptPost2(): BSESERVICE LOGIN OTP Error while trying to generate OTP",e);
 		    model.addAttribute("error", "Unable to process request currently");
 		    returnUrl="Internal error. Kindly contact admin";
+		    requeststatus.setStatuscode(ERROR_S);
+			requeststatus.setMsg(returnUrl);
+		    
 		}
 
 	    }else{
@@ -451,6 +491,8 @@ public class HomeController {
 
 		    logger.info(responseEntity.getHeaders().get("Authorization").get(0));
 		    returnUrl="SUCCESS";
+		    requeststatus.setStatuscode(SUCCESS_S);
+			requeststatus.setMsg(returnUrl);
 		}catch(HttpStatusCodeException  e){
 		    logger.error("loginwithJqueryAttemptPost2(): Login failure - " ,e.getMessage());
 		    if(e.getRawStatusCode()==HttpStatus.UNAUTHORIZED.value()) 
@@ -464,10 +506,15 @@ public class HomeController {
 		    else{
 			returnUrl="Internal error. Please try after some time or contact admin if prolem persist.";
 		    }
+		    requeststatus.setStatuscode(ERROR_S);
+			requeststatus.setMsg(returnUrl);
+		    
 		}catch(Exception e){
 		    logger.error("Error while trying to set cookie after login",e);
 		    model.addAttribute("error", "Unable to process request currently");
 		    returnUrl="Internal error. Kindly contact admin";
+		    requeststatus.setStatuscode(ERROR_S);
+			requeststatus.setMsg(returnUrl);
 		}
 	    }
 
@@ -478,18 +525,24 @@ public class HomeController {
 	    try{
 		if(!login.getUsermobile().isEmpty() && !login.getOtpVal().isEmpty()){
 		    logger.info("Process OTP submit verfication for mobile number- "+ login.getUsermobile());
-		    resultotp2= bseRestClientService.otpverify(login.getUsermobile(), login.getOtpVal());
-
+//		    resultotp2= bseRestClientService.otpverify(login.getUsermobile(), login.getOtpVal());
+		    Otpform otpform = new Otpform();
+		    otpform.setKey(login.getUsermobile());
+			otpform.setModule("LOGIN");
+			otpform.setSubmodule("WEB_UI_LOGIN");
+			ClientSystemDetails systemdetails = new ClientSystemDetails();
+			systemdetails = CommonTask.getClientSystemDetails(request);
+			requeststatus = verifydetailsinterface.verifymobileotp(otpform,systemdetails, request.getSession().getId());
 
 		    logger.info("OTP validation respond- "+ resultotp2);
-		    if(resultotp2.equalsIgnoreCase("Entered Otp is valid")){
+//		    if(resultotp2.equalsIgnoreCase("Entered Otp is valid")){
+		    if(requeststatus.getStatuscode().equals(SUCCESS_S)) {
 			//				Generate login session
 
 			try {
 			    responseEntity= profileRestClientService.otpLogin(login,ip);
 			    if(responseEntity.getBody().toString().equalsIgnoreCase("SUCCESS")){
 				logger.debug("Authorization token - "+ responseEntity.getHeaders().get("Authorization").get(0));
-				
 				
 				setloggedsessiondata(session, responseEntity);
 				    try{
@@ -535,8 +588,13 @@ public class HomeController {
 								}
 				*/
 				returnUrl="SUCCESS";
+				 requeststatus.setStatuscode(SUCCESS_S);
+				requeststatus.setMsg(returnUrl);
+				
 			    }else{
 				returnUrl="OTP_LOGIN_FAIL";
+				 requeststatus.setStatuscode(ERROR_S);
+				requeststatus.setMsg(returnUrl);
 			    }
 			}catch(HttpStatusCodeException  e){
 			    logger.error("loginwithJqueryAttemptPost2(): Login failure during OTP authentication generation - " ,e.getMessage());
@@ -551,26 +609,42 @@ public class HomeController {
 			    else{
 				returnUrl="Internal error. Please try after some time or contact admin if prolem persist.";
 			    }
+			    requeststatus.setStatuscode(ERROR_S);
+				requeststatus.setMsg(returnUrl);
 			} catch (JsonProcessingException e) {
 			    logger.error("Failed to parse data",e);
 			    returnUrl="OTP_VALID_FAIL";
+			    requeststatus.setStatuscode(ERROR_S);
+				requeststatus.setMsg(returnUrl);
 			}catch(Exception e){
 			    returnUrl="OTP_VALID_FAIL";
 			    logger.error("Failed to process OTP login",e);
 			}
 			//			model.addAttribute("token",response.getHeaders().get("Authorization").get(0));
 			//			model.addAttribute("loggedInUser",response.getHeaders().get("fname").get(0).split(" ")[0]);
+			 requeststatus.setStatuscode(ERROR_S);
+			requeststatus.setMsg(returnUrl);
 		    }else{
 			returnUrl="OTP_INVALID";
+			requeststatus.setStatuscode(ERROR_S);
+			requeststatus.setMsg(returnUrl);
 		    }
 		}else{
-		    returnUrl="Missing reqiored data!";
+		    returnUrl="Missing required data!";
+		    requeststatus.setStatuscode(ERROR_S);
+			requeststatus.setMsg(returnUrl);
 		}
 	    }catch(HttpServerErrorException e){
 		logger.error("loginwithJqueryAttemptPost(): Error processing OTP verification prorcess: ", e.getStatusCode(),e);
+		 returnUrl="OTP_VALID_FAIL";
+		 requeststatus.setStatuscode(ERROR_S);
+		 requeststatus.setMsg(returnUrl);
 	    }
 	    catch(Exception e){
+	    	returnUrl="OTP_VALID_FAIL";
 		logger.error("loginwithJqueryAttemptPost(): Error with OTP verification.",e);
+		 requeststatus.setStatuscode(ERROR_S);
+		requeststatus.setMsg(returnUrl);
 	    }
 
 
@@ -578,7 +652,8 @@ public class HomeController {
 
 	model.addAttribute("error", "1st Attempt..");
 	logger.info("Returning to URL- "+ returnUrl);
-	return returnUrl;
+//	return returnUrl;
+	return requeststatus;
 
     }
 
@@ -725,6 +800,294 @@ public class HomeController {
 	logger.info("Returning to URL- "+ returnUrl);
 	return returnUrl;
     }
+    
+    
+    
+    @RequestMapping(value = "/login-otp", method = RequestMethod.POST)
+    @ResponseBody
+    public Otprequeststatus loginwithJqueryAttemptPost3(@RequestBody @Valid Login login, 
+    		BindingResult bindingResult,ModelMap model, HttpServletRequest request,HttpServletResponse response, HttpSession session) {
+	logger.info("@@@@ Inside Login do loginwithJqueryAttemptPost3().. /login-otp");	
+	//		logger.info("Referer- "+ request.getHeader("Referer"));
+	//		String referer = request.getHeader("Referer");
+
+
+	Otprequeststatus requeststatus = new Otprequeststatus();
+	String ip = CommonTask.getClientSystemIp(request);
+
+	if(bindingResult.hasErrors()){
+	    logger.info("loginwithJqueryAttemptPost2(): Error in login form- "+ bindingResult.getFieldError().getField());
+	    //			model.addAttribute("error", "Invalid form data");
+	    model.addAttribute("error", bindingResult.getFieldError().getDefaultMessage());
+//	    return "Invalid form data!";
+	    requeststatus.setStatuscode(ERROR_S);
+		requeststatus.setErrormsg(bindingResult.getFieldError().getDefaultMessage());
+		return requeststatus;
+	    
+	}
+	if(request.getParameter("g-recaptcha-response")==""){
+	    logger.info("loginwithJqueryAttemptPost2(): Security token not checked");
+	    model.addAttribute("error", "Please check the security verification");
+//	    return "Security Captcha token missing!";
+	    requeststatus.setStatuscode(ERROR_S);
+		requeststatus.setErrormsg("Please check the security verification");
+		return requeststatus;
+	}else{
+	    if(!GoogleSecurity.verifyRecaptcha(request.getParameter("g-recaptcha-response"), "N", ip, request.getRequestURL().toString())){
+		logger.warn("loginwithJqueryAttemptPost2(): Security token validation failed");
+		model.addAttribute("error", "Security token validation failed!");
+//		return "Captcha validation failed!";
+		requeststatus.setStatuscode(ERROR_S);
+		requeststatus.setErrormsg("Captcha validation failed!");
+		return requeststatus;
+	    }
+	}
+	logger.info("loginwithJqueryAttemptPost2(): Session id during login- "+ session.getId() + " :mobile : "+ login.getUsermobile());
+	//		logger.info("Beginning attemptAuthentication() from IP- "+ request.getRemoteHost()+ "/"+request.getHeader("X-Forwarded-for"));
+	logger.debug("loginwithJqueryAttemptPost2(): OTP login check- "+ login.isOtpLogin());
+
+	String returnmsg="";
+	String referer = (String) session.getAttribute("returnSite");
+	logger.debug("loginwithJqueryAttemptPost2(): login2.do referer- "+ referer);
+	//		returnUrl = redirectUrlAfterLogin(referer);
+
+	//		RestClient client = new RestClient();
+	ResponseEntity<String> responseEntity = null;
+
+	    if(login.isOtpLogin()){
+		//			Process for OTP login
+		try{
+
+		    //			Check if user exists and fetch email id
+
+		    responseEntity = profileRestClientService.validateuserIdAndGetMail(login.getUsermobile());
+		    String[] userStatus = responseEntity.getBody().toString().split(",");
+
+		    logger.info(Arrays.asList(userStatus));
+		    if(userStatus[0].equalsIgnoreCase("VALID")){
+			if(!userStatus[1].equals("NO_EMAIL")){
+				
+				Otpform otpform = new Otpform();
+				otpform.setKey(login.getUsermobile());
+				otpform.setModule("LOGIN");
+				otpform.setSubmodule("WEB_UI_LOGIN");
+				ClientSystemDetails systemdetails = new ClientSystemDetails();
+				systemdetails = CommonTask.getClientSystemDetails(request);
+				requeststatus = verifydetailsinterface.generatemobileotp(otpform,systemdetails, request.getSession().getId());
+				
+				if(requeststatus.getStatuscode().equals(SUCCESS_S)) {
+					login.setOtpSubmit(true);
+				}
+				
+			}else{
+//			    returnUrl = "No email to OTP. Kindly contact admin";
+				requeststatus.setStatuscode(ERROR_S);
+				requeststatus.setErrormsg("No email to OTP. Kindly contact admin");
+			}
+		    }else{
+//			returnUrl = "Invalid user id";
+			requeststatus.setStatuscode(ERROR_S);
+			requeststatus.setErrormsg("Invalid user id");
+		    }
+
+		}catch(HttpStatusCodeException  e){
+		    logger.error("loginwithJqueryAttemptPost2(): BSESERVICE LOGIN OTP service connection ailure - " ,e);
+		    if(e.getRawStatusCode()==HttpStatus.UNAUTHORIZED.value())
+			returnmsg= "Invalid userid or password";
+		    else if(e.getRawStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR.value())
+			returnmsg="Unable to connect to service";
+		    else if(e.getRawStatusCode() == HttpStatus.NOT_FOUND.value())
+			returnmsg="Service url down or not found!";
+		    else if(e.getRawStatusCode() == HttpStatus.LOCKED.value())
+			returnmsg="Service url down or not found!";
+		    else {
+			returnmsg="Internal error. Please try after sometime";
+		    }
+		    
+		    requeststatus.setStatuscode(ERROR_S);
+			requeststatus.setErrormsg(returnmsg);
+		    
+		}catch(Exception e){
+		    logger.error("loginwithJqueryAttemptPost2(): BSESERVICE LOGIN OTP Error while trying to generate OTP",e);
+		    model.addAttribute("error", "Unable to process request currently");
+		    returnmsg="Internal error. Kindly contact admin";
+		    requeststatus.setStatuscode(ERROR_S);
+			requeststatus.setErrormsg(returnmsg);
+		    
+		}
+
+	    }else{
+	    	returnmsg="Use profile credentials to login.";
+	    	requeststatus.setStatuscode(ERROR_S);
+			requeststatus.setErrormsg(returnmsg);
+	    }
+
+
+	model.addAttribute("error", "1st Attempt..");
+	logger.info("Returning to URL- "+ returnmsg);
+//	return returnUrl;
+	return requeststatus;
+
+    }
+
+
+    @RequestMapping(value = "/login-verify", method = RequestMethod.POST)
+    @ResponseBody
+    public Otprequeststatus loginverify(@RequestBody @Valid Login login, BindingResult bindingResult,ModelMap model, HttpServletRequest request,HttpServletResponse response, HttpSession session) {
+	logger.info("@@@@ Inside Login verification()..");	
+
+	Otprequeststatus requeststatus = new Otprequeststatus();
+	String ip = CommonTask.getClientSystemIp(request);
+
+	if(bindingResult.hasErrors()){
+	    logger.info("loginverify(): Error in login form");
+	    requeststatus.setStatuscode(ERROR_S);
+		requeststatus.setErrormsg("Invalid form data!");
+		return requeststatus;
+	}
+	if(request.getParameter("g-recaptcha-response")==""){
+	    logger.info("loginverify(): Security token not checked");
+	    requeststatus.setStatuscode(ERROR_S);
+		requeststatus.setErrormsg("Please check the security verification");
+		return requeststatus;
+	}else{
+	    if(!GoogleSecurity.verifyRecaptcha(request.getParameter("g-recaptcha-response"), "N", ip, request.getRequestURL().toString())){
+		logger.warn("loginverify(): Security token validation failed");
+		requeststatus.setStatuscode(ERROR_S);
+		requeststatus.setErrormsg("Captcha validation failed!");
+		return requeststatus;
+	    }
+	}
+	logger.info("loginverify(): Session id during login verify- "+ session.getId() + " :mobile : "+ login.getUsermobile());
+	logger.debug("loginverify(): OTP login check- "+ login.isOtpLogin());
+
+	String returnmsg="";
+	String referer = (String) session.getAttribute("returnSite");
+	logger.debug("loginverify(): login verify referer- "+ referer);
+
+	ResponseEntity<String> responseEntity = null;
+
+	if(!login.isOtpLogin()){
+		logger.info("Proceed with credential based login........................");
+		/* ------------------------ Direct login process with userid-password -------------------------------- */
+		try{
+		    responseEntity= profileRestClientService.login(login.getUsermobile(), login.getUserpassword(), ip);
+		    logger.info("loginverify(): login sucess with password. Session id during login- "+ session.getId());
+		    setloggedsessiondata(session, responseEntity);
+		    setloggedsessioncookie(response, responseEntity);
+
+		    logger.info(responseEntity.getHeaders().get("Authorization").get(0));
+		    returnmsg="SUCCESS";
+		    requeststatus.setStatuscode(SUCCESS_S);
+			requeststatus.setMsg(returnmsg);
+		}catch(HttpStatusCodeException  e){
+		    logger.error("loginverify(): Login failure - " ,e.getMessage());
+		    if(e.getRawStatusCode()==HttpStatus.UNAUTHORIZED.value()) 
+			returnmsg= "Invalid userid or password";
+		    else if(e.getRawStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR.value())
+			returnmsg="Unable to connect to server";
+		    else if(e.getRawStatusCode() == HttpStatus.NOT_FOUND.value())
+			returnmsg="Service url down or not found!";
+		    else if(e.getRawStatusCode() == HttpStatus.LOCKED.value())
+			returnmsg="Account is locked. Kindly get in touch with our support team to unlock your account.";
+		    else{
+			returnmsg="Internal error. Please try after some time or contact admin if prolem persist.";
+		    }
+		    requeststatus.setStatuscode(ERROR_S);
+			requeststatus.setErrormsg(returnmsg);
+		    
+		}catch(Exception e){
+		    logger.error("Error while trying to set cookie after login success",e);
+		    returnmsg="Internal error. Kindly contact admin";
+		    requeststatus.setStatuscode(ERROR_S);
+			requeststatus.setErrormsg(returnmsg);
+		}
+
+	}else{
+		/*--------------- OTP based login ------------------------*/
+		logger.info("Proceed with OTP based login........................");
+		if(login.isOtpSubmit()) {
+	    try{
+		    logger.info("Process OTP submit verfication for mobile number- "+ login.getUsermobile());
+		    Otpform verifyform = new Otpform();
+		    verifyform.setKey(login.getUsermobile());
+			verifyform.setModule("LOGIN");
+			verifyform.setSubmodule("WEB_UI_LOGIN");
+			verifyform.setOtp(login.getOtpVal());
+			ClientSystemDetails systemdetails = new ClientSystemDetails();
+			systemdetails = CommonTask.getClientSystemDetails(request);
+			requeststatus = verifydetailsinterface.verifymobileotp(verifyform,systemdetails,request.getSession().getId());
+		    logger.info("OTP validation respond- "+ requeststatus.getStatuscode());
+		    if(requeststatus.getStatuscode().equals(SUCCESS_S)) {
+			//				Generate login session
+
+			try {
+			    responseEntity= profileRestClientService.otpLogin(login,ip);
+			    if(responseEntity.getBody().toString().equalsIgnoreCase("SUCCESS")){
+				logger.debug("Authorization token - "+ responseEntity.getHeaders().get("Authorization").get(0));
+				
+				setloggedsessiondata(session, responseEntity);
+				    try{
+					setloggedsessioncookie(response, responseEntity);
+				    }catch(Exception e){
+					logger.error("Error setting session cookie ..",e);
+				    }
+				returnmsg="SUCCESS";
+				requeststatus.setMsg(returnmsg);
+			    }else{
+			    	returnmsg="Failed to process login request. Please try after sometime.";
+			    	requeststatus.setStatuscode(ERROR_S);
+			    	requeststatus.setErrormsg(returnmsg);
+			    }
+			}catch(HttpStatusCodeException  e){
+			    logger.error("loginverify(): Login failure during OTP authentication generation - " ,e.getMessage());
+			    if(e.getRawStatusCode()==HttpStatus.UNAUTHORIZED.value()) 
+				returnmsg= "Invalid userid or password";
+			    else if(e.getRawStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR.value())
+				returnmsg="Unable to connect to server";
+			    else if(e.getRawStatusCode() == HttpStatus.NOT_FOUND.value())
+				returnmsg="Service url down or not found!";
+			    else if(e.getRawStatusCode() == HttpStatus.LOCKED.value())
+				returnmsg="Account is locked. Kindly get in touch with our support team to unlock your account.";
+			    else{
+				returnmsg="Internal error. Please try after some time or contact admin if prolem persist.";
+			    }
+			    requeststatus.setStatuscode(ERROR_S);
+				requeststatus.setErrormsg(returnmsg);
+			} catch (JsonProcessingException e) {
+			    logger.error("Failed to parse data",e);
+			    returnmsg="Internal error. Kindly contact admin.";
+			    requeststatus.setStatuscode(ERROR_S);
+				requeststatus.setErrormsg(returnmsg);
+			}catch(Exception e){
+			    returnmsg="Internal error. Kindly contact admin.";
+			    logger.error("Failed to process OTP login for- ",login.getUsermobile() ,e);
+			    requeststatus.setStatuscode(ERROR_S);
+				requeststatus.setErrormsg(returnmsg);
+			}
+			 
+		    }
+	    }catch(HttpServerErrorException e){
+		logger.error("loginverify(): Error processing OTP verification prorcess: ", e.getStatusCode(),e);
+		 returnmsg="Internal error. Kindly contact admin.";
+		 requeststatus.setStatuscode(ERROR_S);
+		 requeststatus.setErrormsg(returnmsg);
+	    }catch(Exception e){
+	    	returnmsg="Internal error. Kindly contact admin.";
+	    	logger.error("loginverify(): Error with OTP verification.",e);
+	    	requeststatus.setStatuscode(ERROR_S);
+	    	requeststatus.setErrormsg(returnmsg);
+	    }}else {
+	    	logger.warn("loginverify(): OTP value not passed");
+	    	requeststatus.setStatuscode(ERROR_S);
+	    	requeststatus.setErrormsg("Submit OTP for verification.");
+	    }
+	}
+	logger.info("Returning to URL- "+ returnmsg);
+	return requeststatus;
+
+    }
+    
 
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
@@ -1183,6 +1546,10 @@ public class HomeController {
     @ModelAttribute("contextcdn") String contextcdn() {
 		return env.getProperty(CommonConstants.CDN_URL);
 	}
+    
+    public String test(String data){
+    	return data;
+    }
 
 
 }

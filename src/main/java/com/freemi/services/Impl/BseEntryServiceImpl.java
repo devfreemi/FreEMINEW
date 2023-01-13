@@ -74,6 +74,7 @@ import com.freemi.entity.investment.BseMandateDetails;
 import com.freemi.entity.investment.BseOrderEntryResponse;
 import com.freemi.entity.investment.BsemfTransactionHistory;
 import com.freemi.entity.investment.Bseregistrationstatus;
+import com.freemi.entity.investment.Emandatestaus;
 import com.freemi.entity.investment.MFCamsFolio;
 import com.freemi.entity.investment.MFCamsValueByCategroy;
 import com.freemi.entity.investment.MFCustomers;
@@ -2198,6 +2199,26 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	@Override
 	public String getifscdetails(String ifsc) {
 		return investmentConnectorBseInterface.getifscdetails(ifsc);
+	}
+
+	@Override
+	public BseApiResponse getemandateauthurl(String clientid, String mandateid) {
+		return investmentConnectorBseInterface.getmandateauthurl(clientid, mandateid);
+	}
+
+	@Override
+	public BseApiResponse getemandatestatus(String clientid, String mandateid) {
+		
+		BseApiResponse response = new BseApiResponse();
+		
+		Emandatestaus status=  investmentConnectorBseInterface.getmandatestatus(clientid, mandateid);
+		
+		response.setStatusCode(status.getRequeststatus());
+		response.setRemarks(status.getRequestmsg());
+		response.setResponseCode(status.getStatus());
+		response.setData1(status.getRemarks());
+		
+		return response;
 	}
 
 

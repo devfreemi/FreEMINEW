@@ -39,6 +39,7 @@ public class Communicationrestclient {
 			logger.info("SMS request- "+ mapper.writeValueAsString(otpinfo));
 			logger.info("msgdata- "+ otpinfo.getMsgdata());
 			res = rt.postForObject(uri, entity, Otprequeststatus.class );
+			logger.info("Response- "+ mapper.writeValueAsString(res));
 		} catch (Exception ex) {
 			logger.error("Error calling /sendotp service- ",ex);
 			res.setStatuscode("1");

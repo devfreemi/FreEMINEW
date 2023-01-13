@@ -118,6 +118,7 @@ function submitLogin(e){
 
 		request.done(function(msg) {
 //			console.log(msg);
+			/*
 			if(msg=="OTP_SENT"){
 				$("#loginmsg").text("OTP sent to your registered email.");
 				document.getElementById("passbox").style.display = 'none';
@@ -135,6 +136,24 @@ function submitLogin(e){
 //				Error
 				$("#loginmsg").text(msg);
 			}
+			 */			
+			if (data.statuscode == 0){
+				$("#loginmsg").text(data.msg);
+				document.getElementById("passbox").style.display = 'none';
+				document.getElementById("otpChoice").style.display = 'none';
+				document.getElementById("otpbox").style.display = 'block';
+
+				$("#otpsubmitstat").val(true);
+				otpsubmit = true;
+				countDownTimer();
+			}else if(data.statuscode == 99){
+//				console.log("Redirect to: " +returnUrl);
+				window.location.href = returnUrl;
+			} else {
+				$("#loginmsg").text(data.msg);
+			}
+
+
 
 		});
 
@@ -150,12 +169,12 @@ function submitLogin(e){
 			$("#loginbasic").show();*/
 //			$("#loginbasic").html("<i class='fas fa-lock'></i> Login</span>");
 			$("#loginsubmit").prop("disabled", false);
-			 /*if ($("#loginbasic").is(':checked')) {
+			/*if ($("#loginbasic").is(':checked')) {
 				  $("#loginbasic").html("<i class='fas fa-lock'></i> Get OTP</span>");
 			  }else{
 				  $("#loginbasic").html("<i class='fas fa-lock'></i> Login</span>");
 			  }*/
-			 loginfieldvalue("otplogin");
+			loginfieldvalue("otplogin");
 		});
 
 	}else{
@@ -191,6 +210,7 @@ function submitLogin(e){
 
 		request.done(function(msg) {
 //			console.log(msg);
+			/*
 			if(msg=="OTP_SENT"){
 
 				document.getElementById("passbox").style.display = 'none';
@@ -211,6 +231,33 @@ function submitLogin(e){
 //				Error
 				$("#loginmsg").text(msg);
 			}
+			 */			
+			if (data.statuscode == 0){
+				if(data.msg=="OTP_SENT"){
+
+					document.getElementById("passbox").style.display = 'none';
+					document.getElementById("otpChoice").style.display = 'none';
+					document.getElementById("otpbox").style.display = 'block';
+
+				}else if(data.msg=="SUCCESS"){
+//					console.log("Redirect to: " +returnUrl);
+					window.location.href = returnUrl;
+				}else if(data.msg=="OTP_INVALID"){
+					$("#loginmsg").text("Invalid OTP");
+				}else if(data.msg=="OTP_INVALIDATED"){
+					$("#loginmsg").text("OTP invalidated. Get new token.");
+				}else if(data.msg=="OTP_LOGIN_FAIL" || data.msg=="OTP_VALID_FAIL" ){
+					$("#loginmsg").text("Internal error. Kindly contact admin.");
+				}
+				else{
+//					Error
+					$("#loginmsg").text(data.msg);
+				}
+
+			} else {
+				$("#loginmsg").text(data.msg);
+			}
+
 
 		});
 
@@ -226,7 +273,7 @@ function submitLogin(e){
 				$("#loginsubmit").prop("disabled", false);
 				/*$("#loginspin").hide();
 				$("#loginbasic").show();*/
-				  loginfieldvalue("otplogin");
+				loginfieldvalue("otplogin");
 			}
 		});
 	}
@@ -276,28 +323,28 @@ function displayprogress(){
 var input = document.getElementById("validationPassword");
 input.addEventListener("keyup", function(event) {
 
-	  // If "caps lock" is pressed, display the warning text
-	  if (event.getModifierState("CapsLock")) {
-	    $("#msg2").html("Caps lock ON!");
-	  } else {
-		  $("#msg2").html("");
-	  }
-	});
+	// If "caps lock" is pressed, display the warning text
+	if (event.getModifierState("CapsLock")) {
+		$("#msg2").html("Caps lock ON!");
+	} else {
+		$("#msg2").html("");
+	}
+});
 
 $('#otplogin').click(function() {
 //	console.log($(this).attr('id'));
 	loginfieldvalue($(this).attr('id'));
-	});
+});
 
 function loginfieldvalue(elementname){
 //	console.log(elementname);
 	if(otpsubmit){
-		 $("#loginbasic").html("<i class='fas fa-lock'></i> Login</span>");
+		$("#loginbasic").html("<i class='fas fa-lock'></i> Login</span>");
 	}else{
-	if ($("#"+elementname).is(':checked')) {
-		  $("#loginbasic").html("<i class='fas fa-lock'></i> Get OTP</span>");
-	  }else{
-		  $("#loginbasic").html("<i class='fas fa-lock'></i> Login</span>");
-	  }
+		if ($("#"+elementname).is(':checked')) {
+			$("#loginbasic").html("<i class='fas fa-lock'></i> Get OTP</span>");
+		}else{
+			$("#loginbasic").html("<i class='fas fa-lock'></i> Login</span>");
+		}
 	}
 }

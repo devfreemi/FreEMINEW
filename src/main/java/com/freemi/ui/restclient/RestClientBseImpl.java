@@ -1,6 +1,5 @@
 package com.freemi.ui.restclient;
 
-import java.io.File;
 import java.util.Calendar;
 
 import org.apache.logging.log4j.LogManager;
@@ -27,6 +26,7 @@ import com.freemi.entity.bse.BseRegistrationMFD;
 import com.freemi.entity.bse.BseSipOrderEntry;
 import com.freemi.entity.bse.BseXipISipOrderEntry;
 import com.freemi.entity.bse.Uccregisterresponse;
+import com.freemi.entity.investment.Emandatestaus;
 import com.freemi.services.interfaces.BseRestClientService;
 import com.google.gson.JsonObject;
 
@@ -39,7 +39,8 @@ public class RestClientBseImpl implements BseRestClientService {
 
 	private static final Logger logger = LogManager.getLogger(RestClientBseImpl.class);
 
-
+	
+	@Deprecated
 	@Override
 	public String otpGeneration(String userid){
 		logger.info("Beginning process to send generate OTP for Login to Portal..");
@@ -71,6 +72,8 @@ public class RestClientBseImpl implements BseRestClientService {
 		}
 		return returnRes;
 	}
+	
+	@Deprecated
 	@Override
 	public String otpverify(String userid,String otp){
 		logger.info("Beginning process to send reuest to bse service for OTP.. "+ userid);
@@ -591,6 +594,82 @@ public class RestClientBseImpl implements BseRestClientService {
 		}
 		
 		return returnRes;
+	}
+	
+	
+	@Override
+	public String getemandateauthrul(String clientid, String mandateid) {
+		 
+	    logger.info("getemandateauthrul(): Process to send request...");
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_MF_BSE_V1) + "/emandateauthrul";
+		logger.info("BSE client- "+ url);
+//		ObjectMapper mapper = new ObjectMapper();
+		RestTemplate restTemplate = new RestTemplate();
+		
+		String returnRes="FAIL";
+		try {
+		    	JsonObject obj = new JsonObject();
+		    	obj.addProperty("mandateid", "");
+		    	obj.addProperty("clientid", "");
+		    	obj.addProperty("responsecode", "");
+		    	obj.addProperty("mandateurl", "");
+			
+			HttpHeaders headers = new HttpHeaders();
+			headers.set("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+			HttpEntity<String> entity = new HttpEntity<String>(obj.toString(),headers);
+
+			if(env.getProperty(CommonConstants.BSE_CALL_TEST_ENABLED).equalsIgnoreCase("N")){
+				ResponseEntity<?> response= restTemplate.postForEntity(url, entity,  String.class);
+				returnRes=response.getBody().toString();
+				logger.info("Response for Emandateauthurl data- "+ response.getBody().toString());
+			}else{
+				returnRes = "100|www.google.in";
+
+			}
+		} catch (Exception e) {
+			logger.error("getemandateauthrul(): Failed to process request", e);
+			returnRes = "101|Error processing data";
+		}
+		
+		return returnRes;
+	}
+
+	@Override
+	public Emandatestaus getmandatestatus(String clientid, String mandateid) {
+			
+		   logger.info("getmandatestatus(): Process to send request...");
+			final String url = env.getProperty(CommonConstants.URL_SERVICE_MF_BSE_V1) + "/emandate-status";
+			logger.info("BSE client- "+ url);
+			RestTemplate restTemplate = new RestTemplate();
+			Emandatestaus apiresponse = new Emandatestaus();
+			try {
+			    	JsonObject obj = new JsonObject();
+			    	obj.addProperty("mandateid", "");
+			    	obj.addProperty("clientid", "");
+			    	obj.addProperty("responsecode", "");
+			    	obj.addProperty("mandateurl", "");
+				
+				HttpHeaders headers = new HttpHeaders();
+				headers.set("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+				HttpEntity<String> entity = new HttpEntity<String>(obj.toString(),headers);
+
+				if(env.getProperty(CommonConstants.BSE_CALL_TEST_ENABLED).equalsIgnoreCase("N")){
+					apiresponse= restTemplate.postForObject(url, entity, Emandatestaus.class);
+					
+				}else{
+					logger.warn("test enabled. Returning dummy emandate status..");
+					apiresponse.setRequeststatus("100");
+					apiresponse.setRequestmsg("Mandate Details");
+					apiresponse.setRemarks("REGISTERED BY MEMBER");
+					
+				}
+			} catch (Exception e) {
+				logger.error("getmandatestatus(): Failed to process request", e);
+				apiresponse.setRequeststatus("101");
+				apiresponse.setRequestmsg("Failed to process request. Kindly try after sometime");
+			}
+			
+			return apiresponse;
 	}
 	
 

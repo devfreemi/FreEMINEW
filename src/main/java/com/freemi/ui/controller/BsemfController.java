@@ -1387,9 +1387,10 @@ public class BsemfController {
 		String errormsg="Request not complete!";
 		TransactionStatus transationResult = new TransactionStatus();
 		String mandateId = "";
+		String emandatestatus="";
 		boolean mandareGenerated = false;
 		List<String> customerPortfolios = new ArrayList<String>();
-		
+		BseApiResponse emandateResponse = new BseApiResponse();
 		if (bindResult.hasErrors()) {
 			/*
 			map.addAttribute("errormsg", bindResult.getFieldError().getDefaultMessage());
@@ -1408,9 +1409,9 @@ public class BsemfController {
 		try {
 
 			if( session.getAttribute("token")!=null && session.getAttribute("userid")!=null && (session.getAttribute("userid").toString().equalsIgnoreCase(selectedFund.getMobile()) )) {
-
+				
 				logger.info("Selected scheme type- " +selectedFund.getInvCategory() + " --> (G)"+   selectedFund.getSchemeCode() + " ->(R) "+ selectedFund.getReinvSchemeCode());
-
+				transationResult.setMobile(session.getAttribute("userid").toString());
 				//	Check customer status before carrying out transaction - 
 				String profileStatus=bseEntryManager.investmentProfileStatus(selectedFund.getMobile());
 				logger.info("purchaseConfirmPost(): Profile status of customer- "+ selectedFund.getMobile() + " : "+ profileStatus);
@@ -1455,17 +1456,19 @@ public class BsemfController {
 								logger.warn("Madatetype null.. Set to E-Nach");
 								selectedFund.setMandateType("N");
 							}
-							BseApiResponse emandateResponse = bseEntryManager.updateEmdandateStatus(selectedFund.getMobile(),
+							emandateResponse = bseEntryManager.updateEmdandateStatus(selectedFund.getMobile(),
 									selectedFund.getMandateType(), Double.toString(selectedFund.getInvestAmount()));
 							if (emandateResponse != null && emandateResponse.getStatusCode().equals("100")) {
 								//						if (emandateResponse.getStatusCode().equals("100")) {
 								mandareGenerated = true;
 								mandateId = emandateResponse.getResponseCode();
 								logger.info("E-mandate registration completed successfully for Cleint ID- " + selectedFund.getClientID() + " .Mandate ID generater-" + emandateResponse.getResponseCode());
-								redirectAttrs.addFlashAttribute("EMANDATE_STATUS", "S");
+//								redirectAttrs.addFlashAttribute("EMANDATE_STATUS", "S");
+								emandatestatus="S";
 							} else {
 								logger.info("emandate response is null... Returning to confirm page with error..");
 								redirectAttrs.addFlashAttribute("EMANDATE_STATUS", "F");
+								emandatestatus="F";
 								/*
 								map.addAttribute("errormsg","Mandate registration failed for- " + (emandateResponse!=null?emandateResponse.getRemarks():"No response" ));
 								map.addAttribute("paymentMethod", InvestFormConstants.bsePaymentMethod);
@@ -1478,26 +1481,16 @@ public class BsemfController {
 								return "bsemf/bse-mf-purchase";
 							}
 							redirectAttrs.addFlashAttribute("EMANDATE_REMARKS", emandateResponse.getRemarks());
-							transationResult.setEmandateStatusCode(emandateResponse.getStatusCode());
+							
 							transationResult.setEmandateRegisterRemark(emandateResponse.getRemarks());
+							transationResult.setMandateid(emandateResponse.getResponseCode());
 						} else {
 
 							logger.info("Emandate not required. Skipping the request. Get existing mandate ID for client." + selectedFund.getClientID());
-							
-							/*  No longer in use.
-			    mandateId = bseEntryManager.getEmdandateDetails(selectedFund.getMobile(), selectedFund.getClientID(),
-			    selectedFund.getMandateType(), null);
-			    logger.info("Exisitng mandate ID for client- " + mandateId);
-			    if (mandateId == null) {
-			    map.addAttribute("errormsg", "Unable to fetch your registered mandate details..");
-			    map.addAttribute("paymentMethod", InvestFormConstants.bsePaymentMethod);
-			    map.addAttribute("selectedFund", selectedFund);
-			    return "bsemf/bse-mf-purchase";
-			    } else {
-			    redirectAttrs.addFlashAttribute("EMANDATE_STATUS", "AVAILABLE");
-			    }*/
+							redirectAttrs.addFlashAttribute("EMANDATE_STATUS", "SELECTED");
+							emandatestatus="SELECTED";
 							mandateId = selectedFund.getMandateId();
-							logger.info("Mandate ID form form- "+ mandateId);
+							logger.info("Selected Mandate ID from form- "+ mandateId);
 						}
 
 					} else {
@@ -1518,6 +1511,11 @@ public class BsemfController {
 								selectedFund.setSipfrequency("MONYHLY");
 								transationResult = bseEntryManager.savetransactionDetails(selectedFund, mandateId);
 								logger.info("Customer purchase transaction status for SIP- " + transationResult.getSuccessFlag());
+								
+								transationResult.setEmandateRegisterRemark(emandateResponse.getRemarks());
+								transationResult.setMandateid(mandateId);
+								transationResult.setEmandateStatusCode(emandatestatus);
+								
 							} else {
 								logger.info("Skipping transation process as failed to generate EMANDATE...");
 							}
@@ -1551,11 +1549,14 @@ public class BsemfController {
 
 							if (selectedFund.getInvestype().equalsIgnoreCase("LUMPSUM")) {
 								redirectAttrs.addFlashAttribute("FIRST_PAY", "Y");
+								transationResult.setFirstpay("Y");
 							} else if (selectedFund.getInvestype().equalsIgnoreCase("SIP")) {
 								if (selectedFund.isPayFirstInstallment()) {
 									redirectAttrs.addFlashAttribute("FIRST_PAY", "Y");
+									transationResult.setFirstpay("Y");
 								} else {
 									redirectAttrs.addFlashAttribute("FIRST_PAY", "N");
+									transationResult.setFirstpay("N");
 								}
 							}
 
@@ -1588,6 +1589,7 @@ public class BsemfController {
 					}
 					redirectAttrs.addFlashAttribute("TRANS_TYPE", selectedFund.getTransactionType());
 					redirectAttrs.addFlashAttribute("CLIENT_CODE", selectedFund.getClientID());
+					transationResult.setClientcode(selectedFund.getClientID());
 					redirectAttrs.addFlashAttribute("TRANSACTION_REPORT_BEAN", transationResult);
 				}else {
 
@@ -2639,6 +2641,15 @@ public class BsemfController {
 			map.addAttribute("TRANSACTION_REPORT", transReport);
 
 		}
+		
+		if(transReport.getEmandateStatusCode().equals("S")) {
+			logger.info("New E-mandate was generated. Get auth link");
+			BseApiResponse resp = bseEntryManager.getemandateauthurl(transReport.getClientcode(), transReport.getMandateid());
+			if(resp.getStatusCode().equals("100")) {
+				transReport.setOther1("S");
+				transReport.setOther2(resp.getRemarks());
+			}
+		}
 
 		//	map.addAttribute("TRANS_STATUS", "Y");
 
@@ -3356,7 +3367,14 @@ public class BsemfController {
 		return data;
 	}
 
-
+	public String getmandateurl(String clientid, String mandateid) {
+		BseApiResponse response = new BseApiResponse();
+		
+		response = bseEntryManager.getemandateauthurl(clientid, mandateid);
+		
+		return  response.getStatusCode()+"|"+response.getRemarks();
+	}
+	
 	@ModelAttribute("wealthSource") 
 	public Map<String, String> wealthSource()
 	{

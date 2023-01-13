@@ -12,22 +12,22 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Component
 public class Login {
 
-	@NotNull @NotEmpty @Size(min=10,max=10) @Pattern(regexp="[6-9][0-9]{9}", message="Mobile nunmber format invalid")
+	@NotNull(message = "Mobile no is not shared") @NotEmpty(message = "Mobile no is not shared") @Size(min=10,max=10) @Pattern(regexp="[6-9][0-9]{9}", message="Mobile nunmber format invalid")
 	private String usermobile;
 	
-	@NotNull @NotEmpty @Size(min=8,max=24, message="Password minimum length requirement not met")
+	@NotNull(message = "Credentials not given.") @NotEmpty(message = "Credentials not given.") @Size(min=8,max=24, message="Password minimum length requirement not met")
 	private String userpassword;
 	
-	@JsonIgnore
+//	@JsonIgnore
 	private boolean otpLogin =false;
 	
-	@JsonIgnore
+//	@JsonIgnore
 	private String otpVal;
 	
-	@JsonIgnore
+//	@JsonIgnore
 	private String returnUrl;
 	
-	@JsonIgnore
+//	@JsonIgnore
 	private boolean otpSubmit=false;
 	
 	private String systemip="";

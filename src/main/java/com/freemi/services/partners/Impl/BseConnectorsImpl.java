@@ -7,6 +7,7 @@ import java.net.ConnectException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
@@ -39,6 +40,7 @@ import com.freemi.entity.database.UserBankDetails;
 import com.freemi.entity.investment.MFCustomers;
 import com.freemi.entity.investment.Allotmentstatement;
 import com.freemi.entity.investment.BseOrderEntryResponse;
+import com.freemi.entity.investment.Emandatestaus;
 import com.freemi.entity.investment.SelectMFFund;
 import com.freemi.services.interfaces.BseRestClientService;
 import com.freemi.services.interfaces.InvestmentConnectorBseInterface;
@@ -440,6 +442,25 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 	@Override
 	public String getifscdetails(String ifsc) {
 		return bseRestClientService.getifscbankdetails(ifsc);
+	}
+
+	@Override
+	public BseApiResponse getmandateauthurl(String clientid, String mandateid) {
+		BseApiResponse apiresponse = new BseApiResponse();
+		String response = bseRestClientService.getemandateauthrul(clientid, mandateid);
+		List<String> res = Arrays.asList(response.split("\\|"));
+		apiresponse.setStatusCode(res.get(0));
+		apiresponse.setRemarks(res.get(1));
+
+		return apiresponse;
+	}
+
+	@Override
+	public Emandatestaus getmandatestatus(String clientid, String mandateid) {
+		Emandatestaus response = new Emandatestaus();
+		response = bseRestClientService.getmandatestatus(clientid, mandateid);
+
+		return response;
 	}
 
 	/*

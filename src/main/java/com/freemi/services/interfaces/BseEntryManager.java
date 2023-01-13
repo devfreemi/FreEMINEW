@@ -134,6 +134,10 @@ public interface BseEntryManager {
 	
 	public BseApiResponse extractAllotmentstatement(String fromdate, String todate, String orderstatus, String ordertype, String settlementtype);
 	
+	public BseApiResponse getemandateauthurl(String clientid, String mandateid);
+	
+	public BseApiResponse getemandatestatus(String clientid, String mandateid);
+	
 	public Datarquestresponse checkifkeyregistered(String mobile, String pan, String searchtype, String filter1);
 	
 	public String getifscdetails(String ifsc);
