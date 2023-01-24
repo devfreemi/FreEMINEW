@@ -1035,36 +1035,27 @@ public class BseEntryServiceImpl implements BseEntryManager {
 	    c.add(Calendar.YEAR, 10);
 	    endDate.setTime(c.getTimeInMillis());
 
-	    apiresponse = investmentConnectorBseInterface.emandateRegistration(bankDetails,mandateType, amount,clientCode, startDate,endDate);
-	    if(apiresponse.getStatusCode().equals("100")){
-		logger.info("Emandate completed for customer successfully for cusotmner-" + mobileNumber + ": Response code: "+ apiresponse.getStatusCode() + " : "+ apiresponse.getRemarks());
-		logger.info("Update bank emandate status to database...");
-		//				SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd");
-		//					SimpleDateFormat bseFormat = new SimpleDateFormat("dd/MM/yyyy");
-		/*bseCustomerBankDetailsCrudRespository.updateEmandateStatus(clientCode, 
-						bankDetails.getAccountNumber(), true, 
-						dbFormat.parse(dbFormat.format(startDate)), 
-						dbFormat.parse(dbFormat.format(endDate)), 
-						apiresponse.getResponseCode(), 
-						dbFormat.parse(dbFormat.format(new Date()))
-						);*/
-		//				bseMandateCrudRepository.updateMandateRegisterResponse(clientCode, "", mandateId, reponseMsg)
-		BseMandateDetails mandate = new BseMandateDetails();
+	    BseMandateDetails mandate = new BseMandateDetails();
 		mandate.setClientCode(clientCode);
 		mandate.setAccountNumber(bankDetails.getAccountNumber());
 		mandate.setSipStartDate(startDate);
 		mandate.setSipEndDate(endDate);
 		mandate.setMandateType(mandateType);
-		mandate.setMandateId(apiresponse.getResponseCode());
 		mandate.setAmount("50000");
 		mandate.setIfscCode(bankDetails.getIfscCode());
 		mandate.setCreationDate(startDate);
-		mandate.setMandateComplete(true);
-		mandate.setMandateResponse(apiresponse.getRemarks());
-		bseMandateCrudRepository.save(mandate);
+	    
+	    apiresponse = investmentConnectorBseInterface.emandateRegistration(mandate, bankDetails,mandateType, amount,clientCode, startDate,endDate);
+	    if(apiresponse.getStatusCode().equals("100")){
+	    	logger.info("Emandate completed for customer successfully for client ID-" + clientCode + ": Response code: "+ apiresponse.getStatusCode() + " : "+ apiresponse.getRemarks());
+	    	logger.info("Update bank emandate status to database...");
+	    	mandate.setMandateId(apiresponse.getResponseCode());
+	    	mandate.setMandateComplete(true);
+	    	mandate.setMandateResponse(apiresponse.getRemarks());
+	    	bseMandateCrudRepository.save(mandate);
 
 	    }else{
-		logger.info("Failed to update e-mandate. Reason: "+ apiresponse.getStatusCode() + " : "+ apiresponse.getRemarks());
+	    	logger.info("Failed to generate e-mandate. Reason: "+ apiresponse.getStatusCode() + " : "+ apiresponse.getRemarks());
 	    }
 
 	}catch(Exception e){
@@ -2208,17 +2199,33 @@ public class BseEntryServiceImpl implements BseEntryManager {
 
 	@Override
 	public BseApiResponse getemandatestatus(String clientid, String mandateid) {
-		
+
 		BseApiResponse response = new BseApiResponse();
-		
+
 		Emandatestaus status=  investmentConnectorBseInterface.getmandatestatus(clientid, mandateid);
-		
 		response.setStatusCode(status.getRequeststatus());
 		response.setRemarks(status.getRequestmsg());
 		response.setResponseCode(status.getStatus());
-		response.setData1(status.getRemarks());
-		
+		response.setData1(status.getStatus());
+		if(status.getStatus()!=null && status.getStatus().equalsIgnoreCase("REGISTERED BY MEMBER")) {
+			response.setData2("AUTHENTICATE");
+		}
+
 		return response;
+	}
+
+	@Override
+	public List<BseMandateDetails> getmandates(String mobile, String clientid, String otther1) {
+		
+		logger.info("Processing to fetch mandates of clientid- "+ clientid);
+		List<BseMandateDetails> activemandates = new ArrayList<BseMandateDetails>();
+		try {
+			activemandates = bseMandateCrudRepository.findAllByClientCodeAndMandateTypeAndMandateActive(clientid, "N", "Y");
+			logger.info("Total mandates - "+ activemandates.size());
+		}catch(Exception e) {
+			logger.error("Failed to fetch mandates for profile",e);
+		}
+		return activemandates;
 	}
 
 

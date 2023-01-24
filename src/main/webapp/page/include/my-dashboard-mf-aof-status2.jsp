@@ -7,7 +7,6 @@
 		<div class="profile-status-left">
 			<h5 style="background: #dbdee6; padding: 3px;">Mutual Fund
 				Profile Status</h5>
-
 			<div>
 				<span id="signuploadstatus" style="font-size: 11px;"></span>
 			</div>
@@ -24,9 +23,8 @@
 							<li><small>AOF Upload</small></li>
 						</ul>
 					</div>
-					<a href="/products/mutual-funds/register?mf=01">
-						Create Mutual Fund Account
-					</a>
+					<a href="/products/mutual-funds/register?mf=01"> Create Mutual
+						Fund Account </a>
 				</c:when>
 
 				<c:when test="${PROFILE_STATUS == 'REGISTRATION_INCOMPLETE' }">
@@ -49,8 +47,7 @@
 
 				<c:when test="${PROFILE_STATUS == 'PROFILE_READY' }">
 					<div class="text-center mb-2">
-					<h5 style="color: #408ad8;">Investment
-						profile ready.</h5>
+						<h5 style="color: #408ad8;">Investment profile ready.</h5>
 					</div>
 					<div class="container">
 						<ul class="progressbar" style="padding-inline-start: 0px;">
@@ -60,7 +57,8 @@
 						</ul>
 					</div>
 					<div class="mb-2 custom-line-height">
-					<small class="text-danger"><sup>*</sup>Account is registered. KYC must be completed for investing in mutual fund.</small>
+						<small class="text-danger"><sup>*</sup>Account is
+							registered. KYC must be completed for investing in mutual fund.</small>
 					</div>
 					<div style="text-align: center;">
 						<!-- <p>Mode of Holding: </p> -->
@@ -93,9 +91,11 @@
 							<li><small>AOF Upload</small></li>
 						</ul>
 					</div>
-					
+
 					<div class="text-center">
-						<button class="btn btn-sm btn-secondary" id="retryaofupload" onclick="retryaofupload(<%=session.getAttribute("userid").toString()%>)">Retry AOF Upload</button>
+						<button class="btn btn-sm btn-secondary" id="retryaofupload"
+							onclick="retryaofupload(<%=session.getAttribute("userid").toString()%>)">Retry
+							AOF Upload</button>
 					</div>
 
 				</c:when>
@@ -109,6 +109,12 @@
 				</c:otherwise>
 
 			</c:choose>
+			<div class="text-center">
+				<a href="${pageContext.request.contextPath}/e-mandates">
+				<button class="btn btn-sm btn-success" id="mandatelink">
+					E-mandates
+				</button></a>
+			</div>
 		</div>
 
 	</div>

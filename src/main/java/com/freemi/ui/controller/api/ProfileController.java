@@ -15,9 +15,11 @@ import javax.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,13 +30,17 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.freemi.common.util.CommonConstants;
 import com.freemi.common.util.CommonTask;
 import com.freemi.common.util.InvestFormConstants;
+import com.freemi.entity.general.ClientSystemDetails;
 import com.freemi.entity.general.Datarquestresponse;
 import com.freemi.entity.general.HttpClientResponse;
 import com.freemi.entity.general.Login;
 import com.freemi.entity.general.LoginResponse;
 import com.freemi.entity.general.MfCollatedFundsView;
+import com.freemi.entity.general.Otpform;
+import com.freemi.entity.general.Otprequeststatus;
 import com.freemi.entity.general.Registerform;
 import com.freemi.entity.general.Searchlocationdetials;
 import com.freemi.entity.general.Select2Results;
@@ -46,6 +52,7 @@ import com.freemi.services.interfaces.BseEntryManager;
 import com.freemi.services.interfaces.HdfcService;
 import com.freemi.services.interfaces.ProfileRestClientService;
 import com.freemi.services.interfaces.SmsSenderInterface;
+import com.freemi.services.interfaces.Verifydetailsinterface;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -65,7 +72,16 @@ public class ProfileController {
     
     @Autowired
     HdfcService hdfcService;
+    
+    @Autowired
+	Verifydetailsinterface verifydetailsinterface;
 
+    @Autowired
+    Environment environment;
+    
+    private static final String ERROR_S = "1";
+    private static final String SUCCESS_S = "0";
+    
     private static final Logger logger = LogManager.getLogger(ProfileController.class);
 
     @PostMapping(value="/login")
@@ -452,21 +468,35 @@ public class ProfileController {
 			
 			
 			logger.info("Generate OTP request for mobile no: "+ mobile +  " : module: "+ module + " - session ID- "+ sessionid);
-			smssendstatus = smsSenderInterface.sendmobnoverifyotp(mobile, 5,"PRODUCTS",submodule,referrer,sessionid);
-		    logger.info("OTP request response- "+ smssendstatus);
-		    if(smssendstatus.equalsIgnoreCase("SUCCESS")){
+//			smssendstatus = smsSenderInterface.sendmobnoverifyotp(mobile, 5,"PRODUCTS",submodule,referrer,sessionid);
+			Otprequeststatus requeststatus = new Otprequeststatus(); 
+			Otpform otpform = new Otpform();
+			otpform.setKey(mobile);
+			otpform.setModule("PRODUCTS");
+			otpform.setSubmodule("REGISTRATION");
+			ClientSystemDetails systemdetails = new ClientSystemDetails();
+			systemdetails = CommonTask.getClientSystemDetails(request);
+			requeststatus = verifydetailsinterface.generatemobileotp(otpform,systemdetails, request.getSession().getId());
+			
+			
+			logger.info("OTP request response- "+ requeststatus.getStatuscode());
+//		    if(smssendstatus.equalsIgnoreCase("SUCCESS")){
+			if(requeststatus.getStatuscode().equals(SUCCESS_S)) {
 		    	jsonresponse.addProperty("statuscode", "0");
-		    	jsonresponse.addProperty("msg", "SUCCESS");
+//		    	jsonresponse.addProperty("msg", "SUCCESS");
+		    	jsonresponse.addProperty("msg",  requeststatus.getMsg());
 		    }else {
 		    	jsonresponse.addProperty("statuscode", "1");
-		    	if(smssendstatus.equalsIgnoreCase("INVALID_MODULE")) {
-		    		jsonresponse.addProperty("msg", "Invalid reference. Plaese contact admin if issue persists.");
-		    	}else if(smssendstatus.equalsIgnoreCase("RETRY")) {
-		    		jsonresponse.addProperty("msg", "OTP Generation failed. Please try again.");
-		    	}else {
-		    		jsonresponse.addProperty("msg", "Internal error. Please try after sometime.");
-		    	}
-		    	
+				/*
+				 * if(smssendstatus.equalsIgnoreCase("INVALID_MODULE")) {
+				 * jsonresponse.addProperty("msg",
+				 * "Invalid reference. Plaese contact admin if issue persists."); }else
+				 * if(smssendstatus.equalsIgnoreCase("RETRY")) { jsonresponse.addProperty("msg",
+				 * "OTP Generation failed. Please try again."); }else {
+				 * jsonresponse.addProperty("msg",
+				 * "Internal error. Please try after sometime."); }
+				 */
+		    	jsonresponse.addProperty("msg", requeststatus.getMsg());
 		    }
 		    
 		} catch (Exception ex) {
@@ -489,10 +519,24 @@ public class ProfileController {
 		String submodule = params.get("submodule");
 		String sessionid = params.get("sessionid");
 		
+		Otpform otpform = new Otpform();
+		Otprequeststatus apiresponse = new Otprequeststatus();
+		otpform.setKey(mobile);
+		otpform.setModule("PRODUCTS");
+		otpform.setSubmodule("REGISTRATION");
+		otpform.setOtp(otpdata);
 		try {
 			logger.info("Generate OTP request for mobile no: "+ mobile +  " : module: "+ module + "sessionid from session- "+ session.getId());
-			smssendstatus = smsSenderInterface.verifyotp(mobile, 5, otpdata,"REGISTRATION",submodule, request.getHeader(HttpHeaders.REFERER),sessionid,null);
-		    logger.info("OTP request response- "+ smssendstatus);
+//			smssendstatus = smsSenderInterface.verifyotp(mobile, 5, otpdata,"REGISTRATION",submodule, request.getHeader(HttpHeaders.REFERER),sessionid,null);
+			ClientSystemDetails systemdetails = new ClientSystemDetails();
+			systemdetails = CommonTask.getClientSystemDetails(request);
+			apiresponse = verifydetailsinterface.verifymobileotp(otpform,systemdetails,request.getSession().getId());
+			if(apiresponse.getStatuscode().equals(SUCCESS_S)) {
+				smssendstatus="SUCCESS";
+			}else {
+				smssendstatus=apiresponse.getErrormsg();
+			}
+			logger.info("OTP request response- "+ smssendstatus);
 		} catch (Exception ex) {
 			logger.error("Error geenrating ICICI CC card OTP"+ request.getRequestURI()+ " : Exception calling backend ",ex);
 			smssendstatus = "ERROR";
@@ -698,7 +742,9 @@ public class ProfileController {
 		return dataarr;
 	}
 
-
+	@ModelAttribute("contextcdn") String contextcdn() {
+		return environment.getProperty(CommonConstants.CDN_URL);
+	}
 
 
 }

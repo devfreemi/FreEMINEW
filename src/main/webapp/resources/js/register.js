@@ -147,7 +147,7 @@ $("#send-otp-btn").click(function(){
 				console.log("Data- "+ data + "-> "+ data.statuscode)
 				if (data.statuscode == '0'){
 //					const options= { positionClass:'toast-center' };
-					toastr.success("OTP has been sent to "+ registermobile, '' );
+					toastr.success(data.msg);
 					
 					$("#otptext").text("Sent");
 					$("#send-otp-btn").prop("disabled", true);
@@ -272,10 +272,11 @@ $("#verify-otp-btn").click(function(){
 				} else {
 					console.log("Not verified")
 //					const options= { positionClass:'toast-center' };
-					toastr.error("OTP validaiton failed for "+registermobile , '');
+					toastr.error(data);
 					otpverifydisabled = false;
-					$("#otpverify").text("Get OTP");
-					$("#send-otp-btn").prop("disabled", false);
+					$("#otpverify").text("Verify");
+					$("#verify-otp-btn").prop("disabled", false);
+					$("#send-otp-btn").prop("disabled", true);
 				}
 				console.log('data- ' + data + " - "+ textStatus + " -" + xhr );
 

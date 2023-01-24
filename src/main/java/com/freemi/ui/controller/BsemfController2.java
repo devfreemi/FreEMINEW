@@ -28,6 +28,7 @@ import javax.validation.Valid;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.pdfbox.contentstream.operator.state.SetRenderingIntent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
@@ -72,6 +73,7 @@ import com.freemi.entity.bse.BseFatcaForm;
 import com.freemi.entity.bse.BseFileUpload;
 import com.freemi.entity.bse.BseOrderPaymentRequest;
 import com.freemi.entity.bse.BseOrderPaymentResponse;
+import com.freemi.entity.bse.Mandatecheck;
 import com.freemi.entity.database.UserBankDetails;
 import com.freemi.entity.general.ClientSystemDetails;
 import com.freemi.entity.general.HttpClientResponse;
@@ -120,32 +122,65 @@ public class BsemfController2 {
 	Environment env;
 
 
-	public BseApiResponse getemandatestatus(String clientid, String mandateid) {
+	@RequestMapping(value = "/mutual-funds/mandate-status", method = RequestMethod.POST)
+	@ResponseBody
+	public BseApiResponse getemandatestatus(@RequestBody Mandatecheck data, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 		
-		BseApiResponse response = new BseApiResponse();
-		
-		response = bseEntryManager.getemandatestatus(clientid, mandateid);
-		
-		return  response;
+		BseApiResponse apiresponse = new BseApiResponse();
+		try {
+			
+			if( session.getAttribute("token")!=null && session.getAttribute("userid")!=null) {
+				String clientid = bseEntryManager.getClientIdfromMobile( session.getAttribute("userid").toString());
+				
+				if(clientid.equalsIgnoreCase(data.getClientid())) {
+					apiresponse = bseEntryManager.getemandatestatus(data.getClientid(), data.getMandateid());
+				}else {
+					apiresponse.setStatusCode("101");
+					apiresponse.setRemarks("Invalid client ID.");
+				}
+			}else {
+				apiresponse.setStatusCode("101");
+				apiresponse.setRemarks("Session expired. Kindly login again to check status.");
+			}
+		}catch(Exception e) {
+			logger.error("Failed to process",e);
+			apiresponse.setStatusCode("101");
+			apiresponse.setRemarks("Internal failure");
+		}
+		return  apiresponse;
 	}
 
-	@PostMapping("/mutual-funds/emandateurl")
-	public String getmandateurl(@RequestBody HashMap<String, String> data) {
-		
-		BseApiResponse response = new BseApiResponse();
-		
-		response = bseEntryManager.getemandateauthurl(data.get("clientid"), data.get("mandateid"));
-		
-		return  response.getStatusCode()+"|"+response.getRemarks();
+	@RequestMapping(value = "/mutual-funds/emandateurl", method = RequestMethod.POST)
+	@ResponseBody
+	public BseApiResponse getmandateurl(@RequestBody Mandatecheck data, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+		BseApiResponse apiresponse = new BseApiResponse();
+		try {
+			
+			if( session.getAttribute("token")!=null && session.getAttribute("userid")!=null) {
+				String clientid = bseEntryManager.getClientIdfromMobile( session.getAttribute("userid").toString());
+				logger.info("Match client ID- "+ clientid + " : "+ data.getClientid());
+				if(clientid.equalsIgnoreCase(data.getClientid())) {
+					apiresponse = bseEntryManager.getemandateauthurl(data.getClientid(), data.getMandateid());
+				}else {
+					apiresponse.setStatusCode("101");
+					apiresponse.setRemarks("Invalid client ID.");
+				}
+			}else {
+				apiresponse.setStatusCode("101");
+				apiresponse.setRemarks("Session expired. Kindly login again.");
+			}
+		}catch(Exception e) {
+			logger.error("Failed to proess",e);
+			apiresponse.setStatusCode("101");
+			apiresponse.setRemarks("Failed!");
+		}
+		logger.info("Response- "+ apiresponse.getRemarks());
+		return  apiresponse;
 	}
 	
-	public String getmandateurl2(String clientid, String mandateid) {
-		
-		BseApiResponse response = new BseApiResponse();
-		
-		response = bseEntryManager.getemandateauthurl(clientid, mandateid);
-		
-		return  response.getStatusCode()+"|"+response.getRemarks();
+	
+	@ModelAttribute("contextcdn") String contextcdn() {
+		return env.getProperty(CommonConstants.CDN_URL);
 	}
-
+	
 }

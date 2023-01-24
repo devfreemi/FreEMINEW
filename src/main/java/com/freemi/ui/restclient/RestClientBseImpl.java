@@ -25,6 +25,8 @@ import com.freemi.entity.bse.BsePaymentStatus;
 import com.freemi.entity.bse.BseRegistrationMFD;
 import com.freemi.entity.bse.BseSipOrderEntry;
 import com.freemi.entity.bse.BseXipISipOrderEntry;
+import com.freemi.entity.bse.PauseSIP;
+import com.freemi.entity.bse.PauseSIPResponse;
 import com.freemi.entity.bse.Uccregisterresponse;
 import com.freemi.entity.investment.Emandatestaus;
 import com.freemi.services.interfaces.BseRestClientService;
@@ -609,8 +611,8 @@ public class RestClientBseImpl implements BseRestClientService {
 		String returnRes="FAIL";
 		try {
 		    	JsonObject obj = new JsonObject();
-		    	obj.addProperty("mandateid", "");
-		    	obj.addProperty("clientid", "");
+		    	obj.addProperty("mandateid", mandateid);
+		    	obj.addProperty("clientid", clientid);
 		    	obj.addProperty("responsecode", "");
 		    	obj.addProperty("mandateurl", "");
 			
@@ -623,7 +625,7 @@ public class RestClientBseImpl implements BseRestClientService {
 				returnRes=response.getBody().toString();
 				logger.info("Response for Emandateauthurl data- "+ response.getBody().toString());
 			}else{
-				returnRes = "100|www.google.in";
+				returnRes = "100|https://www.google.com";
 
 			}
 		} catch (Exception e) {
@@ -642,10 +644,11 @@ public class RestClientBseImpl implements BseRestClientService {
 			logger.info("BSE client- "+ url);
 			RestTemplate restTemplate = new RestTemplate();
 			Emandatestaus apiresponse = new Emandatestaus();
+			ObjectMapper mapper =  new ObjectMapper();
 			try {
 			    	JsonObject obj = new JsonObject();
-			    	obj.addProperty("mandateid", "");
-			    	obj.addProperty("clientid", "");
+			    	obj.addProperty("mandateid", mandateid);
+			    	obj.addProperty("clientid", clientid);
 			    	obj.addProperty("responsecode", "");
 			    	obj.addProperty("mandateurl", "");
 				
@@ -655,13 +658,14 @@ public class RestClientBseImpl implements BseRestClientService {
 
 				if(env.getProperty(CommonConstants.BSE_CALL_TEST_ENABLED).equalsIgnoreCase("N")){
 					apiresponse= restTemplate.postForObject(url, entity, Emandatestaus.class);
-					
+					logger.info("Mandate status response- "+ mapper.writeValueAsString(apiresponse));
 				}else{
 					logger.warn("test enabled. Returning dummy emandate status..");
 					apiresponse.setRequeststatus("100");
 					apiresponse.setRequestmsg("Mandate Details");
-					apiresponse.setRemarks("REGISTERED BY MEMBER");
-					
+					apiresponse.setRemarks("");
+//					apiresponse.setStatus("PENDING");
+					apiresponse.setStatus("REGISTERED BY MEMBER");
 				}
 			} catch (Exception e) {
 				logger.error("getmandatestatus(): Failed to process request", e);
@@ -670,6 +674,40 @@ public class RestClientBseImpl implements BseRestClientService {
 			}
 			
 			return apiresponse;
+	}
+
+	@Override
+	public PauseSIPResponse pausexsip(PauseSIP requestdata) {
+		logger.info("pausexsip(): Process to send request...");
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_MF_BSE_V1) + "/pausexsip";
+		ObjectMapper mapper = new ObjectMapper();
+		RestTemplate restTemplate = new RestTemplate();
+		String formdata = null;
+		PauseSIPResponse response = new PauseSIPResponse();
+		try {
+			formdata = mapper.writeValueAsString(requestdata);
+			
+			logger.info("Requesting for SIP pause- "+ formdata);
+			HttpHeaders headers = new HttpHeaders();
+			headers.set("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
+			HttpEntity<String> entity = new HttpEntity<String>(formdata,headers);
+
+			if(env.getProperty(CommonConstants.BSE_CALL_TEST_ENABLED).equalsIgnoreCase("N")){
+				response= restTemplate.postForObject(url, entity, PauseSIPResponse.class);
+				logger.info("Response from SIP pause- "+ mapper.writeValueAsString(response));
+			}else{
+				logger.info("pausexsip(): Test phase enabled. Sending back dummy response");
+				response.setRegistrationno(requestdata.getRegistrationno());
+				response.setStatusflag("0");
+				response.setBseremarks("DATA SAVED SUCCESSFULLY");
+			}
+		} catch (Exception e) {
+			logger.error("pausexsip(): Failed to write process data", e);
+			response.setStatusflag("1");
+			response.setBseremarks("Internal error. Please try after sometime");
+		}
+		
+		return null;
 	}
 	
 

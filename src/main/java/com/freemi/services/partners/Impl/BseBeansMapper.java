@@ -26,6 +26,7 @@ import com.freemi.entity.bse.BseXipISipOrderEntry;
 import com.freemi.entity.database.UserBankDetails;
 import com.freemi.entity.investment.MFCustomers;
 import com.freemi.entity.investment.Allotmentstatement;
+import com.freemi.entity.investment.BseMandateDetails;
 import com.freemi.entity.investment.BseOrderEntryResponse;
 import com.freemi.entity.investment.SelectMFFund;
 
@@ -680,12 +681,12 @@ public class BseBeansMapper {
 		return requestForm;
 	}
 
-	public static BseEMandateRegistration bankDetailsToBseMandateBeans(UserBankDetails bankDetails,String mandateType, String amount, String clientCode,Date startDate, Date endDate){
+	public static BseEMandateRegistration bankDetailsToBseMandateBeans(BseMandateDetails mandatedetails, UserBankDetails bankDetails,String mandateType, String amount, String clientCode,Date startDate, Date endDate){
 		BseEMandateRegistration requestForm = new BseEMandateRegistration();
 
 		requestForm.setClientCode(clientCode);
 		//		requestForm.setAmount(amount);
-		requestForm.setAmount("50000");
+		requestForm.setAmount(mandatedetails.getAmount());
 		requestForm.setMandateType(mandateType!="X"?mandateType:"X");
 		requestForm.setAccountNo(bankDetails.getAccountNumber());
 		requestForm.setAccType(bankDetails.getAccountType());

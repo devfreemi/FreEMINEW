@@ -934,6 +934,12 @@ public class BseRestClient implements BseEntryManager {
 		return null;
 	}
 
+	@Override
+	public List<BseMandateDetails> getmandates(String mobile, String clientid, String otther1) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 	
 

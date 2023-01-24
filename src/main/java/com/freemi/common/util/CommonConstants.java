@@ -123,7 +123,6 @@ public class CommonConstants {
 	
 	
 	public static final String OTP_CHECK = "sms.otp.check.enabled";
-	public static final String OTP_TEST_ENABLED = "otp.test.enabled";
 	
 	/*SMS RELATED CONSTANTS*/
 	

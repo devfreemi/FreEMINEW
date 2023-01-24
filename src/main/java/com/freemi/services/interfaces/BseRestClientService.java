@@ -11,6 +11,8 @@ import com.freemi.entity.bse.BsePaymentStatus;
 import com.freemi.entity.bse.BseRegistrationMFD;
 import com.freemi.entity.bse.BseSipOrderEntry;
 import com.freemi.entity.bse.BseXipISipOrderEntry;
+import com.freemi.entity.bse.PauseSIP;
+import com.freemi.entity.bse.PauseSIPResponse;
 import com.freemi.entity.bse.Uccregisterresponse;
 import com.freemi.entity.investment.Emandatestaus;
 
@@ -43,5 +45,6 @@ public interface BseRestClientService {
 	public String getemandateauthrul(String clientid, String mandateid);
 	
 	public Emandatestaus getmandatestatus(String clientid, String mandateid);
-
+	
+	public PauseSIPResponse pausexsip(PauseSIP requestdata);
 }

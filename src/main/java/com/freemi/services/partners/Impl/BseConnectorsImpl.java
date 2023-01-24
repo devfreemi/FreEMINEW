@@ -39,6 +39,7 @@ import com.freemi.entity.bse.BseXipISipOrderEntry;
 import com.freemi.entity.database.UserBankDetails;
 import com.freemi.entity.investment.MFCustomers;
 import com.freemi.entity.investment.Allotmentstatement;
+import com.freemi.entity.investment.BseMandateDetails;
 import com.freemi.entity.investment.BseOrderEntryResponse;
 import com.freemi.entity.investment.Emandatestaus;
 import com.freemi.entity.investment.SelectMFFund;
@@ -268,14 +269,14 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 	}
 
 	@Override
-	public BseApiResponse emandateRegistration(UserBankDetails bankDetails,String mandateType, String amount, String clientCode, Date startDate, Date endDate) {
+	public BseApiResponse emandateRegistration(BseMandateDetails mandatedetails, UserBankDetails bankDetails,String mandateType, String amount, String clientCode, Date startDate, Date endDate) {
 		logger.info("Get bank account e-mandate registered for client id- "+ clientCode + " : bank no- " + bankDetails.getAccountNumber().substring(bankDetails.getAccountNumber().length()-4));
 		String response = "";
 		BseApiResponse bseresponse = new BseApiResponse();
 		if(env.getProperty(CommonConstants.BSE_ENABLED).equalsIgnoreCase("Y")){
 			try{
 				//				BsePaymentStatus requestForm=  BseBeansMapper.BsePaymentStatusRequestToBse(clientId, orderNo);
-				BseEMandateRegistration registerForm = BseBeansMapper.bankDetailsToBseMandateBeans(bankDetails,mandateType, amount, clientCode,startDate,endDate);
+				BseEMandateRegistration registerForm = BseBeansMapper.bankDetailsToBseMandateBeans(mandatedetails, bankDetails,mandateType, amount, clientCode,startDate,endDate);
 				logger.info("Begin BSE service invoke process for payment status");
 				response = bseRestClientService.eMandateRegistration(registerForm);
 				bseresponse= BseBeansMapper.emandateRegResponseToBean(response);

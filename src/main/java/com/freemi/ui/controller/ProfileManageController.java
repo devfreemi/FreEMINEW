@@ -45,6 +45,7 @@ import com.freemi.entity.general.ProfilePasswordChangeForm;
 import com.freemi.entity.general.ResetPassword;
 import com.freemi.entity.general.UserProfile;
 import com.freemi.entity.general.UserProfileLdap;
+import com.freemi.entity.investment.BseMandateDetails;
 import com.freemi.entity.loan.Loanreqcompleteform;
 import com.freemi.services.interfaces.BseEntryManager;
 import com.freemi.services.interfaces.ProfileRestClientService;
@@ -173,7 +174,6 @@ public class ProfileManageController{
 
 
 		model.addAttribute("profilePasswordChangeForm",passform);
-		model.addAttribute("contextcdn", environment.getProperty(CommonConstants.CDN_URL));
 		logger.info("@@@@ ProfileController complete. @@@@");
 
 
@@ -417,7 +417,6 @@ public class ProfileManageController{
 
 			map.addAttribute("totalasset", totalAsset);
 			map.addAttribute("totalmarketval", totalmarketVal);
-			map.addAttribute("contextcdn", environment.getProperty(CommonConstants.CDN_URL));
 		}catch(Exception e) {
 			logger.error("Error while processing my-dashboard",e);
 		}
@@ -426,6 +425,48 @@ public class ProfileManageController{
 		logger.info("Returning to page- "+ returnurl);
 		return returnurl;
 		//		return "my-dashboard";
+	}
+	
+	
+	@RequestMapping(value = {"/e-mandates","/e-mandates/"}, method = RequestMethod.GET)
+	public String getemandates(Model map,HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+		logger.info("@@@@ Get my e-mandates @@@@");
+
+		String returnurl = "profile/emandates";
+		List<BseMandateDetails> mandates = new ArrayList<BseMandateDetails>();
+		try {
+			if(session.getAttribute("token") == null){
+				try {
+					returnurl="redirect:/login?ref="+ URLEncoder.encode(request.getRequestURL().toString(), StandardCharsets.UTF_8.toString());
+				} catch (UnsupportedEncodingException e) {
+					logger.error("getemandates(): failed to encode referrel url",e.getMessage());
+					returnurl="redirect:/login";
+				}
+			}else{
+				String mobile = session.getAttribute("userid").toString();
+				ResponseEntity<String> sessionValidCheck = profileRestClientService.validateUserToken(session.getAttribute("userid")!=null?session.getAttribute("userid").toString():"BLANK", session.getAttribute("token").toString(), CommonTask.getClientSystemIp(request));
+				logger.info("getProfile(): Session validation status- "+ sessionValidCheck.getBody());
+
+				if (sessionValidCheck.getBody().equals("VALID")) {
+					String clientid = bseEntryManager.getClientIdfromMobile(mobile);
+					mandates = bseEntryManager.getmandates(mobile, clientid, null);
+					
+				}else {
+					try {
+						returnurl="redirect:/login?ref="+ URLEncoder.encode("/e-mandates", StandardCharsets.UTF_8.toString());
+					} catch (UnsupportedEncodingException e) {
+						logger.error("profile(): failed to encode url- ",e);
+						returnurl="redirect:/login";
+					}
+				}
+			}
+		}catch(Exception e) {
+			logger.error("Error while processing e-mandates page",e);
+		}
+		map.addAttribute("mandates", mandates);
+		
+		logger.info("Returning to page- "+ returnurl);
+		return returnurl;
 	}
 
 
@@ -450,7 +491,6 @@ public class ProfileManageController{
 				map.addAttribute("REQHISTORY", listreq); 
 
 			}
-			map.addAttribute("contextcdn", environment.getProperty(CommonConstants.CDN_URL));
 
 		}catch(Exception e) {
 			logger.error("Error while processing my-dashboard",e);
@@ -516,7 +556,6 @@ public class ProfileManageController{
 			map.addAttribute("resetPassword", passform);
 			map.addAttribute("userid", user);
 
-			map.addAttribute("contextcdn", environment.getProperty(CommonConstants.CDN_URL));
 			returnurl = "reset-password";
 		}
 
@@ -536,7 +575,6 @@ public class ProfileManageController{
 		ForceChangePassword changePassword = new ForceChangePassword();
 
 		map.addAttribute("changePasswordForm", changePassword);
-		map.addAttribute("contextcdn", environment.getProperty(CommonConstants.CDN_URL));
 		returnurl = "force-change-password";
 
 		return returnurl;
@@ -644,6 +682,10 @@ public class ProfileManageController{
 		return "blogs";
 	}
 	 */
+	
+	@ModelAttribute("contextcdn") String contextcdn() {
+		return environment.getProperty(CommonConstants.CDN_URL);
+	}
 
 	@ExceptionHandler(MissingServletRequestParameterException.class)
 	@ResponseBody

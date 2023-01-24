@@ -1,8 +1,6 @@
-<%@page import="com.freemi.entity.investment.TransactionStatus"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@page import="com.freemi.ui.controller.BsemfController2"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <!DOCTYPE html>
 <html>
@@ -38,9 +36,6 @@
 <body>
 	<jsp:include page="../include/header.jsp"></jsp:include>
 	<jsp:include page="../include/GoogleBodyTag.jsp"></jsp:include>
-	<%
-		BsemfController2 h = new BsemfController2();
-	%>
 	<div class="container">
 		<%
 			
@@ -80,6 +75,7 @@
 												<th class="text-dark">Payment Status</th>
 												<td>${ORDER_STATUS}</td>
 											</tr>
+											
 
 										</table>
 									</div>
@@ -148,6 +144,8 @@
 															<td>
 															<c:if test="${TRANSACTION_REPORT.other1 == 'S' }">
 															<a href="${TRANSACTION_REPORT.other2}" target="_blank"> <button class="btn btn-sm btn-primary">Authenticate E-mandate</button></a>
+															
+															<button onclick="mandatestatus()">Test</button>
 															</c:if>
 															
 															</td>
@@ -158,8 +156,7 @@
 														test="${TRANSACTION_REPORT.emandateStatusCode == 'SELECTED' }">
 														<tr>
 															<th class="text-dark">Action</th>
-															<td><button class="btn btn-sm btn-primary">Check E-mandate
-																	status from profile</button></td>
+															<td><button class="btn btn-sm btn-primary">Check E-mandate</button></td>
 														</tr>
 													</c:when>
 													<c:when
@@ -227,76 +224,12 @@
 						</div>
 
 					</div>
-
-					<input type="hidden" name="x" id="x" value=${TRANSACTION_REPORT.clientcode }>
-					<input type="hidden" name="y" id="y" value=${TRANSACTION_REPORT.mandateid }>
 				</div>
 			</div>
-			<form action="">
-			
-			</form>
 		</section>
 
 	</div>
-	<%-- <%
-		TransactionStatus s = (TransactionStatus) request.getAttribute("TRANSACTION_REPORT");
-	%> --%>
 	<jsp:include page="../include/sub-footer.jsp"></jsp:include>
 	<jsp:include page="../include/footer.jsp"></jsp:include>
 </body>
-<script type="text/javascript">
-function mandatestatus(){
-	console.log("test");
-}
-
-function mandatestatus(){
-	var test = "asdasdasd";
-	console.log(JSON.stringify(test));
-	alert(JSON.stringify(test));
-}
-
-function mandateauth2(){
-
-	var token =  $('input[name="_csrf"]').attr('value');
-	$.ajaxSetup({
-		headers:
-		{ 'X-CSRF-TOKEN': token }
-	});
-	request = $.ajax({
-		url: "/products/mutual-funds/emandateurl",
-		method: "POST",
-		data: {
-			"clientid" : $("#x").val(),
-			"mandateid" : $("#y").val(),
-			"_csrf" : token
-		},
-		async: true,
-		datatype: "json",
-		beforeSend: function() {
-		}
-	});
-
-	request.done(function(data, textStatus, xhr) {
-		console.log(data);
-		var x = data.split("|");
-		if(x[0] == '100'){
-				window.open(x[1],"_blank");
-			}
-		else{
-		alert(data);
-			}
-
-
-	});
-
-	request.fail(function(jqXHR, textStatus) {
-		alert("Request failed..");
-	});
-
-	request.always(function(msg){
-
-	});
-}
-	 
-</script>
 </html>

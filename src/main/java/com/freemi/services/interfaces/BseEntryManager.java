@@ -134,6 +134,8 @@ public interface BseEntryManager {
 	
 	public BseApiResponse extractAllotmentstatement(String fromdate, String todate, String orderstatus, String ordertype, String settlementtype);
 	
+	public List<BseMandateDetails> getmandates(String mobile, String clientid, String otther1);
+	
 	public BseApiResponse getemandateauthurl(String clientid, String mandateid);
 	
 	public BseApiResponse getemandatestatus(String clientid, String mandateid);
