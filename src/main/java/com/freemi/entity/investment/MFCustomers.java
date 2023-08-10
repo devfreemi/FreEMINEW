@@ -330,6 +330,41 @@ public class MFCustomers implements Serializable {
 	@OneToMany(mappedBy="clientID", cascade=CascadeType.ALL)
 	private List<SelectMFFund> fundPurchaseDetails;
 	
+	//Added as per new WEB struture April - 2023
+	
+	@Transient
+//	@Column(name="NOMINEE_OPT")
+	private String nominationopt="Y";
+	
+	@Transient
+//	@Column(name="NOMINEE_AUTH_MODE")
+	private String nominationauthmode="E"; //Default E-sign
+	
+	@Transient
+	private String emailholder2;
+	
+	@Transient
+	private String emailholder2declaration;
+	
+	@Transient
+	private String mobileholder2;
+	
+	@Transient
+	private String mobileholder2declaration;
+	
+	@Transient
+	private String emailholder3;
+	
+	@Transient
+	private String emailholder3declaration;
+	
+	@Transient
+	private String mobileholder3;
+	
+	@Transient
+	private String mobileholder3declaration;
+	
+	
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
@@ -1101,6 +1136,106 @@ public class MFCustomers implements Serializable {
 		this.profileuniqueid = profileuniqueid;
 	}
 
+
+	public String getNominationopt() {
+		return nominationopt;
+	}
+
+
+	public void setNominationopt(String nominationopt) {
+		this.nominationopt = nominationopt;
+	}
+
+
+	public String getNominationauthmode() {
+		return nominationauthmode;
+	}
+
+
+	public void setNominationauthmode(String nominationauthmode) {
+		this.nominationauthmode = nominationauthmode;
+	}
+
+
+	public String getEmailholder2() {
+		return emailholder2;
+	}
+
+
+	public void setEmailholder2(String emailholder2) {
+		this.emailholder2 = emailholder2;
+	}
+
+
+	public String getEmailholder2declaration() {
+		return emailholder2declaration;
+	}
+
+
+	public void setEmailholder2declaration(String emailholder2declaration) {
+		this.emailholder2declaration = emailholder2declaration;
+	}
+
+
+	public String getMobileholder2() {
+		return mobileholder2;
+	}
+
+
+	public void setMobileholder2(String mobileholder2) {
+		this.mobileholder2 = mobileholder2;
+	}
+
+
+	public String getMobileholder2declaration() {
+		return mobileholder2declaration;
+	}
+
+
+	public void setMobileholder2declaration(String mobileholder2declaration) {
+		this.mobileholder2declaration = mobileholder2declaration;
+	}
+
+
+	public String getEmailholder3() {
+		return emailholder3;
+	}
+
+
+	public void setEmailholder3(String emailholder3) {
+		this.emailholder3 = emailholder3;
+	}
+
+
+	public String getEmailholder3declaration() {
+		return emailholder3declaration;
+	}
+
+
+	public void setEmailholder3declaration(String emailholder3declaration) {
+		this.emailholder3declaration = emailholder3declaration;
+	}
+
+
+	public String getMobileholder3() {
+		return mobileholder3;
+	}
+
+
+	public void setMobileholder3(String mobileholder3) {
+		this.mobileholder3 = mobileholder3;
+	}
+
+
+	public String getMobileholder3declaration() {
+		return mobileholder3declaration;
+	}
+
+
+	public void setMobileholder3declaration(String mobileholder3declaration) {
+		this.mobileholder3declaration = mobileholder3declaration;
+	}
+	
 	
 	
 }

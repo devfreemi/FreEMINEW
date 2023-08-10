@@ -2,6 +2,8 @@ package com.freemi.entity.bse;
 
 import java.io.Serializable;
 
+import javax.persistence.Transient;
+
 
 public class BseRegistrationMFD implements Serializable{
 	/**
@@ -266,7 +268,26 @@ public class BseRegistrationMFD implements Serializable{
 	private String leivalidity="";	//128
 	private String mobiledecflag="";	//129	Filler1
 	private String emaildecflag="";	//130	Filler2
-	private String filler3="";	//131	Filler3
+	
+	private String filler3="";	//Deprecated
+	
+	private String nomineeopt;	//131
+	private String nomineeauthmode;	//132
+	private String nominee1pan;	//133
+	private String nominee1guardianpan;	//134
+	private String nominee2pan;	//135
+	private String nominee2guardianpan;	//136
+	private String nominee3pan;	//137
+	private String nominee3guardianpan;	//138
+	private String emailholder2;	//139
+	private String emailholder2declaration;	//140
+	private String mobileholder2;	//141
+	private String mobileholder2declaration;	//142
+	private String emailholder3;	//143
+	private String emailholder3declaration;	//144
+	private String mobileholder3;	//145
+	private String mobileholder3declaration;	//146
+	
 	
 	
 	private String ClientAppname1="";		//Deprecated in new API
@@ -1091,6 +1112,103 @@ public class BseRegistrationMFD implements Serializable{
 	}
 	public void setFiller3(String filler3) {
 		this.filler3 = filler3;
+	}
+	
+	public String getNomineeopt() {
+		return nomineeopt;
+	}
+	public void setNomineeopt(String nomineeopt) {
+		this.nomineeopt = nomineeopt;
+	}
+	public String getNomineeauthmode() {
+		return nomineeauthmode;
+	}
+	public void setNomineeauthmode(String nomineeauthmode) {
+		this.nomineeauthmode = nomineeauthmode;
+	}
+	public String getNominee1pan() {
+		return nominee1pan;
+	}
+	public void setNominee1pan(String nominee1pan) {
+		this.nominee1pan = nominee1pan;
+	}
+	public String getNominee1guardianpan() {
+		return nominee1guardianpan;
+	}
+	public void setNominee1guardianpan(String nominee1guardianpan) {
+		this.nominee1guardianpan = nominee1guardianpan;
+	}
+	public String getNominee2pan() {
+		return nominee2pan;
+	}
+	public void setNominee2pan(String nominee2pan) {
+		this.nominee2pan = nominee2pan;
+	}
+	public String getNominee2guardianpan() {
+		return nominee2guardianpan;
+	}
+	public void setNominee2guardianpan(String nominee2guardianpan) {
+		this.nominee2guardianpan = nominee2guardianpan;
+	}
+	public String getNominee3pan() {
+		return nominee3pan;
+	}
+	public void setNominee3pan(String nominee3pan) {
+		this.nominee3pan = nominee3pan;
+	}
+	public String getNominee3guardianpan() {
+		return nominee3guardianpan;
+	}
+	public void setNominee3guardianpan(String nominee3guardianpan) {
+		this.nominee3guardianpan = nominee3guardianpan;
+	}
+	public String getEmailholder2() {
+		return emailholder2;
+	}
+	public void setEmailholder2(String emailholder2) {
+		this.emailholder2 = emailholder2;
+	}
+	public String getEmailholder2declaration() {
+		return emailholder2declaration;
+	}
+	public void setEmailholder2declaration(String emailholder2declaration) {
+		this.emailholder2declaration = emailholder2declaration;
+	}
+	public String getMobileholder2() {
+		return mobileholder2;
+	}
+	public void setMobileholder2(String mobileholder2) {
+		this.mobileholder2 = mobileholder2;
+	}
+	public String getMobileholder2declaration() {
+		return mobileholder2declaration;
+	}
+	public void setMobileholder2declaration(String mobileholder2declaration) {
+		this.mobileholder2declaration = mobileholder2declaration;
+	}
+	public String getEmailholder3() {
+		return emailholder3;
+	}
+	public void setEmailholder3(String emailholder3) {
+		this.emailholder3 = emailholder3;
+	}
+	public String getEmailholder3declaration() {
+		return emailholder3declaration;
+	}
+	public void setEmailholder3declaration(String emailholder3declaration) {
+		this.emailholder3declaration = emailholder3declaration;
+	}
+	public String getMobileholder3() {
+		return mobileholder3;
+	}
+	public void setMobileholder3(String mobileholder3) {
+		this.mobileholder3 = mobileholder3;
+	}
+	public String getMobileholder3declaration() {
+		return mobileholder3declaration;
+	}
+	public void setMobileholder3declaration(String mobileholder3declaration) {
+		this.mobileholder3declaration = mobileholder3declaration;
 	}
 	public static long getSerialversionuid() {
 		return serialVersionUID;

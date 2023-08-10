@@ -140,9 +140,9 @@
 				</div>
 			</div>
 		</div>
-		<p><b>NOTE: </b> <small class="text-info"> E-mandate registration will be done for Systematic Investment Plan (SIP). You have to add BSE
-			through your Internet banking portal. Your Internet banking must
-			support biller.</small>
+		<p>
+		<small class="text-primary">E-Nach mandate registration for automated payment service.</small>
+		<small class="text-muted">Note: Email will be sent for authenticating the generated mandate ID.</small>
 		</p>
 
 

@@ -36,8 +36,18 @@ import com.freemi.entity.bse.BsePanStatusResponse;
 import com.freemi.entity.bse.BsePaymentStatus;
 import com.freemi.entity.bse.BseRegistrationMFD;
 import com.freemi.entity.bse.BseXipISipOrderEntry;
+import com.freemi.entity.bse.Bsepay;
+import com.freemi.entity.bse.Nomineeregistrationrequest;
+import com.freemi.entity.bse.Nomineeregistrationresponse;
+import com.freemi.entity.bse.PauseSIP;
+import com.freemi.entity.bse.PauseSIPResponse;
+import com.freemi.entity.bse.Paymentgateway;
+import com.freemi.entity.bse.Paymentgatewayresponse;
 import com.freemi.entity.database.UserBankDetails;
 import com.freemi.entity.investment.MFCustomers;
+import com.freemi.entity.investment.Nominee2farequest;
+import com.freemi.entity.investment.Nominee2faresponse;
+import com.freemi.entity.investment.Nomineeverification;
 import com.freemi.entity.investment.Allotmentstatement;
 import com.freemi.entity.investment.BseMandateDetails;
 import com.freemi.entity.investment.BseOrderEntryResponse;
@@ -182,6 +192,62 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 		}
 		return orderResponse;
 	}
+	
+	@Override
+	public Paymentgatewayresponse getPaymentGetway(Bsepay request) {
+		
+		logger.info("getPaymentGetway(): Get payment getway for current transaction of customer- "+ request.getMobile());
+		Paymentgatewayresponse orderResponse = new Paymentgatewayresponse();
+		Paymentgateway gatewayrequest = new Paymentgateway();
+		if(env.getProperty(CommonConstants.BSE_ENABLED).equalsIgnoreCase("Y")){
+			try{
+				logger.info("getPaymentGetway(): Begin BSE service invoke process for payment gateway");
+				gatewayrequest.setClientcode(request.getTransstatus().getClientcode());
+				gatewayrequest.setModeofpayment(request.getPaymentmode());
+				
+				if(request.getPaymentmode().equalsIgnoreCase("DIRECT") || request.getPaymentmode().equalsIgnoreCase("NODAL") || request.getPaymentmode().equalsIgnoreCase("UPI") ) {
+					gatewayrequest.setBankid(request.getBankgatewaycode());
+				}
+				gatewayrequest.setAccountno(request.getBankacc());
+				gatewayrequest.setIfsc(request.getIfscode());
+				gatewayrequest.setOrderno(request.getTransstatus().getBseOrderNoFromResponse());
+				gatewayrequest.setTotalamount(Double.toString(request.getTransstatus().getInvestamount()));
+				gatewayrequest.setInternalrefno(request.getTransstatus().getTransactionReference());
+				gatewayrequest.setLoopbackurl(request.getLoopbackurl());
+				gatewayrequest.setInternalrefno(request.getTransstatus().getTransactionReference());
+//				gatewayrequest.setNeftref(null); //TO DO when NEFT is added
+				if(request.getPayvia().equalsIgnoreCase("UPI")) {
+					gatewayrequest.setVpaid(request.getUpiid());
+				}
+//				gatewayrequest.setLoopbackurl();
+				
+				
+				orderResponse = bseRestClientService.purchasepaymentgateway(gatewayrequest);
+//				BseBeansMapper.bseOrderPayemtResultMapper(orderResponse, response);
+				
+				if(orderResponse.getStatuscode().equalsIgnoreCase("100")) {
+					String data = orderResponse.getResponse();
+					data = data.replace("\\n", "");
+					data = data.replace("\\t", "");
+					data = data.replace("\\r", "");
+					data = data.replace("\\", "");
+					orderResponse.setResponse(data);
+				}
+			}catch(Exception e){
+				logger.error("Failed to request pending payments url",e);
+				//			result="BSE_CONN_FAIL";
+				orderResponse.setStatuscode("101");
+				orderResponse.setResponse("Internal error.");
+			}
+		}else{
+			logger.info("BSE connction is currently disabled");
+			orderResponse.setStatuscode(CommonConstants.BSE_API_SERVICE_DISABLED);
+			orderResponse.setResponse("Service disabled currently.");
+		}
+		return orderResponse;
+	}
+
+	
 
 	@Override
 	public BseAOFUploadResponse uploadAOFFormtoBSE(String fileName, String aoffolderLocation, String clientCode, String filename) {
@@ -463,6 +529,45 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 
 		return response;
 	}
+
+	@Override
+	public PauseSIPResponse pausesip(String clientid, String registrationno, String noofinstallments) {
+		logger.info("Process and map pause SIP request..");
+		PauseSIP requestdata = new PauseSIP();
+		
+		requestdata.setClientid(clientid);
+		requestdata.setRegistrationno(registrationno);
+		requestdata.setNoofinstallments(noofinstallments);
+		requestdata.setRegistrationtype("XSIP");
+		requestdata.setModificationtype("PAUSE");
+		PauseSIPResponse apiresponse = new PauseSIPResponse();
+		apiresponse = bseRestClientService.pausexsip(requestdata);
+
+		return apiresponse;
+	}
+
+	@Override
+	public Nomineeregistrationresponse verifynominee(Nomineeverification nomineedata, String regtype) {
+		
+		logger.info("Registration type- "+ regtype);
+		Nomineeregistrationrequest registrationrequest = BseBeansMapper.nomineerecordtorequest(nomineedata, "MOD");
+		
+		Nomineeregistrationresponse response = bseRestClientService.nomineeregister(registrationrequest);
+		
+		
+		return response;
+	}
+
+	@Override
+	public Nominee2faresponse nomineeauthenticate(Nominee2farequest request) {
+		
+		request.setType("NOMINEE");
+		request.setFiller1("1");
+		Nominee2faresponse response = bseRestClientService.nomineeauthenticate(request);
+		return response;
+	}
+
+	
 
 	/*
 	public static void main(String[] args){

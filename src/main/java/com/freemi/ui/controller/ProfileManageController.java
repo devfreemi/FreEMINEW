@@ -1,6 +1,7 @@
 package com.freemi.ui.controller;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ import com.freemi.common.util.CommonConstants;
 import com.freemi.common.util.CommonTask;
 import com.freemi.common.util.InvestFormConstants;
 import com.freemi.entity.bse.BseFileUpload;
+import com.freemi.entity.bse.Nomineeregistrationresponse;
 import com.freemi.entity.general.ForceChangePassword;
 import com.freemi.entity.general.MfCollatedFundsView;
 //import com.freemi.database.service.BseEntryManager;
@@ -46,6 +48,10 @@ import com.freemi.entity.general.ResetPassword;
 import com.freemi.entity.general.UserProfile;
 import com.freemi.entity.general.UserProfileLdap;
 import com.freemi.entity.investment.BseMandateDetails;
+import com.freemi.entity.investment.Errorparam;
+import com.freemi.entity.investment.MFNominationForm;
+import com.freemi.entity.investment.Nominee2faresponse;
+import com.freemi.entity.investment.Nomineeverification;
 import com.freemi.entity.loan.Loanreqcompleteform;
 import com.freemi.services.interfaces.BseEntryManager;
 import com.freemi.services.interfaces.ProfileRestClientService;
@@ -673,7 +679,214 @@ public class ProfileManageController{
 		return returnurl;
 	}
 
+	@RequestMapping(value = "/nominee-registration/mutual-funds", method = RequestMethod.GET)
+	public String nomineeregistermutualfunds(Model model,HttpServletRequest request,HttpServletResponse response, HttpSession session) {
+		logger.info("@@@@ nomineeregistermutualfundsController @@@@- "+ request.getQueryString());
+		String returnurl="bsemf/nominee-registration";
+		Nomineeverification nomineedetails = new Nomineeverification();
+		MFNominationForm nominee = null;
+		try {
+			if(session.getAttribute("token") == null){
+				try {
+					returnurl="redirect:/login?ref="+ URLEncoder.encode(request.getRequestURL().toString(), StandardCharsets.UTF_8.toString());
+				} catch (UnsupportedEncodingException e) {
+					logger.error("getemandates(): failed to encode referrel url",e.getMessage());
+					returnurl="redirect:/login";
+				}
+			}else{
+				String mobile = session.getAttribute("userid").toString();
+				ResponseEntity<String> sessionValidCheck = profileRestClientService.validateUserToken(session.getAttribute("userid")!=null?session.getAttribute("userid").toString():"BLANK", session.getAttribute("token").toString(), CommonTask.getClientSystemIp(request));
+				logger.info("nomineeregistermutualfunds(): Session validation status- "+ sessionValidCheck.getBody());
 
+				if (sessionValidCheck.getBody().equals("VALID")) {
+					String clientid = bseEntryManager.getClientIdfromMobile(mobile);
+				if(null!=clientid) {
+					nomineedetails.setMutualfundaccountexist("Y");
+					nomineedetails.setClientid(clientid);
+					nomineedetails.setMobileno(mobile);
+					try {
+						nominee = bseEntryManager.getnomineefetails(mobile, clientid);
+					}catch(Exception e) {
+						nomineedetails.setNomineedetailsexist("ERROR");
+					}
+					if(null!=nominee) {
+						nomineedetails.setNomineedetails(nominee);
+						nomineedetails.setNomineedetailsexist("Y");
+					}else {
+						nomineedetails.setNomineedetailsexist("N");
+					}
+				}else {
+					logger.info("No BSE profile found for mobile- "+ mobile);
+					model.addAttribute("errormsg", "Your do not have Mutual Fund account registerd. Contact admin in case any issue.");
+				}
+					
+				}else {
+					try {
+						returnurl="redirect:/login?ref="+ URLEncoder.encode("/nominee-registration/mutual-funds", StandardCharsets.UTF_8.toString());
+					} catch (UnsupportedEncodingException e) {
+						logger.error("nomineeregistermutualfunds(): failed to encode url- ",e);
+						returnurl="redirect:/login";
+					}
+				}
+			}
+		}catch(Exception e) {
+			logger.error("Error while processing nomineeregistermutualfunds",e);
+		}
+		
+		
+		model.addAttribute("nominee", nomineedetails);
+		return returnurl;
+	}
+	
+	@RequestMapping(value = "/nominee-registration/mutual-funds", method = RequestMethod.POST)
+	public String nomineeregistermutualfundspost(@ModelAttribute("nominee")Nomineeverification nomineeverify, Model model,HttpServletRequest request,HttpServletResponse response, HttpSession session) {
+		logger.info("@@@@ nomineeregistermutualfundspost @@@@- ");
+		String returnurl="bsemf/nominee-registration-step";
+		//Nomineeverification nomineedetails = new Nomineeverification();
+		MFNominationForm nominee = null;
+		Nomineeregistrationresponse apiresponse;
+		try {
+			if(session.getAttribute("token") == null){
+				try {
+					returnurl="redirect:/login?ref="+ URLEncoder.encode(request.getRequestURL().toString(), StandardCharsets.UTF_8.toString());
+				} catch (UnsupportedEncodingException e) {
+					logger.error("getemandates(): failed to encode referrel url",e.getMessage());
+					returnurl="redirect:/login";
+				}
+			}else{
+				String mobile = session.getAttribute("userid").toString();
+				ResponseEntity<String> sessionValidCheck = profileRestClientService.validateUserToken(session.getAttribute("userid")!=null?session.getAttribute("userid").toString():"BLANK", session.getAttribute("token").toString(), CommonTask.getClientSystemIp(request));
+				logger.info("nomineeregistermutualfundspost(): Session validation status- "+ sessionValidCheck.getBody());
+				if(mobile.equalsIgnoreCase(nomineeverify.getMobileno()) ) {
+				if (sessionValidCheck.getBody().equals("VALID")) {
+					
+					apiresponse = bseEntryManager.submitnomineeverification(nomineeverify);
+					if(apiresponse.getStatuscode().equalsIgnoreCase("100") || (apiresponse.getStatuscode().equalsIgnoreCase("101") && apiresponse.getErrormessage()[0].getErrorremark().equalsIgnoreCase("FAILED : DATA HAS BEEN ALREADY UPLOADED")  )) {
+						//model.addAttribute("nominee", nomineeverify);
+						model.addAttribute("errormsg", apiresponse.getRemarks());
+						model.addAttribute("response", apiresponse);
+					}else {
+						logger.info("Request not successful");
+						Errorparam [] errordata = apiresponse.getErrormessage();
+						StringBuffer str = new StringBuffer();
+						if(null!=errordata) {
+							str.append(errordata.length>0?errordata[0].getErrorremark():"Request failed to process.");
+						}
+						if(null!=apiresponse.getRemarks()) {
+							str.append("\n").append(apiresponse.getRemarks());
+						}
+						model.addAttribute("errormsg", str.toString());
+						returnurl = "bsemf/nominee-registration";
+//						model.addAttribute("response", apiresponse);
+						//return returnurl;
+					}
+				}else {
+					try {
+						returnurl="redirect:/login?ref="+ URLEncoder.encode("/nominee-registration/mutual-funds", StandardCharsets.UTF_8.toString());
+					} catch (UnsupportedEncodingException e) {
+						logger.error("nomineeregistermutualfunds(): failed to encode url- ",e);
+						returnurl="redirect:/login";
+					}
+				}
+				}else {
+//					model.addAttribute("nominee", nomineeverify);
+					model.addAttribute("errormsg", "Account details mismatch!");
+					returnurl = "bsemf/nominee-registration";
+				}
+			}
+		}catch(Exception e) {
+			logger.error("Error while processing nomineeregistermutualfunds",e);
+			model.addAttribute("errormsg", "Inernal error.");
+			returnurl = "bsemf/nominee-registration";
+		}
+		
+		
+		model.addAttribute("nominee", nomineeverify);
+		logger.info("Returning to URL - "+ returnurl);
+		return returnurl;
+	}
+	
+	
+	
+	@RequestMapping(value = "/nominee-registration/mutual-funds-authenticate", method = RequestMethod.POST)
+	public String nomineeauthenticatepost(@ModelAttribute("reponse")Nomineeregistrationresponse nomineeresponse, Model model,HttpServletRequest request,HttpServletResponse response, HttpSession session) {
+		logger.info("@@@@ nomineeauthenticatepost @@@@- ");
+		String returnurl="bsemf/nominee-registration-step";
+		Nominee2faresponse apiresponse;
+		try {
+			if(session.getAttribute("token") == null){
+				try {
+					returnurl="redirect:/login?ref="+ URLEncoder.encode(request.getRequestURL().toString(), StandardCharsets.UTF_8.toString());
+				} catch (UnsupportedEncodingException e) {
+					logger.error("getemandates(): failed to encode referrel url",e.getMessage());
+					returnurl="redirect:/login";
+				}
+			}else{
+				String mobile = session.getAttribute("userid").toString();
+				ResponseEntity<String> sessionValidCheck = profileRestClientService.validateUserToken(session.getAttribute("userid")!=null?session.getAttribute("userid").toString():"BLANK", session.getAttribute("token").toString(), CommonTask.getClientSystemIp(request));
+				logger.info("nomineeregistermutualfundspost(): Session validation status- "+ sessionValidCheck.getBody());
+//				if(!mobile.equalsIgnoreCase(nomineeverify.getMobileno()) ) {
+				if (sessionValidCheck.getBody().equals("VALID")) {
+					
+					String callbackUrl = URI.create(request.getRequestURL().toString()).resolve(request.getContextPath())
+							.toString()
+							+ "/nominee-registration/nominee-verify-status";
+					
+					String clientid = bseEntryManager.getClientIdfromMobile(mobile);
+					apiresponse = bseEntryManager.authenticatenominee(mobile, clientid,callbackUrl);
+					if(apiresponse.getStatuscode().equalsIgnoreCase("100")) {
+						
+						returnurl = "redirect:"+apiresponse.getReturnrul();
+					}else {
+						logger.info("Request not successful");
+						
+						model.addAttribute("errormsg",apiresponse.getErrordescription());
+						returnurl = "bsemf/nominee-registration-step";
+					}
+				}else {
+					try {
+						returnurl="redirect:/login?ref="+ URLEncoder.encode("/nominee-registration/mutual-funds", StandardCharsets.UTF_8.toString());
+					} catch (UnsupportedEncodingException e) {
+						logger.error("nomineeregistermutualfunds(): failed to encode url- ",e);
+						returnurl="redirect:/login";
+					}
+				}
+				/*
+				}else {
+					model.addAttribute("errormsg", "Account details mismatch!");
+					returnurl = "bsemf/nominee-registration";
+				}*/
+			}
+		}catch(Exception e) {
+			logger.error("Error while processing nomineeregistermutualfunds",e);
+			model.addAttribute("errormsg", "Inernal error.");
+			returnurl = "bsemf/nominee-registration-step";
+		}
+		
+		model.addAttribute("response", nomineeresponse);
+		logger.info("Returning to URL - "+ returnurl);
+		return returnurl;
+	}
+	
+	
+	@RequestMapping(value = "/nominee-registration/nominee-verify-status", method = RequestMethod.GET)
+	public String nomineeverifystatus(@RequestParam(name = "STATUS", required = false) String status, Model model,HttpServletRequest request,HttpServletResponse response, HttpSession session) {
+		logger.info("@@@@ nomineeverifystatus @@@@- ");
+		String returnurl="bsemf/nominee-verify-status";
+		try {
+			model.addAttribute("status", null!=status?status:"Unknown");
+		}catch(Exception e) {
+			logger.error("Error while processing nomineeverifystatus",e);
+			model.addAttribute("errormsg", "Inernal error.");
+			returnurl = "bsemf/nominee-registration-step";
+		}
+		
+		logger.info("Returning to URL - "+ returnurl);
+		return returnurl;
+	}
+
+	
+	
 	/*
 	@RequestMapping(value = "/blogs", method = RequestMethod.GET)
 	public String getBlogs(ModelMap model) {

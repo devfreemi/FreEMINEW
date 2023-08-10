@@ -20,6 +20,9 @@ import com.freemi.entity.bse.BseAOFUploadResponse;
 import com.freemi.entity.bse.BseApiResponse;
 import com.freemi.entity.bse.BseOrderPaymentRequest;
 import com.freemi.entity.bse.BseOrderPaymentResponse;
+import com.freemi.entity.bse.Bsepay;
+import com.freemi.entity.bse.Nomineeregistrationresponse;
+import com.freemi.entity.bse.Paymentgatewayresponse;
 import com.freemi.entity.database.MfTopFundsInventory;
 import com.freemi.entity.database.UserBankDetails;
 import com.freemi.entity.general.ClientSystemDetails;
@@ -38,8 +41,11 @@ import com.freemi.entity.investment.MFCamsFolio;
 import com.freemi.entity.investment.MFCamsValueByCategroy;
 import com.freemi.entity.investment.MFCustomers;
 import com.freemi.entity.investment.MFKarvyValueByCategory2;
+import com.freemi.entity.investment.MFNominationForm;
 import com.freemi.entity.investment.MfAllInvestorValueByCategory;
 import com.freemi.entity.investment.MfNavData;
+import com.freemi.entity.investment.Nominee2faresponse;
+import com.freemi.entity.investment.Nomineeverification;
 import com.freemi.entity.investment.SelectMFFund;
 import com.freemi.entity.investment.TransactionStatus;
 import com.freemi.services.interfaces.BseEntryManager;
@@ -936,6 +942,30 @@ public class BseRestClient implements BseEntryManager {
 
 	@Override
 	public List<BseMandateDetails> getmandates(String mobile, String clientid, String otther1) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Paymentgatewayresponse getPaymentGateway(Bsepay request) {
+		
+		return null;
+	}
+
+	@Override
+	public MFNominationForm getnomineefetails(String mobile, String clientid) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Nomineeregistrationresponse submitnomineeverification(Nomineeverification nomineedata) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Nominee2faresponse authenticatenominee(String mobile, String clientid, String callbackurl) {
 		// TODO Auto-generated method stub
 		return null;
 	}

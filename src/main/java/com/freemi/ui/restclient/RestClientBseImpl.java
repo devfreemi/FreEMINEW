@@ -25,10 +25,16 @@ import com.freemi.entity.bse.BsePaymentStatus;
 import com.freemi.entity.bse.BseRegistrationMFD;
 import com.freemi.entity.bse.BseSipOrderEntry;
 import com.freemi.entity.bse.BseXipISipOrderEntry;
+import com.freemi.entity.bse.Nomineeregistrationrequest;
+import com.freemi.entity.bse.Nomineeregistrationresponse;
 import com.freemi.entity.bse.PauseSIP;
 import com.freemi.entity.bse.PauseSIPResponse;
+import com.freemi.entity.bse.Paymentgateway;
+import com.freemi.entity.bse.Paymentgatewayresponse;
 import com.freemi.entity.bse.Uccregisterresponse;
 import com.freemi.entity.investment.Emandatestaus;
+import com.freemi.entity.investment.Nominee2farequest;
+import com.freemi.entity.investment.Nominee2faresponse;
 import com.freemi.services.interfaces.BseRestClientService;
 import com.google.gson.JsonObject;
 
@@ -239,7 +245,9 @@ public class RestClientBseImpl implements BseRestClientService {
 			    String order = Long.toString(Calendar.getInstance().getTimeInMillis()).substring(0,5);
 //				returnRes = "NEW|201902212627300013|1466093|SUMANTA1|26273|DEBA593C|ORD CONF: Your Request for FRESH PURCHASE 5000.000  in SCHEME: ID289-DR THRO : PHYSICAL is confirmed for CLIENT : DEBASISH SARKAR (Code: DEBA593C)  CONFIRMATION TIME: Feb 21 2019  9:28PM ENTRY BY:  ORDER NO: 1466093 OFFLINE ORDER WILL BE TRIGGERED  ON NEXT WORKING DAY|0";
 				//				returnRes = "NEW|201902122627300002|0|SUMANTA1|26273|DEBA593C|FAILED: ORDER ENTRY NOT ALLOWED IN THE SCHEME|1";
-				returnRes = "NEW|201904142627300052|"+order+"|SUMANTA1|26273|DEBA593C|ORD CONF: Your Request for FRESH REDEMPTION 500.000 AMOUNT in SCHEME: IDBI-NJGP-GR THRO : PHYSICAL is confirmed for CLIENT : DEBASISH SARKAR (Code: DEBA593C)  CONFIRMATION TIME: Apr 14 2019  9:32PM ENTRY BY:  ORDER NO: 1554280 OFFLINE ORDER WILL BE TRIGGERED  ON NEXT WORKING DAY|0";
+				returnRes = "NEW|"+form.getTransNo()+"|"+order+"|SUMANTA1|26273|"+form.getClientCode()+"|DUMMY RESPONSE : ORD CONF:Your Request for FRESH REDEMPTION 500.000 AMOUNT in SCHEME: "+form.getSchemeCd()+" THRO : PHYSICAL is confirmed for CLIENT : DUMMY NAME (Code: "+form.getClientCode()+")  CONFIRMATION TIME: Apr 14 2019  9:32PM ENTRY BY:  ORDER NO: "+order+" OFFLINE ORDER WILL BE TRIGGERED  ON NEXT WORKING DAY|0";
+//				returnRes = "NEW|"+form.getTransNo()+"|"+order+"|sumanta1|26273|TES654R451|FAILED: CLIENT NOMINEE AUTHENTICATION PENDING|1";
+				
 			}
 
 		} catch (JsonProcessingException e) {
@@ -707,8 +715,151 @@ public class RestClientBseImpl implements BseRestClientService {
 			response.setBseremarks("Internal error. Please try after sometime");
 		}
 		
-		return null;
+		return response;
 	}
+
+	@Override
+	public Paymentgatewayresponse purchasepaymentgateway(Paymentgateway payrequest) {
+		logger.info("purchasepaymentgateway(): Process to send request...");
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_MF_BSE_V1) + "/payment-new";
+		ObjectMapper mapper = new ObjectMapper();
+		RestTemplate restTemplate = new RestTemplate();
+		String formdata = null;
+		Paymentgatewayresponse response = new Paymentgatewayresponse();
+		try {
+			formdata = mapper.writeValueAsString(payrequest);
+			
+			logger.info("Requesting for payment gateway- "+ formdata);
+			HttpHeaders headers = new HttpHeaders();
+			headers.set("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
+			HttpEntity<String> entity = new HttpEntity<String>(formdata,headers);
+
+			if(env.getProperty(CommonConstants.BSE_CALL_TEST_ENABLED).equalsIgnoreCase("N")){
+				response= restTemplate.postForObject(url, entity, Paymentgatewayresponse.class);
+				logger.info("Response from SIP pause- "+ mapper.writeValueAsString(response));
+			}else{
+				logger.info("purchasepaymentgateway(): Test phase enabled. Sending back dummy response");
+				String dummydata = "{\r\n" + 
+						"  \"responsestring\": \"\\r\\n\\r\\n\\r\\n\\r\\n<html>\\r\\n<head><title>Redirecting to Bank</title>\\r\\n<style>\\r\\n\\r\\n.bodytxt4 {\\r\\n\\r\\n\\tfont-family: Verdana, Arial, Helvetica, sans-serif;\\r\\n\\tfont-size: 12px;\\r\\n\\tfont-weight: bold;\\r\\n\\tcolor: #666666;\\r\\n}\\r\\n.bodytxt {\\r\\n\\tfont-family: Verdana, Arial, Helvetica, sans-serif;\\r\\n\\tfont-size: 13px;\\r\\n\\tfont-weight: normal;\\r\\n\\tcolor: #000000;\\r\\n\\r\\n}\\r\\n.bullet1 {\\r\\n\\r\\n\\tlist-style-type:\\tsquare;\\r\\n\\tlist-style-position: inside;\\r\\n\\tlist-style-image: none;\\r\\n\\tfont-family: Verdana, Arial, Helvetica, sans-serif;\\r\\n\\tfont-size: 10px;\\r\\n\\tfont-weight: bold;\\r\\n\\tcolor: #FF9900;\\r\\n}\\r\\n.bodytxt2 {\\r\\n\\tfont-family: Verdana, Arial, Helvetica, sans-serif;\\r\\n\\tfont-size: 8pt;\\r\\n\\tfont-weight: normal;\\r\\n\\tcolor: #333333;\\r\\n\\r\\n}\\r\\nA.sac2 {\\r\\n\\tCOLOR: #000000;\\r\\n\\tfont-family: Verdana, Arial, Helvetica, sans-serif;\\r\\n\\tfont-size: 10px;\\r\\n\\tfont-weight: bold;\\r\\n\\ttext-decoration: none;\\r\\n}\\r\\nA.sac2:visited {\\r\\n\\tCOLOR: #314D5A; TEXT-DECORATION: none\\r\\n}\\r\\nA.sac2:hover {\\r\\n\\tCOLOR: #FF9900; TEXT-DECORATION: underline\\r\\n}\\r\\n</style>\\r\\n\\r\\n</head>\\r\\n<script language=JavaScript>\\r\\n\\r\\n\\r\\nvar message=\\\"Function Disabled!\\\";\\r\\n\\r\\n\\r\\nfunction clickIE4(){\\r\\nif (event.button==2){\\r\\nreturn false;\\r\\n}\\r\\n}\\r\\n\\r\\nfunction clickNS4(e){\\r\\nif (document.layers||document.getElementById&&!document.all){\\r\\nif (e.which==2||e.which==3){\\r\\nreturn false;\\r\\n}\\r\\n}\\r\\n}\\r\\n\\r\\nif (document.layers){\\r\\ndocument.captureEvents(Event.MOUSEDOWN);\\r\\ndocument.onmousedown=clickNS4;\\r\\n}\\r\\nelse if (document.all&&!document.getElementById){\\r\\ndocument.onmousedown=clickIE4;\\r\\n}\\r\\n\\r\\ndocument.oncontextmenu=new Function(\\\"return false\\\")\\r\\n\\r\\n</script>\\r\\n<table width=\\\"100%\\\" border=\\\"0\\\" cellspacing=\\\"0\\\" cellpadding=\\\"0\\\">\\r\\n  <tr>\\r\\n    <td align=\\\"left\\\" valign=\\\"top\\\">\\r\\n<table width=\\\"100%\\\" border=\\\"0\\\" cellspacing=\\\"0\\\" cellpadding=\\\"0\\\">\\r\\n        <tr> \\r\\n          <td align=\\\"center\\\" valign=\\\"middle\\\"><table width=\\\"100%\\\" border=\\\"0\\\" cellspacing=\\\"0\\\" cellpadding=\\\"0\\\">\\r\\n             \\r\\n              <tr>\\r\\n                <td  align=\\\"center\\\"></td>\\r\\n              </tr>\\r\\n              <tr>\\r\\n                <td height=\\\"85\\\" align=\\\"center\\\"><br>\\r\\n                  <table width=\\\"80%\\\" border=\\\"0\\\" cellpadding=\\\"0\\\" cellspacing=\\\"1\\\" bgcolor=\\\"#CCCCCC\\\">\\r\\n                    <tr>\\r\\n                      <td bgcolor=\\\"#CCCCCC\\\"><table width=\\\"100%\\\" border=\\\"0\\\" cellpadding=\\\"6\\\" cellspacing=\\\"0\\\" bgcolor=\\\"#FFFFFF\\\">\\r\\n                          <tr> \\r\\n                            <td colspan=\\\"2\\\" align=\\\"left\\\" valign=\\\"bottom\\\"><span class=\\\"bodytxt4\\\">Your payment request is being processed...</span></td>\\r\\n                          </tr>\\r\\n                          <tr valign=\\\"top\\\"> \\r\\n                            <td colspan=\\\"2\\\" align=\\\"left\\\"><table width=\\\"100%\\\" border=\\\"0\\\" cellspacing=\\\"0\\\" cellpadding=\\\"0\\\">\\r\\n                                <tr> \\r\\n                                  <td width=\\\"87%\\\" bgcolor=\\\"#cccccc\\\" height=\\\"1\\\" align=\\\"center\\\"></td>\\r\\n                                </tr>\\r\\n                              </table></td>\\r\\n                          </tr>\\r\\n                          <tr> \\r\\n                            <td width=\\\"60%\\\" align=\\\"left\\\" valign=\\\"bottom\\\"><table width=\\\"95%\\\" border=\\\"0\\\" cellpadding=\\\"1\\\" cellspacing=\\\"0\\\" bgcolor=\\\"#FFFFFF\\\">\\r\\n                                <tr> \\r\\n                                  <td align=\\\"right\\\" valign=\\\"top\\\"></td>\\r\\n                                  <td class=\\\"bodytxt\\\">&nbsp;</td>\\r\\n                                </tr>\\r\\n                                <tr> \\r\\n                                  <td height=\\\"19\\\"  align=\\\"right\\\" valign=\\\"top\\\"><li class=\\\"bullet1\\\"></li></td>\\r\\n                                  <td class=\\\"bodytxt2\\\">This is a secure payment \\r\\n                                    gateway using 128 bit SSL encryption.</td>\\r\\n                                </tr>\\r\\n                                <tr> \\r\\n                                  <td align=\\\"right\\\" valign=\\\"top\\\"> <li class=\\\"bullet1\\\"></li></td>\\r\\n                                  <td class=\\\"bodytxt2\\\" >When you submit the transaction, \\r\\n                                    the server will take about 1 to 5 seconds \\r\\n                                    to process, but it may take longer at certain \\r\\n                                    times. </td>\\r\\n                                </tr>\\r\\n                                <tr> \\r\\n                                  <td align=\\\"right\\\" valign=\\\"top\\\"><li class=\\\"bullet1\\\"></li></td>\\r\\n                                  <td class=\\\"bodytxt2\\\" >Please do not press \\\"Submit\\\" \\r\\n                                    button once again or the \\\"Back\\\" or \\\"Refresh\\\" \\r\\n                                    buttons. </td>\\r\\n                                </tr>\\r\\n                              </table></td>\\r\\n                            <td align=\\\"right\\\" valign=\\\"bottom\\\"><table width=\\\"80%\\\" border=\\\"0\\\" cellpadding=\\\"1\\\" cellspacing=\\\"0\\\" bgcolor=\\\"#FFFFFF\\\">\\r\\n                                <tr bgcolor=\\\"#FFFCF8\\\"> \\r\\n                                  <td align=\\\"right\\\" bgcolor=\\\"#FFFFFF\\\"></td>\\r\\n                                </tr>\\r\\n                                <tr bgcolor=\\\"#FFFCF8\\\"> \\r\\n                                  <td align=\\\"right\\\" valign=\\\"middle\\\" bgcolor=\\\"#FFFFFF\\\" class=\\\"bodytxt2\\\">&nbsp;</td>\\r\\n                                </tr>\\r\\n                                <tr bgcolor=\\\"#FFFCF8\\\"> \\r\\n                                  <td align=\\\"right\\\" bgcolor=\\\"#FFFFFF\\\" class=\\\"bodytxt2\\\" >&nbsp;</td>\\r\\n                                </tr>\\r\\n                              </table></td>\\r\\n                          </tr>\\r\\n                        </table></td>\\r\\n                    </tr>\\r\\n                  </table>\\r\\n                  \\r\\n                </td>\\r\\n              </tr>\\r\\n            </table>\\r\\n           \\r\\n          \\r\\n         \\r\\n             </td>\\r\\n        </tr>  \\r\\n\\r\\n\\r\\n      </table></td>\\r\\n  </tr>\\r\\n  \\r\\n</table>\\r\\n\\r\\n\\r\\n\\r\\n<body>\\r\\n<form name=\\\"Bankfrm\\\" method=\\\"post\\\" action='https://shopping.icicibank.com/corp/BANKAWAY?IWQRYTASKOBJNAME=bay_mc_login&BAY_BANKID=ICI'>\\r\\n \\r\\n\\t\\t\\t  \\r\\n              <input type = \\\"hidden\\\" name = \\\"MD\\\" value=\\\"P\\\">\\r\\n\\t\\t\\t\\r\\n              \\r\\n\\t\\t\\t  \\r\\n              <input type = \\\"hidden\\\" name = \\\"PID\\\" value=\\\"000000001086\\\">\\r\\n\\t\\t\\t\\r\\n              \\r\\n\\t\\t\\t  \\r\\n              <input type = \\\"hidden\\\" name = \\\"ES\\\" value=\\\"hbVjLCMyDHSYxiBaT7dJgaVXbhCCcxOAk4mNJPkwEQlcdklihe4UQTNrhsjzGEl/ts8Sl9RCMvWWeSMU1MZ7vRMHGEv94hBmuaoqeg0CLXZGgqqZp0aRKazsBdLAYpqTZ94askMgUzU34Bcgb4dogol5jxM0AolY2RtMcDhHrEDjpD3ygzEOJaaT97DmUXVR7p9iQcr1q5TRPpyroTq1Urboe2XFC+91ndxTYa3AjkiPpI+6/JiAh/Wt2TMkWfwm\\\">\\r\\n\\t\\t\\t\\r\\n              \\r\\n\\t\\t\\t  \\r\\n              <input type = \\\"hidden\\\" name = \\\"SPID\\\" value=\\\"NA\\\">\\r\\n\\t\\t\\t\\r\\n              \\r\\n\\t</form>\\r\\n</body>\\r\\n<script>\\r\\ndocument.Bankfrm.submit();\\r\\n</script>\\r\\n</html>\\r\\n\",\r\n" + 
+						"  \"statuscode\": \"100\",\r\n" + 
+						"  \"internalrefno\": \"8226212776538751473\",\r\n" + 
+						"  \"filler1\": \"\",\r\n" + 
+						"  \"filler2\": \"\",\r\n" + 
+						"  \"filler3\": \"\",\r\n" + 
+						"  \"filler4\": \"\"\r\n" + 
+						"}";
+				response = mapper.readValue(dummydata, Paymentgatewayresponse.class);
+			}
+		} catch (Exception e) {
+			logger.error("purchasepaymentgateway(): Failed to write process data", e);
+			response.setStatuscode("101");
+			response.setResponse("Internal error. Please try after sometime");
+		}
+		return response;
+	}
+	
+	
+	@Override
+	public Nomineeregistrationresponse nomineeregister(Nomineeregistrationrequest nomineerequest) {
+		logger.info("nomineeregister(): Process to send request...");
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_MF_BSE_V1) + "/nominee-register";
+		ObjectMapper mapper = new ObjectMapper();
+		RestTemplate restTemplate = new RestTemplate();
+		String formdata = null;
+		logger.info("Connect URL - "+ url);
+		Nomineeregistrationresponse response = new Nomineeregistrationresponse();
+		try {
+			formdata = mapper.writeValueAsString(nomineerequest);
+			
+			logger.info("Requesting for nominee register data- "+ formdata);
+			HttpHeaders headers = new HttpHeaders();
+			headers.set("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
+			HttpEntity<String> entity = new HttpEntity<String>(formdata,headers);
+
+			if(env.getProperty(CommonConstants.BSE_CALL_TEST_ENABLED).equalsIgnoreCase("N")){
+				response= restTemplate.postForObject(url, entity, Nomineeregistrationresponse.class);
+				logger.info("Response from nominee register- "+ mapper.writeValueAsString(response));
+			}else{
+				logger.info("nomineeregister(): Test phase enabled. Sending back dummy response");
+				
+				String dummydata = "{\r\n" + 
+						" \"ErrorMessage\": [],\r\n" + 
+						" \"StatusCode\": \"100\",\r\n" + 
+						" \"Type\": \"NOMINEE\",\r\n" + 
+						" \"Remarks\": \"NOMINATION DETAILS REGISTERED SUCCESSFULLY.\",\r\n" + 
+						" \"Filler1\": \"\",\r\n" + 
+						" \"Filler2\": \"\",\r\n" + 
+						" \"Filler3\": \"\"\r\n" + 
+						"}";
+				
+				/*
+				String dummydata = "{\r\n" + 
+						" \"ErrorMessage\": [\"Client do not exist\"],\r\n" + 
+						" \"StatusCode\": \"101\",\r\n" + 
+						" \"Type\": \"NOMINEE\",\r\n" + 
+						" \"Remarks\": \"\",\r\n" + 
+						" \"Filler1\": \"\",\r\n" + 
+						" \"Filler2\": \"\",\r\n" + 
+						" \"Filler3\": \"\"\r\n" + 
+						"}";
+				*/
+				response = mapper.readValue(dummydata, Nomineeregistrationresponse.class);
+				
+				logger.info("Response (Dummy) - "+ mapper.writeValueAsString(response));
+			}
+		} catch (Exception e) {
+			logger.error("nomineeregister(): Failed to process data", e);
+			response.setStatuscode("101");
+			response.setRemarks("Internal error. Please try after sometime");
+		}
+		return response;
+	}
+	
+	
+	@Override
+	public Nominee2faresponse nomineeauthenticate(Nominee2farequest nomineerequest) {
+		logger.info("nomineeauthenticate(): Process to send request...");
+		final String url = env.getProperty(CommonConstants.URL_SERVICE_MF_BSE_V1) + "/nominee-authenticate";
+		ObjectMapper mapper = new ObjectMapper();
+		RestTemplate restTemplate = new RestTemplate();
+		String formdata = null;
+		Nominee2faresponse response = new Nominee2faresponse();
+		logger.info("Connect URL - "+ url);
+		try {
+			formdata = mapper.writeValueAsString(nomineerequest);
+			
+			logger.info("Requesting for nominee authenticate data- "+ formdata);
+			HttpHeaders headers = new HttpHeaders();
+			headers.set("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
+			HttpEntity<String> entity = new HttpEntity<String>(formdata,headers);
+
+			if(env.getProperty(CommonConstants.BSE_CALL_TEST_ENABLED).equalsIgnoreCase("N")){
+				response= restTemplate.postForObject(url, entity, Nominee2faresponse.class);
+				logger.info("Response from nominee register- "+ mapper.writeValueAsString(response));
+			}else{
+				logger.info("nomineeauthenticate(): Test phase enabled. Sending back dummy response");
+				String dummydata = "{\r\n" + 
+						" \"Filler1\": \"1\",\r\n" + 
+						" \"Filler2\": \"\",\r\n" + 
+						" \"Filler3\": \"\",\r\n" + 
+						" \"Type\": \"NOMINEE\",\r\n" + 
+						" \"LoopbackReturnUrl\": \"https://www.bseindia.com\",\r\n" + 
+						" \"ErrorDescription\": \"HOLDER LINK GENRATED SUCCESSFULLY\",\r\n" + 
+						" \"StatusCode\": \"100\",\r\n" + 
+						" \"InternalRefrenceNo\": \" \",\r\n" + 
+						" \"ReturnUrl\": \r\n" + 
+						"\"https://bsestarmfdemo.bseindia.com/2FA_ClientMasterNominee.aspx?bTJ%2fS8L%2fHwHVQkd%2fwMnC5WaZIw7UIDlfEgVj%2b3mNYlsb%2bFBANqsnRUOJl%2fDUDp1QEQ2wE2KKd8%2f2Y6TrLKTa4pS6A2ZEycbwTVuIUG9sbPJ1JDOVvnkaoL32utq9ipgV7fLBGXq8aaZCf5bcp%2f2cvXw%2fuZhq\"\r\n" + 
+						"}";
+				response = mapper.readValue(dummydata, Nominee2faresponse.class);
+			}
+		} catch (Exception e) {
+			logger.error("nomineeauthenticate(): Failed to write process data", e);
+			response.setStatuscode("101");
+			response.setErrordescription("Internal error. Please try after sometime");
+		}
+		return response;
+	}
+	
 	
 
 }

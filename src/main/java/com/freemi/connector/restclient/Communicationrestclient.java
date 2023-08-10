@@ -73,6 +73,30 @@ public class Communicationrestclient {
 		
 	}
 	
+	public Otprequeststatus checkOTPverifystatus(OTPInfo otpinfo) {
+
+		Otprequeststatus otpverifystatus = new Otprequeststatus();
+		try {
+			final String uri = env.getProperty(CommonConstants.URL_SERVICE_COMMUNICATION)+"/verify-status";
+
+			HttpHeaders headers = new HttpHeaders();	
+
+			RestTemplate rt = new RestTemplate();
+			
+			HttpEntity<Object> entity = new HttpEntity<Object>(otpinfo,headers);
+			logger.info("Calling URL - "+ uri);
+//			ObjectMapper mapper = new ObjectMapper();
+//			logger.info("SMS request- "+ mapper.writeValueAsString(otpinfo));
+			otpverifystatus = rt.postForObject(uri, entity, Otprequeststatus.class );
+		}catch (Exception ex) {
+			logger.error("Failed to communicate with service",ex);
+			otpverifystatus.setStatuscode("1");
+			otpverifystatus.setErrormsg("Internal service failure. Please try after somtime.");
+		}
+		return otpverifystatus;
+		
+	}
+	
 	
 	
 	public Otprequeststatus sendemailOTP(OTPInfo2 otpinfo) {

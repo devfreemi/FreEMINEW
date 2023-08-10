@@ -71,6 +71,8 @@ import com.freemi.entity.bse.BseFatcaForm;
 import com.freemi.entity.bse.BseFileUpload;
 import com.freemi.entity.bse.BseOrderPaymentRequest;
 import com.freemi.entity.bse.BseOrderPaymentResponse;
+import com.freemi.entity.bse.Bsepay;
+import com.freemi.entity.bse.Paymentgatewayresponse;
 import com.freemi.entity.database.UserBankDetails;
 import com.freemi.entity.general.ClientSystemDetails;
 import com.freemi.entity.general.HttpClientResponse;
@@ -1045,7 +1047,7 @@ public class BsemfController {
 					selectedfund.setNoOfInstallments(120); // Default SIP installments to 5 years -- todo dynamic
 					
 					selectedfund.seteMandateRegRequired(true);
-					selectedfund.setMandateType("I");
+					selectedfund.setMandateType("N");
 					
 					/*
 					map.addAttribute("bankacc",
@@ -1406,6 +1408,8 @@ public class BsemfController {
 			return "bsemf/bse-mf-purchase";
 		}
 
+		
+		
 		try {
 
 			if( session.getAttribute("token")!=null && session.getAttribute("userid")!=null && (session.getAttribute("userid").toString().equalsIgnoreCase(selectedFund.getMobile()) )) {
@@ -1467,27 +1471,23 @@ public class BsemfController {
 								emandatestatus="S";
 							} else {
 								logger.info("emandate response is null... Returning to confirm page with error..");
-								redirectAttrs.addFlashAttribute("EMANDATE_STATUS", "F");
+//								redirectAttrs.addFlashAttribute("EMANDATE_STATUS", "F");
 								emandatestatus="F";
-								/*
-								map.addAttribute("errormsg","Mandate registration failed for- " + (emandateResponse!=null?emandateResponse.getRemarks():"No response" ));
-								map.addAttribute("paymentMethod", InvestFormConstants.bsePaymentMethod);
-								map.addAttribute("selectedFund", selectedFund);
 								
-								*/
 								errormsg="Mandate registration failed for- " + (emandateResponse!=null?emandateResponse.getRemarks():"N/A");
 								purchaserequestfailparam(selectedFund, map, errormsg,customerPortfolios);
 //								returnUrl ="bsemf/bse-mf-purchase";
 								return "bsemf/bse-mf-purchase";
 							}
-							redirectAttrs.addFlashAttribute("EMANDATE_REMARKS", emandateResponse.getRemarks());
+//							redirectAttrs.addFlashAttribute("EMANDATE_REMARKS", emandateResponse.getRemarks());
 							
-							transationResult.setEmandateRegisterRemark(emandateResponse.getRemarks());
-							transationResult.setMandateid(emandateResponse.getResponseCode());
+//							transationResult.setEmandateRegisterRemark(emandateResponse.getRemarks());
+//							transationResult.setMandateid(emandateResponse.getResponseCode());
+							mandateId = emandateResponse.getResponseCode();
 						} else {
 
 							logger.info("Emandate not required. Skipping the request. Get existing mandate ID for client." + selectedFund.getClientID());
-							redirectAttrs.addFlashAttribute("EMANDATE_STATUS", "SELECTED");
+//							redirectAttrs.addFlashAttribute("EMANDATE_STATUS", "SELECTED");
 							emandatestatus="SELECTED";
 							mandateId = selectedFund.getMandateId();
 							logger.info("Selected Mandate ID from form- "+ mandateId);
@@ -1523,7 +1523,12 @@ public class BsemfController {
 							logger.info("Transaction is LUMSUM BASED. Carry out transaction staright forward..");
 							transationResult = bseEntryManager.savetransactionDetails(selectedFund, mandateId);
 						}
-
+						
+						transationResult.setInvestamount(selectedFund.getInvestAmount());
+						transationResult.setTransactiontype(selectedFund.getTransactionType());
+						transationResult.setInvestmentType(selectedFund.getInvestype());
+						transationResult.setFundName(selectedFund.getSchemeName());
+						
 						if (transationResult.getSuccessFlag() != null && transationResult.getSuccessFlag().equalsIgnoreCase("S")) {
 							requestcomplete=true;
 							try {
@@ -1539,38 +1544,47 @@ public class BsemfController {
 								logger.error("Failed to send mail to customer after purchase..", e);
 							}
 
-							redirectAttrs.addAttribute("TRANS_STATUS", "Y");
-							redirectAttrs.addFlashAttribute("TRANS_ID", selectedFund.getTransactionID());
-							redirectAttrs.addFlashAttribute("TRANS_MSG", transationResult.getStatusMsg());
-
-							transationResult.setTransactionReference(selectedFund.getTransactionID());
-							transationResult.setInvestmentType(selectedFund.getInvestype());
-							transationResult.setFundName(selectedFund.getSchemeName());
+//							redirectAttrs.addAttribute("TRANS_STATUS", "Y");
+//							redirectAttrs.addFlashAttribute("TRANS_ID", selectedFund.getTransactionID());
+//							redirectAttrs.addFlashAttribute("TRANS_MSG", transationResult.getStatusMsg());
+							
+							transationResult.setTransactionstatus("Y");
+							transationResult.setTransactionmsg(transationResult.getStatusMsg());
+//							transationResult.setTransactionReference(selectedFund.getTransactionID());
+							
 
 							if (selectedFund.getInvestype().equalsIgnoreCase("LUMPSUM")) {
-								redirectAttrs.addFlashAttribute("FIRST_PAY", "Y");
+//								redirectAttrs.addFlashAttribute("FIRST_PAY", "Y");
 								transationResult.setFirstpay("Y");
 							} else if (selectedFund.getInvestype().equalsIgnoreCase("SIP")) {
 								if (selectedFund.isPayFirstInstallment()) {
-									redirectAttrs.addFlashAttribute("FIRST_PAY", "Y");
+//									redirectAttrs.addFlashAttribute("FIRST_PAY", "Y");
 									transationResult.setFirstpay("Y");
 								} else {
-									redirectAttrs.addFlashAttribute("FIRST_PAY", "N");
+//									redirectAttrs.addFlashAttribute("FIRST_PAY", "N");
 									transationResult.setFirstpay("N");
 								}
 							}
 
 						} else if (transationResult.getSuccessFlag() != null
 								&& transationResult.getSuccessFlag().equalsIgnoreCase("F")) {
-							redirectAttrs.addAttribute("TRANS_STATUS", "N");
-							redirectAttrs.addFlashAttribute("TRANS_MSG", transationResult.getStatusMsg());
+//							redirectAttrs.addAttribute("TRANS_STATUS", "N");
+//							redirectAttrs.addFlashAttribute("TRANS_MSG", transationResult.getStatusMsg());
+							transationResult.setTransactionstatus("N");
+							transationResult.setTransactionmsg(transationResult.getStatusMsg());
+							
 						} else if (transationResult.getSuccessFlag() != null
 								&& transationResult.getSuccessFlag().equalsIgnoreCase("D")) {
-							redirectAttrs.addAttribute("TRANS_STATUS", "N");
-							redirectAttrs.addFlashAttribute("TRANS_MSG","Fund transaction is currently disabled by Admin. Please try after sometime.");
+//							redirectAttrs.addAttribute("TRANS_STATUS", "N");
+//							redirectAttrs.addFlashAttribute("TRANS_MSG","Fund transaction is currently disabled by Admin. Please try after sometime.");
+							transationResult.setTransactionstatus("D");
+							transationResult.setTransactionmsg("Fund transaction is currently disabled by Admin. Please try after sometime.");
+							
 						} else {
-							redirectAttrs.addAttribute("TRANS_STATUS", "SF");
-							redirectAttrs.addFlashAttribute("TRANS_MSG", transationResult.getStatusMsg());
+//							redirectAttrs.addAttribute("TRANS_STATUS", "SF");
+//							redirectAttrs.addFlashAttribute("TRANS_MSG", transationResult.getStatusMsg());
+							transationResult.setTransactionstatus("SF");
+							transationResult.setTransactionmsg(transationResult.getStatusMsg());
 						}
 
 					} catch (Exception e) {
@@ -1587,9 +1601,10 @@ public class BsemfController {
 						return "bsemf/bse-mf-purchase";
 
 					}
-					redirectAttrs.addFlashAttribute("TRANS_TYPE", selectedFund.getTransactionType());
-					redirectAttrs.addFlashAttribute("CLIENT_CODE", selectedFund.getClientID());
+//					redirectAttrs.addFlashAttribute("TRANS_TYPE", selectedFund.getTransactionType());
+//					redirectAttrs.addFlashAttribute("CLIENT_CODE", selectedFund.getClientID());
 					transationResult.setClientcode(selectedFund.getClientID());
+					transationResult.setInvestmentType(selectedFund.getInvestype());
 					redirectAttrs.addFlashAttribute("TRANSACTION_REPORT_BEAN", transationResult);
 				}else {
 
@@ -1650,7 +1665,9 @@ public class BsemfController {
 		map.addAttribute("GETDATA", "S");
 		logger.info("purchasefundConfirmPost(): Client ID - " + selectedFund.getClientID() + " : mobile- "+ selectedFund.getMobile());
 
+		BseApiResponse emandateResponse = new BseApiResponse();
 		TransactionStatus transationResult = new TransactionStatus();
+		
 		String mandateId = "";
 		boolean mandareGenerated = false;
 
@@ -1661,7 +1678,8 @@ public class BsemfController {
 
 			return "bsemf/bse-registration-status2";
 		}
-
+		
+		
 		try {
 			MFCustomers customer = (MFCustomers) session.getAttribute("mfInvestForm");
 			logger.info("Customer type- "+ session.getAttribute("PURCHASE_TYPE"));
@@ -1669,7 +1687,7 @@ public class BsemfController {
 			if(customer!=null & customer.getMobile().equals(selectedFund.getMobile())) {
 //			if( session.getAttribute("PURCHASE_TYPE")!=null && session.getAttribute("PURCHASE_TYPE").toString().equalsIgnoreCase("NEW_USER") && customer!=null && customer.getMobile().equalsIgnoreCase(selectedFund.getMobile() )) {
 				logger.info("Selected scheme type- " +selectedFund.getInvCategory() + " --> (G)"+   selectedFund.getSchemeCode() + " ->(R) "+ selectedFund.getReinvSchemeCode());
-
+				transationResult.setMobile(selectedFund.getMobile());
 				//	Check customer status before carrying out transaction - 
 				String profileStatus=bseEntryManager.investmentProfileStatus(selectedFund.getMobile());
 				logger.info("purchasefundConfirmPost(): Profile status of customer- "+ selectedFund.getMobile() + " : "+ profileStatus);
@@ -1691,7 +1709,7 @@ public class BsemfController {
 									+ "/" + selectedFund.getSipStartYear();
 							selectedFund.setSipStartDate((new SimpleDateFormat("dd/MM/yyyy")).parse(combineDate));
 						} catch (Exception e) {
-							logger.error("Failed to convert date to required format for SIP.", e);
+							logger.error("purchasefundConfirmPost(): Failed to convert date to required format for SIP.", e);
 							map.addAttribute("errormsg", "Failed to process the date!");
 							map.addAttribute("paymentMethod", InvestFormConstants.bsePaymentMethod);
 							map.addAttribute("selectedFund", selectedFund);
@@ -1700,39 +1718,43 @@ public class BsemfController {
 						logger.info("Is emandate registration required?- " + selectedFund.iseMandateRegRequired());
 						// Get MANDATE ID
 						if (selectedFund.iseMandateRegRequired()) {
-							logger.info("Customer emandate registration need to be processed first...");
+							logger.info("purchasefundConfirmPost(): Customer emandate registration need to be processed first...");
 							/* flag.setEmandateRequired(true); */
-							BseApiResponse emandateResponse = bseEntryManager.updateEmdandateStatus(selectedFund.getMobile(),
+							emandateResponse = bseEntryManager.updateEmdandateStatus(selectedFund.getMobile(),
 									selectedFund.getMandateType(), Double.toString(selectedFund.getInvestAmount()));
 							if (emandateResponse != null && emandateResponse.getStatusCode().equals("100")) {
 								mandareGenerated = true;
 								mandateId = emandateResponse.getResponseCode();
-								logger.info("E-mandate registration completed successfully for Cleint ID- "
+								logger.info("purchasefundConfirmPost(): E-mandate registration completed successfully for Cleint ID- "
 										+ selectedFund.getClientID() + " .Mandate ID generated-"
 										+ emandateResponse.getResponseCode());
 								redirectAttrs.addFlashAttribute("EMANDATE_STATUS", "S");
 								selectedFund.setMandateId(mandateId);
 								selectedFund.seteMandateRegRequired(false);
 							} else {
-								logger.info("emandate response is null... Returning to confirm page with error..");
+								logger.info("purchasefundConfirmPost(): emandate response is null... Returning to confirm page with error..");
 								redirectAttrs.addFlashAttribute("EMANDATE_STATUS", "F");
 								map.addAttribute("errormsg","Mandate registration failed for- " + (emandateResponse!=null?emandateResponse.getRemarks():"No response" ));
 								map.addAttribute("paymentMethod", InvestFormConstants.bsePaymentMethod);
 								map.addAttribute("selectedFund", selectedFund);
 								return "bsemf/bse-registration-status2";
 							}
-							redirectAttrs.addFlashAttribute("EMANDATE_REMARKS", emandateResponse.getRemarks());
+//							redirectAttrs.addFlashAttribute("EMANDATE_REMARKS", emandateResponse.getRemarks());
+							/*
 							transationResult.setEmandateStatusCode(emandateResponse.getStatusCode());
 							transationResult.setEmandateRegisterRemark(emandateResponse.getRemarks());
+							transationResult.setMandateid(emandateResponse.getResponseCode());
+							*/
+							
 						} else {
 
-							logger.info("Emandate not required. Skipping the request. Get existing mandate ID for client." + selectedFund.getClientID());
+							logger.info("purchasefundConfirmPost(): Emandate not required. Skipping the request. Get existing mandate ID for client." + selectedFund.getClientID());
 							mandateId = selectedFund.getMandateId();
-							logger.info("Mandate ID form form- "+ mandateId);
+							logger.info("purchasefundConfirmPost(): Mandate ID - "+ mandateId);
 						}
 
 					} else {
-						logger.info("Transaction type is lumpsum. Skip emandate registration and generating SIP date");
+						logger.info("purchasefundConfirmPost(): Transaction type is lumpsum. Skip emandate registration and generating SIP date");
 					}
 
 					try {
@@ -1741,22 +1763,34 @@ public class BsemfController {
 						selectedFund.setClientBrowser(requestingsytemDetails.getClientBrowser());
 
 						if (selectedFund.getInvestype().equalsIgnoreCase("SIP")) {
-							logger.info("Transaction is SIP based...");
+							logger.info("purchasefundConfirmPost(): Transaction is SIP based...");
 							logger.info("purchasefundConfirmPost(): Pay first install? " + selectedFund.isPayFirstInstallment());
 							if ((selectedFund.iseMandateRegRequired() && mandareGenerated)
 									|| (!selectedFund.iseMandateRegRequired())) {
-								logger.info("Processing SIP order ...");
+								logger.info("purchasefundConfirmPost(): Processing SIP order ...");
 								selectedFund.setSipfrequency("MONYHLY");
 								transationResult = bseEntryManager.savetransactionDetails(selectedFund, mandateId);
-								logger.info("Customer purchase transaction status for SIP- " + transationResult.getSuccessFlag());
+								transationResult.setEmandateStatusCode(emandateResponse.getStatusCode());
+								transationResult.setEmandateRegisterRemark(emandateResponse.getRemarks());
+								transationResult.setMandateid(emandateResponse.getResponseCode());
+								
+								
+								logger.info("purchasefundConfirmPost(): Customer purchase transaction status for SIP- " + transationResult.getSuccessFlag());
 							} else {
-								logger.info("Skipping transation process as failed to generate EMANDATE...");
+								logger.info("purchasefundConfirmPost(): Skipping transation process as failed to generate EMANDATE...");
 							}
 						} else {
-							logger.info("Transaction is LUMSUM BASED. Carry out transaction staright forward..");
+							logger.info("purchasefundConfirmPost(): Transaction is LUMSUM BASED. Carry out transaction staright forward..");
 							transationResult = bseEntryManager.savetransactionDetails(selectedFund, mandateId);
 						}
-
+						
+						transationResult.setInvestamount(selectedFund.getInvestAmount());
+						transationResult.setTransactiontype(selectedFund.getTransactionType());
+						
+						transationResult.setInvestmentType(selectedFund.getInvestype());
+						transationResult.setFundName(selectedFund.getSchemeName());
+						transationResult.setClientcode(selectedFund.getClientID());
+						
 						if (transationResult.getSuccessFlag() != null && transationResult.getSuccessFlag().equalsIgnoreCase("S")) {
 
 							try {
@@ -1772,36 +1806,48 @@ public class BsemfController {
 								logger.error("Failed to send mail to customer after purchase..", e);
 							}
 
-							redirectAttrs.addAttribute("TRANS_STATUS", "Y");
-							redirectAttrs.addFlashAttribute("TRANS_ID", selectedFund.getTransactionID());
-							redirectAttrs.addFlashAttribute("TRANS_MSG", transationResult.getStatusMsg());
+//							redirectAttrs.addAttribute("TRANS_STATUS", "Y");
+//							redirectAttrs.addFlashAttribute("TRANS_ID", selectedFund.getTransactionID());
+//							redirectAttrs.addFlashAttribute("TRANS_MSG", transationResult.getStatusMsg());
 
-							transationResult.setTransactionReference(selectedFund.getTransactionID());
-							transationResult.setInvestmentType(selectedFund.getInvestype());
-							transationResult.setFundName(selectedFund.getSchemeName());
+							transationResult.setTransactionstatus("Y");
+							transationResult.setTransactionmsg(transationResult.getStatusMsg());
+//							transationResult.setTransactionReference(selectedFund.getTransactionID());
+//							transationResult.setInvestmentType(selectedFund.getInvestype());
+//							transationResult.setFundName(selectedFund.getSchemeName());
+							
+							
 
 							if (selectedFund.getInvestype().equalsIgnoreCase("LUMPSUM")) {
-								redirectAttrs.addFlashAttribute("FIRST_PAY", "Y");
+//								redirectAttrs.addFlashAttribute("FIRST_PAY", "Y");
+								transationResult.setFirstpay("Y");
 							} else if (selectedFund.getInvestype().equalsIgnoreCase("SIP")) {
 								if (selectedFund.isPayFirstInstallment()) {
-									redirectAttrs.addFlashAttribute("FIRST_PAY", "Y");
+//									redirectAttrs.addFlashAttribute("FIRST_PAY", "Y");
+									transationResult.setFirstpay("Y");
 								} else {
-									redirectAttrs.addFlashAttribute("FIRST_PAY", "N");
+//									redirectAttrs.addFlashAttribute("FIRST_PAY", "N");
+									transationResult.setFirstpay("N");
 								}
 							}
 
 						} else if (transationResult.getSuccessFlag() != null
 								&& transationResult.getSuccessFlag().equalsIgnoreCase("F")) {
-							redirectAttrs.addAttribute("TRANS_STATUS", "N");
-							redirectAttrs.addFlashAttribute("TRANS_MSG", transationResult.getStatusMsg());
+//							redirectAttrs.addAttribute("TRANS_STATUS", "N");
+//							redirectAttrs.addFlashAttribute("TRANS_MSG", transationResult.getStatusMsg());
+							transationResult.setTransactionstatus("N");
+							transationResult.setTransactionmsg(transationResult.getStatusMsg());
 						} else if (transationResult.getSuccessFlag() != null
 								&& transationResult.getSuccessFlag().equalsIgnoreCase("D")) {
-							redirectAttrs.addAttribute("TRANS_STATUS", "N");
-							redirectAttrs.addFlashAttribute("TRANS_MSG",
-									"Fund transaction is currently disabled by Admin. Please try after sometime.");
+//							redirectAttrs.addAttribute("TRANS_STATUS", "N");
+//							redirectAttrs.addFlashAttribute("TRANS_MSG", "Fund transaction is currently disabled by Admin. Please try after sometime.");
+							transationResult.setTransactionstatus("D");
+							transationResult.setTransactionmsg("Fund transaction is currently disabled by Admin. Please try after sometime.");
 						} else {
-							redirectAttrs.addAttribute("TRANS_STATUS", "SF");
-							redirectAttrs.addFlashAttribute("TRANS_MSG", transationResult.getStatusMsg());
+//							redirectAttrs.addAttribute("TRANS_STATUS", "SF");
+//							redirectAttrs.addFlashAttribute("TRANS_MSG", transationResult.getStatusMsg());
+							transationResult.setTransactionstatus("SF");
+							transationResult.setTransactionmsg("Fund transaction is currently disabled by Admin. Please try after sometime.");
 						}
 
 					} catch (Exception e) {
@@ -1811,11 +1857,16 @@ public class BsemfController {
 						map.addAttribute("errormsg", "Internal error! Kindly contact admin to help resolve your issue.");
 						map.addAttribute("paymentMethod", InvestFormConstants.bsePaymentMethod);
 						map.addAttribute("selectedFund", selectedFund);
+//						purchaserequestfailparam(selectedFund, map, errormsg,customerPortfolios);
 						return "bsemf/bse-registration-status2";
 
 					}
-					redirectAttrs.addFlashAttribute("TRANS_TYPE", selectedFund.getTransactionType());
-					redirectAttrs.addFlashAttribute("CLIENT_CODE", selectedFund.getClientID());
+//					redirectAttrs.addFlashAttribute("TRANS_TYPE", selectedFund.getTransactionType());
+//					redirectAttrs.addFlashAttribute("CLIENT_CODE", selectedFund.getClientID());
+//					redirectAttrs.addFlashAttribute("TRANSACTION_REPORT_BEAN", transationResult);
+					
+//					transationResult.setClientcode(selectedFund.getClientID());
+//					transationResult.setInvestmentType(selectedFund.getInvestype());
 					redirectAttrs.addFlashAttribute("TRANSACTION_REPORT_BEAN", transationResult);
 				}else {
 
@@ -1839,6 +1890,7 @@ public class BsemfController {
 			map.addAttribute("errormsg", "Error processing request. Please try after again.");
 			returnUrl ="bsemf/bse-registration-status2";
 		}
+		
 		return returnUrl;
 
 	}
@@ -2594,29 +2646,41 @@ public class BsemfController {
 
 	@RequestMapping(value = "/mutual-funds/bse-transaction-status", method = RequestMethod.GET)
 	public String bseMFTransactionStatus(@ModelAttribute("TRANSACTION_REPORT_BEAN") TransactionStatus transReport,
+			/*
 			@ModelAttribute("TRANS_TYPE") String transyType, @ModelAttribute(name = "FIRST_PAY") String firstPayRequire,
 			@ModelAttribute("TRANS_STATUS") String transStatus, @ModelAttribute("CLIENT_CODE") String clienCode,
 			@ModelAttribute("TRANS_ID") String transId, @ModelAttribute("TRANS_MSG") String transMessage,
 			@ModelAttribute("EMANDATE_STATUS") String emandateStatus,
-			@ModelAttribute("EMANDATE_REMARKS") String mandateRemarks, Model map, HttpServletRequest request,
+			@ModelAttribute("EMANDATE_REMARKS") String mandateRemarks,*/ Model map, HttpServletRequest request,
 			HttpServletResponse response, HttpSession session) {
-
+			
 		logger.info("@@ BSE MF STAR Transaction status controller @@");
 		String returnUrl = "bsemf/bse-purchase-status";
-
-		if (clienCode.isEmpty()) {
+		
+		Bsepay pay = new Bsepay();
+		logger.info("Transaction status for client- "+ transReport.getClientcode() + " -> "+ transReport.getTransactionstatus());
+		
+		
+		if (transReport.getClientcode().isEmpty()) {
 			logger.info("bseMFTransactionStatus(): Client code is empty.. Returning back to home page");
 			returnUrl = "redirect:/";
 		} else {
-			if (transStatus.equalsIgnoreCase("Y") || transStatus.equalsIgnoreCase("SF")) {
+			if (transReport.getTransactionstatus().equalsIgnoreCase("Y") || transReport.getTransactionstatus().equalsIgnoreCase("SF")) {
+				UserBankDetails bandetails = bseEntryManager.getCustomerBankDetails(transReport.getClientcode());
+				
+				pay.setChosenbankid(bandetails.getSerialno());
+				pay.setBankname(bandetails.getBankName());
+				pay.setBankacc(bandetails.getAccountNumber().replaceAll(bandetails.getAccountNumber().substring(0, bandetails.getAccountNumber().length()-2), "xxxxxxxx") );
+				
+				/*
 				logger.info("Proceeding to generate pay url for order id - " + transReport.getBseOrderNoFromResponse());
 				BseOrderPaymentRequest orderUrl = new BseOrderPaymentRequest();
 				//		orderUrl.setClientCode(CommonTask.encryptText(clienCode));
-				orderUrl.setClientCode(clienCode);
+				orderUrl.setClientCode(transReport.getClientcode());
 				orderUrl.setMemberCode(CommonConstants.BSE_MEMBER_ID);
 
 				Base64 base64 = new Base64();
-				String encodedClientCode = new String(base64.encode(CommonTask.encryptText(clienCode).getBytes()));
+				String encodedClientCode = new String(base64.encode(CommonTask.encryptText(transReport.getClientcode()).getBytes()));
 
 				String callbackUrl = URI.create(request.getRequestURL().toString()).resolve(request.getContextPath())
 						.toString()
@@ -2628,32 +2692,102 @@ public class BsemfController {
 				orderUrl.setLogOutURL(callbackUrl);
 				BseOrderPaymentResponse orderUrlReponse = investmentConnectorBseInterface.getPaymentUrl(orderUrl);
 				map.addAttribute("orderUrl", orderUrlReponse);
+				*/
+				
 			}
 
-			logger.info("Emdanate status in case of SIP -" + emandateStatus);
-			map.addAttribute("TRANS_STATUS", transStatus);
+			logger.info("Emdanate status in case of SIP -" + transReport.getEmandateStatusCode());
+			map.addAttribute("TRANS_STATUS", transReport.getTransactionstatus());
+			/*
+			
 			map.addAttribute("TRANS_ID", transId);
 			map.addAttribute("MSG", transMessage);
 			map.addAttribute("EMANDATE", emandateStatus);
 			map.addAttribute("MANDATE_REMARKS", mandateRemarks);
 			map.addAttribute("TRANS_TYPE", transyType);
 			map.addAttribute("FIRST_PAY", firstPayRequire);
-			map.addAttribute("TRANSACTION_REPORT", transReport);
+			*/
+			
 
 		}
 		
 		if(transReport.getEmandateStatusCode().equals("S")) {
-			logger.info("New E-mandate was generated. Get auth link");
+			
+			logger.info("New E-mandate was generated. Get auth link..");
 			BseApiResponse resp = bseEntryManager.getemandateauthurl(transReport.getClientcode(), transReport.getMandateid());
 			if(resp.getStatusCode().equals("100")) {
 				transReport.setOther1("S");
 				transReport.setOther2(resp.getRemarks());
 			}
 		}
-
-		//	map.addAttribute("TRANS_STATUS", "Y");
-
+		pay.setTransstatus(transReport);
+		
+		map.addAttribute("bsepay", pay);
+		map.addAttribute("TRANS_STATUS", transReport.getTransactionstatus());
+		map.addAttribute("TRANSACTION_REPORT", transReport);
 		logger.info("bseMFTransactionStatus(): Return url- "+ returnUrl);
+		return returnUrl;
+	}
+	
+	
+	@RequestMapping(value = "/mutual-funds/bse-transaction-status", method = RequestMethod.POST)
+	public String bseMFTransactionStatusPost(@ModelAttribute("bsepay")Bsepay pay,  Model map, HttpServletRequest request,
+			HttpServletResponse response, HttpSession session) {
+		
+		logger.info("bsepaymentprocess(): @@ BSE MF STAR purchase confirm controller process for payment @@");
+		String returnUrl = "bsemf/bse-payment-status";
+		map.addAttribute("bsepay", pay);
+		Paymentgatewayresponse payresponse = new Paymentgatewayresponse();
+		
+		
+		if(pay.getPayvia().equalsIgnoreCase("IB")) {
+			//Pay via internet banking
+			/*
+			String data = "\\r\\n\\r\\n\\r\\n\\r\\n<html>\\r\\n<head><title>Redirecting to Bank</title>\\r\\n<style>\\r\\n\\r\\n.bodytxt4 {\\r\\n\\r\\n\\tfont-family: Verdana, Arial, Helvetica, sans-serif;\\r\\n\\tfont-size: 12px;\\r\\n\\tfont-weight: bold;\\r\\n\\tcolor: #666666;\\r\\n}\\r\\n.bodytxt {\\r\\n\\tfont-family: Verdana, Arial, Helvetica, sans-serif;\\r\\n\\tfont-size: 13px;\\r\\n\\tfont-weight: normal;\\r\\n\\tcolor: #000000;\\r\\n\\r\\n}\\r\\n.bullet1 {\\r\\n\\r\\n\\tlist-style-type:\\tsquare;\\r\\n\\tlist-style-position: inside;\\r\\n\\tlist-style-image: none;\\r\\n\\tfont-family: Verdana, Arial, Helvetica, sans-serif;\\r\\n\\tfont-size: 10px;\\r\\n\\tfont-weight: bold;\\r\\n\\tcolor: #FF9900;\\r\\n}\\r\\n.bodytxt2 {\\r\\n\\tfont-family: Verdana, Arial, Helvetica, sans-serif;\\r\\n\\tfont-size: 8pt;\\r\\n\\tfont-weight: normal;\\r\\n\\tcolor: #333333;\\r\\n\\r\\n}\\r\\nA.sac2 {\\r\\n\\tCOLOR: #000000;\\r\\n\\tfont-family: Verdana, Arial, Helvetica, sans-serif;\\r\\n\\tfont-size: 10px;\\r\\n\\tfont-weight: bold;\\r\\n\\ttext-decoration: none;\\r\\n}\\r\\nA.sac2:visited {\\r\\n\\tCOLOR: #314D5A; TEXT-DECORATION: none\\r\\n}\\r\\nA.sac2:hover {\\r\\n\\tCOLOR: #FF9900; TEXT-DECORATION: underline\\r\\n}\\r\\n</style>\\r\\n\\r\\n</head>\\r\\n<script language=JavaScript>\\r\\n\\r\\n\\r\\nvar message=\\\"Function Disabled!\\\";\\r\\n\\r\\n\\r\\nfunction clickIE4(){\\r\\nif (event.button==2){\\r\\nreturn false;\\r\\n}\\r\\n}\\r\\n\\r\\nfunction clickNS4(e){\\r\\nif (document.layers||document.getElementById&&!document.all){\\r\\nif (e.which==2||e.which==3){\\r\\nreturn false;\\r\\n}\\r\\n}\\r\\n}\\r\\n\\r\\nif (document.layers){\\r\\ndocument.captureEvents(Event.MOUSEDOWN);\\r\\ndocument.onmousedown=clickNS4;\\r\\n}\\r\\nelse if (document.all&&!document.getElementById){\\r\\ndocument.onmousedown=clickIE4;\\r\\n}\\r\\n\\r\\ndocument.oncontextmenu=new Function(\\\"return false\\\")\\r\\n\\r\\n</script>\\r\\n<table width=\\\"100%\\\" border=\\\"0\\\" cellspacing=\\\"0\\\" cellpadding=\\\"0\\\">\\r\\n  <tr>\\r\\n    <td align=\\\"left\\\" valign=\\\"top\\\">\\r\\n<table width=\\\"100%\\\" border=\\\"0\\\" cellspacing=\\\"0\\\" cellpadding=\\\"0\\\">\\r\\n        <tr> \\r\\n          <td align=\\\"center\\\" valign=\\\"middle\\\"><table width=\\\"100%\\\" border=\\\"0\\\" cellspacing=\\\"0\\\" cellpadding=\\\"0\\\">\\r\\n             \\r\\n              <tr>\\r\\n                <td  align=\\\"center\\\"></td>\\r\\n              </tr>\\r\\n              <tr>\\r\\n                <td height=\\\"85\\\" align=\\\"center\\\"><br>\\r\\n                  <table width=\\\"80%\\\" border=\\\"0\\\" cellpadding=\\\"0\\\" cellspacing=\\\"1\\\" bgcolor=\\\"#CCCCCC\\\">\\r\\n                    <tr>\\r\\n                      <td bgcolor=\\\"#CCCCCC\\\"><table width=\\\"100%\\\" border=\\\"0\\\" cellpadding=\\\"6\\\" cellspacing=\\\"0\\\" bgcolor=\\\"#FFFFFF\\\">\\r\\n                          <tr> \\r\\n                            <td colspan=\\\"2\\\" align=\\\"left\\\" valign=\\\"bottom\\\"><span class=\\\"bodytxt4\\\">Your payment request is being processed...</span></td>\\r\\n                          </tr>\\r\\n                          <tr valign=\\\"top\\\"> \\r\\n                            <td colspan=\\\"2\\\" align=\\\"left\\\"><table width=\\\"100%\\\" border=\\\"0\\\" cellspacing=\\\"0\\\" cellpadding=\\\"0\\\">\\r\\n                                <tr> \\r\\n                                  <td width=\\\"87%\\\" bgcolor=\\\"#cccccc\\\" height=\\\"1\\\" align=\\\"center\\\"></td>\\r\\n                                </tr>\\r\\n                              </table></td>\\r\\n                          </tr>\\r\\n                          <tr> \\r\\n                            <td width=\\\"60%\\\" align=\\\"left\\\" valign=\\\"bottom\\\"><table width=\\\"95%\\\" border=\\\"0\\\" cellpadding=\\\"1\\\" cellspacing=\\\"0\\\" bgcolor=\\\"#FFFFFF\\\">\\r\\n                                <tr> \\r\\n                                  <td align=\\\"right\\\" valign=\\\"top\\\"></td>\\r\\n                                  <td class=\\\"bodytxt\\\">&nbsp;</td>\\r\\n                                </tr>\\r\\n                                <tr> \\r\\n                                  <td height=\\\"19\\\"  align=\\\"right\\\" valign=\\\"top\\\"><li class=\\\"bullet1\\\"></li></td>\\r\\n                                  <td class=\\\"bodytxt2\\\">This is a secure payment \\r\\n                                    gateway using 128 bit SSL encryption.</td>\\r\\n                                </tr>\\r\\n                                <tr> \\r\\n                                  <td align=\\\"right\\\" valign=\\\"top\\\"> <li class=\\\"bullet1\\\"></li></td>\\r\\n                                  <td class=\\\"bodytxt2\\\" >When you submit the transaction, \\r\\n                                    the server will take about 1 to 5 seconds \\r\\n                                    to process, but it may take longer at certain \\r\\n                                    times. </td>\\r\\n                                </tr>\\r\\n                                <tr> \\r\\n                                  <td align=\\\"right\\\" valign=\\\"top\\\"><li class=\\\"bullet1\\\"></li></td>\\r\\n                                  <td class=\\\"bodytxt2\\\" >Please do not press \\\"Submit\\\" \\r\\n                                    button once again or the \\\"Back\\\" or \\\"Refresh\\\" \\r\\n                                    buttons. </td>\\r\\n                                </tr>\\r\\n                              </table></td>\\r\\n                            <td align=\\\"right\\\" valign=\\\"bottom\\\"><table width=\\\"80%\\\" border=\\\"0\\\" cellpadding=\\\"1\\\" cellspacing=\\\"0\\\" bgcolor=\\\"#FFFFFF\\\">\\r\\n                                <tr bgcolor=\\\"#FFFCF8\\\"> \\r\\n                                  <td align=\\\"right\\\" bgcolor=\\\"#FFFFFF\\\"></td>\\r\\n                                </tr>\\r\\n                                <tr bgcolor=\\\"#FFFCF8\\\"> \\r\\n                                  <td align=\\\"right\\\" valign=\\\"middle\\\" bgcolor=\\\"#FFFFFF\\\" class=\\\"bodytxt2\\\">&nbsp;</td>\\r\\n                                </tr>\\r\\n                                <tr bgcolor=\\\"#FFFCF8\\\"> \\r\\n                                  <td align=\\\"right\\\" bgcolor=\\\"#FFFFFF\\\" class=\\\"bodytxt2\\\" >&nbsp;</td>\\r\\n                                </tr>\\r\\n                              </table></td>\\r\\n                          </tr>\\r\\n                        </table></td>\\r\\n                    </tr>\\r\\n                  </table>\\r\\n                  \\r\\n                </td>\\r\\n              </tr>\\r\\n            </table>\\r\\n           \\r\\n          \\r\\n         \\r\\n             </td>\\r\\n        </tr>  \\r\\n\\r\\n\\r\\n      </table></td>\\r\\n  </tr>\\r\\n  \\r\\n</table>\\r\\n\\r\\n\\r\\n\\r\\n<body>\\r\\n<form name=\\\"Bankfrm\\\" method=\\\"post\\\" action='https://shopping.icicibank.com/corp/BANKAWAY?IWQRYTASKOBJNAME=bay_mc_login&BAY_BANKID=ICI'>\\r\\n \\r\\n\\t\\t\\t  \\r\\n              <input type = \\\"hidden\\\" name = \\\"MD\\\" value=\\\"P\\\">\\r\\n\\t\\t\\t\\r\\n              \\r\\n\\t\\t\\t  \\r\\n              <input type = \\\"hidden\\\" name = \\\"PID\\\" value=\\\"000000001086\\\">\\r\\n\\t\\t\\t\\r\\n              \\r\\n\\t\\t\\t  \\r\\n              <input type = \\\"hidden\\\" name = \\\"ES\\\" value=\\\"hbVjLCMyDHSYxiBaT7dJgaVXbhCCcxOAk4mNJPkwEQlcdklihe4UQTNrhsjzGEl/ts8Sl9RCMvWWeSMU1MZ7vRMHGEv94hBmuaoqeg0CLXZGgqqZp0aRKazsBdLAYpqTZ94askMgUzU34Bcgb4dogol5jxM0AolY2RtMcDhHrEDjpD3ygzEOJaaT97DmUXVR7p9iQcr1q5TRPpyroTq1Urboe2XFC+91ndxTYa3AjkiPpI+6/JiAh/Wt2TMkWfwm\\\">\\r\\n\\t\\t\\t\\r\\n              \\r\\n\\t\\t\\t  \\r\\n              <input type = \\\"hidden\\\" name = \\\"SPID\\\" value=\\\"NA\\\">\\r\\n\\t\\t\\t\\r\\n              \\r\\n\\t</form>\\r\\n</body>\\r\\n<script>\\r\\ndocument.Bankfrm.submit();\\r\\n</script>\\r\\n</html>\\r\\n";
+			data = data.replace("\\n", "");
+			data = data.replace("\\t", "");
+			data = data.replace("\\r", "");
+			data = data.replace("\\", "");
+			
+			map.addAttribute("data", data);
+			*/
+			
+			Base64 base64 = new Base64();
+			String encodedClientCode = new String(base64.encode(CommonTask.encryptText(pay.getTransstatus().getClientcode()).getBytes()));
+
+			String callbackUrl = URI.create(request.getRequestURL().toString()).resolve(request.getContextPath())
+					.toString()
+					+ "/mutual-funds/bse-transaction-complete?orderid="
+					+ (!pay.getTransstatus().getBseOrderNoFromResponse().isEmpty()
+							? pay.getTransstatus().getBseOrderNoFromResponse() + "&client=" + encodedClientCode
+									: "NA");
+			logger.info("Callback url for payment- " + callbackUrl);
+			pay.setLoopbackurl(callbackUrl);
+			
+			payresponse = bseEntryManager.getPaymentGateway(pay);
+			
+			if(payresponse.getStatuscode().equals("101")) {
+				map.addAttribute("TRANS_STATUS", "N");
+				TransactionStatus status = pay.getTransstatus();
+				status.setTransactionmsg(payresponse.getResponse());
+				map.addAttribute("TRANSACTION_REPORT", status);
+				returnUrl = "bsemf/bse-purchase-status";
+			}else {
+				map.addAttribute("data", payresponse.getResponse());
+			}
+		}else if(pay.getPayvia().equalsIgnoreCase("UPI")) {
+			
+			payresponse = bseEntryManager.getPaymentGateway(pay);
+			map.addAttribute("data", payresponse.getResponse());
+//			map.addAttribute("msg", "Payment request sent.");
+			map.addAttribute("TRANS_STATUS", "UPI_REQUEST");
+			
+			returnUrl = "bsemf/bse-purchase-status";
+		}
+		else {
+			logger.info("Invalid payment method selected.. Returning back to page...");
+		}
+		
 		return returnUrl;
 	}
 

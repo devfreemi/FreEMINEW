@@ -1,11 +1,24 @@
 package com.freemi.entity.investment;
 
+import java.io.Serializable;
+
 import org.springframework.stereotype.Component;
 
 @Component
-public class TransactionStatus {
+public class TransactionStatus implements Serializable {
 	
 //	This class is to accumulate to display all BSE related transaction status
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private String transactiontype="";
+	
+	private String transactionstatus="";
+	
+	private String transactionmsg="";
 	
 	private String successFlag="";
 	
@@ -45,6 +58,8 @@ public class TransactionStatus {
 	private String other2;
 	
 	private String other3;
+	
+	private Double investamount=0.0;
 
 	public String getSuccessFlag() {
 		return successFlag;
@@ -212,6 +227,41 @@ public class TransactionStatus {
 
 	public void setOther3(String other3) {
 		this.other3 = other3;
+	}
+
+	public String getTransactiontype() {
+		return transactiontype;
+	}
+
+	public void setTransactiontype(String transactiontype) {
+		this.transactiontype = transactiontype;
+	}
+
+	public String getTransactionstatus() {
+		return transactionstatus;
+	}
+
+	public void setTransactionstatus(String transactionstatus) {
+		this.transactionstatus = transactionstatus;
+	}
+
+	public String getTransactionmsg() {
+		return transactionmsg;
+	}
+
+	public void setTransactionmsg(String transactionmsg) {
+		this.transactionmsg = transactionmsg;
+	}
+	public Double getInvestamount() {
+		return investamount;
+	}
+
+	public void setInvestamount(Double investamount) {
+		this.investamount = investamount;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 	
 }

@@ -11,10 +11,16 @@ import com.freemi.entity.bse.BsePaymentStatus;
 import com.freemi.entity.bse.BseRegistrationMFD;
 import com.freemi.entity.bse.BseSipOrderEntry;
 import com.freemi.entity.bse.BseXipISipOrderEntry;
+import com.freemi.entity.bse.Nomineeregistrationrequest;
+import com.freemi.entity.bse.Nomineeregistrationresponse;
 import com.freemi.entity.bse.PauseSIP;
 import com.freemi.entity.bse.PauseSIPResponse;
+import com.freemi.entity.bse.Paymentgateway;
+import com.freemi.entity.bse.Paymentgatewayresponse;
 import com.freemi.entity.bse.Uccregisterresponse;
 import com.freemi.entity.investment.Emandatestaus;
+import com.freemi.entity.investment.Nominee2farequest;
+import com.freemi.entity.investment.Nominee2faresponse;
 
 @Component
 public interface BseRestClientService {
@@ -32,6 +38,7 @@ public interface BseRestClientService {
 	public String purchaseSIPRequestProcess(BseSipOrderEntry form);
 	public String purchaseCancelXSIPISIPRequestProcess(BseXipISipOrderEntry form);
 	public String purchasePaymentLink(BseOrderPaymentRequest form);
+	public Paymentgatewayresponse purchasepaymentgateway(Paymentgateway payrequest);
 	public String orderPaymentStatus(BsePaymentStatus form);
 	public String eMandateRegistration(BseEMandateRegistration form);
 	public String fatcaDeclaration(BseFatcaForm form);
@@ -47,4 +54,7 @@ public interface BseRestClientService {
 	public Emandatestaus getmandatestatus(String clientid, String mandateid);
 	
 	public PauseSIPResponse pausexsip(PauseSIP requestdata);
+	public Nomineeregistrationresponse nomineeregister(Nomineeregistrationrequest nomineerequest);
+	public Nominee2faresponse nomineeauthenticate(Nominee2farequest nomineerequest);
+	
 }

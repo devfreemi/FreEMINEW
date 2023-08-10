@@ -16,7 +16,6 @@ import org.springframework.web.client.RestTemplate;
 import com.freemi.common.util.CommonConstants;
 import com.freemi.database.respository.mahindra.MahindraKycdocupdateform;
 import com.freemi.entity.investment.mahindra.MFDSearch;
-import com.freemi.entity.investment.mahindra.MFDSearchResult;
 import com.freemi.entity.investment.mahindra.MahindraFDListItem;
 import com.freemi.entity.investment.mahindra.MahindraResponse;
 import com.freemi.entity.investment.mahindra.Mahindrapurchasehistory;
@@ -37,7 +36,7 @@ public class MahindraFDClient implements MahindraFDProfileService {
     public List<Mahindrapurchasehistory> getPurchaseHistory(String mobile, String pan) {
 
 	final String url = env.getProperty(CommonConstants.URL_SERVICE_MAHINDRA_FD) + "/api/mahindrafdservice/get-purchase-history";
-	logger.info(url);
+	logger.info("getPurchaseHistory(): URL - "+ url);
 	JsonObject form = new  JsonObject();
 	RestTemplate restTemplate = new RestTemplate();
 	List<Mahindrapurchasehistory> result =null;
@@ -68,7 +67,7 @@ public class MahindraFDClient implements MahindraFDProfileService {
     @Override
     public List<MahindraFDListItem> getMahidraFdList(String mobile, String pan) {
 	final String url = env.getProperty(CommonConstants.URL_SERVICE_MAHINDRA_FD) + "/api/mfdmaint/get-fd-portfolios";
-	logger.info(url);
+	logger.info("getMahidraFdList(): URL- "+ url);
 	
 	List<MahindraFDListItem> res = null;
 	try {
@@ -107,7 +106,7 @@ public class MahindraFDClient implements MahindraFDProfileService {
     @Override
     public MahindraResponse updatecustomerkycdocuments(MahindraKycdocupdateform docform) {
 	final String url = env.getProperty(CommonConstants.URL_SERVICE_MAHINDRA_FD) + "/api/mfdmaint/update-kyc-documents";
-	logger.info(url);
+	logger.info("updatecustomerkycdocuments(): URL- "+ url);
 	
 	MahindraResponse res = null;
 	try {
@@ -133,7 +132,7 @@ public class MahindraFDClient implements MahindraFDProfileService {
     @Override
     public MahindraResponse getlatestkycdocuments(String mobile) {
 	final String url = env.getProperty(CommonConstants.URL_SERVICE_MAHINDRA_FD) + "/api/mfdmaint/get-uploaded-kyc-documents";
-	logger.info(url);
+	logger.info("getlatestkycdocuments(): URL- " + url);
 	
 	MahindraResponse res = null;
 	try {

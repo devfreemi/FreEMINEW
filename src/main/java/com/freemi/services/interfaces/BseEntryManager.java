@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 import com.freemi.entity.bse.BseApiResponse;
 import com.freemi.entity.bse.BseOrderPaymentRequest;
 import com.freemi.entity.bse.BseOrderPaymentResponse;
+import com.freemi.entity.bse.Bsepay;
+import com.freemi.entity.bse.Nomineeregistrationresponse;
+import com.freemi.entity.bse.Paymentgatewayresponse;
 import com.freemi.entity.database.MfTopFundsInventory;
 import com.freemi.entity.database.UserBankDetails;
 import com.freemi.entity.general.ClientSystemDetails;
@@ -27,8 +30,11 @@ import com.freemi.entity.investment.MFCamsFolio;
 import com.freemi.entity.investment.MFCamsValueByCategroy;
 import com.freemi.entity.investment.MFCustomers;
 import com.freemi.entity.investment.MFKarvyValueByCategory2;
+import com.freemi.entity.investment.MFNominationForm;
 import com.freemi.entity.investment.MfAllInvestorValueByCategory;
 import com.freemi.entity.investment.MfNavData;
+import com.freemi.entity.investment.Nominee2faresponse;
+import com.freemi.entity.investment.Nomineeverification;
 import com.freemi.entity.investment.SelectMFFund;
 import com.freemi.entity.investment.TransactionStatus;
 
@@ -132,6 +138,8 @@ public interface BseEntryManager {
 	
 	public BseOrderPaymentResponse getPaymentUrl(BseOrderPaymentRequest request);
 	
+	public Paymentgatewayresponse getPaymentGateway(Bsepay request);
+	
 	public BseApiResponse extractAllotmentstatement(String fromdate, String todate, String orderstatus, String ordertype, String settlementtype);
 	
 	public List<BseMandateDetails> getmandates(String mobile, String clientid, String otther1);
@@ -143,5 +151,11 @@ public interface BseEntryManager {
 	public Datarquestresponse checkifkeyregistered(String mobile, String pan, String searchtype, String filter1);
 	
 	public String getifscdetails(String ifsc);
+	
+	public MFNominationForm getnomineefetails(String mobile, String clientid);
+	
+	public Nomineeregistrationresponse submitnomineeverification(Nomineeverification nomineedata);
+	
+	public Nominee2faresponse authenticatenominee(String mobile, String clientid, String callbackurl);
 	
 }

@@ -26,9 +26,9 @@ import org.springframework.stereotype.Service;
 import com.freemi.common.util.BseAOFGenerator;
 import com.freemi.common.util.BseRelatedActions;
 import com.freemi.common.util.CommonConstants;
-import com.freemi.common.util.CommonTask;
 import com.freemi.common.util.InvestFormConstants;
 import com.freemi.database.interfaces.AllotmentStmntCrudRepository;
+import com.freemi.database.interfaces.BseBankidRepository;
 import com.freemi.database.interfaces.BseCamsByCategoryRepository;
 import com.freemi.database.interfaces.BseCustomerAOFRepository;
 import com.freemi.database.interfaces.BseCustomerAddressCrudRepository;
@@ -37,9 +37,11 @@ import com.freemi.database.interfaces.BseCustomerCrudRespository;
 import com.freemi.database.interfaces.BseCustomerFATCACrudRepository;
 import com.freemi.database.interfaces.BseCustomerMfRepository;
 import com.freemi.database.interfaces.BseCustomerNomineeCrudRepository;
+import com.freemi.database.interfaces.BseCustomerNomineeverifyCrudRepository;
 import com.freemi.database.interfaces.BseFundsExplorerRepository;
 import com.freemi.database.interfaces.BseKarvyByCategoryRepository2;
 import com.freemi.database.interfaces.BseMandateCrudRepository;
+import com.freemi.database.interfaces.BseNominee2faRepository;
 import com.freemi.database.interfaces.BseOrderEntryResponseRepository;
 import com.freemi.database.interfaces.BseSelectedCategoryFundsRepository;
 import com.freemi.database.interfaces.BseTop15lsSipViewCrudReositry;
@@ -56,6 +58,9 @@ import com.freemi.entity.bse.BseAOFUploadResponse;
 import com.freemi.entity.bse.BseApiResponse;
 import com.freemi.entity.bse.BseOrderPaymentRequest;
 import com.freemi.entity.bse.BseOrderPaymentResponse;
+import com.freemi.entity.bse.Bsepay;
+import com.freemi.entity.bse.Nomineeregistrationresponse;
+import com.freemi.entity.bse.Paymentgatewayresponse;
 import com.freemi.entity.database.MfTopFundsInventory;
 import com.freemi.entity.database.UserBankDetails;
 import com.freemi.entity.general.ClientSystemDetails;
@@ -66,6 +71,7 @@ import com.freemi.entity.investment.AddressDetails;
 import com.freemi.entity.investment.Allotmentstatement;
 import com.freemi.entity.investment.BseAOFDocument;
 import com.freemi.entity.investment.BseAllTransactionsView;
+import com.freemi.entity.investment.BseBankid;
 import com.freemi.entity.investment.BseDailyTransCounter;
 import com.freemi.entity.investment.BseFundsScheme;
 import com.freemi.entity.investment.BseMFSelectedFunds;
@@ -85,6 +91,10 @@ import com.freemi.entity.investment.MFinitiatedTrasactions;
 //import com.freemi.entity.investment.MFKarvyFundsView;
 import com.freemi.entity.investment.MfAllInvestorValueByCategory;
 import com.freemi.entity.investment.MfNavData;
+import com.freemi.entity.investment.Nominee2farequest;
+import com.freemi.entity.investment.Nominee2faresponse;
+import com.freemi.entity.investment.Nomineeverification;
+import com.freemi.entity.investment.Nomineeverify;
 import com.freemi.entity.investment.SelectMFFund;
 import com.freemi.entity.investment.TransactionStatus;
 import com.freemi.services.interfaces.BseEntryManager;
@@ -173,12 +183,20 @@ public class BseEntryServiceImpl implements BseEntryManager {
     @Autowired
     AllotmentStmntCrudRepository allotmentStmntCrudRepository;
     
+    @Autowired
+    BseBankidRepository bsebankidrepository;
 
     @Autowired
     MailSenderInterface mailSenderInterface;
     
     @Autowired
     BseCustomerAOFRepository bseaofepository;
+    
+    @Autowired
+    BseNominee2faRepository bse2farepository;
+    
+    @Autowired
+    BseCustomerNomineeverifyCrudRepository nomineeverifystatus;
     
     @Autowired
     Environment env;
@@ -450,6 +468,7 @@ public class BseEntryServiceImpl implements BseEntryManager {
     			transStatus.setSuccessFlag("S");
     			transStatus.setStatusMsg(bseResult.getBsereMarks());
     			transStatus.setBseOrderNoFromResponse(bseResult.getOrderNoOrSipRegNo());
+    			transStatus.setTransactionReference(ref.toString());
 
     		}else if (bseResult.getSuccessFlag().equalsIgnoreCase(CommonConstants.BSE_API_SERVICE_DISABLED)){
     			logger.info("Transaction disabled. Reason- "+bseResult.getBsereMarks());
@@ -2226,6 +2245,126 @@ public class BseEntryServiceImpl implements BseEntryManager {
 			logger.error("Failed to fetch mandates for profile",e);
 		}
 		return activemandates;
+	}
+
+	@Override
+	public Paymentgatewayresponse getPaymentGateway(Bsepay request) {
+		
+		logger.info("Processing payment request for client- "+ request.getTransstatus().getClientcode());
+		String transtype = "INTERNET_BANKING";
+		Paymentgatewayresponse response = new Paymentgatewayresponse();
+		try {
+			
+			UserBankDetails bankdetails = bseCustomerBankDetailsCrudRespository.findOneByClientIDAndSerialno(request.getTransstatus().getClientcode(),request.getChosenbankid());
+//			if(!request.getBankacc().equalsIgnoreCase(bankdetails.getAccountNumber())) {
+			if(bankdetails == null)	{
+				logger.info("Bank details not found. Transaction forfeited..");
+				response.setStatuscode("101");
+				response.setResponse("Invalid bank details selected.");
+			}else {
+				request.setBankacc(bankdetails.getAccountNumber());
+				request.setIfscode(bankdetails.getIfscCode());
+				request.setBankname(bankdetails.getBankName());
+				
+				if(request.getPayvia().equalsIgnoreCase("IB")) {
+					transtype = "INTERNET_BANKING";
+				}else if(request.getPayvia().equalsIgnoreCase("UPI")) {
+					transtype="UPI";
+				}else {
+					transtype="NA";
+				}
+				
+				logger.info("fetch bank gatewayc code for - "+ transtype + " ->"+ bankdetails.getBankName());
+				BseBankid bankid = bsebankidrepository.getByTransactiontypeAndRazorpaybankname(transtype, bankdetails.getBankName());
+				if(bankid!=null) {
+					request.setBankgatewaycode(bankid.getBankid());
+					request.setPaymentmode(bankid.getPaymode());
+					response= investmentConnectorBseInterface.getPaymentGetway(request);
+				}else {
+					logger.info("Bank details not found hence payment gateway cannot be requested..");
+					response.setStatuscode("101");
+					response.setResponse("Bank payment gateway details not found. Please contact admin.");
+				}
+				
+			}
+			
+		}catch(Exception e) {
+			logger.error("Failed to process payment gateway fetch request",e);
+			response.setStatuscode("101");
+			response.setResponse("Internal error. Kindly contact admin.");
+		}
+		return response;
+	}
+
+	@Override
+	public MFNominationForm getnomineefetails(String mobile, String clientid) {
+		logger.info("Request received to fetch nomination details of client ID - "+ clientid);
+		MFNominationForm nominee = null;
+		nominee = bseCustomerNomineeCrudRepository.findOneByClientID(clientid);
+		if(null == nominee) {
+			logger.info("No nominee details found for client id - " + clientid);
+		}
+		
+		return nominee;
+	}
+
+	@Override
+	public Nomineeregistrationresponse submitnomineeverification(Nomineeverification nomineedata) {
+		
+		logger.info("Processing nominee verification request for client- "+ nomineedata.getNomineedetails().getClientID());
+		String operation="NEW";
+		Nomineeverify nominee = null;
+		nominee = nomineeverifystatus.findOneByClientID(nomineedata.getNomineedetails().getClientID());
+		if(nominee!=null && null!= nominee.getNomineeverifystatus() && nominee.getNomineeverifystatus().equals("100")) {
+			operation="MOD";
+		}
+		Nomineeregistrationresponse response =  investmentConnectorBseInterface.verifynominee(nomineedata,operation);
+		
+		//Update the record in DB..
+		
+		if(nominee!=null) {
+			logger.info("Updating existing nominee details with verification status for client- "+ nomineedata.getNomineedetails().getClientID());
+			nominee.setNomineeopt(nomineedata.getParam().getNominationopt());
+			nominee.setAuthmode(nomineedata.getParam().getNominationauthmode());
+			nominee.setNomineeverifytrigger("Y");
+			nominee.setNomineeverifystatus(response.getStatuscode());
+			nominee.setRemarks(response.getRemarks());
+			nomineeverifystatus.save(nominee);
+			
+		}else {
+			logger.info("Client earlier had no nominee details. Registering new nominee details for client- "+ nomineedata.getNomineedetails().getClientID());
+			nominee = new Nomineeverify();
+			nominee.setClientID(nomineedata.getNomineedetails().getClientID());
+			nominee.setNomineeopt(nomineedata.getParam().getNominationopt());
+			nominee.setAuthmode(nomineedata.getParam().getNominationauthmode());
+			nominee.setNomineeverifytrigger("Y");
+			nominee.setNomineeverifystatus(response.getStatuscode());
+			nominee.setRemarks(response.getRemarks());
+			nomineeverifystatus.save(nominee);
+		}
+		logger.info("Nominee registration completed. Exit");
+		return response;
+	}
+
+	@Override
+	public Nominee2faresponse authenticatenominee(String mobile, String clientid, String callbackurl) {
+		logger.info("Process to get nominee Auth URL for mobile- "+ mobile);
+		StringBuffer ref = new StringBuffer();
+		ref.append("N").append(clientid.substring(6)).append(Calendar.getInstance().getTimeInMillis());
+		
+		Nominee2farequest request = new Nominee2farequest();
+		request.setClientcode(clientid);
+		request.setInternalrefno(ref.toString());
+		request.setLoopbackurl(callbackurl);
+		Nominee2faresponse response = investmentConnectorBseInterface.nomineeauthenticate(request);
+		try {
+			response.setClientid(clientid);
+			bse2farepository.save(response);
+		}catch(Exception e) {
+			logger.error("Failed to save Nominee 2FA reponse",e);
+		}
+		
+		return response;
 	}
 
 

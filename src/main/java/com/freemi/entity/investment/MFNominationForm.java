@@ -73,10 +73,30 @@ public class MFNominationForm implements Serializable {
 	@Column(name="GUARDIAN_NAME")
 	private String nomineeGuardian="";
 	
+	@Transient
+	private String nominee1pan;
+	
+	@Transient
+	private String nominee1guardianpan;
+	
+	@Transient
+	private String nominee2pan;
+	
+	@Transient
+	private String nominee2guardianpan;
+	
+	@Transient
+	private String nominee3pan;
+	
+	@Transient
+	private String nominee3guardianpan;
+	
+	
 	@OneToOne(fetch= FetchType.LAZY, optional=false, cascade=CascadeType.PERSIST)
 	@JoinColumn(name="CLIENT_ID", nullable= false,insertable=false,updatable=false)
 	private MFCustomers mfForm;
 
+	
 	
 	public long getSerialNo() {
 		return serialNo;
@@ -172,7 +192,41 @@ public class MFNominationForm implements Serializable {
 	public void setNomineePercentage(String nomineePercentage) {
 		this.nomineePercentage = nomineePercentage;
 	}
-	
-	
+	public String getNominee1pan() {
+		return nominee1pan;
+	}
+	public void setNominee1pan(String nominee1pan) {
+		this.nominee1pan = nominee1pan;
+	}
+	public String getNominee1guardianpan() {
+		return nominee1guardianpan;
+	}
+	public void setNominee1guardianpan(String nominee1guardianpan) {
+		this.nominee1guardianpan = nominee1guardianpan;
+	}
+	public String getNominee2pan() {
+		return nominee2pan;
+	}
+	public void setNominee2pan(String nominee2pan) {
+		this.nominee2pan = nominee2pan;
+	}
+	public String getNominee2guardianpan() {
+		return nominee2guardianpan;
+	}
+	public void setNominee2guardianpan(String nominee2guardianpan) {
+		this.nominee2guardianpan = nominee2guardianpan;
+	}
+	public String getNominee3pan() {
+		return nominee3pan;
+	}
+	public void setNominee3pan(String nominee3pan) {
+		this.nominee3pan = nominee3pan;
+	}
+	public String getNominee3guardianpan() {
+		return nominee3guardianpan;
+	}
+	public void setNominee3guardianpan(String nominee3guardianpan) {
+		this.nominee3guardianpan = nominee3guardianpan;
+	}
 	
 }

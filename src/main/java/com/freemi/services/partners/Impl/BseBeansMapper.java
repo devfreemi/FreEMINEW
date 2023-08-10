@@ -23,8 +23,11 @@ import com.freemi.entity.bse.BsePaymentStatus;
 import com.freemi.entity.bse.BseRegistrationMFD;
 import com.freemi.entity.bse.BseSipOrderEntry;
 import com.freemi.entity.bse.BseXipISipOrderEntry;
+import com.freemi.entity.bse.Nomineerecords;
+import com.freemi.entity.bse.Nomineeregistrationrequest;
 import com.freemi.entity.database.UserBankDetails;
 import com.freemi.entity.investment.MFCustomers;
+import com.freemi.entity.investment.Nomineeverification;
 import com.freemi.entity.investment.Allotmentstatement;
 import com.freemi.entity.investment.BseMandateDetails;
 import com.freemi.entity.investment.BseOrderEntryResponse;
@@ -122,6 +125,7 @@ public class BseBeansMapper {
 		}
 
 		//		Nominee
+		
 		clientFregirationForm.setClientNominee(registrationForm.getNominee().getNomineeName());
 		clientFregirationForm.setClientNomineeRelation(registrationForm.getNominee().getNomineeRelation());
 		clientFregirationForm.setNominee1minorflag(registrationForm.getNominee().getIsNomineeMinor());
@@ -131,7 +135,12 @@ public class BseBeansMapper {
 		clientFregirationForm.setNominee1dob(registrationForm.getNominee().getNomineeDOB());
 		clientFregirationForm.setMobiledecflag(registrationForm.getMobiledecflag());
 		clientFregirationForm.setEmaildecflag(registrationForm.getEmaildeclareflag());
-
+		
+		clientFregirationForm.setNomineeopt(registrationForm.getNominationopt());
+		clientFregirationForm.setNomineeauthmode(registrationForm.getNominationauthmode());
+		clientFregirationForm.setNominee1pan(registrationForm.getNominee().getNominee1pan());
+		clientFregirationForm.setNominee1guardianpan(registrationForm.getNominee().getNominee2guardianpan());
+		
 		return clientFregirationForm;
 	}
 
@@ -846,6 +855,27 @@ public class BseBeansMapper {
 
 		return statement;
 	}
+	
+	public static Nomineeregistrationrequest nomineerecordtorequest(Nomineeverification data, String registrationtype){
+		
+		logger.info("Mapping details of clientid- " + data.getNomineedetails().getClientID());
+		Nomineeregistrationrequest requestdataa = new Nomineeregistrationrequest();
+//		data.getParam().setClientcode(data.getClientid());
+		
+		requestdataa.setType("NOMINEE");
+		requestdataa.setRegistrationttype(registrationtype);
+		requestdataa.setFiller1("");
+		requestdataa.setFiller2("");
+		requestdataa.setFiller3("");
+		Nomineerecords[] record = new Nomineerecords[1];
+		record[0] = data.getParam();
+		record[0].setClientcode(data.getNomineedetails().getClientID());
+		requestdataa.setParam(record);
+		
+		return requestdataa;
+	}
+	
+	
 
 	/*	public static void main(String[] args ){
 		Date d  = new Date();
