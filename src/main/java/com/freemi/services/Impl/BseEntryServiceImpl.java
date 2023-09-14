@@ -464,7 +464,8 @@ public class BseEntryServiceImpl implements BseEntryManager {
     				//		    transactionfailed =true;
 
     			}
-
+    			
+    			transStatus.setInvestamount(selectedMFFund.getInvestAmount());
     			transStatus.setSuccessFlag("S");
     			transStatus.setStatusMsg(bseResult.getBsereMarks());
     			transStatus.setBseOrderNoFromResponse(bseResult.getOrderNoOrSipRegNo());

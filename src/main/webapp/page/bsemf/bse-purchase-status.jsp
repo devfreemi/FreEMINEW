@@ -25,8 +25,11 @@
 <link href="<c:url value="${contextcdn}/resources/css/pace-theme.css"/>"
 	rel="stylesheet">
 <script src="<c:url value="${contextcdn}/resources/js/pace.min.js" />"></script>
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+<link
+	href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css"
+	rel="stylesheet" />
+<script
+	src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
 </head>
 <script type="text/javascript">
 	window.history.forward();
@@ -148,44 +151,47 @@
 
 								</c:when>
 
-								<c:when test="${TRANS_STATUS == 'Y' }">
+								<c:when
+									test="${TRANS_STATUS == 'Y' or TRANS_STATUS == 'RETRY' }">
 									<h5
 										class="text-center #00897b teal darken-1 white-text p-1 mb-4">Your
 										order is placed successfully</h5>
+										
+									<h6 class="text-danger">${error}</h6>
 									<div class="dataTables_wrapper dt-bootstrap4 animated fadeIn"
 										style="margin-top: 30px; overflow: auto;">
 										<table class="table">
 											<tr>
 												<th class="text-dark">Fund Name</th>
-												<td>${TRANSACTION_REPORT.fundName }</td>
+												<td>${bsepay.transstatus.fundName }</td>
 											</tr>
 											<tr>
 												<th class="text-dark">Investment Type</th>
-												<td>${TRANSACTION_REPORT.investmentType }</td>
+												<td>${bsepay.transstatus.investmentType }</td>
 											</tr>
 											<tr>
 												<th class="text-dark">Transaction type</th>
-												<td>${TRANSACTION_REPORT.transactiontype }</td>
+												<td>${bsepay.transstatus.transactiontype }</td>
 											</tr>
 											<tr>
 												<th class="text-dark">Reference no.</th>
-												<td>${TRANSACTION_REPORT.transactionReference }</td>
+												<td>${bsepay.transstatus.transactionReference }</td>
 											</tr>
 											<tr>
 												<th class="text-dark">Order No</th>
-												<td>${TRANSACTION_REPORT.bseOrderNoFromResponse}</td>
+												<td>${bsepay.transstatus.bseOrderNoFromResponse}</td>
 											</tr>
 
-											<c:if test="${TRANSACTION_REPORT.investmentType == 'SIP'}">
+											<c:if test="${bsepay.transstatus.investmentType == 'SIP'}">
 
 												<%-- <c:if test="${not empty TRANSACTION_REPORT.emandateStatusCode}"> --%>
 												<tr>
 													<th class="text-dark">Mandate ID</th>
-													<td>${TRANSACTION_REPORT.mandateid }</td>
+													<td>${bsepay.transstatus.mandateid }</td>
 												</tr>
 												<c:choose>
 													<c:when
-														test="${TRANSACTION_REPORT.emandateStatusCode == 'S' }">
+														test="${bsepay.transstatus.emandateStatusCode == 'S' }">
 														<div>
 															<small class="text-muted">E-mandate registered
 																successfully. Authenticate mandate</small>
@@ -197,8 +203,8 @@
 														<tr>
 															<th class="text-dark">Action</th>
 															<td><c:if
-																	test="${TRANSACTION_REPORT.other1 == 'S' }">
-																	<a href="${TRANSACTION_REPORT.other2}" target="_blank">
+																	test="${bsepay.transstatus.other1 == 'S' }">
+																	<a href="${bsepay.transstatus.other2}" target="_blank">
 																		<button class="btn btn-sm btn-primary">Authenticate
 																			E-mandate</button>
 																	</a>
@@ -209,7 +215,7 @@
 
 													</c:when>
 													<c:when
-														test="${TRANSACTION_REPORT.emandateStatusCode == 'SELECTED' }">
+														test="${bsepay.transstatus.emandateStatusCode == 'SELECTED' }">
 														<tr>
 															<th class="text-dark">Action</th>
 															<td><button class="btn btn-sm btn-primary">Check
@@ -217,7 +223,7 @@
 														</tr>
 													</c:when>
 													<c:when
-														test="${TRANSACTION_REPORT.emandateStatusCode == 'F' }">
+														test="${bsepay.transstatus.emandateStatusCode == 'F' }">
 														<div class="mb-2">
 															<small class="text-danger">Failed to generate
 																mandate ID. Please contact admin if the issue persist.</small>
@@ -233,12 +239,12 @@
 									</div>
 									<hr>
 									<div class="text-center">
-										<small class="text-muted">${TRANSACTION_REPORT.statusMsg }</small>
+										<small class="text-muted">${bsepay.transstatus.statusMsg }</small>
 									</div>
 
 
 
-									<c:if test="${TRANSACTION_REPORT.firstpay == 'Y' }">
+									<c:if test="${bsepay.transstatus.firstpay == 'Y' }">
 										<div class="row">
 											<div class="col-12 mx-auto">
 												<div id="h">
@@ -258,7 +264,7 @@
 														</div>
 														<div id="bank" class="mb-3 d-all">
 															<label for="bank" class="form-label small text-primary">Account
-																</label>
+															</label>
 															<form:input path="bankacc"
 																class="form-control
 															 form-control-sm"
@@ -280,18 +286,30 @@
 																class="form-control form-control-sm" id="upi"
 																placeholder=""></form:input>
 														</div>
+
+														<form:hidden path="chosenbankid" />
+														<form:hidden path="transstatus.clientcode" />
+														<form:hidden path="transstatus.bseOrderNoFromResponse" />
+														<form:hidden path="transstatus.mandateid" />
+														<form:hidden path="transstatus.mobile" />
+														<form:hidden path="transstatus.successFlag" />
+														<form:hidden path="transstatus.investamount" />
+														<form:hidden path="transstatus.transactionReference" />
+														<form:hidden path="transstatus.fundName" />
+														<form:hidden path="transstatus.investmentType" />
+														<form:hidden path="transstatus.transactiontype" />
+														<form:hidden path="transstatus.emandateStatusCode" />
+														<form:hidden path="transstatus.other1" />
+														<form:hidden path="transstatus.other2" />
+														<form:hidden path="transstatus.statusMsg" />
+														<form:hidden path="transstatus.firstpay" />
 														
-														<form:hidden path="chosenbankid"/>
-														<form:hidden path="transstatus.clientcode"/>
-														<form:hidden path="transstatus.bseOrderNoFromResponse"/>
-														<form:hidden path="transstatus.mandateid"/>
-														<form:hidden path="transstatus.mobile"/>
-														<form:hidden path="transstatus.successFlag"/>
-														<form:hidden path="transstatus.investamount"/>
-														<form:hidden path="transstatus.transactionReference"/>
+														
 														<div class="mb-3 text-center">
 															<form:button class="btn btn-primary">Proceed to pay</form:button>
+															<p><small class="text-info">*SMS/Email sent to complete order authentication. Kindly complete before proceeding to pay</small></p>
 														</div>
+														
 													</form:form>
 												</div>
 
@@ -318,7 +336,7 @@
 										process your request currently. Kindly try after sometime</div>
 
 									<div>
-										<span style="font-size: 11px; font-weight: 600;">${TRANSACTION_REPORT.transactionmsg }</span>
+										<span style="font-size: 11px; font-weight: 600;">${bsepay.transstatus.transactionmsg }</span>
 									</div>
 
 									<section style="margin-top: 30px;">
@@ -339,10 +357,11 @@
 										request at FreEMI. Admin will help you fix the problem.</h5>
 								</c:when>
 								<c:otherwise>
-										<h5
-										class="text-center #00897b teal darken-1 white-text p-1 mb-4">Transaction status missing!
-										</h5>
-										<h6>Your details could not be shown due to missing information. Kindly go to profile and check the status.</h6>
+									<h5
+										class="text-center #00897b teal darken-1 white-text p-1 mb-4">Transaction
+										status missing!</h5>
+									<h6>Your details could not be shown due to missing
+										information. Kindly go to profile and check the status.</h6>
 								</c:otherwise>
 							</c:choose>
 						</div>
@@ -376,8 +395,8 @@
 								$("#bank").addClass("d-none");
 								$("#bank").removeClass("d-all");
 							}/* else{
-											alert("Invalid option!- "+ $("#payvia").text());
-										} */
+																									alert("Invalid option!- "+ $("#payvia").text());
+																								} */
 						});
 
 						$('form')

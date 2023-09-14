@@ -2014,19 +2014,19 @@ public class BsemfController {
 			Model map, HttpServletRequest request, HttpServletResponse response, HttpSession session,
 			final RedirectAttributes redirectAttrs) {
 
-		logger.info("@@ BSE MF STAR purchase confirm do controller @@");
+		logger.info("bseAdditionalPurchasePost(): @@ BSE MF STAR purchase confirm do controller @@");
 		String returnUrl = "redirect:/mutual-funds/bse-transaction-status";
-		logger.info("Purchase initiated against Folio no - " + purchaseForm.getPortfolio());
+		logger.info("bseAdditionalPurchasePost(): Purchase initiated against Folio no - " + purchaseForm.getPortfolio());
 		String clientId = "";
-		logger.info("Is cutout policy agreed for purchase?- " + purchaseForm.isAgreePolicy());
+		logger.info("bseAdditionalPurchasePost(): Is cutout policy agreed for purchase?- " + purchaseForm.isAgreePolicy());
 
 		if (bindResult.hasErrors()) {
-			logger.error("Error processing redeem request", bindResult.getFieldError().getDefaultMessage());
+			logger.error("bseAdditionalPurchasePost(): Error processing redeem request", bindResult.getFieldError().getDefaultMessage());
 			map.addAttribute("error", bindResult.getFieldError().getDefaultMessage());
 			return "bsemf/bsemf-additional-purchase";
 		}
 		if (!purchaseForm.isAgreePolicy()) {
-			logger.warn("Policy not agreed for transaction.");
+			logger.warn("bseAdditionalPurchasePost(): Policy not agreed for transaction.");
 			map.addAttribute("error", "Please agree to the policy for transaction.");
 			return "bsemf/bsemf-additional-purchase";
 		}
@@ -2036,7 +2036,7 @@ public class BsemfController {
 			SelectMFFund fundTransaction = new SelectMFFund();
 			try {
 				clientId = bseEntryManager.getClientIdfromMobile(session.getAttribute("userid").toString());
-				logger.info("Client id - " + clientId + " : transaction type for additional fund- "
+				logger.info("bseAdditionalPurchasePost(): Client id - " + clientId + " : transaction type for additional fund- "
 						+ purchaseForm.getInvestType());
 				fundTransaction.setClientID(clientId);
 				fundTransaction.setPortfolio(purchaseForm.getPortfolio());
@@ -2063,7 +2063,7 @@ public class BsemfController {
 				fundTransaction.setPaymentMethod(purchaseForm.getPaymentMode());
 
 				TransactionStatus flag = bseEntryManager.savetransactionDetails(fundTransaction, "");
-				logger.info("Customer additional purchase transaction status- " + flag.getSuccessFlag()); // todo
+				logger.info("bseAdditionalPurchasePost(): Customer additional purchase transaction status- " + flag.getSuccessFlag()); // todo
 				/*
 				 * redirectAttrs.addAttribute("TRANS_STATUS", "Y");
 				 * redirectAttrs.addAttribute("TRANS_TYPE", "ADDITIONAL");
@@ -2073,12 +2073,16 @@ public class BsemfController {
 
 				if (flag.getSuccessFlag().equalsIgnoreCase("S")) {
 
-					logger.info("Additional purchase order ID- " + flag.getBseOrderNoFromResponse());
-					redirectAttrs.addFlashAttribute("CLIENT_CODE", fundTransaction.getClientID());
-					redirectAttrs.addFlashAttribute("TRANS_STATUS", "Y");
-					redirectAttrs.addFlashAttribute("TRANS_TYPE", "PURCHASE");
-
-					redirectAttrs.addFlashAttribute("FIRST_PAY", "Y");
+					logger.info("bseAdditionalPurchasePost(): Additional purchase order ID- " + flag.getBseOrderNoFromResponse());
+//					redirectAttrs.addFlashAttribute("CLIENT_CODE", fundTransaction.getClientID());
+//					redirectAttrs.addFlashAttribute("TRANS_STATUS", "Y");
+//					redirectAttrs.addFlashAttribute("TRANS_TYPE", "PURCHASE");
+					
+					flag.setTransactionstatus("Y");
+					flag.setTransactiontype(fundTransaction.getTransactionType());
+					
+//					redirectAttrs.addFlashAttribute("FIRST_PAY", "Y");
+					flag.setFirstpay("Y");
 					flag.setFundName(purchaseForm.getFundName());
 
 					try {
@@ -2086,14 +2090,16 @@ public class BsemfController {
 
 						MFCustomers userDetails = bseEntryManager.getCustomerInvestFormData(session.getAttribute("userid") != null ? session.getAttribute("userid").toString() : fundTransaction.getMobile());
 
-						logger.info("Transaction processed successfully.. Processing to send mail for transaction id- "
+						logger.info("bseAdditionalPurchasePost(): Transaction processed successfully.. Processing to send mail for transaction id- "
 								+ fundTransaction.getTransactionID());
 						mailSenderInterface.mfpurchasenotofication(fundTransaction, userDetails, "purchase");
 					} catch (Exception e) {
-						logger.error("Failed to send mail to customer after purchase..", e);
+						logger.error("bseAdditionalPurchasePost(): Failed to send mail to customer after purchase..", e);
 					}
-
-					redirectAttrs.addFlashAttribute("TRANSACTION_REPORT_BEAN", flag);
+					
+					//flag.setClientcode(fundTransaction.getClientID());
+					flag.setInvestmentType(fundTransaction.getInvestype());
+					
 
 				} else if (flag.getSuccessFlag().equalsIgnoreCase("SF")) {
 					returnUrl = "bsemf/bsemf-additional-purchase";
@@ -2107,15 +2113,20 @@ public class BsemfController {
 
 				redirectAttrs.addFlashAttribute("TRANS_ID", purchaseForm.getPurchaseTransid());
 				redirectAttrs.addFlashAttribute("CLIENT_CODE", clientId);
+				
+				flag.setInvestamount(fundTransaction.getInvestAmount());
+				flag.setTransactionReference(purchaseForm.getPurchaseTransid()); // Validate mappimg
+				flag.setClientcode(clientId);
+				redirectAttrs.addFlashAttribute("TRANSACTION_REPORT_BEAN", flag);
 			} catch (Exception e) {
 
-				logger.error("Unable to save customer transaction request for additional purchase", e);
+				logger.error("bseAdditionalPurchasePost(): Unable to save customer transaction request for additional purchase", e);
 				// redirectAttrs.addAttribute("TRANS_STATUS", "N");
 				map.addAttribute("error", "Failed to save your request for additional purchase. Please try again.");
 				returnUrl = "bsemf/bsemf-additional-purchase";
 			}
 		}else {
-			logger.info("Session not found during purchase post. Redircting back to login page...");
+			logger.info("bseAdditionalPurchasePost(): Session not found during purchase post. Redircting back to login page...");
 			returnUrl="redirect:/login";
 		}
 		/*
@@ -2602,18 +2613,20 @@ public class BsemfController {
 		 * logger.info("No session found for requesting user. Invalidating request");
 		 * returnUrl="redirect:/login"; }else{
 		 */
-		String clientCode = CommonTask.decryptText(clientid);
-
+//		String clientCode = CommonTask.decryptText(clientid);
+		Base64 base64 = new Base64();
+		String decodedClientCode = CommonTask.decryptText(new String(base64.decode(clientid)));
+		
 		if (orderid.equalsIgnoreCase("")) {
-			logger.info("bseMFTransactionCallback(): Parameters data not found");
+			logger.info("bseMFTransactionCallback(): Parameter orderid data not found");
 			returnUrl = "redirect:/";
 		} else {
 			// String getClientId =
 			// bseEntryManager.getClientIdfromMobile(session.getAttribute("userid")!=null?session.getAttribute("userid").toString():"NA");
 			logger.info("bseMFTransactionCallback(): Transaction complete callback received for order id: " + orderid
-					+ " : client: " + clientCode);
-			Base64 base64 = new Base64();
-			String decodedClientCode = new String(base64.decode(clientCode.getBytes()));
+					+ " : client: " + decodedClientCode);
+//			Base64 base64 = new Base64();
+//			String decodedClientCode = new String(base64.decode(clientCode.getBytes()));
 
 			String resp = investmentConnectorBseInterface.BseOrderPaymentStatus(decodedClientCode, orderid);
 
@@ -2697,7 +2710,7 @@ public class BsemfController {
 			}
 
 			logger.info("Emdanate status in case of SIP -" + transReport.getEmandateStatusCode());
-			map.addAttribute("TRANS_STATUS", transReport.getTransactionstatus());
+			//map.addAttribute("TRANS_STATUS", transReport.getTransactionstatus());
 			/*
 			
 			map.addAttribute("TRANS_ID", transId);
@@ -2724,7 +2737,7 @@ public class BsemfController {
 		
 		map.addAttribute("bsepay", pay);
 		map.addAttribute("TRANS_STATUS", transReport.getTransactionstatus());
-		map.addAttribute("TRANSACTION_REPORT", transReport);
+		//map.addAttribute("TRANSACTION_REPORT", transReport);
 		logger.info("bseMFTransactionStatus(): Return url- "+ returnUrl);
 		return returnUrl;
 	}
@@ -2736,10 +2749,10 @@ public class BsemfController {
 		
 		logger.info("bsepaymentprocess(): @@ BSE MF STAR purchase confirm controller process for payment @@");
 		String returnUrl = "bsemf/bse-payment-status";
-		map.addAttribute("bsepay", pay);
+		
 		Paymentgatewayresponse payresponse = new Paymentgatewayresponse();
 		
-		
+		TransactionStatus status = new TransactionStatus();
 		if(pay.getPayvia().equalsIgnoreCase("IB")) {
 			//Pay via internet banking
 			/*
@@ -2767,10 +2780,12 @@ public class BsemfController {
 			payresponse = bseEntryManager.getPaymentGateway(pay);
 			
 			if(payresponse.getStatuscode().equals("101")) {
-				map.addAttribute("TRANS_STATUS", "N");
-				TransactionStatus status = pay.getTransstatus();
+				logger.info("Payment request failed for- "+ payresponse.getResponse());
+				map.addAttribute("TRANS_STATUS", "RETRY");
+				status = pay.getTransstatus();
 				status.setTransactionmsg(payresponse.getResponse());
-				map.addAttribute("TRANSACTION_REPORT", status);
+//				map.addAttribute("TRANSACTION_REPORT", status);
+				map.addAttribute("error", payresponse.getResponse());
 				returnUrl = "bsemf/bse-purchase-status";
 			}else {
 				map.addAttribute("data", payresponse.getResponse());
@@ -2778,15 +2793,26 @@ public class BsemfController {
 		}else if(pay.getPayvia().equalsIgnoreCase("UPI")) {
 			
 			payresponse = bseEntryManager.getPaymentGateway(pay);
-			map.addAttribute("data", payresponse.getResponse());
-//			map.addAttribute("msg", "Payment request sent.");
-			map.addAttribute("TRANS_STATUS", "UPI_REQUEST");
 			
-			returnUrl = "bsemf/bse-purchase-status";
+			if(payresponse.getStatuscode().equals("101")) {
+				logger.info("UPI Payment request failed for- "+ payresponse.getResponse());
+				map.addAttribute("TRANS_STATUS", "RETRY");
+				status = pay.getTransstatus();
+				status.setTransactionmsg(payresponse.getResponse());
+				map.addAttribute("error", payresponse.getResponse());
+				returnUrl = "bsemf/bse-purchase-status";
+			}else {
+				map.addAttribute("data", payresponse.getResponse());
+				map.addAttribute("TRANS_STATUS", "UPI_REQUEST");
+			}
+			
 		}
 		else {
 			logger.info("Invalid payment method selected.. Returning back to page...");
 		}
+		
+		pay.setTransstatus(status);
+		map.addAttribute("bsepay", pay);
 		
 		return returnUrl;
 	}
@@ -3358,7 +3384,7 @@ public class BsemfController {
 
 	}
 
-	@Scheduled(cron = "0 0 23 * * ?")
+//	@Scheduled(cron = "0 0 23 * * ?")
 	public void scheduledgetallotmentstatement() {
 		allotmentstatementcall("0");
 	}
