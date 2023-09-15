@@ -13,31 +13,31 @@ public class Bsepay implements Serializable {
 	
 	private Long chosenbankid;
 	
-	private String bankgatewaycode;
+	private String bankgatewaycode="";
 	
-	private String bankname;
+	private String bankname="";
 	
-	private String bankacc;
+	private String bankacc="";
 	
-	private String payvia;
+	private String payvia="";
 	
-	private String paymentmode;
+	private String paymentmode="";
 	
-	private String ifscode;
+	private String ifscode="";
 	
-	private String upiid;
+	private String upiid="";
 	
-	private String orderno;
+	private String orderno="";
 	
 	private String amount="0";
 	
-	private String mobile;
+	private String mobile="";
 	
 	private String investtype;
 	
 	private TransactionStatus transstatus;
 	
-	private String loopbackurl;
+	private String loopbackurl="";
 
 	public Long getChosenbankid() {
 		return chosenbankid;
@@ -154,5 +154,6 @@ public class Bsepay implements Serializable {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
+	
 	
 }
