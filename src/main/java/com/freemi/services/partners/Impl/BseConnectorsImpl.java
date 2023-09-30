@@ -216,7 +216,8 @@ public class BseConnectorsImpl implements InvestmentConnectorBseInterface {
 				gatewayrequest.setLoopbackurl(request.getLoopbackurl());
 				gatewayrequest.setInternalrefno(request.getTransstatus().getTransactionReference());
 //				gatewayrequest.setNeftref(null); //TO DO when NEFT is added
-				if(request.getPayvia().equalsIgnoreCase("UPI")) {
+				String[] payviadata = request.getPayvia().split("-");
+				if(payviadata[0].equalsIgnoreCase("UPI")) {
 					gatewayrequest.setVpaid(request.getUpiid());
 				}
 //				gatewayrequest.setLoopbackurl();

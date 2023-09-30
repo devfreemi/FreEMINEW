@@ -2266,10 +2266,10 @@ public class BseEntryServiceImpl implements BseEntryManager {
 				request.setBankacc(bankdetails.getAccountNumber());
 				request.setIfscode(bankdetails.getIfscCode());
 				request.setBankname(bankdetails.getBankName());
-				
-				if(request.getPayvia().equalsIgnoreCase("IB")) {
+				String[] payviadata = request.getPayvia().split("-");
+				if(payviadata[0].equalsIgnoreCase("INTERNET_BANKING")) {
 					transtype = "INTERNET_BANKING";
-				}else if(request.getPayvia().equalsIgnoreCase("UPI")) {
+				}else if(payviadata[0].equalsIgnoreCase("UPI")) {
 					transtype="UPI";
 				}else {
 					transtype="NA";
