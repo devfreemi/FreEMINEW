@@ -7,7 +7,7 @@
 
 <div class="fddetailed">
 
-	<div style="padding-top: 1rem;">
+	<div>
 		<form:form id="regForm"
 			action="${pageContext.request.contextPath}/mutual-funds/register"
 			modelAttribute="mfInvestForm" method="POST">
@@ -24,11 +24,6 @@
 						id="errormsgbox">${ error}</div>
 				</c:if>
 			</div>
-
-			<div>
-				<small class="text-muted" style="font-size: 11px;">Complete
-					your investment profile</small>
-			</div>
 			<div class="tab animated fadeIn">
 				<form:hidden path="profileRegRequired" />
 				<form:hidden path="customerRegistered" />
@@ -39,37 +34,37 @@
 				<form:hidden path="holdingMode" id="holdingMode" value="SI" />
 				<form:hidden path="mobileverified" id="mobileverified" />
 				<form:hidden path="emailverified" id="emailverified" />
+				<form:hidden path="nomineeregcomplete" id="nomineeverifyregcomplete"/>
 
-				<div class="sectionheader mb-5">
+				<div class="sectionheader mb-4">
 					<h5 class="topic-style">
 						<i class="fas fa-user"></i> Personal Details
 					</h5>
-					<hr>
 				</div>
 
 				<div class="form-row mb-3">
 					<div class="col-md-4 col-lg-4">
-						<div class="md-form md-outline form-sm mt-0">
-							<form:input type="text" class="form-control" maxlength="48"
+						<div class="field mt-0">
+							<form:input type="text" class=" form-control invest" maxlength="48"
 								id="fname" path="fname" required="required" />
-							<label for="fname">First Name <sup class="text-danger">*</sup>
+							<label class="label-invest" for="fname">First Name <sup class="text-danger">*</sup>
 							</label>
 						</div>
 					</div>
 
 					<div class="col-md-4 col-lg-4">
-						<div class="md-form md-outline form-sm mt-0">
-							<form:input type="text" class="form-control" maxlength="48"
+						<div class="field mt-0">
+							<form:input type="text" class="form-control invest" maxlength="48"
 								id="mname" path="mname" required="required" />
-							<label for="mname">Middle Name</label>
+							<label class="label-invest" for="mname">Middle Name</label>
 						</div>
 					</div>
 
 					<div class="col-md-4 col-lg-4">
-						<div class="md-form md-outline form-sm mt-0">
-							<form:input type="text" class="form-control" maxlength="48"
+						<div class="field mt-0">
+							<form:input type="text" class="form-control invest" maxlength="48"
 								id="lname" path="lname" required="required" placeholder="" />
-							<label for="lname">Last name <sup class="text-danger">*</sup></label>
+							<label class="label-invest" for="lname">Last name <sup class="text-danger">*</sup></label>
 						</div>
 					</div>
 
@@ -77,12 +72,12 @@
 
 				<div class="form-row mb-3">
 					<div class="col-md-4 col-lg-4">
-						<div class="md-form md-outline form-sm mt-0">
-							<form:input type="text" class="buttonInside form-control"
+						<div class="field mt-0">
+							<form:input type="text" class="buttonInside form-control invest"
 								minlength="10" maxlength="10" pattern="[0-9]*" id="mobile"
 								path="mobile" required="required"
 								readonly="${LOGGED =='Y' ? 'true' : 'false' }" />
-							<label for="mobile">Mobile no. <sup class="text-danger">*</sup></label>
+							<label class="label-invest" for="mobile">Mobile no. <sup class="text-danger">*</sup></label>
 							<span class="border-0 verifybtn" id="verifymobile"
 								data-mdb-toggle="tooltip" data-mdb-placement="top"
 								title="Click to send OTP"> <i id="mobileverifyimg"
@@ -94,11 +89,11 @@
 					</div>
 
 					<div class="col-md-4 col-lg-4">
-						<div class="md-form md-outline form-sm mt-0">
-							<form:input type="email" class="buttonInside form-control"
+						<div class="field mt-0">
+							<form:input type="email" class="buttonInside form-control invest"
 								maxlength="128" id="email" path="email" required="required"
 								readonly="${LOGGED =='Y' ? 'true' : 'false' }" />
-							<label for="email">Email ID <sup class="text-danger">*</sup></label>
+							<label class="label-invest"  for="email">Email ID <sup class="text-danger">*</sup></label>
 							<span class="border-0 verifybtn" id="verifyemail"
 								data-mdb-toggle="tooltip" data-mdb-placement="top"
 								title="Click to send OTP"><i id="emailverifyimg"
@@ -108,11 +103,11 @@
 					</div>
 
 					<div class="col-md-4 col-lg-4">
-						<div class="md-form md-outline form-sm mt-0">
-							<form:input type="text" class="form-control" id="pan1"
+						<div class="field mt-0">
+							<form:input type="text" class="form-control invest" id="pan1"
 								style="text-transform: uppercase;" maxlength="10"
 								required="required" path="pan1" />
-							<label for="pan1">Primary holder PAN <sup
+							<label class="label-invest" for="pan1">Primary holder PAN <sup
 								class="text-danger">*</sup></label>
 						</div>
 					</div>
@@ -120,38 +115,37 @@
 
 				<div class="form-row mb-3">
 
-					<div class="col-md-4 col-lg-4 mb-4">
-						<p class="mb-0" style="font-size: .9rem;">
-							Gender <sup class="text-danger">*</sup>
-						</p>
-						<div class="form-check form-check-inline">
-							<form:radiobutton class="form-check-input" path="gender"
-								id="genderm" value="M" />
-							<label class="form-check-label" for="genderm">Male</label>
-						</div>
-
-						<div class="form-check form-check-inline">
-							<form:radiobutton class="form-check-input" path="gender"
-								id="genderf" value="F" />
-							<label class="form-check-label" for="genderf">Female</label>
-						</div>
+					<div class="col-md-4 col-lg-4 my-4 pl-3">
+						<div class="row mx-auto mw-100 pl-md-3">
+							<div class="col-6 col-md-6 form-check mx-auto mt-n4 mt-md-0">
+								<label class="label-invest form-check-label" for="genderm">
+									<form:radiobutton class="form-check-input form-radio" path="gender" id="genderm" value="M" />
+									<strong>Male</strong>
+								</label>
+							</div>
+							<div class="col-6 col-md-6 form-check mt-n4 mt-md-0">
+								<label class="label-invest form-check-label" for="genderf">
+									<form:radiobutton class="form-check-input form-radio" path="gender" id="genderf" value="F" />
+									<strong>Female</strong>
+								</label>
+							</div>
 					</div>
-
+				   </div>
 
 					<div class="col-md-4 col-lg-4">
-						<div class="md-form md-outline form-sm mt-0">
+						<div class="field mt-0">
 							<form:input type="text" path="customerdob" required="required"
 								data-provide="datepicker" data-date-start-date="-65y"
 								data-date-end-date="-6750d" maxlength="10"
-								class="form-control datepicker mb-0" id="investorDOB" />
-							<label for="investorDOB">Date of Birth <sup
+								class="form-control datepicker invest" id="investorDOB" />
+							<label class="label-invest" for="investorDOB">Date of Birth <sup
 								class="text-danger">*</sup></label> <small class="text-muted"
 								style="font-size: 10px;">Age limit: 18-65 years</small>
 						</div>
 					</div>
 					<div class="col-md-4 col-lg-4">
-						<div class="md-form md-outline form-sm mt-0">
-							<form:select class="custom-select drop-down-custom"
+						<div class="field select-mod mt-0">
+							<form:select class="custom-select form-control invest"
 								id="occupation" path="occupation">
 								<form:option value="">--Select Occupation--</form:option>
 								<form:options items="${occupation}" />
@@ -164,20 +158,21 @@
 
 				<div class="form-row">
 					<div class="form-group col-md-6">
-						<small class="text-primary">Mobile no. owner declaration</small>
-						<div class="input-group mb-1">
-							<form:select class="custom-select drop-down-custom" id="mobiledec"
+						<div class="field select-mod">
+							<form:select class="form-control invest" id="mobiledec"
 								path="mobiledecflag">
+								<form:option value="" disabled="true" selected="true">--Mobile no. owner declaration--</form:option>
 								<form:options items="${idbelongsto}" />
 							</form:select>
 						</div>
 						
 					</div>
 					<div class="form-group col-md-6">
-						<small class="text-primary">Email ID owner declaration</small>
-						<div class="input-group mb-1">
-							<form:select class="custom-select" id="emaildeclare"
+						<!-- <small class="text-primary">Email ID owner declaration</small> -->
+						<div class="field select-mod">
+							<form:select class="form-control invest" id="emaildeclare"
 								path="emaildeclareflag">
+								<form:option value="" disabled="true" selected="true">--Email Id. owner declaration--</form:option>
 								<form:options items="${idbelongsto}" />
 							</form:select>
 							
@@ -188,36 +183,36 @@
 
 				<div class="form-row">
 					<div class="col-md-4 col-lg-4">
-						<div class="md-form md-outline form-sm mt-0">
-							<form:input type="text" class="form-control" required="required"
+						<div class="field mt-0">
+							<form:input type="text" class="form-control invest" required="required"
 								id="address1" path="addressDetails.address1" />
-							<label for="address1">Address 1 <sup class="text-danger">*</sup></label>
+							<label class="label-invest" for="address1">Address 1 <sup class="text-danger">*</sup></label>
 						</div>
 					</div>
 
 					<div class="col-md-4 col-lg-4">
-						<div class="md-form md-outline form-sm mt-0">
-							<form:input type="text" class="form-control" id="address2"
+						<div class="field mt-0">
+							<form:input type="text" class="form-control invest" id="address2"
 								path="addressDetails.address2" />
-							<label for="address2">Address 2 <sup class="text-danger">*</sup></label>
+							<label class="label-invest" for="address2">Address 2 <sup class="text-danger">*</sup></label>
 						</div>
 					</div>
 
 					<div class="col-md-4 col-lg-4">
-						<div class="md-form md-outline form-sm mt-0">
-							<form:input type="text" class="form-control" id="address3"
+						<div class="field mt-0">
+							<form:input type="text" class="form-control invest" id="address3"
 								path="addressDetails.address3" />
-							<label for="address3">Address 3</label>
+							<label class="label-invest" for="address3">Address 3</label>
 						</div>
 					</div>
-					<div class="col-md-4 col-lg-4 mb-3">
+					<div class="col-md-4 col-lg-4 mb-3 field select-mod">
 						<form:select class="custom-select select2size" id="addState"
 							required="required" path="addressDetails.state">
 							<form:options items="${states}" />
 						</form:select>
 					</div>
 
-					<div class="col-md-4 col-lg-4 mb-3">
+					<div class="col-md-4 col-lg-4 mb-3 field select-mod">
 						<form:select class="custom-select select2size"
 							path="addressDetails.city" id="address_city">
 							<form:options items="${cities}" />
@@ -225,7 +220,7 @@
 
 					</div>
 
-					<div class="col-md-4 col-lg-4 mb-3">
+					<div class="col-md-4 col-lg-4 mb-3 field select-mod">
 						<form:select class="custom-select select2size mb-3"
 							path="addressDetails.pinCode" id="pinCode">
 							<form:options items="${pincode}" />
@@ -249,20 +244,20 @@
 
 				<div class="form-row mb-3">
 					<div class="col-md-6 col-lg-6">
-						<div class="md-form md-outline form-sm mt-0">
-							<form:input type="tel" class="form-control mb-0" id="accountno"
+						<div class="field mt-0">
+							<form:input type="tel" class="form-control invest mb-0" id="accountno"
 								path="bankDetails.accountNumber" maxlength="18" />
-							<label for="accountno">Account No. <sup
+							<label class="label-invest" for="accountno">Account No. <sup
 								class="text-danger">*</sup></label> <small class="text-muted"
 								style="font-size: 10px;"><sup>*</sup>Account must belong
 								to primary account holder.</small>
 						</div>
 					</div>
 					<div class="col-md-6 col-lg-6">
-						<div class="md-form md-outline form-sm mt-0">
-							<form:input type="text" class="form-control" id="ifsc"
+						<div class="field mt-0">
+							<form:input type="text" class="form-control invest" id="ifsc"
 								path="bankDetails.ifscCode" required="required" maxlength="11" />
-							<label for="ifsc">IFSC Code <sup class="text-danger">*</sup></label>
+							<label class="label-invest" for="ifsc">IFSC Code <sup class="text-danger">*</sup></label>
 							<small id="invalidifsc" class="text-danger"></small>
 						</div>
 					</div>
@@ -271,19 +266,23 @@
 
 				<div class="form-row mb-3">
 					<div class="col-md-6 col-lg-6">
-						<p class="mb-0" style="font-size: .9rem;">
+						<p class="mb-3" style="font-size: .9rem;">
 							Account type <sup class="text-danger">*</sup>
 						</p>
-						<div class="form-check form-check-inline">
-							<form:radiobutton class="form-check-input"
-								path="bankDetails.accountType" id="accountTypesb" value="SB" />
-							<label class="form-check-label" for="accountTypesb">Savings</label>
-						</div>
-
-						<div class="form-check form-check-inline">
-							<form:radiobutton class="form-check-input"
-								path="bankDetails.accountType" id="accountTypeac" value="CB" />
-							<label class="form-check-label" for="accountTypeac">Current</label>
+						<div class="row mx-auto mw-100 pl-md-3">
+							<div class="col-6 col-md-6 form-check mx-auto my-3 mt-md-0">
+								<label class="label-invest form-check-label" for="accountTypesb">
+									<form:radiobutton class="form-check-input form-radio" path="bankDetails.accountType" id="accountTypesb" value="SB" />
+									<strong>Savings</strong>
+								</label>
+							</div>
+							
+							<div class="col-6 col-md-6 form-check mx-auto my-3 mt-md-0">
+								<label class="form-check-label" for="accountTypeac">
+									<form:radiobutton class="form-check-input form-radio" path="bankDetails.accountType" id="accountTypeac" value="CB" />
+									<strong>Savings</strong>
+								</label>
+							</div>
 						</div>
 					</div>
 					<div class="col-md-6 col-lg-6">
@@ -303,17 +302,17 @@
 
 				<div class="form-row">
 					<div class="col-md-6 col-lg-6">
-						<div class="md-form md-outline form-sm mt-0">
-							<form:input type="text" class="form-control" id="nomineeName"
+						<div class="field mt-0">
+							<form:input type="text" class="form-control invest" id="nomineeName"
 								path="nominee.nomineeName" />
-							<label for="nomineeName">Nominee Name <sup
+							<label class="label-invest" for="nomineeName">Nominee Name <sup
 								class="text-danger">*</sup></label>
 						</div>
 					</div>
 
 					<div class="col-md-6 col-lg-6">
-						<div class="md-form md-outline form-sm mt-0">
-							<form:select class="custom-select" id="relation"
+						<div class="field select-mod mt-0">
+							<form:select class="custom-select form-control invest" id="relation"
 								path="nominee.nomineeRelation">
 								<option value="">Choose relation</option>
 								<form:options items="${nomineeRelation}" />
@@ -326,41 +325,75 @@
 				<div class="form-row mb-3">
 
 					<div class="col-md-4 col-lg-4 mb-4">
-						<p class="mb-0" style="font-size: .9rem;">
+						<p class="mb-3" style="font-size: .9rem;">
 							Nominee Minor? <sup class="text-danger">*</sup>
 						</p>
-						<div class="form-check form-check-inline">
-							<form:radiobutton class="form-check-input"
-								path="nominee.isNomineeMinor" id="isNomineeMinorn" value="N" />
-							<label class="form-check-label" for=isNomineeMinorn>No</label>
-						</div>
-
-						<div class="form-check form-check-inline">
-							<form:radiobutton class="form-check-input"
-								path="nominee.isNomineeMinor" id="isNomineeMinory" value="Y" />
-							<label class="form-check-label" for="isNomineeMinory">Yes</label>
+						<div class="row mx-auto mw-100 pl-md-3">
+							<div class="col-6 col-md-6 form-check mx-auto my-3 mt-md-0">
+								<label class="label-invest form-check-label" for=isNomineeMinorn>
+									<form:radiobutton class="form-check-input form-radio" path="nominee.isNomineeMinor" id="isNomineeMinorn" value="N" />
+									<strong>No</strong>
+								</label>
+							</div>
+							
+							<div class="col-6 col-md-6 form-check mx-auto my-3 mt-md-0">
+								<label class="label-invest form-check-label" for="isNomineeMinory">
+									<form:radiobutton class="form-check-input form-radio" path="nominee.isNomineeMinor" id="isNomineeMinory" value="Y" />
+									<strong>Yes</strong>
+								</label>
+							</div>
 						</div>
 					</div>
 
 					<div class="col-md-4 col-lg-4">
-						<div class="md-form md-outline form-sm mt-0">
+						<div class="field mt-0">
 							<form:input type="text" path="nominee.nomineeDOB"
 								required="required" data-provide="datepicker"
 								data-date-start-date="-18y" data-date-end-date="-1d"
-								maxlength="10" class="form-control datepicker mb-0"
+								maxlength="10" class="form-control invest datepicker mb-0"
 								id="nomineedob" />
-							<label for="nomineedob">Minor's DOB </label>
+							<label class="label-invest" for="nomineedob">Minor's DOB </label>
 						</div>
 					</div>
 
 
 					<div class="col-md-4 col-lg-4">
-						<div class="md-form md-outline form-sm mt-0">
-							<form:input type="text" class="form-control" id="nomineeguardian"
+						<div class="field mt-0">
+							<form:input type="text" class="form-control invest" id="nomineeguardian"
 								maxlength="64" path="nominee.nomineeGuardian" />
-							<label for="nomineeName">Nominee Guardian</label>
+							<label class="label-invest" for="nomineeName">Nominee Guardian</label>
 						</div>
 					</div>
+				</div>
+				
+				
+				
+				<div class="form-row mb-3">
+				
+				<div class="col-md-4 col-lg-4">
+						<div class="field mt-0">
+							<form:input type="text" class="form-control invest" id="nominee1pan"
+								maxlength="10" path="nominee.nominee1pan" value="OTP" />
+							<label class="label-invest" for="nominee1pan">Nominee PAN</label>
+						</div>
+				</div>
+				
+				<div class="col-md-4 col-lg-4">
+						<div class="field mt-0">
+							<form:input type="text" class="form-control invest" id="nominee1guardpan"
+								maxlength="10" path="nominee.nominee1guardianpan" value="OTP" />
+							<label class="label-invest" for="nominee1guardpan">Nominee Guardian PAN</label>
+						</div>
+				</div>
+				
+				<div class="col-md-4 col-lg-4">
+						<div class="field mt-0">
+							<form:input type="text" class="form-control invest" id="authmode"
+								maxlength="64" path="nomineeverifymethod" readonly="readonly" value="OTP" />
+							<label class="label-invest" for="authmode">Nominee authentication</label>
+						</div>
+				</div>
+				
 				</div>
 
 
@@ -396,11 +429,11 @@
 
 					<div class="form-row mb-3">
 						<div class="col-md-6 col-lg-6">
-							<div class="md-form md-outline form-sm mt-0">
-								<form:input type="text" class="form-control" maxlength="32"
+							<div class="field mt-0">
+								<form:input type="text" class="form-control invest" maxlength="32"
 									pattern="[a-zA-Z ]*" id="birthplace"
 									path="fatcaDetails.placeOfBirth" />
-								<label for="birthplace">Place of Birth<sup
+								<label class="label-invest" for="birthplace">Place of Birth<sup
 									class="text-danger">*</sup></label>
 							</div>
 						</div>
@@ -419,27 +452,27 @@
 					<div class="form-row mb-3">
 
 						<div class="col-md-6 col-lg-6">
-							<div class="md-form md-outline form-sm mt-0">
-								<form:input type="text" class="form-control" id="fathername"
+							<div class="field mt-0">
+								<form:input type="text" class="form-control invest" id="fathername"
 									path="fatcaDetails.fatherName" maxlength="64" />
-								<label for="fathername">Father's name</label>
+								<label class="label-invest" for="fathername">Father's name</label>
 							</div>
 						</div>
 
 						<div class="col-md-6 col-lg-6">
-							<div class="md-form md-outline form-sm mt-0">
-								<form:input type="text" class="form-control" id="spousename"
+							<div class="field mt-0">
+								<form:input type="text" class="form-control invest" id="spousename"
 									path="fatcaDetails.spouseName" maxlength="64" />
-								<label for="spousename">Spouse Name</label>
+								<label class="label-invest" for="spousename">Spouse Name</label>
 							</div>
 						</div>
 					</div>
 					<div class="form-row mb-3">
 						<div class="col-md-4 col-lg-4">
-							<div class="md-form form-group mt-0">
+							<div class="field select-mod mt-0">
 								<small class="text-primary">Income slab <sup
 									class="text-danger">*</sup></small>
-								<form:select class="custom-select" id="incomeslab"
+								<form:select class="custom-select form-control invest" id="incomeslab"
 									required="required" path="fatcaDetails.incomeSlab">
 									<form:option value="">--Select--</form:option>
 									<form:options items="${incomeSlab}" />
@@ -448,10 +481,10 @@
 						</div>
 
 						<div class="col-md-4 col-lg-4">
-							<div class="md-form form-group mt-0">
+							<div class="field select-mod mt-0">
 								<small class="text-primary">Wealth source <sup
 									class="text-danger">*</sup></small>
-								<form:select class="custom-select" id="wealthsource"
+								<form:select class="custom-select form-control invest" id="wealthsource"
 									required="required" path="fatcaDetails.wealthSource">
 									<form:option value="">--Select--</form:option>
 									<form:options items="${wealthSource}" />
@@ -460,10 +493,10 @@
 						</div>
 
 						<div class="col-md-4 col-lg-4">
-							<div class="md-form form-group mt-0">
+							<div class="field select-mod">
 								<small class="text-primary">Political view <sup
 									class="text-danger">*</sup></small>
-								<form:select class="custom-select" id="politicalview"
+								<form:select class="custom-select form-control invest" id="politicalview"
 									required="required" path="fatcaDetails.politicalExposedPerson">
 									<form:option value="">--Select--</form:option>
 									<form:options items="${politicalView}" />
@@ -514,10 +547,9 @@
 
 					</div>
 
-					<div class="form-row"
-						style="margin-bottom: 5px; padding-left: 5px;">
+					<!-- <div class="row">
 
-						<div class="md-12">
+						<div class="col-md-6 col-lg-6 label-tandc-size px-0">
 							<%-- <form:checkbox path="ubo" id="customCheck1"
 								class="custom-control-input" onchange="validConfirmForm();" />
 							<label class="custom-control-label text-muted pt-1"
@@ -528,15 +560,38 @@
 									&amp; Conditions</a> and agree to the same
 							</label>  --%>
 
-							<label style="margin-right: 4px;"> <form:checkbox
+							<form:checkbox
 									path="ubo" class="option-input checkbox" checked="checked"
-									id="customCheck1" /> By clicking Apply, you confirm that you
-								have read Mutual Fund Investment documents and FreEMI
-							</label><a href="https://www.freemi.in/terms-conditions/" target="_blank">Terms
-								&amp; Conditions</a> and agree to the same
-
+									id="customCheck1" />
+							
+							<div class="col-12 pl-small-text text-muted px-0 mb-1" style="font-size: 10px;">
+								<i class="fas fa-star-of-life my-note text-danger"></i>
+								By clicking Apply, you confirm that you
+								have read Mutual Fund Investment documents and FreEMI.
+							</div>
+							<a href="https://www.freemi.in/terms-conditions/" target="_blank">Terms
+								&amp; Conditions</a>
+							and agree to the same
 						</div>
 
+					</div> -->
+					<div class="row">
+					
+						<div class="col-md-6 col-lg-6 label-tandc-size px-0">
+							<input id="customCheck1" name="ubo" checked="checked" class="agreeTerms mb-0" type="checkbox" value="true" />
+							<a href="https://www.freemi.in/terms-conditions/" target="_blank" class="label-tandc-size">
+								Terms &amp; Conditions</a>
+							<input type="hidden" name="_ubo" value="on" />
+							<label for="TandC">
+								and agree to the same.
+							</label>
+							<div class="col-12 pl-small-text text-muted px-0 mb-1" style="font-size: 10px;">
+								<i class="fas fa-star-of-life my-note text-danger"></i>
+								By clicking Apply, you confirm that you
+								have read Mutual Fund Investment documents and FreEMI.
+							</div>
+						</div>
+					
 					</div>
 
 				</div>

@@ -14,8 +14,10 @@
 <meta name="description" content="" />
 <meta name="robots" content="noindex,follow" />
 <%-- <link
-	href="<c:url value="${contextcdn}/resources/css/bseinvestmentform.css"/>"
+	href="<c:url value="${contextcdn}/products/resources/css/bseinvestmentform.css"/>"
 	rel="stylesheet"> --%>
+<link href="<c:url value="../products/resources/css/purchase.css" />"
+rel="stylesheet"> 
 <link href="<c:url value="${contextcdn}/resources/css/pace-theme.css"/>"
 	rel="stylesheet">
 <link rel="stylesheet"
@@ -75,8 +77,31 @@
 
 	<!-- END BSE MF  -->
 	<jsp:include page="../include/footer.jsp"></jsp:include>
-	<script src="<c:url value="${contextcdn}/resources/js/bseinvest.js" />"
-		async="true"></script>
-
+	<script src='<c:url value="${contextcdn}/resources/js/bseinvest.js"/>' async="true"></script>
+	<script>
+		$(document).ready(function () {
+			$(".purchase-next").click(function () {
+				// console.log("Hi");
+				$("#next-step").removeClass("d-none");
+				$(".purchase-next").addClass("d-none");
+				$(".purchase-next").removeClass("d-block");
+				$(".first-step").hide();
+			});
+			$(".back").click(function () {
+				// console.log("Hi");
+				$("#next-step").addClass("d-none");
+				$(".purchase-next").addClass("d-block");
+				$(".purchase-next").addClass("float-right");
+				$(".purchase-next").removeClass("d-none");
+				$(".first-step").show();
+			});
+			$('.more').hide();
+			$(".read-more").click(function () {
+				// console.log("Hi");
+				$(".read-more").hide();
+				$('.more').show();
+			});
+		});
+	</script>
 </body>
 </html>

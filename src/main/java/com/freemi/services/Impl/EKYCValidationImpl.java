@@ -35,7 +35,7 @@ public class EKYCValidationImpl implements EKYCValidation {
 			 */
 			OTPInfo otpinfo = new OTPInfo();
 			otpinfo.setMobileNumber(mobileno);
-			otpinfo.setSubModule(mobileno);
+			otpinfo.setSubModule(submodule);
 			otpinfo.setSessionId(sesisonid);
 			
 			Otprequeststatus status= communicationclient.checkOTPverifystatus(otpinfo);

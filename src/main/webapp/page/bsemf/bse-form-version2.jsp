@@ -27,6 +27,7 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
 <link href="<c:url value="${contextcdn}/resources/css/bseinvestv2.css"/>" rel="preload" as="style" onload="this.rel='stylesheet'">
 <link href="<c:url value="${contextcdn}/resources/css/bseinvestmentformv2.css"/>" rel="stylesheet">
+<link href="<c:url value="${contextcdn}/resources/css/bseinvestmentform.css" />" rel="stylesheet">
 <link
 	href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css"
 	rel="stylesheet" />
@@ -35,23 +36,21 @@
 </head>
 <body>
 	<jsp:include page="/page/include/header.jsp"></jsp:include>
-	<div class="container-fluid" style="margin-bottom: 5rem;">
-		<section>
-			<div class="row" style="padding-top: 2rem;">
-				<div class="col-md-6 col-lg-6 mx-auto border rounded">
-					<jsp:include page="bse-starmf-form-detailed-v2.jsp"></jsp:include>
-				</div>
-
-				<%-- <div class="col-md-5 col-lg-5 d-none d-sm-block">
-					<img
-						src="<c:url value="${contextcdn}/resources/images/invest/fd-1.png"/>"
-						class="img-fluid animated slideInRight">
-				</div> --%>
-
+		<div class="col-12 mx-auto">
+			<div class="col-md-5 col-10 mx-auto py-3">
+				<h5 class="text-center register-head">Complete Your Investment Profile</h5>
 			</div>
-		</section>
-
-	</div>
+			<section>
+				<div class="row mb-4">
+					<div class="col-md-6 col-lg-6  mx-auto ">
+						<div class="card card-body">
+							<jsp:include page="bse-starmf-form-detailed-v2.jsp"></jsp:include>
+						</div>
+					</div>
+				</div>
+			</section>
+		
+		</div>
 	<jsp:include page="/page/include/mobileverify.jsp"></jsp:include>
 	<jsp:include page="/page/include/emailverify.jsp"></jsp:include>
 	<jsp:include page="/page/include/sub-footer.jsp"></jsp:include>

@@ -31,6 +31,7 @@ import com.freemi.entity.general.HttpClientResponse;
 import com.freemi.entity.general.UserProfile;
 import com.freemi.entity.investment.AofSignaure;
 import com.freemi.entity.investment.BseAllTransactionsView;
+import com.freemi.entity.investment.BseBankid;
 import com.freemi.entity.investment.BseFundsScheme;
 import com.freemi.entity.investment.BseMFSelectedFunds;
 import com.freemi.entity.investment.BseMFTop15lsSip;
@@ -966,6 +967,12 @@ public class BseRestClient implements BseEntryManager {
 
 	@Override
 	public Nominee2faresponse authenticatenominee(String mobile, String clientid, String callbackurl) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<BseBankid> getbankgateways(String paymentmethod, String razorpaybankname) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -256,11 +256,9 @@
 															<form:select class="form-select form-select-sm"
 																path="payvia" id="payvia" aria-label="Payment mode"
 																data-width="100%">
-																<option selected value="IB">Internet Banking</option>
-																<option value="UPI">UPI</option>
+																<option selected value="">Select Payment mode</option>
+																<form:options items="${gatewaydata}" />
 															</form:select>
-
-
 														</div>
 														<div id="bank" class="mb-3 d-all">
 															<label for="bank" class="form-label small text-primary">Account
@@ -384,12 +382,14 @@
 						});
 
 						$("#payvia").change(function() {
-							if ($("#payvia").val() == 'IB') {
+								const payviadata = $("#payvia").val().split("-");
+							
+							if (payviadata[0] == 'INTERNET_BANKING') {
 								$("#upifield").removeClass("d-all");
 								$("#upifield").addClass("d-none");
 								$("#bank").addClass("d-all");
 								$("#bank").removeClass("d-none");
-							} else if ($("#payvia").val() == 'UPI') {
+							} else if (payviadata[0] == 'UPI') {
 								$("#upifield").removeClass("d-none");
 								$("#upifield").addClass("d-all");
 								$("#bank").addClass("d-none");
@@ -406,7 +406,9 @@
 											e.preventDefault();
 											let regex = new RegExp(
 													/^[a-zA-Z0-9.-]{2,48}@[a-zA-Z][a-zA-Z]{2,16}$/);
-											if ($("#payvia").val() == 'UPI') {
+
+											const payviadata = $("#payvia").val().split("-");
+											if (payviadata[0] == 'UPI') {
 												if ($("#upi").val() == undefined
 														|| $("#upi").val() == null
 														|| $("#upi").val() == "") {

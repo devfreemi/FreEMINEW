@@ -32,6 +32,8 @@ public class Nomineeverification implements Serializable {
 	private String filler3;
 	
 	private Nomineerecords param;
+	
+	private String holdingmode;
 
 	public String getMobileno() {
 		return mobileno;
@@ -119,6 +121,14 @@ public class Nomineeverification implements Serializable {
 
 	public void setParam(Nomineerecords param) {
 		this.param = param;
+	}
+
+	public String getHoldingmode() {
+		return holdingmode;
+	}
+
+	public void setHoldingmode(String holdingmode) {
+		this.holdingmode = holdingmode;
 	}
 
 	public static long getSerialversionuid() {

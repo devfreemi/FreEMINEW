@@ -42,9 +42,7 @@ public class BseRelatedActions {
 	}
 	
 	public static String generateTransactionId(){
-		return Long.toString((Math.abs(UUID.randomUUID().getMostSignificantBits())));
+		return Long.toString((Math.abs(UUID.randomUUID().getMostSignificantBits()))).substring(0, 8);
 	}
-	
-	
 
 }

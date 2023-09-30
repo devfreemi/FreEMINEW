@@ -27,6 +27,9 @@
 					style="border: 1px solid #c1bdb8; border-radius: 5px;">
 					<h1 style="font-size: 1.5rem; color: #5885e9; font-weight: 400;">Congratulation!</h1>
 					<small class="text-muted"><i class="fas fa-check" style="color: #3fc53f;"></i> Your mutual fund account registration complete.</small>
+					<div class="text-center">
+					 <a  target="_blank" href="${n2faurl}"><button class="btn btn-info" id="nomiee2fa">Authenticate Nominee</button></a>
+					</div>
 					<br>
 					<c:if test="${PURCHASE_TYPE =='NEW_CUSTOMER' }">
 						<small>Your account is registered at FreEMI and temporary password sent over mail for your login.</small>

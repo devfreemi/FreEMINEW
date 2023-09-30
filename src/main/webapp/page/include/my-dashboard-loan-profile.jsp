@@ -1,19 +1,14 @@
 <%@taglib prefix="c1" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt1" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="form1" uri="http://www.springframework.org/tags/form"%>
-
-<div class="loan-list mb-2">
-	<i class="fas fa-list" style="color: aliceblue;"></i>
-</div>
-
 <div class="fd-history-outer m-2" style="overflow: auto;">
 
-	<table class="table table-sm" id="loanprofile">
+	<table class="table align-middle mb-0 bg-white table-responsive-sm table-striped" id="loanprofile">
 		<caption style="line-height: normal;">
 			Loan Application history <br> <small class="text-muted">
 			</small>
 		</caption>
-		<thead class="#3949ab indigo darken-1 white-text">
+		<thead class="bg-light">
 			<tr>
 				<th scope="col">Bank</th>
 				<th scope="col">Request Date</th>
@@ -32,7 +27,7 @@
 	</table>
 
 	<div class="text-center">
-		<span id="loanfetch"><button class="btn btn-sm btn-secondary"
+		<span id="loanfetch"><button class="btn btn-load-more"
 				onclick="gethdfcloanrequestlist(reqid,null);">Fetch your Loan
 				Requests</button></span>
 		<div>
@@ -100,7 +95,7 @@
 				</table>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-sm btn-secondary"
+				<button type="button" class="btn btn-load-more"
 					data-dismiss="modal">Close</button>
 			</div>
 		</div>

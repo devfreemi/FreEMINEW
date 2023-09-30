@@ -1,20 +1,14 @@
 <%@taglib prefix="c1" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt1" uri="http://java.sun.com/jsp/jstl/fmt"%>
-
-
-<div class="registry-profiles mb-2">
-	<i class="fas fa-list" style="color: aliceblue;"></i>
-</div>
-
 <div class="fd-history-outer m-2" style="overflow: auto;">
 	
-	<table class="table table-sm" id="fdprofile">
+	<table class="table align-middle mb-0 bg-white table-responsive-sm table-striped" id="fdprofile">
 		<caption style="line-height: normal;">
 			Fixed Deposit Folio history <br> <small class="text-muted">
 
 			</small>
 		</caption>
-		<thead class="#3949ab indigo darken-1 white-text">
+		<thead class="bg-light">
 			<tr>
 				<th scope="col">NBFC</th>
 				<th scope="col">Folio</th>
@@ -31,9 +25,25 @@
 		</tbody>
 	</table>
 
-	<div style="text-align: center;">
-	<span id="fdfetch"><button class="btn btn-sm btn-secondary" onclick="getfixeddepositdata('<%=session.getAttribute("userid").toString()%>','${pan }');">Fetch your Portfolio</button></span>
-	</div>
+<div class="col-md-12 col-12 mx-auto">
+  <div class="row mx-auto">
+    <div class="col-12.mx-auto">
+      <p class="text-center fw-bold text-danger" id="fdMsg"></p>
+    </div>
+    <div class="col-12 col-md-6 text-center mt-4">
+      <span id="fdfetch">
+        <button class="btn btn-primary" onclick="getfixeddepositdata('<%=session.getAttribute("userid").toString()%>','${pan }');">Fetch your Portfolio</button>
+      </span>
+    </div>
+    <!-- <div class="col-12 col-md-6 text-center mt-4">
+    </div> -->
+    <div class="col-12 col-md-6 mt-md-4 mt-0 mx-auto text-center">
+      <a href="/products/fixed-deposit/view-purchase-history" class="btn btn-dark py-2"> <span>
+          Transaction Histoty &nbsp;&nbsp; <i class="fas fa-history"></i></span>
+      </a>
+    </div>
+  </div>
+</div>
 	<div style="overflow-x: auto;"></div>
 </div>
 
@@ -97,7 +107,7 @@
 </table>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-load-more" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>

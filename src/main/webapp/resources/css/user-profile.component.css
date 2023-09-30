@@ -1,17 +1,17 @@
-.accordian-style{
+.accordian-style {
     /* width: 80%;  */
     margin: 20px auto;
 }
 
-.profile{
+.profile {
     font-weight: 800;
 }
 
-label{
+label {
     font-weight: 600;
 }
 
-.fa-refresh{
+.fa-refresh {
     transition: 2s;
     -webkit-transition: 2s;
     -moz-transition: 2s;
@@ -21,27 +21,72 @@ label{
     -moz-animation-iteration-count: infinite;
     -o-animation-iteration-count: infinite; */
 }
-.fa-refresh:hover{
+
+.fa-refresh:hover {
     transform: rotate(360deg);
 }
 
-.disappear{
+.disappear {
     animation-delay: 2s;
     animation: box_vanish;
 }
 
-@keyframes box_vanish{
+@keyframes box_vanish {
     0% {
-        transform:opacity(1);
+        transform: opacity(1);
     }
+
     100% {
         transform: opacity(0);
     }
 }
 
-.card{
-	margin-bottom: .5rem;
+.card {
+    margin-bottom: .5rem;
 }
-.card-header{
-	padding: .15rem 1.25rem;
+
+.card-header {
+    padding: .15rem 1.25rem;
+}
+
+.text-dash {
+    text-transform: uppercase;
+    line-height: 1.25;
+    font-weight: 700;
+    transition: all 0.3s;
+    -webkit-transition: all 0.3s;
+    -moz-transition: all 0.3s;
+    -ms-transition: all 0.3s;
+    -o-transition: all 0.3s;
+    font-family: 'Thasadith', sans-serif;
+    color: #df9e14;
+    font-weight: 700;
+}
+
+.text-brand {
+    color: #df9e14;
+}
+
+.btn-chng-pass {
+    background-image: linear-gradient(45deg, #c18600d4, #fac944)!important;
+    color: #f5f5fa!important;
+    letter-spacing: 1px!important;
+    font-weight: 700!important;
+}
+
+.btn-chng-pass:hover {
+    background-image: linear-gradient(45deg, #fac944, #c18600d4)!important;
+    color: #f5f0f0!important;
+    letter-spacing: 1px!important;
+}
+
+.f-11 {
+    font-size: 11px;
+}
+
+.f-16 {
+    font-size: 16px;
+}
+h6{
+    color: #4f4f4f!important;
 }

@@ -1,17 +1,22 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<section class="mahindra-account-display">
-	<h5>Mahindra Finance FD KYC Documents</h5>
-	<div class="row mx-auto mb-3">
-		<button type="button"
-			class="btn btn-sm btn-default"  id="viewmfdkycdoc">View
-			Documents</button>
-		<button type="button"
-			class="btn btn-sm blue-gradient white-text waves-effect waves-light"
-			data-toggle="modal" data-target="#mfdkycdoc">update
-			Documents</button>
+
+<section class="mahindra-account-display mb-3">
+	<div class="row gutters-sm">
+		<div class="col-md-6 pb-md-0 pb-3">
+			<div class="card shadow">
+				<div class="card-body side">
+				<h5 class="fw-bold pb-4 text-center">Mahindra Finance FD</h5>
+				<div class="row mx-auto mb-3">
+				<div class="col-6 col-md-4 mx-auto">
+					<button type="button" class="btn btn-sm btn-default" id="viewmfdkycdoc">View
+					Documents</button>
+				</div>
+			<div class="col-6 col-md-4 mx-auto mb-3 mb-md-0">
+				<button type="button" class="btn btn-sm blue-gradient white-text waves-effect waves-light" data-toggle="modal"
+				data-target="#mfdkycdoc">update
+				Documents</button>
+			</div>
 	</div>
-	<div class="row mx-auto" id="kycdocdata"></div>
-	
 	
 	<!-- Modal -->
 		<div class="modal fade" id="mfdkycdoc" tabindex="-1" role="dialog"
@@ -19,7 +24,7 @@
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h5 class="modal-title" id="kycupdatedocModalLabel">Update
+						<h5 class="modal-title fw-bold" id="kycupdatedocModalLabel">Update
 							KYC documents</h5>
 						<button type="button" class="close" data-dismiss="modal"
 							aria-label="Close">
@@ -122,4 +127,16 @@
 				</div>
 			</div>
 		</div>
+	</div>
+	</div>
+	</div>
+	<div class="col-md-6 col-12">
+		<div class="card shadow">
+			<div class="card-body side">
+				<h5 class="fw-bold pb-4 text-center">Mahindra Finance FD KYC Documents</h5>
+			<div class="row mx-auto text-center" id="kycdocdata"></div>
+			</div>
+			</div>
+	</div>
+</div>
 </section>

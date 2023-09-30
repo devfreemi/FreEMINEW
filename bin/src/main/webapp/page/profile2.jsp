@@ -414,7 +414,7 @@
 											</div>
 											<div class="col-6 borderstyle-1">${profileBasic.nomineeRelation }</div>
 										</div>
-
+										
 
 									</c:when>
 									<c:otherwise>

@@ -26,6 +26,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.freemi.common.util.CommonConstants;
+import com.freemi.entity.bse.Nomineeregistrationresponse;
 import com.freemi.entity.database.UserBankDetails;
 
 @Entity
@@ -363,6 +364,15 @@ public class MFCustomers implements Serializable {
 	
 	@Transient
 	private String mobileholder3declaration;
+	
+	@Transient
+	private String nomineeverifymethod;
+	
+	@Transient
+	private Nominee2faresponse nomineeregresponse;
+	
+	@Transient
+	private boolean nomineeregcomplete=false;
 	
 	
 	public static long getSerialversionuid() {
@@ -1235,7 +1245,34 @@ public class MFCustomers implements Serializable {
 	public void setMobileholder3declaration(String mobileholder3declaration) {
 		this.mobileholder3declaration = mobileholder3declaration;
 	}
-	
+
+
+	public String getNomineeverifymethod() {
+		return nomineeverifymethod;
+	}
+
+
+	public void setNomineeverifymethod(String nomineeverifymethod) {
+		this.nomineeverifymethod = nomineeverifymethod;
+	}
+
+	public Nominee2faresponse getNomineeregresponse() {
+		return nomineeregresponse;
+	}
+
+
+	public void setNomineeregresponse(Nominee2faresponse nomineeregresponse) {
+		this.nomineeregresponse = nomineeregresponse;
+	}
+
+
+	public boolean isNomineeregcomplete() {
+		return nomineeregcomplete;
+	}
+
+	public void setNomineeregcomplete(boolean nomineeregcomplete) {
+		this.nomineeregcomplete = nomineeregcomplete;
+	}
 	
 	
 }

@@ -63,7 +63,7 @@
 
 
 						<div class="btn-group btn-group-sm btn-group-toggle"
-							data-toggle="buttons" id="radioamount" style="padding-left: 2.5rem;">
+							data-toggle="buttons" id="radioamount" style="padding-left: 2.5rem; box-shadow: none;">
 							<label class="btn btn-info active" for="option1"> <input type="radio"
 								value="2000" name="options" id="option1" autocomplete="off">
 								2,000
@@ -112,7 +112,7 @@
 					</div>
 				</div>
 				<div class="modal-footer">
-					<form:button type="submit" class="btn rgba(244, 67, 54, 0.7) rgba-red-strong btn-sm btn-block text-white" id="selectfundbtn">BUY NOW <i
+					<form:button type="submit" class="btn btn-sm btn-block text-white" id="selectfundbtn" style="background-color: #ff746a;">BUY NOW <i
 							class="fas fa-shopping-cart"></i>
 					</form:button>
 				</div>

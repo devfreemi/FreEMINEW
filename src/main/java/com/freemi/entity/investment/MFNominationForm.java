@@ -73,10 +73,10 @@ public class MFNominationForm implements Serializable {
 	@Column(name="GUARDIAN_NAME")
 	private String nomineeGuardian="";
 	
-	@Transient
+	@Column(name="NOMINEE1_PAN")
 	private String nominee1pan;
 	
-	@Transient
+	@Column(name="NOMINEE1_GUARDIAN_PAN")
 	private String nominee1guardianpan;
 	
 	@Transient

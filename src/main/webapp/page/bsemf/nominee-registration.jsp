@@ -89,6 +89,46 @@
 						<label for="pan1">Nominee Guardian PAN (Optional)</label>
 					</div>
 					
+					<c:if test="${nominee.holdingmode=='AS' }">
+					
+					<div class="md-form md-outline form-sm mt-0">
+						<form:input type="text" class="form-control" id="holder2email"
+							path="param.secondholderemail" maxlength="64" />
+						<label for="pan1">2nd Holder Email</label>
+					</div>
+					
+					<div class="form-group form-sm">
+						<!-- <small class="text-primary">Email ID owner declaration</small> -->
+						<div class="field select-mod">
+							<form:select class="form-control invest" id="holder2emaildec"
+								path="param.secondholderemaildeclaration">
+								<form:option value="" disabled="true" selected="true">--Email Id. owner declaration--</form:option>
+								<form:options items="${idbelongsto}" />
+							</form:select>
+							
+						</div>
+					</div>
+					
+					<div class="md-form md-outline form-sm mt-0">
+						<form:input type="text" class="form-control" id="holder2mob"
+							path="param.secondholdermobile" maxlength="10" />
+						<label for="pan1">2nd Holder mobile</label>
+					</div>
+					
+					<div class="form-group form-sm">
+						<!-- <small class="text-primary">Email ID owner declaration</small> -->
+						<div class="field select-mod">
+							<form:select class="form-control invest" id="holder2mobdec"
+								path="param.secondholdermobiledeclaration">
+								<form:option value="" disabled="true" selected="true">--Mobile owner declaration--</form:option>
+								<form:options items="${idbelongsto}" />
+							</form:select>
+							
+						</div>
+					</div>
+					
+					</c:if>
+					
 					<div style="text-align: center; margin-top: 20px;">
 						<form:button type="submit"
 							class="btn #00796b teal darken-2 white-text" id="confirmbtn">Submit

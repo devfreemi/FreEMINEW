@@ -72,6 +72,8 @@ import com.freemi.entity.bse.BseFileUpload;
 import com.freemi.entity.bse.BseOrderPaymentRequest;
 import com.freemi.entity.bse.BseOrderPaymentResponse;
 import com.freemi.entity.bse.Bsepay;
+import com.freemi.entity.bse.Nomineerecords;
+import com.freemi.entity.bse.Nomineeregistrationresponse;
 import com.freemi.entity.bse.Paymentgatewayresponse;
 import com.freemi.entity.database.UserBankDetails;
 import com.freemi.entity.general.ClientSystemDetails;
@@ -80,6 +82,7 @@ import com.freemi.entity.general.Searchlocationdetials;
 import com.freemi.entity.general.UserProfile;
 import com.freemi.entity.general.UserProfileLdap;
 import com.freemi.entity.investment.BseAOFDocument;
+import com.freemi.entity.investment.BseBankid;
 import com.freemi.entity.investment.BseFundsScheme;
 import com.freemi.entity.investment.BseMFSelectedFunds;
 import com.freemi.entity.investment.BseMFTop15lsSip;
@@ -88,8 +91,11 @@ import com.freemi.entity.investment.BsemfTransactionHistory;
 import com.freemi.entity.investment.Bseregistrationstatus;
 import com.freemi.entity.investment.MFAdditionalPurchaseForm;
 import com.freemi.entity.investment.MFCustomers;
+import com.freemi.entity.investment.MFNominationForm;
 import com.freemi.entity.investment.MFRedeemForm;
 import com.freemi.entity.investment.MfAllInvestorValueByCategory;
+import com.freemi.entity.investment.Nominee2faresponse;
+import com.freemi.entity.investment.Nomineeverification;
 import com.freemi.entity.investment.SelectMFFund;
 import com.freemi.entity.investment.TransactionStatus;
 import com.freemi.services.Impl.Profilerequesthandler;
@@ -932,6 +938,36 @@ public class BsemfController {
 					}else {
 						logger.info("Clientcode not found. Skip AOF upload call for mobile- "+ investForm.getMobile());
 					}
+					
+					//Send request for Nominee authentication
+					if(bseclientcode!=null) {
+						Nomineeverification verify = new Nomineeverification();
+						MFNominationForm nomineedetails = new MFNominationForm();
+						Nomineerecords records = new Nomineerecords();
+						
+						nomineedetails.setClientID(bseclientcode);
+						records.setClientcode(bseclientcode);
+						records.setNominationopt("Y");
+						records.setNominationauthmode("O");
+						records.setNomineepan1(investForm.getNominee().getNominee1pan());
+						records.setNomineeguardianpan1(investForm.getNominee().getNominee1guardianpan());
+						
+						verify.setParam(records);
+						verify.setNomineedetails(nomineedetails);
+						Nomineeregistrationresponse registrationresponse = bseEntryManager.submitnomineeverification(verify);
+//						investForm.setNomineeregresponse(registrationresponse);
+						investForm.setNomineeregcomplete(true);
+						if(registrationresponse.getStatuscode().equals("100")) {
+						
+						String callbackUrl = URI.create(request.getRequestURL().toString()).resolve(request.getContextPath())
+								.toString()
+								+ "/nominee-registration/nominee-verify-status";
+						
+						Nominee2faresponse nominee2faresponse = bseEntryManager.authenticatenominee(investForm.getMobile(), bseclientcode,callbackUrl);
+						investForm.setNomineeregresponse(nominee2faresponse);
+						}
+						
+					}
 
 					
 				}
@@ -1153,6 +1189,12 @@ public class BsemfController {
 		map.addAttribute("selectedFund", selectedfund);
 		map.addAttribute("PURCHASE_TYPE",purchasetype);
 		map.addAttribute("investForm", investForm);
+		if(investForm.getNomineeregresponse()!=null && investForm.getNomineeregresponse().getStatuscode().equals("100") ) {
+			map.addAttribute("n2faurl", investForm.getNomineeregresponse().getReturnrul());
+		}else {
+			map.addAttribute("n2faurl", "#");
+			
+		}
 //		map.addAttribute("KYCVERIFIED", pan1verified);
 //		session.setAttribute("userid", investForm.getMobile());
 //		session.setAttribute("token", "NEW_USER");
@@ -2670,6 +2712,7 @@ public class BsemfController {
 		logger.info("@@ BSE MF STAR Transaction status controller @@");
 		String returnUrl = "bsemf/bse-purchase-status";
 		
+		Map<String,String> paymentgatewaylist = new HashMap<String,String>();
 		Bsepay pay = new Bsepay();
 		logger.info("Transaction status for client- "+ transReport.getClientcode() + " -> "+ transReport.getTransactionstatus());
 		
@@ -2684,6 +2727,11 @@ public class BsemfController {
 				pay.setChosenbankid(bandetails.getSerialno());
 				pay.setBankname(bandetails.getBankName());
 				pay.setBankacc(bandetails.getAccountNumber().replaceAll(bandetails.getAccountNumber().substring(0, bandetails.getAccountNumber().length()-2), "xxxxxxxx") );
+				String bankname = bandetails.getBankName(); 
+				
+				getbankgatewaydetails(paymentgatewaylist, bankname);
+				
+				map.addAttribute("gatewaydata", paymentgatewaylist);
 				
 				/*
 				logger.info("Proceeding to generate pay url for order id - " + transReport.getBseOrderNoFromResponse());
@@ -2741,6 +2789,22 @@ public class BsemfController {
 		logger.info("bseMFTransactionStatus(): Return url- "+ returnUrl);
 		return returnUrl;
 	}
+
+
+	private void getbankgatewaydetails(Map<String, String> paymentgatewaylist, String bankname) {
+		List<BseBankid> gatewaylist = bseEntryManager.getbankgateways(null, bankname);
+		if(gatewaylist!=null) {
+			for(BseBankid data : gatewaylist) {
+				if(data.getActive().equalsIgnoreCase("Y"))
+					paymentgatewaylist.put((data.getTransactiontype()+"-"+data.getPaymode()+"-"+data.getBankid()),(data.getPaymode()+ " - "+ data.getBsebankname()));
+			}
+			logger.info("Total active gateway mode- "+ gatewaylist.size());
+			
+		}else {
+			logger.info("No gateway list to process..");
+			paymentgatewaylist.put("NA-NA-NA","No Gateway available");
+		}
+	}
 	
 	
 	@RequestMapping(value = "/mutual-funds/bse-transaction-status", method = RequestMethod.POST)
@@ -2749,11 +2813,12 @@ public class BsemfController {
 		
 		logger.info("bsepaymentprocess(): @@ BSE MF STAR purchase confirm controller process for payment @@");
 		String returnUrl = "bsemf/bse-payment-status";
-		
+		Map<String,String> paymentgatewaylist = new HashMap<String,String>();
 		Paymentgatewayresponse payresponse = new Paymentgatewayresponse();
 		
 		TransactionStatus status = new TransactionStatus();
-		if(pay.getPayvia().equalsIgnoreCase("IB")) {
+		String[] payviadata = pay.getPayvia().split("-");
+		if(payviadata[0].equalsIgnoreCase("INTERNET_BANKING")) {
 			//Pay via internet banking
 			/*
 			String data = "\\r\\n\\r\\n\\r\\n\\r\\n<html>\\r\\n<head><title>Redirecting to Bank</title>\\r\\n<style>\\r\\n\\r\\n.bodytxt4 {\\r\\n\\r\\n\\tfont-family: Verdana, Arial, Helvetica, sans-serif;\\r\\n\\tfont-size: 12px;\\r\\n\\tfont-weight: bold;\\r\\n\\tcolor: #666666;\\r\\n}\\r\\n.bodytxt {\\r\\n\\tfont-family: Verdana, Arial, Helvetica, sans-serif;\\r\\n\\tfont-size: 13px;\\r\\n\\tfont-weight: normal;\\r\\n\\tcolor: #000000;\\r\\n\\r\\n}\\r\\n.bullet1 {\\r\\n\\r\\n\\tlist-style-type:\\tsquare;\\r\\n\\tlist-style-position: inside;\\r\\n\\tlist-style-image: none;\\r\\n\\tfont-family: Verdana, Arial, Helvetica, sans-serif;\\r\\n\\tfont-size: 10px;\\r\\n\\tfont-weight: bold;\\r\\n\\tcolor: #FF9900;\\r\\n}\\r\\n.bodytxt2 {\\r\\n\\tfont-family: Verdana, Arial, Helvetica, sans-serif;\\r\\n\\tfont-size: 8pt;\\r\\n\\tfont-weight: normal;\\r\\n\\tcolor: #333333;\\r\\n\\r\\n}\\r\\nA.sac2 {\\r\\n\\tCOLOR: #000000;\\r\\n\\tfont-family: Verdana, Arial, Helvetica, sans-serif;\\r\\n\\tfont-size: 10px;\\r\\n\\tfont-weight: bold;\\r\\n\\ttext-decoration: none;\\r\\n}\\r\\nA.sac2:visited {\\r\\n\\tCOLOR: #314D5A; TEXT-DECORATION: none\\r\\n}\\r\\nA.sac2:hover {\\r\\n\\tCOLOR: #FF9900; TEXT-DECORATION: underline\\r\\n}\\r\\n</style>\\r\\n\\r\\n</head>\\r\\n<script language=JavaScript>\\r\\n\\r\\n\\r\\nvar message=\\\"Function Disabled!\\\";\\r\\n\\r\\n\\r\\nfunction clickIE4(){\\r\\nif (event.button==2){\\r\\nreturn false;\\r\\n}\\r\\n}\\r\\n\\r\\nfunction clickNS4(e){\\r\\nif (document.layers||document.getElementById&&!document.all){\\r\\nif (e.which==2||e.which==3){\\r\\nreturn false;\\r\\n}\\r\\n}\\r\\n}\\r\\n\\r\\nif (document.layers){\\r\\ndocument.captureEvents(Event.MOUSEDOWN);\\r\\ndocument.onmousedown=clickNS4;\\r\\n}\\r\\nelse if (document.all&&!document.getElementById){\\r\\ndocument.onmousedown=clickIE4;\\r\\n}\\r\\n\\r\\ndocument.oncontextmenu=new Function(\\\"return false\\\")\\r\\n\\r\\n</script>\\r\\n<table width=\\\"100%\\\" border=\\\"0\\\" cellspacing=\\\"0\\\" cellpadding=\\\"0\\\">\\r\\n  <tr>\\r\\n    <td align=\\\"left\\\" valign=\\\"top\\\">\\r\\n<table width=\\\"100%\\\" border=\\\"0\\\" cellspacing=\\\"0\\\" cellpadding=\\\"0\\\">\\r\\n        <tr> \\r\\n          <td align=\\\"center\\\" valign=\\\"middle\\\"><table width=\\\"100%\\\" border=\\\"0\\\" cellspacing=\\\"0\\\" cellpadding=\\\"0\\\">\\r\\n             \\r\\n              <tr>\\r\\n                <td  align=\\\"center\\\"></td>\\r\\n              </tr>\\r\\n              <tr>\\r\\n                <td height=\\\"85\\\" align=\\\"center\\\"><br>\\r\\n                  <table width=\\\"80%\\\" border=\\\"0\\\" cellpadding=\\\"0\\\" cellspacing=\\\"1\\\" bgcolor=\\\"#CCCCCC\\\">\\r\\n                    <tr>\\r\\n                      <td bgcolor=\\\"#CCCCCC\\\"><table width=\\\"100%\\\" border=\\\"0\\\" cellpadding=\\\"6\\\" cellspacing=\\\"0\\\" bgcolor=\\\"#FFFFFF\\\">\\r\\n                          <tr> \\r\\n                            <td colspan=\\\"2\\\" align=\\\"left\\\" valign=\\\"bottom\\\"><span class=\\\"bodytxt4\\\">Your payment request is being processed...</span></td>\\r\\n                          </tr>\\r\\n                          <tr valign=\\\"top\\\"> \\r\\n                            <td colspan=\\\"2\\\" align=\\\"left\\\"><table width=\\\"100%\\\" border=\\\"0\\\" cellspacing=\\\"0\\\" cellpadding=\\\"0\\\">\\r\\n                                <tr> \\r\\n                                  <td width=\\\"87%\\\" bgcolor=\\\"#cccccc\\\" height=\\\"1\\\" align=\\\"center\\\"></td>\\r\\n                                </tr>\\r\\n                              </table></td>\\r\\n                          </tr>\\r\\n                          <tr> \\r\\n                            <td width=\\\"60%\\\" align=\\\"left\\\" valign=\\\"bottom\\\"><table width=\\\"95%\\\" border=\\\"0\\\" cellpadding=\\\"1\\\" cellspacing=\\\"0\\\" bgcolor=\\\"#FFFFFF\\\">\\r\\n                                <tr> \\r\\n                                  <td align=\\\"right\\\" valign=\\\"top\\\"></td>\\r\\n                                  <td class=\\\"bodytxt\\\">&nbsp;</td>\\r\\n                                </tr>\\r\\n                                <tr> \\r\\n                                  <td height=\\\"19\\\"  align=\\\"right\\\" valign=\\\"top\\\"><li class=\\\"bullet1\\\"></li></td>\\r\\n                                  <td class=\\\"bodytxt2\\\">This is a secure payment \\r\\n                                    gateway using 128 bit SSL encryption.</td>\\r\\n                                </tr>\\r\\n                                <tr> \\r\\n                                  <td align=\\\"right\\\" valign=\\\"top\\\"> <li class=\\\"bullet1\\\"></li></td>\\r\\n                                  <td class=\\\"bodytxt2\\\" >When you submit the transaction, \\r\\n                                    the server will take about 1 to 5 seconds \\r\\n                                    to process, but it may take longer at certain \\r\\n                                    times. </td>\\r\\n                                </tr>\\r\\n                                <tr> \\r\\n                                  <td align=\\\"right\\\" valign=\\\"top\\\"><li class=\\\"bullet1\\\"></li></td>\\r\\n                                  <td class=\\\"bodytxt2\\\" >Please do not press \\\"Submit\\\" \\r\\n                                    button once again or the \\\"Back\\\" or \\\"Refresh\\\" \\r\\n                                    buttons. </td>\\r\\n                                </tr>\\r\\n                              </table></td>\\r\\n                            <td align=\\\"right\\\" valign=\\\"bottom\\\"><table width=\\\"80%\\\" border=\\\"0\\\" cellpadding=\\\"1\\\" cellspacing=\\\"0\\\" bgcolor=\\\"#FFFFFF\\\">\\r\\n                                <tr bgcolor=\\\"#FFFCF8\\\"> \\r\\n                                  <td align=\\\"right\\\" bgcolor=\\\"#FFFFFF\\\"></td>\\r\\n                                </tr>\\r\\n                                <tr bgcolor=\\\"#FFFCF8\\\"> \\r\\n                                  <td align=\\\"right\\\" valign=\\\"middle\\\" bgcolor=\\\"#FFFFFF\\\" class=\\\"bodytxt2\\\">&nbsp;</td>\\r\\n                                </tr>\\r\\n                                <tr bgcolor=\\\"#FFFCF8\\\"> \\r\\n                                  <td align=\\\"right\\\" bgcolor=\\\"#FFFFFF\\\" class=\\\"bodytxt2\\\" >&nbsp;</td>\\r\\n                                </tr>\\r\\n                              </table></td>\\r\\n                          </tr>\\r\\n                        </table></td>\\r\\n                    </tr>\\r\\n                  </table>\\r\\n                  \\r\\n                </td>\\r\\n              </tr>\\r\\n            </table>\\r\\n           \\r\\n          \\r\\n         \\r\\n             </td>\\r\\n        </tr>  \\r\\n\\r\\n\\r\\n      </table></td>\\r\\n  </tr>\\r\\n  \\r\\n</table>\\r\\n\\r\\n\\r\\n\\r\\n<body>\\r\\n<form name=\\\"Bankfrm\\\" method=\\\"post\\\" action='https://shopping.icicibank.com/corp/BANKAWAY?IWQRYTASKOBJNAME=bay_mc_login&BAY_BANKID=ICI'>\\r\\n \\r\\n\\t\\t\\t  \\r\\n              <input type = \\\"hidden\\\" name = \\\"MD\\\" value=\\\"P\\\">\\r\\n\\t\\t\\t\\r\\n              \\r\\n\\t\\t\\t  \\r\\n              <input type = \\\"hidden\\\" name = \\\"PID\\\" value=\\\"000000001086\\\">\\r\\n\\t\\t\\t\\r\\n              \\r\\n\\t\\t\\t  \\r\\n              <input type = \\\"hidden\\\" name = \\\"ES\\\" value=\\\"hbVjLCMyDHSYxiBaT7dJgaVXbhCCcxOAk4mNJPkwEQlcdklihe4UQTNrhsjzGEl/ts8Sl9RCMvWWeSMU1MZ7vRMHGEv94hBmuaoqeg0CLXZGgqqZp0aRKazsBdLAYpqTZ94askMgUzU34Bcgb4dogol5jxM0AolY2RtMcDhHrEDjpD3ygzEOJaaT97DmUXVR7p9iQcr1q5TRPpyroTq1Urboe2XFC+91ndxTYa3AjkiPpI+6/JiAh/Wt2TMkWfwm\\\">\\r\\n\\t\\t\\t\\r\\n              \\r\\n\\t\\t\\t  \\r\\n              <input type = \\\"hidden\\\" name = \\\"SPID\\\" value=\\\"NA\\\">\\r\\n\\t\\t\\t\\r\\n              \\r\\n\\t</form>\\r\\n</body>\\r\\n<script>\\r\\ndocument.Bankfrm.submit();\\r\\n</script>\\r\\n</html>\\r\\n";
@@ -2785,12 +2850,16 @@ public class BsemfController {
 				status = pay.getTransstatus();
 				status.setTransactionmsg(payresponse.getResponse());
 //				map.addAttribute("TRANSACTION_REPORT", status);
+				getbankgatewaydetails(paymentgatewaylist, pay.getBankname());
+				map.addAttribute("gatewaydata", paymentgatewaylist);
+				
 				map.addAttribute("error", payresponse.getResponse());
 				returnUrl = "bsemf/bse-purchase-status";
 			}else {
 				map.addAttribute("data", payresponse.getResponse());
 			}
-		}else if(pay.getPayvia().equalsIgnoreCase("UPI")) {
+			pay.setTransstatus(status);
+		}else if(payviadata[0].equalsIgnoreCase("UPI")) {
 			
 			payresponse = bseEntryManager.getPaymentGateway(pay);
 			
@@ -2800,18 +2869,26 @@ public class BsemfController {
 				status = pay.getTransstatus();
 				status.setTransactionmsg(payresponse.getResponse());
 				map.addAttribute("error", payresponse.getResponse());
+				getbankgatewaydetails(paymentgatewaylist, pay.getBankname());
+				map.addAttribute("gatewaydata", paymentgatewaylist);
+				
 				returnUrl = "bsemf/bse-purchase-status";
 			}else {
 				map.addAttribute("data", payresponse.getResponse());
 				map.addAttribute("TRANS_STATUS", "UPI_REQUEST");
 			}
-			
-		}
-		else {
+			pay.setTransstatus(status);
+		}else {
 			logger.info("Invalid payment method selected.. Returning back to page...");
+			map.addAttribute("TRANS_STATUS", "RETRY");
+			map.addAttribute("error", "Invalid payment method.");
+			getbankgatewaydetails(paymentgatewaylist, pay.getBankname());
+			map.addAttribute("gatewaydata", paymentgatewaylist);
+			
+			returnUrl = "bsemf/bse-purchase-status";
 		}
 		
-		pay.setTransstatus(status);
+		
 		map.addAttribute("bsepay", pay);
 		
 		return returnUrl;

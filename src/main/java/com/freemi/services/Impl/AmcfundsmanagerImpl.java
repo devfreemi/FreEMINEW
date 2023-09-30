@@ -115,9 +115,9 @@ public class AmcfundsmanagerImpl implements Amcfundmanager {
 				}
 			}
 			logger.info("Total active funds for explorer- "+ maintainlist.size());
-			for (String key: maintainlist.keySet()){  
-				System.out.println(key);
-			} 
+			/*
+			 * for (String key: maintainlist.keySet()){ System.out.println(key); }
+			 */ 
 			
 			fundDetails = new ArrayList<BseMFSelectedFunds>();
 			// Java 8 code to convert map values to list

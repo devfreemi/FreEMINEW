@@ -2276,15 +2276,17 @@ public class BseEntryServiceImpl implements BseEntryManager {
 				}
 				
 				logger.info("fetch bank gatewayc code for - "+ transtype + " ->"+ bankdetails.getBankName());
-				BseBankid bankid = bsebankidrepository.getByTransactiontypeAndRazorpaybankname(transtype, bankdetails.getBankName());
-				if(bankid!=null) {
-					request.setBankgatewaycode(bankid.getBankid());
-					request.setPaymentmode(bankid.getPaymode());
-					response= investmentConnectorBseInterface.getPaymentGetway(request);
-				}else {
+//				BseBankid bankid = bsebankidrepository.getByTransactiontypeAndRazorpaybankname(transtype, bankdetails.getBankName());
+				if(request.getPayvia() ==null || request.getPayvia().isEmpty() || request.getPayvia().equalsIgnoreCase("NA")) {
 					logger.info("Bank details not found hence payment gateway cannot be requested..");
 					response.setStatuscode("101");
 					response.setResponse("Bank payment gateway details not found. Please contact admin.");
+				}else {
+					String[] gatewaycode= request.getPayvia().split("-");
+					request.setBankgatewaycode(gatewaycode[2]);
+					request.setPaymentmode(gatewaycode[1]);
+					logger.info("Proceeding to payment gateway request..");
+					response= investmentConnectorBseInterface.getPaymentGetway(request);
 				}
 				
 			}
@@ -2330,6 +2332,10 @@ public class BseEntryServiceImpl implements BseEntryManager {
 			nominee.setNomineeverifytrigger("Y");
 			nominee.setNomineeverifystatus(response.getStatuscode());
 			nominee.setRemarks(response.getRemarks());
+			nominee.setHolder2mob(nomineedata.getParam().getSecondholdermobile());
+			nominee.setHolder2emaildec(nomineedata.getParam().getSecondholdermobiledeclaration());
+			nominee.setHolder2email(nomineedata.getParam().getSecondholderemail());
+			nominee.setHolder2emaildec(nomineedata.getParam().getSecondholderemaildeclaration());
 			nomineeverifystatus.save(nominee);
 			
 		}else {
@@ -2341,6 +2347,10 @@ public class BseEntryServiceImpl implements BseEntryManager {
 			nominee.setNomineeverifytrigger("Y");
 			nominee.setNomineeverifystatus(response.getStatuscode());
 			nominee.setRemarks(response.getRemarks());
+			nominee.setHolder2mob(nomineedata.getParam().getSecondholdermobile());
+			nominee.setHolder2mobdec(nomineedata.getParam().getSecondholdermobiledeclaration());
+			nominee.setHolder2email(nomineedata.getParam().getSecondholderemail());
+			nominee.setHolder2emaildec(nomineedata.getParam().getSecondholderemaildeclaration());
 			nomineeverifystatus.save(nominee);
 		}
 		logger.info("Nominee registration completed. Exit");
@@ -2368,8 +2378,22 @@ public class BseEntryServiceImpl implements BseEntryManager {
 		return response;
 	}
 
+	@Override
+	public List<BseBankid> getbankgateways(String paymentmethod, String razorpaybankname) {
+		
+		List<BseBankid> bankgateway = null;
+		if(paymentmethod!=null) {
+			logger.info("Fetch seelcted payment gateway details for bank - "+ razorpaybankname + ":method- "+ paymentmethod);
+			bankgateway = bsebankidrepository.getByTransactiontypeAndRazorpaybankname(paymentmethod, razorpaybankname);
+		}else {
+			logger.info("Fetcha all payment gateway details for bank - "+ razorpaybankname);
+			bankgateway = bsebankidrepository.getByRazorpaybankname(razorpaybankname);
+		}
+		return bankgateway;
+	}
 
-    /*		public static void main(String[] args){
+
+    /*		public static void main(String[] args){getByRazorpaybankname
 		//		System.out.println(new Random());
 		String s ="NEW|201901302627300006|0|SUMANTA1|26273|DEBA593C|FAILED: DIRECT INV TYPE SCHEME NOT ALLOWED|1";
 

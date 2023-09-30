@@ -46,6 +46,18 @@ public class Nomineeverify implements Serializable {
 	
 	@Column(name="NOMINEE_REGISTRATION_REMARKS")
 	private String remarks;
+	
+	@Column(name="HOLDER2_MOBILE")
+	private String holder2mob;
+	
+	@Column(name="HOLDER2_MOBILE_DEC")
+	private String holder2mobdec;
+	
+	@Column(name="HOLDER2_EMAIL")
+	private String holder2email;
+	
+	@Column(name="HOLDER2_EMAIL_DEC")
+	private String holder2emaildec;
 
 	public long getSerialNo() {
 		return serialNo;
@@ -101,6 +113,38 @@ public class Nomineeverify implements Serializable {
 
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
+	}
+
+	public String getHolder2mob() {
+		return holder2mob;
+	}
+
+	public void setHolder2mob(String holder2mob) {
+		this.holder2mob = holder2mob;
+	}
+
+	public String getHolder2mobdec() {
+		return holder2mobdec;
+	}
+
+	public void setHolder2mobdec(String holder2mobdec) {
+		this.holder2mobdec = holder2mobdec;
+	}
+
+	public String getHolder2email() {
+		return holder2email;
+	}
+
+	public void setHolder2email(String holder2email) {
+		this.holder2email = holder2email;
+	}
+
+	public String getHolder2emaildec() {
+		return holder2emaildec;
+	}
+
+	public void setHolder2emaildec(String holder2emaildec) {
+		this.holder2emaildec = holder2emaildec;
 	}
 
 	public static long getSerialversionuid() {

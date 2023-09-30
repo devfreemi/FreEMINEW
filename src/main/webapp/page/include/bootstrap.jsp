@@ -10,11 +10,13 @@
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
 <link href="https://resources.freemi.in/mdbtheme/4.8.10/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://resources.freemi.in/mdbtheme/4.8.10/css/mdb.min.css" rel="stylesheet">
- 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.1.0/mdb.min.css">
+
 <script type="text/javascript" src="https://resources.freemi.in/mdbtheme/4.8.10/js/jquery-3.4.1.min.js" ></script>
 <script type="text/javascript" src="https://resources.freemi.in/mdbtheme/4.8.10/js/popper.min.js" async="true" ></script>
 <script type="text/javascript" src="https://resources.freemi.in/mdbtheme/4.8.10/js/bootstrap.min.js" async="true" ></script>
 <script type="text/javascript" src="https://resources.freemi.in/mdbtheme/4.8.10/js/mdb.min.js" async="true" ></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.1.0/mdb.min.js"></script>
 
 <!-- McAfee Secure logo -->
 <!-- <script type="text/javascript" src="https://cdn.ywxi.net/js/1.js" defer="defer"></script> -->

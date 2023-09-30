@@ -6,6 +6,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -49,6 +51,7 @@ import com.freemi.entity.general.UserProfile;
 import com.freemi.entity.general.UserProfileLdap;
 import com.freemi.entity.investment.BseMandateDetails;
 import com.freemi.entity.investment.Errorparam;
+import com.freemi.entity.investment.MFCustomers;
 import com.freemi.entity.investment.MFNominationForm;
 import com.freemi.entity.investment.Nominee2faresponse;
 import com.freemi.entity.investment.Nomineeverification;
@@ -700,10 +703,15 @@ public class ProfileManageController{
 
 				if (sessionValidCheck.getBody().equals("VALID")) {
 					String clientid = bseEntryManager.getClientIdfromMobile(mobile);
+					List<MFCustomers> getcustomerdetails = bseEntryManager.getCustomerDetails(clientid);
+					
 				if(null!=clientid) {
 					nomineedetails.setMutualfundaccountexist("Y");
 					nomineedetails.setClientid(clientid);
 					nomineedetails.setMobileno(mobile);
+					if(getcustomerdetails!=null) {
+						nomineedetails.setHoldingmode(getcustomerdetails.get(0).getHoldingMode());
+					}
 					try {
 						nominee = bseEntryManager.getnomineefetails(mobile, clientid);
 					}catch(Exception e) {
@@ -809,7 +817,7 @@ public class ProfileManageController{
 	
 	
 	@RequestMapping(value = "/nominee-registration/mutual-funds-authenticate", method = RequestMethod.POST)
-	public String nomineeauthenticatepost(@ModelAttribute("reponse")Nomineeregistrationresponse nomineeresponse, Model model,HttpServletRequest request,HttpServletResponse response, HttpSession session) {
+	public String nomineeauthenticatepost(@ModelAttribute("reponse")Nomineeregistrationresponse nomineeresponse, Model model,HttpServletRequest request,HttpServletResponse response, HttpSession session, RedirectAttributes ra) {
 		logger.info("@@@@ nomineeauthenticatepost @@@@- ");
 		String returnurl="bsemf/nominee-registration-step";
 		Nominee2faresponse apiresponse;
@@ -895,6 +903,14 @@ public class ProfileManageController{
 		return "blogs";
 	}
 	 */
+	
+	
+	@ModelAttribute("idbelongsto") 
+	public Map<String, String> getwhoseId()
+	{
+		logger.info("Return ID belongs to...");
+		return InvestFormConstants.idbelongsto; 
+	}
 	
 	@ModelAttribute("contextcdn") String contextcdn() {
 		return environment.getProperty(CommonConstants.CDN_URL);

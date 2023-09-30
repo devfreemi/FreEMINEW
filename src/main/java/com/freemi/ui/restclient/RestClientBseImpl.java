@@ -736,7 +736,7 @@ public class RestClientBseImpl implements BseRestClientService {
 
 			if(env.getProperty(CommonConstants.BSE_CALL_TEST_ENABLED).equalsIgnoreCase("N")){
 				response= restTemplate.postForObject(url, entity, Paymentgatewayresponse.class);
-				logger.info("Response from SIP pause- "+ mapper.writeValueAsString(response));
+				logger.info("Response from payment gateway- "+ mapper.writeValueAsString(response));
 			}else{
 				logger.info("purchasepaymentgateway(): Test phase enabled. Sending back dummy response");
 				String dummydata = "{\r\n" + 
@@ -748,6 +748,8 @@ public class RestClientBseImpl implements BseRestClientService {
 						"  \"filler3\": \"\",\r\n" + 
 						"  \"filler4\": \"\"\r\n" + 
 						"}";
+				
+				dummydata = "{\"responsestring\":\"2FA NOT COMPLETED FOR ORDERS\",\"statuscode\":\"101\",\"internalrefno\":\""+payrequest.getInternalrefno() +"\",\"filler1\":\"\",\"filler2\":\"\",\"filler3\":\"\",\"filler4\":\"\"}";
 				response = mapper.readValue(dummydata, Paymentgatewayresponse.class);
 			}
 		} catch (Exception e) {
